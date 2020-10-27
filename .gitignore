@@ -1,9 +1,8 @@
 ##  Ignore Beta and Test Projects, config.json's and libs
 /Mods/DeathReimagined/
 /Mods/SeismicactiveGeology/
-/Mods/Test/
 /Plib/*
-Test/*
+**/Test/
 [Cc]onfig.json
 
 ## Ignore Visual Studio temporary files, build results, and
