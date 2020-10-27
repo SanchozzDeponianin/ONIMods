@@ -1,0 +1,10 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. MoreTinkerablePlants.STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.ADDITIONAL_EFFECTS
+msgctxt "MoreTinkerablePlants.STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.ADDITIONAL_EFFECTS"
+msgid "Increases the <style=\"KKeyword\">Throughput</style> of <link=\"OXYFERN\">Oxyfern</link> and <link=\"COLDBREATHER\">Wheezewort</link>"
+msgstr ""
+

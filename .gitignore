@@ -1,6 +1,7 @@
 ##  Ignore Beta and Test Projects, config.json's and libs
 /Mods/DeathReimagined/
 /Mods/SeismicactiveGeology/
+/Mods/Test/
 /Plib/*
 Test/*
 [Cc]onfig.json

@@ -1,0 +1,20 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. AquaticFarm.STRINGS.BUILDINGS.PREFABS.AQUATICFARM.DESC
+msgctxt "AquaticFarm.STRINGS.BUILDINGS.PREFABS.AQUATICFARM.DESC"
+msgid "Aquatic farms reduce Duplicant traffic by automating irrigating crops."
+msgstr ""
+
+#. AquaticFarm.STRINGS.BUILDINGS.PREFABS.AQUATICFARM.EFFECT
+msgctxt "AquaticFarm.STRINGS.BUILDINGS.PREFABS.AQUATICFARM.EFFECT"
+msgid "Grows one <link=\"PLANTS\">Plant</link> from a <link=\"PLANTS\">Seed</link>.\n\nCan be used as floor tile and rotated before construction.\n\nAbsorbs <link=\"ELEMENTSLIQUID\">Liquids</link> from the world for irrigation. Does not require <link=\"LIQUIDPIPING\">Liquid Piping</link>."
+msgstr ""
+
+#. AquaticFarm.STRINGS.BUILDINGS.PREFABS.AQUATICFARM.NAME
+msgctxt "AquaticFarm.STRINGS.BUILDINGS.PREFABS.AQUATICFARM.NAME"
+msgid "<link=\"AQUATICFARM\">Aquatic Farm</link>"
+msgstr ""
+

@@ -1,0 +1,14 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. Archaeologist.STRINGS.DUPLICANTS.TRAITS.ARCHAEOLOGIST.SHORT_DESC
+msgctxt "Archaeologist.STRINGS.DUPLICANTS.TRAITS.ARCHAEOLOGIST.SHORT_DESC"
+msgid "Archaeologist"
+msgstr "Археолог"
+
+#. Archaeologist.STRINGS.DUPLICANTS.TRAITS.ARCHAEOLOGIST.SHORT_DESC_TOOLTIP
+msgctxt "Archaeologist.STRINGS.DUPLICANTS.TRAITS.ARCHAEOLOGIST.SHORT_DESC_TOOLTIP"
+msgid "This Duplicant almost always finds <style=\"KKeyword\">Artifacts</style> when traveling to other planets"
+msgstr "Этот дупликант почти всегда находит <style=\"KKeyword\">артефакты</style>, когда путешествует к другим планетам"

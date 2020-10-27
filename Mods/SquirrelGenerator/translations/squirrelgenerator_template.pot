@@ -1,0 +1,40 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.DESC
+msgctxt "SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.DESC"
+msgid "Watching {Squirrel} run on it is adorable... the electrical power is just an added bonus."
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.EFFECT
+msgctxt "SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.EFFECT"
+msgid "Converts a creature’s muscular labor into electrical <link=\"POWER\">Power</link>.\n\nA {Squirrel} is happier when it runs in a wheel, but consumes more food."
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.NAME
+msgctxt "SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.NAME"
+msgid "<link=\"SQUIRRELGENERATOR\">Squirrel Wheel</link>"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME
+msgctxt "SquirrelGenerator.STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME"
+msgid "Running in a Wheel"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.TOOLTIP
+msgctxt "SquirrelGenerator.STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.TOOLTIP"
+msgid "This critter is running in a <style=\"KKeyword\">Squirrel Wheel</style> and generate <style=\"KKeyword\">Power</style>"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL.NAME
+msgctxt "SquirrelGenerator.STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL.NAME"
+msgid "Interested"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL.TOOLTIP
+msgctxt "SquirrelGenerator.STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL.TOOLTIP"
+msgid "This creature has discovered an entertaining mechanical thing and is very interested"
+msgstr ""
+
