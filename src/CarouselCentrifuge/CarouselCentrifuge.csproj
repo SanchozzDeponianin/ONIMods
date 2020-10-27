@@ -100,13 +100,13 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-mkdir "$(SolutionDir)..\Dev\$(ProjectName)"
+mkdir "$(SolutionDir)..\Mods\$(ProjectName)"
 
-copy /y "$(TargetPath)" "$(SolutionDir)..\Dev\$(ProjectName)"
+copy /y "$(TargetPath)" "$(SolutionDir)..\Mods\$(ProjectName)"
 
-rem "$(ILMergeConsolePath)" /ndebug /out:"$(SolutionDir)..\Dev\$(ProjectName)\$(TargetFileName)" "$(TargetPath)"   "$(SolutionDir)..\PLib\PLib.dll"  /targetplatform:v4,C:\Windows\Microsoft.NET\Framework64\v4.0.30319 /lib:"W:\OxygenNotIncluded_Data\Managed"
+rem "$(ILMergeConsolePath)" /ndebug /out:"$(SolutionDir)..\Mods\$(ProjectName)\$(TargetFileName)" "$(TargetPath)"   "$(SolutionDir)..\PLib\PLib.dll"  /targetplatform:v4,C:\Windows\Microsoft.NET\Framework64\v4.0.30319 /lib:"W:\OxygenNotIncluded_Data\Managed"
 
-copy /y  "$(SolutionDir)..\PLib\peterhan.plib.ui_ru.po"   "$(SolutionDir)..\Dev\$(ProjectName)\translations\"
+copy /y  "$(SolutionDir)..\PLib\peterhan.plib.ui_ru.po"   "$(SolutionDir)..\Mods\$(ProjectName)\translations\"
 </PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
