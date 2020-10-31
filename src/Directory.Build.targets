@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+  <Target Name="ClearGameFolderCopyLocal" AfterTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Remove="$(GameFolder)\*" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="ILRepack" AfterTargets="Build" Condition=" '$(UsesPLib)' == 'true'  Or  '$(UsesPLibOptions)' == 'true' ">
+    <ItemGroup>
+      <InputAssemblies Include="$(TargetPath)" />
+      <InputAssemblies Condition=" '$(UsesPLib)' == 'true'" Include="..\..\PLib\PLib.dll" />
+      <InputAssemblies Condition=" '$(UsesPLibOptions)' == 'true'" Include="..\..\PLib\PLibOptions.dll" />
+    </ItemGroup>
+
+    <ILRepack
+        TargetPlatformVersion="v4"
+        TargetKind="SameAsPrimaryAssembly"
+        OutputFile="$(TargetPath)"
+        InputAssemblies="@(InputAssemblies)"
+        LibraryPath="$(GameFolder)" />
+
+  </Target>
+
+  <Target Name="CopyArtifactsToInstallFolder" AfterTargets="ILRepack">
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+      <InstallFolder>$(ModOutputFolderRelease)\$(ProjectName)</InstallFolder>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+      <InstallFolder>$(ModOutputFolderDebug)\$(ProjectName)</InstallFolder>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <AnimFiles Include="$(MSBuildProjectDirectory)\anim\**\*.*" />
+      <SpritesFiles Include="$(MSBuildProjectDirectory)\sprites\*.*" />
+      <ArchivedModVersions Include="$(MSBuildProjectDirectory)\archived_versions\**\*.*" />
+      <TranslationFiles Include="$(MSBuildProjectDirectory)\translations\*.po" />
+      <TranslationFiles Include="$(MSBuildProjectDirectory)\translations\*.pot" />
+      <WorldGenFiles Include="$(MSBuildProjectDirectory)\worldgen\**\*.*" />
+      <YamlFiles Include="$(MSBuildProjectDirectory)\*.yaml" />
+    </ItemGroup>
+
+    <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(InstallFolder)\$(TargetFileName)" />
+
+    <Copy SourceFiles="@(AnimFiles)" DestinationFiles="@(AnimFiles->'$(InstallFolder)\anim\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SpritesFiles)" DestinationFolder="$(InstallFolder)\sprites" />
+    <Copy SourceFiles="@(ArchivedModVersions)" DestinationFiles="@(ArchivedModVersions->'$(InstallFolder)\archived_versions\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(TranslationFiles)" DestinationFolder="$(InstallFolder)\translations" />
+    <Copy SourceFiles="@(WorldGenFiles)" DestinationFiles="@(WorldGenFiles->'$(InstallFolder)\worldgen\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(YamlFiles)" DestinationFolder="$(InstallFolder)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\Preview.png" DestinationFiles="$(InstallFolder)\preview.png" Condition=" $(CopyPreview) == true " />
+
+  </Target>
+
+</Project>

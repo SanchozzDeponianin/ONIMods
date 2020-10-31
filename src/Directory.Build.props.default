@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <SteamFolder>$(MSBuildProgramFiles32)Steam</SteamFolder>
+    <GameFolder>$(SteamFolder)\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameFolder>
+    <ModOutputFolderDebug>$(UserProfile)\Documents\Klei\OxygenNotIncluded\mods\Dev</ModOutputFolderDebug>
+    <ModOutputFolderRelease>$(MSBuildProjectDirectory)\..\..\Mods</ModOutputFolderRelease>
+  </PropertyGroup>
+</Project>
