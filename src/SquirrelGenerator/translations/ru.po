@@ -1,0 +1,40 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.DESC
+msgctxt "SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.DESC"
+msgid "Watching {Squirrel} run on it is adorable... the electrical power is just an added bonus."
+msgstr "Наблюдать, как {Squirrel} бегает в нём восхитительно... электричество лишь дополнительный бонус."
+
+#. SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.EFFECT
+msgctxt "SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.EFFECT"
+msgid "Converts a creature’s muscular labor into electrical <link=\"POWER\">Power</link>.\n\nA {Squirrel} is happier when it runs in a wheel, but consumes more food."
+msgstr "Преобразует мускульный труд существа в <link=\"POWER\">Электричество</link>.\n\n{Squirrel} более счастлив когда бегает в колесе, но потребляет больше пищи."
+
+#. SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.NAME
+msgctxt "SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.NAME"
+msgid "<link=\"SQUIRRELGENERATOR\">Squirrel Wheel</link>"
+msgstr "<link=\"SQUIRRELGENERATOR\">Беличье колесо</link>"
+
+#. SquirrelGenerator.STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME
+msgctxt "SquirrelGenerator.STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME"
+msgid "Running in a Wheel"
+msgstr "Бегает в колесе"
+
+#. SquirrelGenerator.STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.TOOLTIP
+msgctxt "SquirrelGenerator.STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.TOOLTIP"
+msgid "This critter is running in a <style=\"KKeyword\">Squirrel Wheel</style> and generate <style=\"KKeyword\">Power</style>"
+msgstr "Это существо бегает в <style=\"KKeyword\">Бельичем колесе</style> и генерирует <style=\"KKeyword\">Энергию</style>"
+
+#. SquirrelGenerator.STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL.NAME
+msgctxt "SquirrelGenerator.STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL.NAME"
+msgid "Interested"
+msgstr "Заинтересовано"
+
+#. SquirrelGenerator.STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL.TOOLTIP
+msgctxt "SquirrelGenerator.STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL.TOOLTIP"
+msgid "This creature has discovered an entertaining mechanical thing and is very interested"
+msgstr "Это существо обнаружило занятную механическую штуковину и очень заинтересовано"
+

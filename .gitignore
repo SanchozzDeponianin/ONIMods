@@ -2,6 +2,8 @@
 /Mods/DeathReimagined/
 /Mods/SeismicactiveGeology/
 /Plib/*
+!/Plib/*.po
+!/Plib/*.pot
 **/Test/
 [Cc]onfig.json
 

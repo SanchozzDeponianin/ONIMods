@@ -10,8 +10,8 @@
   <Target Name="ILRepack" AfterTargets="Build" Condition=" '$(UsesPLib)' == 'true'  Or  '$(UsesPLibOptions)' == 'true' ">
     <ItemGroup>
       <InputAssemblies Include="$(TargetPath)" />
-      <InputAssemblies Condition=" '$(UsesPLib)' == 'true'" Include="..\..\PLib\PLib.dll" />
-      <InputAssemblies Condition=" '$(UsesPLibOptions)' == 'true'" Include="..\..\PLib\PLibOptions.dll" />
+      <InputAssemblies Include="..\..\PLib\PLib.dll" Condition=" '$(UsesPLib)' == 'true'" />
+      <InputAssemblies Include="..\..\PLib\PLibOptions.dll" Condition=" '$(UsesPLibOptions)' == 'true'" />
     </ItemGroup>
 
     <ILRepack
@@ -37,6 +37,7 @@
       <ArchivedModVersions Include="$(MSBuildProjectDirectory)\archived_versions\**\*.*" />
       <TranslationFiles Include="$(MSBuildProjectDirectory)\translations\*.po" />
       <TranslationFiles Include="$(MSBuildProjectDirectory)\translations\*.pot" />
+      <TranslationFiles Include="$(MSBuildProjectDirectory)\..\..\PLib\*.po" Condition=" '$(UsesPLibOptions)' == 'true'" />
       <WorldGenFiles Include="$(MSBuildProjectDirectory)\worldgen\**\*.*" />
       <YamlFiles Include="$(MSBuildProjectDirectory)\*.yaml" />
     </ItemGroup>

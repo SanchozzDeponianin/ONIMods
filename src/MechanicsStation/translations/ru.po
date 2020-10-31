@@ -1,0 +1,24 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. MechanicsStation.STRINGS.BUILDINGS.PREFABS.MECHANICSSTATION.EFFECT
+msgctxt "MechanicsStation.STRINGS.BUILDINGS.PREFABS.MECHANICSSTATION.EFFECT"
+msgid "Produces <link=\"MACHINEPARTS\">Custom Parts</link> to improve building production efficiency.\n\nAssigned Duplicants must possess the <link=\"MACHINETECHNICIAN\">Improved Tinkering</link> trait.\n\nThis building is a necessary component of the Machine Shop room."
+msgstr "Производит <link=\"MACHINEPARTS\">Механизмы</link>, позволяющие увеличить эффективность работы построек.\n\nНазначенные дупликанты должны обладать навыком <link=\"MACHINETECHNICIAN\">Улучшенная механика</link>.\n\nЭта постройка – необходимый компонент машинного цеха."
+
+#. MechanicsStation.STRINGS.DUPLICANTS.ATTRIBUTES.CRAFTINGSPEED.NAME
+msgctxt "MechanicsStation.STRINGS.DUPLICANTS.ATTRIBUTES.CRAFTINGSPEED.NAME"
+msgid "Fabrication Speed"
+msgstr "Скорость производства"
+
+#. MechanicsStation.STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP
+msgctxt "MechanicsStation.STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP"
+msgid "A skilled Duplicant has jerry rigged this <style=\"KKeyword\">Building</style> to temporarily run faster"
+msgstr "Опытный Дупликант тщательно настроил все шестерёнки  в этой <style=\"KKeyword\">постройке</style>, чтобы ускорить производство"
+
+#. MechanicsStation.STRINGS.UI.ROLES_SCREEN.PERKS.CAN_MACHINE_TINKER.DESCRIPTION
+msgctxt "MechanicsStation.STRINGS.UI.ROLES_SCREEN.PERKS.CAN_MACHINE_TINKER.DESCRIPTION"
+msgid "<link=\"BUILDINGS\">Engie's Jerry Rig</link> and Custom Parts Crafting"
+msgstr "<link=\"BUILDINGS\">Инженерная настройка</link> и создание Механизмов"
