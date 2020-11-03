@@ -38,7 +38,6 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Tweaked Biological Cargo Bay](https://steamcommunity.com/sharedfiles/filedetails/?id=1891479671) | Allows Duplicants independently transport animals directly from the Biological Cargo Bay to the Critter Drop-Off, without performing any unnecessary intermediate actions. |
 <!--| []() |  |-->
 
-# Special thanks
-To @pardeike, creator of [Harmony](https://github.com/pardeike/Harmony), the library that made oni modding possible.
-
-To @PeterHan, author of [PLib](https://github.com/peterhaneve/ONIMods/tree/master/PLib).
+# Special thanks to
+- [@pardeike](https://github.com/pardeike), creator of [Harmony](https://github.com/pardeike/Harmony), the library that made oni modding possible.
+- [@PeterHan](https://github.com/peterhaneve), author of [PLib](https://github.com/peterhaneve/ONIMods/tree/master/PLib).
