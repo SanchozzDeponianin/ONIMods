@@ -54,7 +54,6 @@ namespace AquaticFarm
                                     traverse.Method("SimRegister").GetValue();
                                 }
                                 elementConsumer.consumptionRate = consumeInfo.massConsumptionRate * 1.5f;
-//                                elementConsumer.capacityKG = consumeInfo.massConsumptionRate * 600f * 3f;
                                 elementConsumer.EnableConsumption(true);
                             }
                         }

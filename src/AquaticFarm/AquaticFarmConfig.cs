@@ -46,6 +46,7 @@ namespace AquaticFarm
             BuildingConfigManager.Instance.IgnoreDefaultKComponent(typeof(RequiresFoundation), prefab_tag);
             SimCellOccupier simCellOccupier = go.AddOrGet<SimCellOccupier>();
             simCellOccupier.doReplaceElement = true;
+            simCellOccupier.notifyOnMelt = true;
             go.AddOrGet<TileTemperature>();
             Storage storage = BuildingTemplates.CreateDefaultStorage(go, false);
             storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
