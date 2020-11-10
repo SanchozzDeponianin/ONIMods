@@ -7,6 +7,15 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="DefineConstants" BeforeTargets="CoreCompile">
+    <PropertyGroup Condition=" '$(UsesPLib)' == 'true' ">
+      <DefineConstants>$(DefineConstants);USESPLIB</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(UsesPLibOptions)' == 'true' ">
+      <DefineConstants>$(DefineConstants);USESPLIBOPTIONS</DefineConstants>
+    </PropertyGroup>
+  </Target>
+
   <Target Name="ILRepack" AfterTargets="Build" Condition=" '$(UsesPLib)' == 'true'  Or  '$(UsesPLibOptions)' == 'true' ">
     <ItemGroup>
       <InputAssemblies Include="$(TargetPath)" />

@@ -9,55 +9,7 @@ namespace SanchozzONIMods.Lib
 {
     public static class Utils
     {
-        public static void AddBuildingToPlanScreen(HashedString category, string buildingId, string addAfterBuildingId = null)
-        {
-            int index = BUILDINGS.PLANORDER.FindIndex(x => x.category == category);
-
-            if (index == -1)
-                return;
-
-            IList<string> planOrderList = BUILDINGS.PLANORDER[index].data as IList<string>;
-            if (planOrderList == null)
-            {
-                return;
-            }
-
-            int neighborIdx = planOrderList.IndexOf(addAfterBuildingId);
-
-            if (neighborIdx != -1)
-                planOrderList.Insert(neighborIdx + 1, buildingId);
-            else
-                planOrderList.Add(buildingId);
-        }
-
-        public static void AddBuildingToTechnology(string tech, string buildingId)
-        {
-            List<string> techList = new List<string>(Database.Techs.TECH_GROUPING[tech]) { buildingId };
-            Database.Techs.TECH_GROUPING[tech] = techList.ToArray();
-        }
-
-        public static void LogExcWarn(Exception thrown)
-        {
-            string format = "[{0}] {1} {2} {3}";
-            object[] array = new object[4];
-            Assembly callingAssembly = Assembly.GetCallingAssembly();
-            object obj;
-            if (callingAssembly == null)
-            {
-                obj = null;
-            }
-            else
-            {
-                AssemblyName name = callingAssembly.GetName();
-                obj = (name?.Name);
-            }
-            array[0] = (obj ?? "?");
-            array[1] = thrown.GetType();
-            array[2] = thrown.Message;
-            array[3] = thrown.StackTrace;
-            global::Debug.LogWarningFormat(format, array);
-        }
-
+        // информация о моде
         public class ModInfo
         {
             public readonly string assemblyName;
@@ -90,12 +42,80 @@ namespace SanchozzONIMods.Lib
             }
         }
 
+#if !USESPLIB
+        public static void OnLoad()
+        {
+            Debug.Log($"Mod {modInfo.assemblyName} loaded, version: {modInfo.version}");
+        }
+#endif
+
+        // логирование со стактрасом
+        public static void LogExcWarn(Exception thrown)
+        {
+            string format = "[{0}] {1} {2} {3}";
+            object[] array = new object[4];
+            Assembly callingAssembly = Assembly.GetCallingAssembly();
+            object obj;
+            if (callingAssembly == null)
+            {
+                obj = null;
+            }
+            else
+            {
+                AssemblyName name = callingAssembly.GetName();
+                obj = (name?.Name);
+            }
+            array[0] = (obj ?? "?");
+            array[1] = thrown.GetType();
+            array[2] = thrown.Message;
+            array[3] = thrown.StackTrace;
+            Debug.LogWarningFormat(format, array);
+        }
+
+
+        // добавляем постройки в меню
+        public static void AddBuildingToPlanScreen(HashedString category, string buildingId, string addAfterBuildingId = null)
+        {
+            int index = BUILDINGS.PLANORDER.FindIndex(x => x.category == category);
+            if (index == -1)
+            {
+                Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{category}' category in the building menu.");
+                return;
+            }
+
+            IList<string> planOrderList = BUILDINGS.PLANORDER[index].data as IList<string>;
+            if (planOrderList == null)
+            {
+                Debug.LogWarning($"{modInfo.assemblyName}: Could not add '{buildingId}' to the building menu.");
+                return;
+            }
+
+            int neighborIdx = planOrderList.IndexOf(addAfterBuildingId);
+
+            if (neighborIdx != -1)
+                planOrderList.Insert(neighborIdx + 1, buildingId);
+            else
+                planOrderList.Add(buildingId);
+        }
+
+        // добавляем постройки в технологии
+        public static void AddBuildingToTechnology(string tech, string buildingId)
+        {
+            if (Database.Techs.TECH_GROUPING.ContainsKey(tech))
+            {
+                List<string> techList = new List<string>(Database.Techs.TECH_GROUPING[tech]) { buildingId };
+                Database.Techs.TECH_GROUPING[tech] = techList.ToArray();
+            }
+            else
+            {
+                Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{tech}' tech in TECH_GROUPING.");
+            }
+        }
+
+        // загружаем строки для локализации
         public static void InitLocalization(Type locstring_tree_root, Localization.Locale locale, string filename_prefix = "", bool writeStringsTemplate = false)
         {
             // регистрируемся
-#if DEBUG
-            Debug.Log(modInfo.assemblyName + " Loaded: Version " + modInfo.version);
-#endif
             Localization.RegisterForTranslation(locstring_tree_root);
             if (writeStringsTemplate)
             {
