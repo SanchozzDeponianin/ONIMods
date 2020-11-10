@@ -5,6 +5,7 @@
 !/Plib/*.po
 !/Plib/*.pot
 **/Test/
+**/Properties/AssemblyInfos.cs
 [Cc]onfig.json
 
 ## Ignore Visual Studio temporary files, build results, and

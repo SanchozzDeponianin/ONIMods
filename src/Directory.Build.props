@@ -4,8 +4,9 @@
   <Import Condition=" Exists('Directory.Build.props.user') " Project="Directory.Build.props.user" />
 
   <PropertyGroup>
-    <Product>SanchozzONIMods</Product>
-    <Authors>Sanchozz</Authors>
+    <Author>Sanchozz</Author>
+    <Company>Sanchozz (https://github.com/SanchozzDeponianin)</Company>
+    <Product>Sanchozz's ONI Mods</Product>
     <Copyright>Copyright © Sanchozz 2020</Copyright>
   </PropertyGroup>
 
@@ -18,6 +19,14 @@
       <Private>false</Private>
     </ProjectReference>
   </ItemDefinitionGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSBuildTasks">
+      <Version>1.5.0.235</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
 
   <ItemGroup Condition=" '$(UsesPLib)' == 'true'  Or  '$(UsesPLibOptions)' == 'true' ">
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.1" />

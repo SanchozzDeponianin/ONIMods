@@ -16,6 +16,32 @@
     </PropertyGroup>
   </Target>
 
+  <Target Name="AssemblyInfos" BeforeTargets="CoreCompile" Outputs="UpdatedAssemblyInfoFiles">
+    <ItemGroup>
+      <AssemblyInfoFiles Include="Properties\AssemblyInfos.cs"/>
+    </ItemGroup>
+
+    <Attrib Files="%(AssemblyInfoFiles.FullPath)" Normal="true" />
+    <AssemblyInfo
+        CodeLanguage="CS"
+        OutputFile="%(AssemblyInfoFiles.FullPath)"
+        AssemblyTitle="$(AssemblyName)"
+        AssemblyDescription=""
+        AssemblyConfiguration="$(Configuration)"
+        AssemblyCompany="$(Company)"
+        AssemblyProduct="$(Product)"
+        AssemblyCopyright="$(Copyright)"
+        AssemblyTrademark=""
+        ComVisible="false" >
+      <Output TaskParameter="OutputFile" ItemName="UpdatedAssemblyInfoFiles"/>
+    </AssemblyInfo>
+
+    <ItemGroup>
+      <Compile Include="%(UpdatedAssemblyInfoFiles.FullPath)" />
+    </ItemGroup>
+
+  </Target>
+
   <Target Name="ILRepack" AfterTargets="Build" Condition=" '$(UsesPLib)' == 'true'  Or  '$(UsesPLibOptions)' == 'true' ">
     <ItemGroup>
       <InputAssemblies Include="$(TargetPath)" />
