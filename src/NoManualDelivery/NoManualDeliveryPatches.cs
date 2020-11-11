@@ -41,7 +41,7 @@ namespace NoManualDelivery
             }
         }
 
-        [HarmonyPatch(typeof(Localization), "Initialize")]
+        [HarmonyPatch(typeof(Localization), nameof(Localization.Initialize))]
         internal static class Localization_Initialize
         {
             private static void Postfix(Localization.Locale ___sLocale)
@@ -69,33 +69,37 @@ namespace NoManualDelivery
         // ручной список добавленных построек
         private static List<string> BuildingToMakeAutomatable = new List<string>()
         {
-            "StorageLocker",
-            "StorageLockerSmart",
-            "ObjectDispenser",
-            "RationBox",
-            "Refrigerator",
-            "FarmTile",
-            "HydroponicFarm",
-            "PlanterBox",
-            "AquaticFarm",
-            "CreatureFeeder",
-            "FishFeeder",
-            "EggIncubator",
-            "Kiln",
-            "IceCooledFan",
-            "SolidBooster",
-            "ResearchCenter",
+            StorageLockerConfig.ID,
+            StorageLockerSmartConfig.ID,
+            ObjectDispenserConfig.ID,
+            RationBoxConfig.ID,
+            RefrigeratorConfig.ID,
+            FarmTileConfig.ID,
+            HydroponicFarmConfig.ID,
+            PlanterBoxConfig.ID,
+            CreatureFeederConfig.ID,
+            FishFeederConfig.ID,
+            EggIncubatorConfig.ID,
+            KilnConfig.ID,
+            IceCooledFanConfig.ID,
+            SolidBoosterConfig.ID,
+            ResearchCenterConfig.ID,
             // из модов:
+            // Aquatic Farm https://steamcommunity.com/sharedfiles/filedetails/?id=1910961538
+            "AquaticFarm",
             // Storage Pod  https://steamcommunity.com/sharedfiles/filedetails/?id=1873476551
             "StoragePodConfig",
+            // Big Storage  https://steamcommunity.com/sharedfiles/filedetails/?id=1913589787
+            "BigSolidStorage",
+            "BigBeautifulStorage",
         };
 
         private static List<string> BuildingToMakeAutomatableWithTransferArmPickupGasLiquid = new List<string>()
         {
-            "LiquidPumpingStation",
-            "GasBottler",
-            "BottleEmptier",
-            "BottleEmptierGas",
+            LiquidPumpingStationConfig.ID,
+            GasBottlerConfig.ID,
+            BottleEmptierConfig.ID,
+            BottleEmptierGasConfig.ID,
             // из модов:
             // Fluid Shipping https://steamcommunity.com/sharedfiles/filedetails/?id=1794548334
             "StormShark.BottleInserter",
@@ -105,7 +109,7 @@ namespace NoManualDelivery
         };
 
         // добавляем компонент к постройкам
-        [HarmonyPatch(typeof(Assets), "AddBuildingDef")]
+        [HarmonyPatch(typeof(Assets), nameof(Assets.AddBuildingDef))]
         internal static class Assets_AddBuildingDef
         {
             private static void Prefix(ref BuildingDef def)
@@ -134,9 +138,10 @@ namespace NoManualDelivery
             {
                 if (___chore != null && ___chore is FetchChore)
                 {
+                    string id = ChorePreconditions.instance.IsAllowedByAutomation.id;
                     Traverse traverse = Traverse.Create(___chore);
                     traverse.Field<bool>("arePreconditionsDirty").Value = true;
-                    traverse.Field<List<Chore.PreconditionInstance>>("preconditions").Value.RemoveAll((Chore.PreconditionInstance x) => x.id == "IsAllowedByAutomation");
+                    traverse.Field<List<Chore.PreconditionInstance>>("preconditions").Value.RemoveAll((Chore.PreconditionInstance x) => x.id == id);
                     ((FetchChore)___chore).automatable = null;
                 }
             }
@@ -145,7 +150,7 @@ namespace NoManualDelivery
         private static Tag[] AlwaysCouldBePickedUpByMinionTags = new Tag[0];
 
         // хак для того чтобы разрешить дупликам забирать жеготных из инкубатора и всегда хватать еду
-        [HarmonyPatch(typeof(Pickupable), "CouldBePickedUpByMinion")]
+        [HarmonyPatch(typeof(Pickupable), nameof(Pickupable.CouldBePickedUpByMinion))]
         internal static class Pickupable_CouldBePickedUpByMinion
         {
             private static bool Prefix(Pickupable __instance, GameObject carrier, ref bool __result)
@@ -160,7 +165,7 @@ namespace NoManualDelivery
         }
 
         // хак - дуплы обжирающиеся от стресса, будут игнорировать установленную галку
-        [HarmonyPatch(typeof(BingeEatChore.StatesInstance), "FindFood")]
+        [HarmonyPatch(typeof(BingeEatChore.StatesInstance), nameof(BingeEatChore.StatesInstance.FindFood))]
         internal static class BingeEatChore_StatesInstance_FindFood
         {
             /*
@@ -174,8 +179,8 @@ namespace NoManualDelivery
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                MethodInfo CouldBePickedUpByMinion = typeof(Pickupable).GetMethod("CouldBePickedUpByMinion", new Type[] { typeof(GameObject) });
-                MethodInfo CouldBePickedUpByTransferArm = typeof(Pickupable).GetMethod("CouldBePickedUpByTransferArm", new Type[] { typeof(GameObject) });
+                MethodInfo CouldBePickedUpByMinion = typeof(Pickupable).GetMethod(nameof(Pickupable.CouldBePickedUpByMinion), new Type[] { typeof(GameObject) });
+                MethodInfo CouldBePickedUpByTransferArm = typeof(Pickupable).GetMethod(nameof(Pickupable.CouldBePickedUpByTransferArm), new Type[] { typeof(GameObject) });
                 bool result = false;
                 List<CodeInstruction> instructionsList = instructions.ToList();
                 for (int i = 0; i < instructionsList.Count; i++)
@@ -193,7 +198,7 @@ namespace NoManualDelivery
                 }
                 if (!result)
                 {
-                    Debug.LogError("NoManualDelivery cannot apply patch BingeEatChore.StatesInstance.FindFood");
+                    Debug.LogWarning($"{ Utils.modInfo.assemblyName}: Could not apply apply Transpiler to the 'BingeEatChore.StatesInstance.FindFood'");
                 }
             }
         }
