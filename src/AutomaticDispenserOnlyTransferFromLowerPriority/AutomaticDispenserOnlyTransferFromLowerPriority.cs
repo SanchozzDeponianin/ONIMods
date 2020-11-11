@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace AutomaticDispenserOnlyTransferFromLowerPriority
 {
-    [HarmonyPatch(typeof(ObjectDispenserConfig), "DoPostConfigureComplete")]
+    [HarmonyPatch(typeof(ObjectDispenserConfig), nameof(ObjectDispenserConfig.DoPostConfigureComplete))]
     public class AutomaticDispenser_DoPostConfigureComplete
     {
         public static void Postfix(GameObject go)

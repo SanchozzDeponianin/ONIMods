@@ -38,7 +38,7 @@ namespace FixedGenerator
         }
 
         // исправляем отображение метера
-        [HarmonyPatch(typeof(EnergyGenerator), "EnergySim200ms")]
+        [HarmonyPatch(typeof(EnergyGenerator), nameof(EnergyGenerator.EnergySim200ms))]
         internal static class EnergyGenerator_EnergySim200ms
         {
             private static void Prefix(EnergyGenerator __instance, Storage ___storage, MeterController ___meter)
@@ -71,19 +71,28 @@ namespace FixedGenerator
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 List<CodeInstruction> instructionsList = instructions.ToList();
+                FieldInfo hasMeter = typeof(EnergyGenerator).GetField(nameof(EnergyGenerator.hasMeter));
+                bool result = false;
                 for (int i = 0; i < instructionsList.Count; i++)
                 {
                     CodeInstruction instruction = instructionsList[i];
-                    if (instruction.opcode == OpCodes.Ldfld && (FieldInfo)instruction.operand == typeof(EnergyGenerator).GetField("hasMeter"))
+                    if (instruction.opcode == OpCodes.Ldfld && (FieldInfo)instruction.operand == hasMeter)
                     {
+#if DEBUG
                         Debug.Log("EnergyGenerator EnergySim200ms Transpiler injected");
+#endif
                         yield return new CodeInstruction(OpCodes.Pop);
                         yield return new CodeInstruction(OpCodes.Ldc_I4_0);
+                        result = true;
                     }
                     else
                     {
                         yield return instruction;
                     }
+                }
+                if (!result)
+                {
+                    Debug.LogWarning("Could not apply Transpiler to the 'EnergyGenerator.EnergySim200ms'");
                 }
             }
         }

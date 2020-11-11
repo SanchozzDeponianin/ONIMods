@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace TweakedBiologicalCargoBay
 {
-    [HarmonyPatch(typeof(SpecialCargoBayConfig), "DoPostConfigureComplete")]
+    [HarmonyPatch(typeof(SpecialCargoBayConfig), nameof(SpecialCargoBayConfig.DoPostConfigureComplete))]
     internal static class SpecialCargoBayConfig_DoPostConfigureComplete
     {
         private static void Postfix(GameObject go)

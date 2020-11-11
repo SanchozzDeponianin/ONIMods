@@ -4,7 +4,7 @@ namespace OldLiquidReservoir
 {
     internal static class OldLiquidReservoirPatches
     {
-        [HarmonyPatch(typeof(LiquidReservoirConfig), "CreateBuildingDef")]
+        [HarmonyPatch(typeof(LiquidReservoirConfig), nameof(LiquidReservoirConfig.CreateBuildingDef))]
         internal static class LiquidReservoirConfig_CreateBuildingDef
         {
             private static void Postfix(ref BuildingDef __result)

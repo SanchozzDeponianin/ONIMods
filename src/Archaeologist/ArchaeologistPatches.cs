@@ -9,7 +9,9 @@ namespace Archaeologist
 {
     internal static class ArchaeologistPatches
     {
-        [HarmonyPatch(typeof(Db), "Initialize")]
+        private const string Archaeologist = "Archaeologist";
+
+        [HarmonyPatch(typeof(Db), nameof(Db.Initialize))]
         internal static class Db_Initialize
         {
             private static void Prefix()
@@ -18,7 +20,7 @@ namespace Archaeologist
                 {
                     new DUPLICANTSTATS.TraitVal
                     {
-                        id = "Archaeologist",
+                        id = Archaeologist,
                         statBonus = -DUPLICANTSTATS.MEDIUM_STATPOINT_BONUS,
                         probability = DUPLICANTSTATS.PROBABILITY_MED,
                         mutuallyExclusiveTraits = new List<string>
@@ -44,11 +46,11 @@ namespace Archaeologist
 
             private static void Postfix(ref Db __instance)
             {
-                __instance.traits.Get("Archaeologist").PositiveTrait = true;
+                __instance.traits.Get(Archaeologist).PositiveTrait = true;
             }
         }
 
-        [HarmonyPatch(typeof(Localization), "Initialize")]
+        [HarmonyPatch(typeof(Localization), nameof(Localization.Initialize))]
         internal static class Localization_Initialize
         {
             private static void Postfix(Localization.Locale ___sLocale)
