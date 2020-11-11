@@ -2,6 +2,7 @@
 <Project>
   <Import Condition=" !Exists('Directory.Build.props.user') " Project="Directory.Build.props.default" />
   <Import Condition=" Exists('Directory.Build.props.user') " Project="Directory.Build.props.user" />
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 
   <PropertyGroup>
     <Author>Sanchozz</Author>
@@ -19,14 +20,6 @@
       <Private>false</Private>
     </ProjectReference>
   </ItemDefinitionGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MSBuildTasks">
-      <Version>1.5.0.235</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
 
   <ItemGroup Condition=" '$(UsesPLib)' == 'true'  Or  '$(UsesPLibOptions)' == 'true' ">
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.1" />
