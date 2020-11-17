@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixedGenerator", "FixedGene
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeathReimagined", "DeathReimagined\DeathReimagined.csproj", "{97D0678D-AC07-472D-B1D4-C7BDA313F344}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VaricolouredBalloons", "VaricolouredBalloons\VaricolouredBalloons.csproj", "{FE642F86-51F3-4961-A75C-025DEE5E0DD5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -190,6 +192,14 @@ Global
 		{97D0678D-AC07-472D-B1D4-C7BDA313F344}.Release|Any CPU.Build.0 = Release|Any CPU
 		{97D0678D-AC07-472D-B1D4-C7BDA313F344}.Release|x64.ActiveCfg = Release|Any CPU
 		{97D0678D-AC07-472D-B1D4-C7BDA313F344}.Release|x64.Build.0 = Release|Any CPU
+		{FE642F86-51F3-4961-A75C-025DEE5E0DD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE642F86-51F3-4961-A75C-025DEE5E0DD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE642F86-51F3-4961-A75C-025DEE5E0DD5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FE642F86-51F3-4961-A75C-025DEE5E0DD5}.Debug|x64.Build.0 = Debug|Any CPU
+		{FE642F86-51F3-4961-A75C-025DEE5E0DD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE642F86-51F3-4961-A75C-025DEE5E0DD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE642F86-51F3-4961-A75C-025DEE5E0DD5}.Release|x64.ActiveCfg = Release|Any CPU
+		{FE642F86-51F3-4961-A75C-025DEE5E0DD5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
