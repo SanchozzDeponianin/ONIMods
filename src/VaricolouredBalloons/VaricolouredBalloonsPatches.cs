@@ -128,6 +128,9 @@ namespace VaricolouredBalloons
                 CodeInstruction instruction = instructionsList[i];
                 if (instruction.opcode == OpCodes.Ldftn && (MethodInfo)instruction.operand == makenewballoonchore)
                 {
+#if DEBUG
+                    Debug.Log($"'{nameof(TranspilerInjectOnBeginChoreAction)}' injected");
+#endif
                     yield return instruction;
                     i++;
                     instruction = instructionsList[i];
