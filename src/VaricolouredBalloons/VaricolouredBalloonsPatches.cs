@@ -68,7 +68,7 @@ namespace VaricolouredBalloons
             // когда "задание 'получить баллон' завершено" - рандомим новый индекс для артиста
             private static void Postfix(Chore chore)
             {
-                int idx = VaricolouredBalloonsHelper.GetRandomSymbolIdx();
+                uint idx = VaricolouredBalloonsHelper.GetRandomSymbolIdx();
                 GetBalloonWorkable balloonWorkable = chore.target?.GetComponent<GetBalloonWorkable>();
                 if (balloonWorkable != null)
                 {
@@ -79,9 +79,9 @@ namespace VaricolouredBalloons
 
         // перехватываем "задание 'получить баллон' начато"
         // вытаскиваем индекс из артиста, запихиваем его в получателя, и применяем подмену символа анимации 
-        private static void OnBeginBalloonChore(BalloonStandConfig balloonStandConfig, Chore chore)
+        private static void OnBeginGetBalloonChore(BalloonStandConfig balloonStandConfig, Chore chore)
         {
-            int idx = 0;
+            uint idx = 0;
             GetBalloonWorkable balloonWorkable = chore.target?.GetComponent<GetBalloonWorkable>();
             if (balloonWorkable != null)
             {
@@ -100,7 +100,7 @@ namespace VaricolouredBalloons
                 run_until_complete: true, 
                 on_complete: MakeNewBalloonChore, 
         ---     on_begin: null, 
-        +++     on_begin: VaricolouredBalloonsPatches.OnBeginBalloonChore
+        +++     on_begin: VaricolouredBalloonsPatches.OnBeginGetBalloonChore
                 on_end: null, 
                 allow_in_red_alert: true, 
                 schedule_block: Db.Get().ScheduleBlockTypes.Recreation, 
@@ -119,7 +119,7 @@ namespace VaricolouredBalloons
         private static IEnumerable<CodeInstruction> TranspilerInjectOnBeginChoreAction(IEnumerable<CodeInstruction> instructions)
         {
             MethodInfo makenewballoonchore = AccessTools.Method(typeof(BalloonStandConfig), "MakeNewBalloonChore");
-            MethodInfo onbeginballoonchore = AccessTools.Method(typeof(VaricolouredBalloonsPatches), "OnBeginBalloonChore");
+            MethodInfo onbegingetballoonchore = AccessTools.Method(typeof(VaricolouredBalloonsPatches), "OnBeginGetBalloonChore");
 
             List<CodeInstruction> instructionsList = instructions.ToList();
             bool result = false;
@@ -137,8 +137,8 @@ namespace VaricolouredBalloons
                     yield return instruction;           // new Action<Chore>(this.MakeNewBalloonChore)
                     i++;
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
-                    yield return new CodeInstruction(OpCodes.Ldftn, onbeginballoonchore); // 
-                    yield return instruction;           // new Action<Chore>(VaricolouredBalloonsPatches.OnBeginBalloonChore)
+                    yield return new CodeInstruction(OpCodes.Ldftn, onbegingetballoonchore);
+                    yield return instruction;           // new Action<Chore>(VaricolouredBalloonsPatches.OnBeginGetBalloonChore)
                     result = true;
                 }
                 else
@@ -156,6 +156,7 @@ namespace VaricolouredBalloons
 
         // внедряем в FX-объект баллона контроллер подмены анимации
         // вытаскиваем индекс из носителя и применяем подмену символа анимации
+        // запоминаем ссылку на FX-объект 
         public static void ApplySymbolOverrideBalloonFX(BalloonFX.Instance smi, KBatchedAnimController kbac)
         {
             kbac.usingNewSymbolOverrideSystem = true;
@@ -163,6 +164,7 @@ namespace VaricolouredBalloons
             VaricolouredBalloonsHelper receiver = smi.master.GetComponent<VaricolouredBalloonsHelper>();
             if (receiver != null)
             {
+                receiver.fx = smi;
                 VaricolouredBalloonsHelper.ApplySymbolOverrideByIdx(symbolOverrideController, receiver.ReceiverBalloonSymbolIdx);
             }
         }
@@ -208,6 +210,24 @@ namespace VaricolouredBalloons
                 {
                     Debug.LogWarning($"Could not apply Transpiler to the '{nameof(BalloonFX.Instance)}.Constructor'");
                 }
+            }
+        }
+
+        // обработка косяка в базовой игре
+        // когда пришло время разэкипировки баллона, уничтожаем FX-объект баллона
+        // а также обнуляем ссылку на FX-объект в классе конфига, во избежание конфликтов.
+        [HarmonyPatch(typeof(EquippableBalloonConfig), "OnUnequipBalloon")]
+        internal static class EquippableBalloonConfig_OnUnequipBalloon
+        {
+            private static void Prefix(Equippable eq, ref BalloonFX.Instance ___fx)
+            {
+                VaricolouredBalloonsHelper carrier = (eq?.assignee?.GetSoleOwner()?.GetComponent<MinionAssignablesProxy>().target as KMonoBehaviour)?.GetComponent<VaricolouredBalloonsHelper>();
+                if (carrier?.fx != null)
+                {
+                    carrier.fx.StopSM("Unequipped");
+                    carrier.fx = null;
+                }
+                ___fx = null;
             }
         }
     }
