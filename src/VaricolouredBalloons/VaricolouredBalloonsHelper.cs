@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 
 using KSerialization;
 
+using PeterHan.PLib;
 
 namespace VaricolouredBalloons
 {
@@ -11,6 +12,7 @@ namespace VaricolouredBalloons
     {
         const string NEW_BALLOON_ANIM = "varicoloured_balloon_kanim";
         const string BALLOON_SYMBOL = "body";
+        const int OVERRIDE_PRIORITY = 4;
 
         private static string[] BalloonSymbolNames = new string[] { BALLOON_SYMBOL };
 
@@ -44,7 +46,7 @@ namespace VaricolouredBalloons
             KAnim.Build.Symbol[] symbols = Assets.GetAnim(NEW_BALLOON_ANIM)?.GetData().build.symbols;
             if (symbols == null)
             {
-                Debug.LogWarning($"Missing Anim: '{NEW_BALLOON_ANIM}'.");
+                PUtil.LogError($"Missing Anim: '{NEW_BALLOON_ANIM}'.");
                 return;
             }
 
@@ -56,7 +58,7 @@ namespace VaricolouredBalloons
             }
             else
             {
-                Debug.LogWarning($"Collected 0 '{BALLOON_SYMBOL}' symbols from anim '{NEW_BALLOON_ANIM}'.");
+                PUtil.LogError($"Collected 0 '{BALLOON_SYMBOL}' symbols from anim '{NEW_BALLOON_ANIM}'.");
             }
         }
 
@@ -76,7 +78,7 @@ namespace VaricolouredBalloons
             if (symbolOverrideController == null)
             {
 #if DEBUG
-                Debug.LogWarning($"SymbolOverrideController is null");
+                PUtil.LogWarning($"SymbolOverrideController is null");
 #endif
                 return;
             }
@@ -84,7 +86,7 @@ namespace VaricolouredBalloons
             if (BalloonSymbolNames == null || BalloonSymbolNames.Length == 0)
             {
 #if DEBUG
-                Debug.LogWarning($"BalloonSymbols is null or empty.");
+                PUtil.LogWarning($"BalloonSymbols is null or empty.");
 #endif
                 return;
             }
@@ -94,12 +96,12 @@ namespace VaricolouredBalloons
             KAnim.Build.Symbol symbol = Assets.GetAnim(NEW_BALLOON_ANIM)?.GetData().build.GetSymbol(symbolname);
             if (symbol != null)
             {
-                symbolOverrideController.AddSymbolOverride(BALLOON_SYMBOL, symbol, 4);
+                symbolOverrideController.AddSymbolOverride(BALLOON_SYMBOL, symbol, OVERRIDE_PRIORITY);
             }
 #if DEBUG
             else
             {
-                Debug.LogWarning($"Could not find anim '{NEW_BALLOON_ANIM}' symbol '{symbolname}'");
+                PUtil.LogWarning($"Could not find anim '{NEW_BALLOON_ANIM}' symbol '{symbolname}'");
             }
 #endif
         }

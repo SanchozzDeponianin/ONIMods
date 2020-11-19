@@ -3,20 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+
 using Harmony;
 using UnityEngine;
+
+using PeterHan.PLib;
+using PeterHan.PLib.Detours;
 
 namespace VaricolouredBalloons
 {
     internal static class VaricolouredBalloonsPatches
     {
-        [HarmonyPatch(typeof(Db), nameof(Db.Initialize))]
-        internal static class Db_Initialize
+        // доступ к приватному полю
+        private static readonly IDetouredField<GetBalloonWorkable, BalloonArtistChore.StatesInstance> BALLOONARTIST = PDetours.DetourField<GetBalloonWorkable, BalloonArtistChore.StatesInstance>("balloonArtist");
+
+        public static void OnLoad()
         {
-            private static void Prefix()
-            {
-                VaricolouredBalloonsHelper.Initialize();
-            }
+            PUtil.InitLibrary(true);
+            PUtil.RegisterPatchClass(typeof(VaricolouredBalloonsPatches));
+        }
+
+        [PLibMethod(RunAt.BeforeDbInit)]
+        private static void Initialize()
+        {
+            VaricolouredBalloonsHelper.Initialize();
         }
 
         [HarmonyPatch(typeof(MinionConfig), nameof(MinionConfig.CreatePrefab))]
@@ -72,7 +82,7 @@ namespace VaricolouredBalloons
                 GetBalloonWorkable balloonWorkable = chore.target?.GetComponent<GetBalloonWorkable>();
                 if (balloonWorkable != null)
                 {
-                    Traverse.Create(balloonWorkable).Field<BalloonArtistChore.StatesInstance>("balloonArtist").Value?.GetComponent<VaricolouredBalloonsHelper>()?.SetArtistBalloonSymbolIdx(idx);
+                    BALLOONARTIST.Get(balloonWorkable)?.GetComponent<VaricolouredBalloonsHelper>()?.SetArtistBalloonSymbolIdx(idx);
                 }
             }
         }
@@ -85,7 +95,7 @@ namespace VaricolouredBalloons
             GetBalloonWorkable balloonWorkable = chore.target?.GetComponent<GetBalloonWorkable>();
             if (balloonWorkable != null)
             {
-                idx = Traverse.Create(balloonWorkable).Field<BalloonArtistChore.StatesInstance>("balloonArtist").Value?.GetComponent<VaricolouredBalloonsHelper>()?.ArtistBalloonSymbolIdx ?? 0;
+                idx = BALLOONARTIST.Get(balloonWorkable)?.GetComponent<VaricolouredBalloonsHelper>()?.ArtistBalloonSymbolIdx ?? 0;
                 chore.driver?.GetComponent<VaricolouredBalloonsHelper>()?.SetReceiverBalloonSymbolIdx(idx);
             }
             VaricolouredBalloonsHelper.ApplySymbolOverrideByIdx(chore.driver?.GetComponent<SymbolOverrideController>(), idx);
@@ -119,8 +129,7 @@ namespace VaricolouredBalloons
         private static IEnumerable<CodeInstruction> TranspilerInjectOnBeginChoreAction(IEnumerable<CodeInstruction> instructions)
         {
             MethodInfo makenewballoonchore = AccessTools.Method(typeof(BalloonStandConfig), "MakeNewBalloonChore");
-            MethodInfo onbegingetballoonchore = AccessTools.Method(typeof(VaricolouredBalloonsPatches), "OnBeginGetBalloonChore");
-
+            MethodInfo onbegingetballoonchore = AccessTools.Method(typeof(VaricolouredBalloonsPatches), nameof(VaricolouredBalloonsPatches.OnBeginGetBalloonChore));
             List<CodeInstruction> instructionsList = instructions.ToList();
             bool result = false;
             for (int i = 0; i < instructionsList.Count; i++)
@@ -129,7 +138,7 @@ namespace VaricolouredBalloons
                 if (instruction.opcode == OpCodes.Ldftn && (MethodInfo)instruction.operand == makenewballoonchore)
                 {
 #if DEBUG
-                    Debug.Log($"'{nameof(TranspilerInjectOnBeginChoreAction)}' injected");
+                    PUtil.LogDebug($"'{nameof(TranspilerInjectOnBeginChoreAction)}' injected");
 #endif
                     yield return instruction;
                     i++;
@@ -148,7 +157,7 @@ namespace VaricolouredBalloons
             }
             if (!result)
             {
-                Debug.LogWarning($"Could not apply {nameof(TranspilerInjectOnBeginChoreAction)}");
+                PUtil.LogWarning($"Could not apply {nameof(TranspilerInjectOnBeginChoreAction)}");
             }
         }
 
@@ -157,7 +166,7 @@ namespace VaricolouredBalloons
         // внедряем в FX-объект баллона контроллер подмены анимации
         // вытаскиваем индекс из носителя и применяем подмену символа анимации
         // запоминаем ссылку на FX-объект 
-        public static void ApplySymbolOverrideBalloonFX(BalloonFX.Instance smi, KBatchedAnimController kbac)
+        private static void ApplySymbolOverrideBalloonFX(BalloonFX.Instance smi, KBatchedAnimController kbac)
         {
             kbac.usingNewSymbolOverrideSystem = true;
             SymbolOverrideController symbolOverrideController = SymbolOverrideControllerUtil.AddToPrefab(kbac.gameObject);
@@ -180,11 +189,13 @@ namespace VaricolouredBalloons
         +++     VaricolouredBalloonsPatches.ApplySymbolOverrideBalloonFX(this, kBatchedAnimController);
 		    }
         */
+
         [HarmonyPatch(typeof(BalloonFX.Instance), MethodType.Constructor, new Type[] { typeof(IStateMachineTarget) })]
         internal static class BalloonFX_Instance_Constructor
         {
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
+                MethodInfo applysymboloverrideballoonfx = AccessTools.Method(typeof(VaricolouredBalloonsPatches), nameof(VaricolouredBalloonsPatches.ApplySymbolOverrideBalloonFX));
                 List<CodeInstruction> instructionsList = instructions.ToList();
                 bool result = false;
                 for (int i = 0; i < instructionsList.Count; i++)
@@ -193,11 +204,11 @@ namespace VaricolouredBalloons
                     if (instruction.opcode == OpCodes.Ret)
                     {
 #if DEBUG
-                        Debug.Log($"'{nameof(BalloonFX.Instance)}.Constructor' Transpiler injected");
+                        PUtil.LogDebug($"'{nameof(BalloonFX.Instance)}.Constructor' Transpiler injected");
 #endif
                         yield return new CodeInstruction(OpCodes.Ldarg_0);
                         yield return new CodeInstruction(OpCodes.Ldloc_0);
-                        yield return new CodeInstruction(OpCodes.Call, typeof(VaricolouredBalloonsPatches).GetMethod(nameof(VaricolouredBalloonsPatches.ApplySymbolOverrideBalloonFX)));
+                        yield return new CodeInstruction(OpCodes.Call, applysymboloverrideballoonfx);
                         yield return instruction;
                         result = true;
                     }
@@ -208,27 +219,25 @@ namespace VaricolouredBalloons
                 }
                 if (!result)
                 {
-                    Debug.LogWarning($"Could not apply Transpiler to the '{nameof(BalloonFX.Instance)}.Constructor'");
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{nameof(BalloonFX.Instance)}.Constructor'");
                 }
             }
         }
 
         // обработка косяка в базовой игре
+        // завернуто в оболочку Plib на случай если исправят
         // когда пришло время разэкипировки баллона, уничтожаем FX-объект баллона
         // а также обнуляем ссылку на FX-объект в классе конфига, во избежание конфликтов.
-        [HarmonyPatch(typeof(EquippableBalloonConfig), "OnUnequipBalloon")]
-        internal static class EquippableBalloonConfig_OnUnequipBalloon
+        [PLibPatch(runtime: RunAt.Immediately, target: typeof(EquippableBalloonConfig), method: "OnUnequipBalloon", IgnoreOnFail = true)]
+        private static void EquippableBalloonConfig_OnUnequipBalloon_Prefix(Equippable eq, ref BalloonFX.Instance ___fx)
         {
-            private static void Prefix(Equippable eq, ref BalloonFX.Instance ___fx)
+            VaricolouredBalloonsHelper carrier = (eq?.assignee?.GetSoleOwner()?.GetComponent<MinionAssignablesProxy>().target as KMonoBehaviour)?.GetComponent<VaricolouredBalloonsHelper>();
+            if (carrier?.fx != null)
             {
-                VaricolouredBalloonsHelper carrier = (eq?.assignee?.GetSoleOwner()?.GetComponent<MinionAssignablesProxy>().target as KMonoBehaviour)?.GetComponent<VaricolouredBalloonsHelper>();
-                if (carrier?.fx != null)
-                {
-                    carrier.fx.StopSM("Unequipped");
-                    carrier.fx = null;
-                }
-                ___fx = null;
+                carrier.fx.StopSM("Unequipped");
+                carrier.fx = null;
             }
+            ___fx = null;
         }
     }
 }
