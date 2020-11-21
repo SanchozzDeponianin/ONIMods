@@ -7,8 +7,10 @@ using System.Reflection.Emit;
 using Harmony;
 using UnityEngine;
 
+using SanchozzONIMods.Lib;
 using PeterHan.PLib;
 using PeterHan.PLib.Detours;
+using PeterHan.PLib.Options;
 
 namespace VaricolouredBalloons
 {
@@ -21,12 +23,25 @@ namespace VaricolouredBalloons
         {
             PUtil.InitLibrary(true);
             PUtil.RegisterPatchClass(typeof(VaricolouredBalloonsPatches));
+            POptions.RegisterOptions(typeof(VaricolouredBalloonsOptions));
+        }
+
+        [PLibMethod(RunAt.AfterModsLoad)]
+        private static void InitLocalization()
+        {
+            Utils.InitLocalization(typeof(STRINGS));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
-        private static void Initialize()
+        private static void InitAnims()
         {
-            VaricolouredBalloonsHelper.Initialize();
+            VaricolouredBalloonsHelper.InitializeAnims();
+        }
+
+        [PLibMethod(RunAt.OnStartGame)]
+        private static void OnStartGame()
+        {
+            VaricolouredBalloonsOptions.Reload();
         }
 
         [HarmonyPatch(typeof(MinionConfig), nameof(MinionConfig.CreatePrefab))]
@@ -47,10 +62,14 @@ namespace VaricolouredBalloons
         {
             private static void Postfix(BalloonArtistChore.States __instance)
             {
-                __instance.balloonStand.Enter((BalloonArtistChore.StatesInstance smi) => smi.GetComponent<VaricolouredBalloonsHelper>()?.SetArtistBalloonSymbolIdx(VaricolouredBalloonsHelper.GetRandomSymbolIdx()));
+                __instance.balloonStand.Enter((BalloonArtistChore.StatesInstance smi) => smi.GetComponent<VaricolouredBalloonsHelper>()?.RandomizeArtistBalloonSymbolIdx());
                 __instance.balloonStand.idle.Enter((BalloonArtistChore.StatesInstance smi) =>
                 {
-                    VaricolouredBalloonsHelper.ApplySymbolOverrideByIdx(smi.GetComponent<SymbolOverrideController>(), smi.GetComponent<VaricolouredBalloonsHelper>()?.ArtistBalloonSymbolIdx ?? 0);
+                    VaricolouredBalloonsHelper artist = smi.GetComponent<VaricolouredBalloonsHelper>();
+                    if (artist != null)
+                    {
+                        artist.ApplySymbolOverrideByIdx(artist.ArtistBalloonSymbolIdx);
+                    }
                 });
             }
         }
@@ -78,27 +97,35 @@ namespace VaricolouredBalloons
             // когда "задание 'получить баллон' завершено" - рандомим новый индекс для артиста
             private static void Postfix(Chore chore)
             {
-                uint idx = VaricolouredBalloonsHelper.GetRandomSymbolIdx();
                 GetBalloonWorkable balloonWorkable = chore.target?.GetComponent<GetBalloonWorkable>();
                 if (balloonWorkable != null)
                 {
-                    BALLOONARTIST.Get(balloonWorkable)?.GetComponent<VaricolouredBalloonsHelper>()?.SetArtistBalloonSymbolIdx(idx);
+                    BALLOONARTIST.Get(balloonWorkable)?.GetComponent<VaricolouredBalloonsHelper>()?.RandomizeArtistBalloonSymbolIdx();
                 }
             }
         }
 
         // перехватываем "задание 'получить баллон' начато"
         // вытаскиваем индекс из артиста, запихиваем его в получателя, и применяем подмену символа анимации 
+        // уничтожаем предыдущий FX-объект баллона если он есть
         private static void OnBeginGetBalloonChore(BalloonStandConfig balloonStandConfig, Chore chore)
         {
-            uint idx = 0;
             GetBalloonWorkable balloonWorkable = chore.target?.GetComponent<GetBalloonWorkable>();
             if (balloonWorkable != null)
             {
-                idx = BALLOONARTIST.Get(balloonWorkable)?.GetComponent<VaricolouredBalloonsHelper>()?.ArtistBalloonSymbolIdx ?? 0;
-                chore.driver?.GetComponent<VaricolouredBalloonsHelper>()?.SetReceiverBalloonSymbolIdx(idx);
+                uint idx = BALLOONARTIST.Get(balloonWorkable)?.GetComponent<VaricolouredBalloonsHelper>()?.ArtistBalloonSymbolIdx ?? 0;
+                VaricolouredBalloonsHelper receiver = chore.driver?.GetComponent<VaricolouredBalloonsHelper>();
+                if (receiver != null)
+                {
+                    receiver.ReceiverBalloonSymbolIdx = idx;
+                    receiver.ApplySymbolOverrideByIdx(idx);
+                    if (receiver.fx != null)
+                    {
+                        receiver.fx.StopSM("Unequipped");
+                        receiver.fx = null;
+                    }
+                }
             }
-            VaricolouredBalloonsHelper.ApplySymbolOverrideByIdx(chore.driver?.GetComponent<SymbolOverrideController>(), idx);
         }
 
         // внедряем перехватчик "задание 'получить баллон' начато"
@@ -165,7 +192,7 @@ namespace VaricolouredBalloons
 
         // внедряем в FX-объект баллона контроллер подмены анимации
         // вытаскиваем индекс из носителя и применяем подмену символа анимации
-        // запоминаем ссылку на FX-объект 
+        // запоминаем ссылку на новый FX-объект 
         private static void ApplySymbolOverrideBalloonFX(BalloonFX.Instance smi, KBatchedAnimController kbac)
         {
             kbac.usingNewSymbolOverrideSystem = true;
@@ -226,16 +253,21 @@ namespace VaricolouredBalloons
 
         // обработка косяка в базовой игре
         // завернуто в оболочку Plib на случай если исправят
-        // когда пришло время разэкипировки баллона, уничтожаем FX-объект баллона
+        // когда пришло время разэкипировки баллона, в зависимости от настроек:
+        // либо уничтожаем FX-объект баллона
+        // либо не трогаем его и превращаем баг в фичу
         // а также обнуляем ссылку на FX-объект в классе конфига, во избежание конфликтов.
         [PLibPatch(runtime: RunAt.Immediately, target: typeof(EquippableBalloonConfig), method: "OnUnequipBalloon", IgnoreOnFail = true)]
         private static void EquippableBalloonConfig_OnUnequipBalloon_Prefix(Equippable eq, ref BalloonFX.Instance ___fx)
         {
-            VaricolouredBalloonsHelper carrier = (eq?.assignee?.GetSoleOwner()?.GetComponent<MinionAssignablesProxy>().target as KMonoBehaviour)?.GetComponent<VaricolouredBalloonsHelper>();
-            if (carrier?.fx != null)
+            if (VaricolouredBalloonsOptions.Instance.DestroyFXAfterEffectExpired)
             {
-                carrier.fx.StopSM("Unequipped");
-                carrier.fx = null;
+                VaricolouredBalloonsHelper carrier = (eq?.assignee?.GetSoleOwner()?.GetComponent<MinionAssignablesProxy>().target as KMonoBehaviour)?.GetComponent<VaricolouredBalloonsHelper>();
+                if (carrier?.fx != null)
+                {
+                    carrier.fx.StopSM("Unequipped");
+                    carrier.fx = null;
+                }
             }
             ___fx = null;
         }

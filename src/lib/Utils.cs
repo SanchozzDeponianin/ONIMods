@@ -113,24 +113,43 @@ namespace SanchozzONIMods.Lib
         }
 
         // загружаем строки для локализации
-        public static void InitLocalization(Type locstring_tree_root, Localization.Locale locale, string filename_prefix = "", bool writeStringsTemplate = false)
+        public static void InitLocalization(Type locstring_tree_root, string filename_prefix = "", bool writeStringsTemplate = false)
         {
             // регистрируемся
             Localization.RegisterForTranslation(locstring_tree_root);
-            if (writeStringsTemplate)
+
+            if (writeStringsTemplate)  // для записи шаблона !!!!
             {
-                Localization.GenerateStringsTemplate(locstring_tree_root, modInfo.langDirectory);    // для записи шаблона !!!!
+                try
+                {
+                    Localization.GenerateStringsTemplate(locstring_tree_root, modInfo.langDirectory);
+                }
+                catch (IOException e)
+                {
+                    Debug.LogWarning($"{modInfo.assemblyName} Failed to write localization template.");
+                    LogExcWarn(e);
+                }
             }
+
+            Localization.Locale locale = Localization.GetLocale();
             if (locale != null)
             {
-                string langFile = Path.Combine(modInfo.langDirectory, filename_prefix + locale.Code + ".po");
-                if (File.Exists(langFile))
+                try
                 {
-                    // перезагружаем строки
+                    string langFile = Path.Combine(modInfo.langDirectory, filename_prefix + locale.Code + ".po");
+                    if (File.Exists(langFile))
+                    {
+                        // перезагружаем строки
 #if DEBUG
-                    Debug.Log(modInfo.assemblyName + " try load LangFile: " + langFile);
+                        Debug.Log($"{modInfo.assemblyName} try load LangFile: {langFile}");
 #endif
-                    Localization.OverloadStrings(Localization.LoadStringsFile(langFile, false));
+                        Localization.OverloadStrings(Localization.LoadStringsFile(langFile, false));
+                    }
+                }
+                catch (IOException e)
+                {
+                    Debug.LogWarning($"{modInfo.assemblyName} Failed to load localization.");
+                    LogExcWarn(e);
                 }
             }
 
@@ -153,4 +172,3 @@ namespace SanchozzONIMods.Lib
         }
     }
 }
-	

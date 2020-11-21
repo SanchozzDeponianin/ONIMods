@@ -10,9 +10,9 @@ namespace VaricolouredBalloons
     [SerializationConfig(MemberSerialization.OptIn)]
     public class VaricolouredBalloonsHelper : KMonoBehaviour, ISaveLoadable
     {
-        const string NEW_BALLOON_ANIM = "varicoloured_balloon_kanim";
-        const string BALLOON_SYMBOL = "body";
-        const int OVERRIDE_PRIORITY = 4;
+        private const string NEW_BALLOON_ANIM = "varicoloured_balloon_kanim";
+        private const string BALLOON_SYMBOL = "body";
+        private const int OVERRIDE_PRIORITY = 4;
 
         private static string[] BalloonSymbolNames = new string[] { BALLOON_SYMBOL };
 
@@ -20,18 +20,13 @@ namespace VaricolouredBalloons
         private uint receiverballoonsymbolidx;
 
         internal uint ArtistBalloonSymbolIdx { get; private set; }
-        internal uint ReceiverBalloonSymbolIdx { get => receiverballoonsymbolidx; }
+        internal uint ReceiverBalloonSymbolIdx { get => receiverballoonsymbolidx; set => receiverballoonsymbolidx = Clamp(value); }
 
         internal BalloonFX.Instance fx;
 
-        internal void SetArtistBalloonSymbolIdx(uint value)
+        internal void RandomizeArtistBalloonSymbolIdx()
         {
-            ArtistBalloonSymbolIdx = Clamp(value);
-        }
-
-        internal void SetReceiverBalloonSymbolIdx(uint value)
-        {
-            receiverballoonsymbolidx = Clamp(value);
+            ArtistBalloonSymbolIdx = GetRandomSymbolIdx();
         }
 
         [OnDeserialized]
@@ -41,12 +36,12 @@ namespace VaricolouredBalloons
         }
 
         // собираем названия символов в загруженной анимации баллонов
-        internal static void Initialize()
+        internal static void InitializeAnims()
         {
             KAnim.Build.Symbol[] symbols = Assets.GetAnim(NEW_BALLOON_ANIM)?.GetData().build.symbols;
             if (symbols == null)
             {
-                PUtil.LogError($"Missing Anim: '{NEW_BALLOON_ANIM}'.");
+                PUtil.LogWarning($"Missing Anim: '{NEW_BALLOON_ANIM}'.");
                 return;
             }
 
@@ -58,7 +53,7 @@ namespace VaricolouredBalloons
             }
             else
             {
-                PUtil.LogError($"Collected 0 '{BALLOON_SYMBOL}' symbols from anim '{NEW_BALLOON_ANIM}'.");
+                PUtil.LogWarning($"Collected 0 '{BALLOON_SYMBOL}' symbols from anim '{NEW_BALLOON_ANIM}'.");
             }
         }
 
@@ -73,6 +68,12 @@ namespace VaricolouredBalloons
         }
 
         // переопределение символа, по индексу в массиве анимации
+
+        internal void ApplySymbolOverrideByIdx(uint idx)
+        {
+            ApplySymbolOverrideByIdx(GetComponent<SymbolOverrideController>(), idx);
+        }
+
         internal static void ApplySymbolOverrideByIdx(SymbolOverrideController symbolOverrideController, uint idx)
         {
             if (symbolOverrideController == null)
