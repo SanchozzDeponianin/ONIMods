@@ -45,9 +45,9 @@ namespace CarouselCentrifuge
         [HarmonyPatch(typeof(Localization), "Initialize")]
         internal static class Localization_Initialize
         {
-            private static void Postfix(Localization.Locale ___sLocale)
+            private static void Postfix()
             {
-                Utils.InitLocalization(typeof(STRINGS), ___sLocale);
+                Utils.InitLocalization(typeof(STRINGS));
                 LocString.CreateLocStringKeys(typeof(STRINGS.BUILDINGS));
 
                 Config.Initialize();

@@ -33,9 +33,9 @@ namespace SquirrelGenerator
         [HarmonyPatch(typeof(Localization), "Initialize")]
         internal static class Localization_Initialize
         {
-            private static void Postfix(Localization.Locale ___sLocale)
+            private static void Postfix()
             {
-                Utils.InitLocalization(typeof(STRINGS), ___sLocale);
+                Utils.InitLocalization(typeof(STRINGS));
                 // чтобы подтянуть название белки из локализации
                 Utils.ReplaceLocString(ref STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.DESC, STRINGS.SQUIRREL, CREATURES.SPECIES.SQUIRREL.NAME);
                 Utils.ReplaceLocString(ref STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.EFFECT, STRINGS.SQUIRREL, CREATURES.SPECIES.SQUIRREL.NAME);

@@ -44,10 +44,10 @@ namespace NoManualDelivery
         [HarmonyPatch(typeof(Localization), nameof(Localization.Initialize))]
         internal static class Localization_Initialize
         {
-            private static void Postfix(Localization.Locale ___sLocale)
+            private static void Postfix()
             {
-                Utils.InitLocalization(typeof(STRINGS), ___sLocale, "", false);
-                Utils.InitLocalization(typeof(PUIStrings), ___sLocale, "peterhan.plib.ui_", false);
+                Utils.InitLocalization(typeof(STRINGS));
+                Utils.InitLocalization(typeof(PUIStrings), "peterhan.plib.ui_", false);
             }
         }
 

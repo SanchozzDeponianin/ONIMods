@@ -53,9 +53,9 @@ namespace ButcherStation
         [HarmonyPatch(typeof(Localization), "Initialize")]
         public static class Localization_Initialize
         {
-            public static void Postfix(Localization.Locale ___sLocale)
+            public static void Postfix()
             {
-                Utils.InitLocalization(typeof(STRINGS), ___sLocale);
+                Utils.InitLocalization(typeof(STRINGS));
                 LocString.CreateLocStringKeys(typeof(STRINGS.BUILDING));
                 LocString.CreateLocStringKeys(typeof(STRINGS.BUILDINGS));
                 LocString.CreateLocStringKeys(typeof(STRINGS.UI));
