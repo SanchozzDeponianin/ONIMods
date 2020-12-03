@@ -24,7 +24,7 @@ namespace CarouselCentrifuge
                 public class RIDEONCAROUSEL
                 {
                     public static LocString NAME = "Ride on a Carousel";
-                    public static LocString TOOLTIP = "This Duplicant ride on a Carousel!\n\nLeisure activities increase Duplicants' " + UI.PRE_KEYWORD + "Morale" + UI.PST_KEYWORD;
+                    public static LocString TOOLTIP = "This Duplicant ride on a Carousel!\n\nLeisure activities increase Duplicants' " + UI.FormatAsKeyWord("Morale");
                 }
             }
 
@@ -38,9 +38,7 @@ namespace CarouselCentrifuge
                         "This Duplicant has unceremoniously hurled as the result of a Dizziness",
                         UI.HORIZONTAL_BR_RULE,
                         "Duplicant-related \"spills\" can be cleaned up using the ",
-                        UI.PRE_KEYWORD,
-                        "Mop Tool",
-                        UI.PST_KEYWORD,
+                        UI.FormatAsKeyWord("Mop Tool"),
                         " ",
                         UI.FormatAsHotkey("[M]")
                     });

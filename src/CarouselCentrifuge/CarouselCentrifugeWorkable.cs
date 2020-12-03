@@ -1,7 +1,7 @@
-﻿using Klei.AI;
-using TUNING;
+﻿using System.Collections.Generic;
+using Klei.AI;
 using STRINGS;
-using System.Collections.Generic;
+using TUNING;
 using UnityEngine;
 
 namespace CarouselCentrifuge
@@ -21,7 +21,7 @@ namespace CarouselCentrifuge
         public static readonly string trackingEffect = "RecentlyRideonCarousel";
 
         // эмоции после успешного катания
-        private static Tuple<HashedString, HashedString[]>[] emote_anims =
+        private static readonly Tuple<HashedString, HashedString[]>[] emote_anims =
         {
             new Tuple<HashedString, HashedString[]>("anim_cheer_kanim", new HashedString[] { "cheer_pre", "cheer_loop", "cheer_pst" }),
             new Tuple<HashedString, HashedString[]>("anim_clapcheer_kanim", new HashedString[] { "clapcheer_pre", "clapcheer_loop", "clapcheer_pst" }),
@@ -44,7 +44,7 @@ namespace CarouselCentrifuge
             showProgressBar = true;
             resetProgressOnStop = true;
             synchronizeAnims = true;
-            SetWorkTime(30f);
+            SetWorkTime(TUNING.BUILDINGS.WORK_TIME_SECONDS.MEDIUM_WORK_TIME);
             if (vomitStatusItem == null)
             {
                 vomitStatusItem = new StatusItem("CarouselVomiting", STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NAME, STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.TOOLTIP, string.Empty, StatusItem.IconType.Info, NotificationType.BadMinor, false, OverlayModes.None.ID);
@@ -99,7 +99,6 @@ namespace CarouselCentrifuge
                     else
                     {
                         Notification notification = new Notification(STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_NAME, NotificationType.BadMinor, HashedString.Invalid, (List<Notification> notificationList, object data) => STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_TOOLTIP + notificationList.ReduceMessages(false), null, true, 0f);
-
                         new VomitChore(Db.Get().ChoreTypes.Vomit, chore_provider, vomitStatusItem, notification, null);
                     }
                 }
@@ -132,17 +131,14 @@ namespace CarouselCentrifuge
             }
             return true;
         }
-
         
         List<Descriptor> IGameObjectEffectDescriptor.GetDescriptors(GameObject go)
         {
-            List<Descriptor> list = new List<Descriptor>();
-            Descriptor item = default(Descriptor);
+            Descriptor item = default;
             item.SetupDescriptor(UI.BUILDINGEFFECTS.RECREATION, UI.BUILDINGEFFECTS.TOOLTIPS.RECREATION, Descriptor.DescriptorType.Effect);
-            list.Add(item);
+            var list = new List<Descriptor> { item };
             Effect.AddModifierDescriptions(gameObject, list, specificEffect, true);
             return list;
         }
-        
     }
 }

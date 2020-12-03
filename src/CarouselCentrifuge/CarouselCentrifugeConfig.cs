@@ -9,18 +9,20 @@ namespace CarouselCentrifuge
 
         public override BuildingDef CreateBuildingDef()
 		{
-			string id = ID;
-			int width = 5;
-			int height = 5;
-            string anim = "centrifuge_kanim";
-			int hitpoints = BUILDINGS.HITPOINTS.TIER1;
-			float construction_time = TUNING.BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER1;
-			float[] tier = BUILDINGS.CONSTRUCTION_MASS_KG.TIER4;
-			string[] refined_METALS = MATERIALS.REFINED_METALS;
-			float melting_point = BUILDINGS.MELTING_POINT_KELVIN.TIER1;
-			BuildLocationRule build_location_rule = BuildLocationRule.OnFloor;
-			EffectorValues tier1 = NOISE_POLLUTION.NOISY.TIER1;
-			BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(id, width, height, anim, hitpoints, construction_time, tier, refined_METALS, melting_point, build_location_rule, BUILDINGS.DECOR.BONUS.TIER1, tier1);
+            BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(
+				id: ID, 
+				width: 5, 
+				height: 5, 
+				anim: "centrifuge_kanim", 
+				hitpoints: BUILDINGS.HITPOINTS.TIER1, 
+				construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER1, 
+				construction_mass: BUILDINGS.CONSTRUCTION_MASS_KG.TIER4, 
+				construction_materials: MATERIALS.REFINED_METALS, 
+				melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER1, 
+				build_location_rule: BuildLocationRule.OnFloor, 
+				decor: BUILDINGS.DECOR.BONUS.TIER1, 
+				noise: NOISE_POLLUTION.NOISY.TIER1
+				);
 			buildingDef.Floodable = true;
 			buildingDef.Overheatable = true;
 			buildingDef.RequiresPowerInput = true;

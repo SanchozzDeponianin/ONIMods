@@ -12,13 +12,8 @@
   </PropertyGroup>
 
   <ItemDefinitionGroup>
-    <Reference>
-      <Private>false</Private>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <ProjectReference>
-      <Private>false</Private>
-    </ProjectReference>
+    <Reference Private="false" SpecificVersion="false" />
+	<ProjectReference Private="false" />
   </ItemDefinitionGroup>
 
   <ItemGroup Condition=" '$(UsesPLib)' == 'true'  Or  '$(UsesPLibOptions)' == 'true' ">
