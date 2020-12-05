@@ -10,8 +10,8 @@ msgstr "Весёлое головокружительное развлечени
 
 #. CarouselCentrifuge.STRINGS.BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.EFFECT
 msgctxt "CarouselCentrifuge.STRINGS.BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.EFFECT"
-msgid "Allows Duplicants to ride on a Carousel on their breaks.\n\nIncreases Duplicant <link=\"MORALE\">Morale</link>."
-msgstr "Позволяет дупликантам кататься на карусели во время перерывов.\n\n Увеличивает <link=\"MORALE\">моральный дух</link> дупликантов."
+msgid "Allows Duplicants to ride on a Carousel on their breaks.\n\nIncreases Duplicant <link=\"MORALE\">{Morale}</link>."
+msgstr "Позволяет дупликантам кататься на карусели во время перерывов.\n\nУвеличивает <link=\"MORALE\">{Morale}</link> дупликантов."
 
 #. CarouselCentrifuge.STRINGS.BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.NAME
 msgctxt "CarouselCentrifuge.STRINGS.BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.NAME"
@@ -25,8 +25,8 @@ msgstr "Катался на карусели"
 
 #. CarouselCentrifuge.STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.TOOLTIP
 msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.TOOLTIP"
-msgid "This Duplicant ride on a Carousel!\n\nLeisure activities increase Duplicants' <style=\"KKeyword\">Morale</style>"
-msgstr "Этот Дупликант прокатился на карусели!\n\nАктивный отдых увеличивает <style=\"KKeyword\">моральный дух</style> дупликантов"
+msgid "This Duplicant ride on a Carousel!\n\nLeisure activities increase Duplicants' <style=\"KKeyword\">{Morale}</style>"
+msgstr "Этот Дупликант прокатился на карусели!\n\nАктивный отдых увеличивает <style=\"KKeyword\">{Morale}</style> дупликантов"
 
 #. CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NAME
 msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NAME"
@@ -47,4 +47,24 @@ msgstr "<b>Команда \"ВЫТЕРЕТЬ\"</b> <b><color=#F44A4A>[М]</b></c
 msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.TOOLTIP"
 msgid "This Duplicant has unceremoniously hurled as the result of a Dizziness\n------------------\nDuplicant-related \"spills\" can be cleaned up using the <style=\"KKeyword\">Mop Tool</style> <b><color=#F44A4A>[M]</b></color>"
 msgstr "В результате головокружения этого дубликанта просто вывернуло наизнанку\n------------------\n<style=\"KKeyword\">Команда \"ВЫТЕРЕТЬ\"</style> <b><color=#F44A4A>[М]</b></color> поможет убрать оставленные дубликантами \"лужи\""
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCE.TITLE
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCE.TITLE"
+msgid "Chance of <style=\"KKeyword\">Unforeseen consequences</style>"
+msgstr "Шанс <style=\"KKeyword\">Непредвиденных последствий</style>"
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCE.TOOLTIP
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCE.TOOLTIP"
+msgid "Set to <style=\"produced\">0</style> to disable <style=\"KKeyword\">Unforeseen consequences</style>"
+msgstr "Установите в <style=\"produced\">0</style> чтобы отключить <style=\"KKeyword\">Непредвиденные последствия</style>"
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.EFFECTDURATION.TITLE
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.EFFECTDURATION.TITLE"
+msgid "Duration of the <style=\"KKeyword\">Ride on a Carousel</style> effect"
+msgstr "Длительность эффекта <style=\"KKeyword\">Катался на карусели</style>"
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.MORALEBONUS.TITLE
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.MORALEBONUS.TITLE"
+msgid "<style=\"KKeyword\">{Morale}</style> bonus"
+msgstr "Бонус <style=\"KKeyword\">{Morale}</style>"
 

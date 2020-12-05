@@ -10,7 +10,7 @@ msgstr ""
 
 #. CarouselCentrifuge.STRINGS.BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.EFFECT
 msgctxt "CarouselCentrifuge.STRINGS.BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.EFFECT"
-msgid "Allows Duplicants to ride on a Carousel on their breaks.\n\nIncreases Duplicant <link=\"MORALE\">Morale</link>."
+msgid "Allows Duplicants to ride on a Carousel on their breaks.\n\nIncreases Duplicant <link=\"MORALE\">{Morale}</link>."
 msgstr ""
 
 #. CarouselCentrifuge.STRINGS.BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.NAME
@@ -25,7 +25,7 @@ msgstr ""
 
 #. CarouselCentrifuge.STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.TOOLTIP
 msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.TOOLTIP"
-msgid "This Duplicant ride on a Carousel!\n\nLeisure activities increase Duplicants' <style=\"KKeyword\">Morale</style>"
+msgid "This Duplicant ride on a Carousel!\n\nLeisure activities increase Duplicants' <style=\"KKeyword\">{Morale}</style>"
 msgstr ""
 
 #. CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NAME
@@ -46,5 +46,25 @@ msgstr ""
 #. CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.TOOLTIP
 msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.TOOLTIP"
 msgid "This Duplicant has unceremoniously hurled as the result of a Dizziness\n------------------\nDuplicant-related \"spills\" can be cleaned up using the <style=\"KKeyword\">Mop Tool</style> <b><color=#F44A4A>[M]</b></color>"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCE.TITLE
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCE.TITLE"
+msgid "Chance of <style=\"KKeyword\">Unforeseen consequences</style>"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCE.TOOLTIP
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCE.TOOLTIP"
+msgid "Set to <style=\"produced\">0</style> to disable <style=\"KKeyword\">Unforeseen consequences</style>"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.EFFECTDURATION.TITLE
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.EFFECTDURATION.TITLE"
+msgid "Duration of the <style=\"KKeyword\">Ride on a Carousel</style> effect"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.MORALEBONUS.TITLE
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.MORALEBONUS.TITLE"
+msgid "<style=\"KKeyword\">{Morale}</style> bonus"
 msgstr ""
 

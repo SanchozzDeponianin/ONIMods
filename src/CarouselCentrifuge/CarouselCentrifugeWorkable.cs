@@ -48,7 +48,7 @@ namespace CarouselCentrifuge
             if (vomitStatusItem == null)
             {
                 vomitStatusItem = new StatusItem("CarouselVomiting", STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NAME, STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.TOOLTIP, string.Empty, StatusItem.IconType.Info, NotificationType.BadMinor, false, OverlayModes.None.ID);
-                vomitChancePercent = Config.Get().DizzinessChancePercent;
+                vomitChancePercent = CarouselCentrifugeOptions.Instance.DizzinessChancePercent;
             }
         }
 
@@ -60,13 +60,14 @@ namespace CarouselCentrifuge
 
         private Chore CreateChore()
         {
-            WorkChore<CarouselCentrifugeWorkable> workChore = new WorkChore<CarouselCentrifugeWorkable>(
+            var workChore = new WorkChore<CarouselCentrifugeWorkable>(
                 chore_type: Db.Get().ChoreTypes.Relax,
                 target: this,
                 schedule_block: Db.Get().ScheduleBlockTypes.Recreation,
                 allow_in_red_alert: false,
                 allow_prioritization: false,
-                priority_class: PriorityScreen.PriorityClass.high);
+                priority_class: PriorityScreen.PriorityClass.high
+                );
             workChore.AddPrecondition(ChorePreconditions.instance.CanDoWorkerPrioritizable, this);
             return workChore;
         }
@@ -82,24 +83,40 @@ namespace CarouselCentrifuge
             base.OnCompleteWork(worker);
             bool flag = (Random.Range(0f, 100f) > vomitChancePercent);
 
-            Effects effects = worker.GetComponent<Effects>();
+            var effects = worker.GetComponent<Effects>();
             if (effects != null)
             {
                 effects.Add(trackingEffect, true);
                 if (flag) effects.Add(specificEffect, true);
 
-                ChoreProvider chore_provider = worker.GetComponent<ChoreProvider>();
+                var chore_provider = worker.GetComponent<ChoreProvider>();
                 if (chore_provider != null)
                 {
                     if (flag)
                     {
                         int i = Random.Range(0, emote_anims.Length);
-                        new EmoteChore(chore_provider, Db.Get().ChoreTypes.EmoteHighPriority, emote_anims[i].first, emote_anims[i].second, null);
+                        new EmoteChore(
+                            target: chore_provider,
+                            chore_type: Db.Get().ChoreTypes.EmoteHighPriority,
+                            emote_kanim: emote_anims[i].first,
+                            emote_anims: emote_anims[i].second,
+                            get_status_item: null
+                            );
                     }
                     else
                     {
-                        Notification notification = new Notification(STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_NAME, NotificationType.BadMinor, HashedString.Invalid, (List<Notification> notificationList, object data) => STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_TOOLTIP + notificationList.ReduceMessages(false), null, true, 0f);
-                        new VomitChore(Db.Get().ChoreTypes.Vomit, chore_provider, vomitStatusItem, notification, null);
+                        var notification = new Notification(
+                            title: STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_NAME,
+                            type: NotificationType.BadMinor,
+                            group: HashedString.Invalid,
+                            tooltip: (List<Notification> notificationList, object data) => STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_TOOLTIP + notificationList.ReduceMessages(false)
+                            );
+                        new VomitChore(
+                            chore_type: Db.Get().ChoreTypes.Vomit,
+                            target: chore_provider,
+                            status_item: vomitStatusItem,
+                            notification: notification
+                            );
                     }
                 }
             }
@@ -119,7 +136,7 @@ namespace CarouselCentrifuge
         public bool GetWorkerPriority(Worker worker, out int priority)
         {
             priority = basePriority;
-            Effects effects = worker.GetComponent<Effects>();
+            var effects = worker.GetComponent<Effects>();
             if (effects.HasEffect(trackingEffect))
             {
                 priority = 0;
@@ -131,7 +148,7 @@ namespace CarouselCentrifuge
             }
             return true;
         }
-        
+
         List<Descriptor> IGameObjectEffectDescriptor.GetDescriptors(GameObject go)
         {
             Descriptor item = default;

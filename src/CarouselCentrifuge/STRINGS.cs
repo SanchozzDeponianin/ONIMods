@@ -1,9 +1,12 @@
 ﻿using STRINGS;
+using SanchozzONIMods.Lib;
 
 namespace CarouselCentrifuge
 {
     public class STRINGS
     {
+        private const string MORALE = "{Morale}";
+
         public class BUILDINGS
         {
             public class PREFABS
@@ -12,7 +15,7 @@ namespace CarouselCentrifuge
                 {
                     public static LocString NAME = UI.FormatAsLink("Carousel", "CAROUSELCENTRIFUGE");
                     public static LocString DESC = "Funny dizzy entertainment.\nSometimes too dizzy.\nBe prepared for unforeseen consequences.";
-                    public static LocString EFFECT = "Allows Duplicants to ride on a Carousel on their breaks.\n\nIncreases Duplicant " + UI.FormatAsLink("Morale", "MORALE") + ".";
+                    public static LocString EFFECT = "Allows Duplicants to ride on a Carousel on their breaks.\n\nIncreases Duplicant " + UI.FormatAsLink(MORALE, "MORALE") + ".";
                 }
             }
         }
@@ -20,11 +23,11 @@ namespace CarouselCentrifuge
         public class DUPLICANTS
         {
             public class MODIFIERS
-            { 
+            {
                 public class RIDEONCAROUSEL
                 {
                     public static LocString NAME = "Ride on a Carousel";
-                    public static LocString TOOLTIP = "This Duplicant ride on a Carousel!\n\nLeisure activities increase Duplicants' " + UI.FormatAsKeyWord("Morale");
+                    public static LocString TOOLTIP = "This Duplicant ride on a Carousel!\n\nLeisure activities increase Duplicants' " + UI.FormatAsKeyWord(MORALE);
                 }
             }
 
@@ -54,6 +57,31 @@ namespace CarouselCentrifuge
                     });
                 }
             }
+        }
+
+        public class OPTIONS
+        {
+            public class DIZZINESSCHANCE
+            {
+                public static LocString TITLE = $"Chance of {UI.FormatAsKeyWord("Unforeseen consequences")}";
+                public static LocString TOOLTIP = $"Set to {UI.FormatAsPositiveRate("0")} to disable {UI.FormatAsKeyWord("Unforeseen consequences")}";
+            }
+            public class MORALEBONUS
+            {
+                public static LocString TITLE = $"{UI.FormatAsKeyWord(MORALE)} bonus";
+            }
+            public class EFFECTDURATION
+            {
+                public static LocString TITLE = $"Duration of the {UI.FormatAsKeyWord("Ride on a Carousel")} effect";
+            }
+        }
+
+        internal static void DoReplacement()
+        {
+            Utils.ReplaceLocString(ref BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.EFFECT, MORALE, global::STRINGS.DUPLICANTS.ATTRIBUTES.QUALITYOFLIFE.NAME);
+            Utils.ReplaceLocString(ref DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.TOOLTIP, MORALE, global::STRINGS.DUPLICANTS.ATTRIBUTES.QUALITYOFLIFE.NAME);
+            Utils.ReplaceLocString(ref OPTIONS.MORALEBONUS.TITLE, MORALE, global::STRINGS.DUPLICANTS.ATTRIBUTES.QUALITYOFLIFE.NAME);
+            LocString.CreateLocStringKeys(typeof(BUILDINGS));
         }
     }
 }

@@ -1,57 +1,67 @@
-﻿using Harmony;
-using Klei.AI;
+﻿using Klei.AI;
+
 using SanchozzONIMods.Lib;
+using PeterHan.PLib;
+using PeterHan.PLib.Options;
 
 namespace CarouselCentrifuge
 {
     internal static class CarouselCentrifugePatches
-	{
-        [HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
-        internal static class GeneratedBuildings_LoadGeneratedBuildings
-		{
-			private static void Prefix()
-			{
-				Utils.AddBuildingToPlanScreen("Furniture", CarouselCentrifugeConfig.ID, "EspressoMachine");
-			}
-		}
-
-		[HarmonyPatch(typeof(Db), "Initialize")]
-        internal static class Db_Initialize
-		{
-            private static void Prefix()
-			{
-				Utils.AddBuildingToTechnology("SkyDetectors", CarouselCentrifugeConfig.ID);
-            }
-		}
-
-        [HarmonyPatch(typeof(ModifierSet), "LoadEffects")]
-        internal static class ModifierSet_LoadEffects
+    {
+        public static void OnLoad()
         {
-            private static void Postfix(ModifierSet __instance)
-            {
-                string text = STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.NAME;
-                string description = STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.TOOLTIP;
-
-                Effect specificEffect = new Effect(CarouselCentrifugeWorkable.specificEffect, text, description, Config.Get().SpecificEffectDuration * 600f, false, true, false);
-                specificEffect.Add(new AttributeModifier("QualityOfLife", Config.Get().MoraleBonus, text, false, false, true));
-
-                Effect trackingEffect = new Effect(CarouselCentrifugeWorkable.trackingEffect, "", "", Config.Get().TrackingEffectDuration * 600f, false, false, false);
-
-                __instance.effects.Add(specificEffect);
-                __instance.effects.Add(trackingEffect);
-            }
+            PUtil.InitLibrary();
+            PUtil.RegisterPatchClass(typeof(CarouselCentrifugePatches));
+            POptions.RegisterOptions(typeof(CarouselCentrifugeOptions));
         }
 
-        [HarmonyPatch(typeof(Localization), "Initialize")]
-        internal static class Localization_Initialize
+        [PLibMethod(RunAt.AfterModsLoad)]
+        private static void InitLocalization()
         {
-            private static void Postfix()
-            {
-                Utils.InitLocalization(typeof(STRINGS));
-                LocString.CreateLocStringKeys(typeof(STRINGS.BUILDINGS));
+            Utils.InitLocalization(typeof(STRINGS));
+        }
 
-                Config.Initialize();
-            }
+        [PLibMethod(RunAt.BeforeDbInit)]
+        private static void AddBuilding()
+        {
+            Utils.AddBuildingToPlanScreen("Furniture", CarouselCentrifugeConfig.ID, EspressoMachineConfig.ID);
+            Utils.AddBuildingToTechnology("SkyDetectors", CarouselCentrifugeConfig.ID);
+        }
+
+        [PLibMethod(RunAt.AfterDbInit)]
+        private static void AddEffects()
+        {
+            Effect specificEffect = new Effect(
+                id: CarouselCentrifugeWorkable.specificEffect,
+                name: STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.NAME,
+                description: STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.TOOLTIP,
+                duration: (CarouselCentrifugeOptions.Instance.SpecificEffectDuration - 0.05f) * Constants.SECONDS_PER_CYCLE,
+                show_in_ui: false,
+                trigger_floating_text: true,
+                is_bad: false
+                );
+
+            specificEffect.Add(new AttributeModifier(
+                attribute_id: "QualityOfLife",
+                value: CarouselCentrifugeOptions.Instance.MoraleBonus,
+                description: STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.NAME,
+                is_multiplier: false,
+                uiOnly: false,
+                is_readonly: true
+                ));
+
+            Effect trackingEffect = new Effect(
+                id: CarouselCentrifugeWorkable.trackingEffect,
+                name: "",
+                description: "",
+                duration: CarouselCentrifugeOptions.Instance.TrackingEffectDuration * Constants.SECONDS_PER_CYCLE,
+                show_in_ui: false,
+                trigger_floating_text: false,
+                is_bad: false
+                );
+
+            Db.Get().effects.Add(specificEffect);
+            Db.Get().effects.Add(trackingEffect);
         }
     }
 }
