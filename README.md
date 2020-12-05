@@ -1,5 +1,5 @@
 # Sanchozz's mods for Oxygen Not Included
-Last tested on game version: **AP-420700**
+Last tested on game version: **CS-442712**
 
 Steam Workshop: https://steamcommunity.com/profiles/76561198341359629/myworkshopfiles/?appid=457140
 
@@ -31,11 +31,11 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 |  **Name**  |  **Description**  |
 | :--------: | :---------------: |
 | [Farmer's Touch on more Plants](https://steamcommunity.com/sharedfiles/filedetails/?id=1933433002) | Allows Farmers can use Micronutrient Fertilizer and give the Farmer's Touch effect on Oxyfern, Wheezewort and Arbor Tree. |
-| [Generators Bug Fix](https://steamcommunity.com/sharedfiles/filedetails/?id=2090191873) | Fixes a issue in the stock game, due to which the Generator cannot properly consume mixed two types of fuel. |
 | [No Manual Delivery](https://steamcommunity.com/sharedfiles/filedetails/?id=2047308624) | Adds a "Allow Manual Use" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicates from manually delivering resources to those buildings. |
 | [[Visual] Old Liquid Reservoir](https://steamcommunity.com/sharedfiles/filedetails/?id=1904543022) | Returns the old visual art of the Liquid Reservoir from older "early access" versions of the game. |
 | [Relic Hunter](https://steamcommunity.com/sharedfiles/filedetails/?id=1927259233) | Unlocks the Relic Hunter trait that exists in vanilla but is not used. A duplicant with this trait almost always finds artifacts when traveling to other planets. |
 | [Tweaked Biological Cargo Bay](https://steamcommunity.com/sharedfiles/filedetails/?id=1891479671) | Allows Duplicants independently transport animals directly from the Biological Cargo Bay to the Critter Drop-Off, without performing any unnecessary intermediate actions. |
+| [Varicoloured Balloons](https://steamcommunity.com/sharedfiles/filedetails/?id=2293939893) | Adds more different colors and variations of balloons. |
 <!--| []() |  |-->
 
 # Special thanks to
