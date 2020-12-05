@@ -15,12 +15,12 @@ namespace SquirrelGenerator
                 height: 2,
                 construction_mass: new float[] { BUILDINGS.CONSTRUCTION_MASS_KG.TIER3[0], BUILDINGS.CONSTRUCTION_MASS_KG.TIER3[0] },
                 construction_materials: new string[] { MATERIALS.METAL, MATERIALS.WOOD },
-                noise: NOISE_POLLUTION.NOISY.TIER3, 
-                anim: "generatormanual_kanim", 
-                hitpoints: BUILDINGS.HITPOINTS.TIER1, 
-                construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER2, 
-                melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER1, 
-                build_location_rule: BuildLocationRule.OnFloor, 
+                noise: NOISE_POLLUTION.NOISY.TIER3,
+                anim: "generatormanual_kanim",
+                hitpoints: BUILDINGS.HITPOINTS.TIER1,
+                construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER2,
+                melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER1,
+                build_location_rule: BuildLocationRule.OnFloor,
                 decor: BUILDINGS.DECOR.NONE
                 );
             buildingDef.GeneratorWattageRating = Config.Get().GeneratorWattageRating;
@@ -41,7 +41,7 @@ namespace SquirrelGenerator
             go.AddOrGet<LoopingSounds>();
             Prioritizable.AddRef(go);
             go.AddOrGet<SquirrelGenerator>().powerDistributionOrder = 10;
-            KBatchedAnimController kBatchedAnimController = go.AddOrGet<KBatchedAnimController>();
+            var kBatchedAnimController = go.AddOrGet<KBatchedAnimController>();
             kBatchedAnimController.fgLayer = Grid.SceneLayer.BuildingFront;
             kBatchedAnimController.initialAnim = "off";
             Tinkerable.MakePowerTinkerable(go);

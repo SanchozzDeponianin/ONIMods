@@ -54,11 +54,8 @@ namespace SquirrelGenerator
 
         private static StatusItem activeWattageStatusItem;
 
-        //public bool IsPowered => operational.IsActive;
         public bool IsOperational => operational.IsOperational;
-
         public new float WattageRating => base.WattageRating * productiveness;
-
         public int RunningCell { get => Grid.CellRight(Grid.PosToCell(this)); }
 
         protected override void OnPrefabInit()
@@ -68,7 +65,7 @@ namespace SquirrelGenerator
             {
                 resolveStringCallback = delegate (string str, object data)
                 {
-                    SquirrelGenerator generator = (SquirrelGenerator)data;
+                    var generator = (SquirrelGenerator)data;
                     str = str.Replace("{Wattage}", GameUtil.GetFormattedWattage(generator.WattageRating, GameUtil.WattageFormatterUnit.Automatic, true));
                     return str;
                 }
@@ -103,7 +100,6 @@ namespace SquirrelGenerator
         public override void EnergySim200ms(float dt)
         {
             base.EnergySim200ms(dt);
-            KSelectable component = GetComponent<KSelectable>();
             if (operational.IsActive)
             {
                 GenerateJoules(WattageRating * dt, false);

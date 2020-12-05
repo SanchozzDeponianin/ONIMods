@@ -41,7 +41,7 @@ namespace SquirrelGenerator
                 kbac = GetComponent<KBatchedAnimController>();
             }
         }
-        
+
         public class MovingStates : State
         {
             public State cheer_pre;
@@ -78,7 +78,7 @@ namespace SquirrelGenerator
                 {
                     if (!ReserveWheel(smi))
                     {
-                        smi.GoTo((BaseState) null);
+                        smi.GoTo((BaseState)null);
                     }
                 })
                 .Exit(UnreserveWheel)
@@ -89,15 +89,15 @@ namespace SquirrelGenerator
                 .OnTargetLost(target, null)
                 .EventTransition(GameHashes.OperationalChanged, (Instance smi) => smi.targetWheel, null, (Instance smi) => !smi.targetWheel.IsOperational)
                 .ToggleStatusItem(
-                    name: STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL.NAME, 
-                    tooltip: STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL.TOOLTIP, 
+                    name: STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL.NAME,
+                    tooltip: STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL.TOOLTIP,
                     category: Db.Get().StatusItemCategories.Main);
 
             moving.cheer_pre
                 .ScheduleGoTo(0.9f, moving.cheer);
 
             moving.cheer
-                .Enter( (Instance smi) => smi.GetComponent<Facing>().Face(Grid.CellToPos(smi.targetWheel_cell)))
+                .Enter((Instance smi) => smi.GetComponent<Facing>().Face(Grid.CellToPos(smi.targetWheel_cell)))
                 .PlayAnim("excited_loop")
                 .OnAnimQueueComplete(moving.cheer_pst);
 
@@ -105,7 +105,7 @@ namespace SquirrelGenerator
                 .ScheduleGoTo(0.2f, moving.moving);
 
             moving.moving
-                .Enter("Speedup", (Instance smi) => smi.GetComponent<Navigator>().defaultSpeed = smi.originalSpeed * TUNING.DUPLICANTSTATS.MOVEMENT.BONUS_2 )
+                .Enter("Speedup", (Instance smi) => smi.GetComponent<Navigator>().defaultSpeed = smi.originalSpeed * TUNING.DUPLICANTSTATS.MOVEMENT.BONUS_2)
                 .MoveTo((Instance smi) => smi.targetWheel_cell, running, null, false)
                 .Exit("RestoreSpeed", delegate (Instance smi)
                 {
@@ -149,7 +149,7 @@ namespace SquirrelGenerator
             GameObject go = smi.GetSMI<WheelRunningMonitor.Instance>()?.targetWheel;
             if (go != null && !go.HasTag(GameTags.Creatures.ReservedByCreature))
             {
-                SquirrelGenerator squirrelGenerator = go.GetComponent<SquirrelGenerator>();
+                var squirrelGenerator = go.GetComponent<SquirrelGenerator>();
                 if (squirrelGenerator != null && squirrelGenerator.IsOperational)
                 {
                     smi.sm.target.Set(go, smi);
@@ -167,11 +167,7 @@ namespace SquirrelGenerator
             if (go != null)
             {
                 go.RemoveTag(GameTags.Creatures.ReservedByCreature);
-                SquirrelGenerator squirrelGenerator = go.GetComponent<SquirrelGenerator>();
-                if (squirrelGenerator != null)
-                {
-                    squirrelGenerator.SetProductiveness(0);
-                }
+                go.GetComponent<SquirrelGenerator>()?.SetProductiveness(0);
             }
             smi.sm.target.Set(null, smi);
         }

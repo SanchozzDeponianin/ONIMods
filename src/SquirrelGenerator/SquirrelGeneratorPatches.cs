@@ -17,7 +17,7 @@ namespace SquirrelGenerator
         {
             private static void Prefix()
             {
-                Utils.AddBuildingToPlanScreen("Power", SquirrelGeneratorConfig.ID, "SolarPanel");
+                Utils.AddBuildingToPlanScreen("Power", SquirrelGeneratorConfig.ID, SolarPanelConfig.ID);
             }
         }
 
@@ -46,14 +46,14 @@ namespace SquirrelGenerator
         }
 
         // добавить белкам новое поведение
-        [HarmonyPatch(typeof(BaseSquirrelConfig), "BaseSquirrel")]
+        [HarmonyPatch(typeof(BaseSquirrelConfig), nameof(BaseSquirrelConfig.BaseSquirrel))]
         internal static class BaseSquirrelConfig_BaseSquirrel
         {
             private static void Postfix(ref GameObject __result, bool is_baby)
             {
                 if (!is_baby)
                 {
-                    WheelRunningMonitor.Def def = __result.AddOrGetDef<WheelRunningMonitor.Def>();
+                    var def = __result.AddOrGetDef<WheelRunningMonitor.Def>();
                     def.searchMinInterval = Config.Get().SearchMinInterval;
                     def.searchMaxInterval = Config.Get().SearchMaxInterval;
                 }
@@ -73,16 +73,19 @@ namespace SquirrelGenerator
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 List<CodeInstruction> instructionsList = instructions.ToList();
+                ConstructorInfo constructor = typeof(SeedPlantingStates.Def).GetConstructors()[0];
+                bool result = false;
                 for (int i = 0; i < instructionsList.Count; i++)
                 {
                     CodeInstruction instruction = instructionsList[i];
-                    if (instruction.opcode == OpCodes.Newobj && (ConstructorInfo)instruction.operand == typeof(SeedPlantingStates.Def).GetConstructors()[0])
+                    if (instruction.opcode == OpCodes.Newobj && (ConstructorInfo)instruction.operand == constructor)
                     {
-                        yield return new CodeInstruction(OpCodes.Callvirt, typeof(ChoreTable.Builder).GetMethod("PushInterruptGroup", new Type[] { }));
+                        yield return new CodeInstruction(OpCodes.Callvirt, typeof(ChoreTable.Builder).GetMethod(nameof(ChoreTable.Builder.PushInterruptGroup), new Type[] { }));
                         yield return new CodeInstruction(OpCodes.Newobj, typeof(WheelRunningStates.Def).GetConstructors()[0]);
                         yield return new CodeInstruction(OpCodes.Ldc_I4_1);
-                        yield return new CodeInstruction(OpCodes.Callvirt, typeof(ChoreTable.Builder).GetMethod("Add", new Type[] { typeof(StateMachine.BaseDef), typeof(bool) }));
-                        yield return new CodeInstruction(OpCodes.Callvirt, typeof(ChoreTable.Builder).GetMethod("PopInterruptGroup", new Type[] { }));
+                        yield return new CodeInstruction(OpCodes.Callvirt, typeof(ChoreTable.Builder).GetMethod(nameof(ChoreTable.Builder.Add), new Type[] { typeof(StateMachine.BaseDef), typeof(bool) }));
+                        yield return new CodeInstruction(OpCodes.Callvirt, typeof(ChoreTable.Builder).GetMethod(nameof(ChoreTable.Builder.PopInterruptGroup), new Type[] { }));
+                        result = true;
                     }
                     yield return instruction;
                 }

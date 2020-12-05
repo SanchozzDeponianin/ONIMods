@@ -9,7 +9,6 @@ namespace SquirrelGenerator
         public const int SEARCHMININTERVAL = 15;
         public const int SEARCHMAXINTERVAL = 60;
 
-
         public class Def : BaseDef
         {
             public float searchMinInterval = SEARCHMININTERVAL;
@@ -19,11 +18,10 @@ namespace SquirrelGenerator
         public new class Instance : GameInstance
         {
             public float nextSearchTime;
-            public GameObject targetWheel; 
+            public GameObject targetWheel;
 
             public Instance(IStateMachineTarget master, Def def) : base(master, def)
             {
-                //targetWheel = null;
                 RefreshSearchTime();
             }
 
@@ -52,22 +50,20 @@ namespace SquirrelGenerator
             private void FindWheel()
             {
                 targetWheel = null;
-                ListPool<ScenePartitionerEntry, GameScenePartitioner>.PooledList pooledList = ListPool<ScenePartitionerEntry, GameScenePartitioner>.Allocate();
-                ListPool<GameObject, WheelRunningMonitor>.PooledList pooledList2 = ListPool<GameObject, WheelRunningMonitor>.Allocate();
-                
-                Extents extents = new Extents(Grid.PosToCell(master.transform.GetPosition()), SEARCHWHEELRADIUS);
+                var pooledList = ListPool<ScenePartitionerEntry, GameScenePartitioner>.Allocate();
+                var pooledList2 = ListPool<GameObject, WheelRunningMonitor>.Allocate();
+
+                var extents = new Extents(Grid.PosToCell(master.transform.GetPosition()), SEARCHWHEELRADIUS);
                 GameScenePartitioner.Instance.GatherEntries(extents, GameScenePartitioner.Instance.completeBuildings, pooledList);
-                
+
                 foreach (ScenePartitionerEntry item in pooledList)
                 {
-                    SquirrelGenerator squirrelGenerator = (item.obj as KMonoBehaviour).GetComponent<SquirrelGenerator>();
-                    if (squirrelGenerator != null && squirrelGenerator.IsOperational && !squirrelGenerator.HasTag(GameTags.Creatures.ReservedByCreature))
+                    var squirrelGenerator = (item.obj as KMonoBehaviour).GetComponent<SquirrelGenerator>();
+                    if (squirrelGenerator != null && squirrelGenerator.IsOperational
+                        && !squirrelGenerator.HasTag(GameTags.Creatures.ReservedByCreature)
+                        && GetComponent<Navigator>().CanReach(Grid.PosToCell(squirrelGenerator)))
                     {
-                        Navigator navigator = GetComponent<Navigator>();
-                        if (navigator.CanReach(Grid.PosToCell(squirrelGenerator)))
-                        {
-                            pooledList2.Add(squirrelGenerator.gameObject);
-                        }
+                        pooledList2.Add(squirrelGenerator.gameObject);
                     }
                 }
                 if (pooledList2.Count > 0)
@@ -90,7 +86,7 @@ namespace SquirrelGenerator
         {
             serializable = true;
             default_state = root;
-            root.ToggleBehaviour(WheelRunningStates.WantsToWheelRunning, (Instance smi) => smi.ShouldRunInWheel(), (Instance smi) => smi.OnRunningComplete() );
+            root.ToggleBehaviour(WheelRunningStates.WantsToWheelRunning, (Instance smi) => smi.ShouldRunInWheel(), (Instance smi) => smi.OnRunningComplete());
         }
     }
 }
