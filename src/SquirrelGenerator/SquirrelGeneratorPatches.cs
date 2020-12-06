@@ -15,6 +15,12 @@ namespace SquirrelGenerator
 {
     internal static class SquirrelGeneratorPatches
     {
+        private static HarmonyInstance harmonyInstance;
+        public static void PrePatch(HarmonyInstance instance)
+        {
+            harmonyInstance = instance;
+        }
+
         public static void OnLoad()
         {
             PUtil.InitLibrary();
@@ -39,7 +45,7 @@ namespace SquirrelGenerator
         [HarmonyPatch(typeof(BaseSquirrelConfig), nameof(BaseSquirrelConfig.BaseSquirrel))]
         internal static class BaseSquirrelConfig_BaseSquirrel
         {
-            private static void Postfix(ref GameObject __result, bool is_baby)
+            internal static void Postfix(ref GameObject __result, bool is_baby)
             {
                 if (!is_baby)
                 {
@@ -60,7 +66,7 @@ namespace SquirrelGenerator
                 .PopInterruptGroup()
                 .Add(new IdleStates.Def(), true);
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 List<CodeInstruction> instructionsList = instructions.ToList();
                 ConstructorInfo constructor = typeof(SeedPlantingStates.Def).GetConstructors()[0];
@@ -86,6 +92,23 @@ namespace SquirrelGenerator
                 {
                     PUtil.LogWarning($"Could not apply Transpiler to the '{nameof(BaseSquirrelConfig.BaseSquirrel)}'");
                 }
+            }
+        }
+
+        // патч совместимости для мода Lagoo (https://steamcommunity.com/sharedfiles/filedetails/?id=2025986309)
+        [PLibMethod(RunAt.AfterModsLoad, RequireAssembly = "LagooMerged", RequireType = "Lagoo.BaseLagooConfig")]
+        private static void LagooPatch()
+        {
+            var BaseLagooConfig = PPatchTools.GetTypeSafe("Lagoo.BaseLagooConfig", "LagooMerged");
+            if (BaseLagooConfig != null)
+            {
+                PUtil.LogDebug("'Lagoo' found, trying to apply a compatibility patch.");
+
+                var postfix = new HarmonyMethod(typeof(BaseSquirrelConfig_BaseSquirrel), nameof(BaseSquirrelConfig_BaseSquirrel.Postfix));
+                harmonyInstance.Patch(BaseLagooConfig, "BaseLagoo", null, postfix);
+
+                var transpiler = new HarmonyMethod(typeof(BaseSquirrelConfig_BaseSquirrel), nameof(BaseSquirrelConfig_BaseSquirrel.Transpiler));
+                harmonyInstance.PatchTranspile(BaseLagooConfig, "BaseLagoo", transpiler);
             }
         }
     }
