@@ -3,46 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+
 using Harmony;
-using STRINGS;
 using UnityEngine;
+
 using SanchozzONIMods.Lib;
+using PeterHan.PLib;
+using PeterHan.PLib.Options;
 
 namespace SquirrelGenerator
 {
     internal static class SquirrelGeneratorPatches
     {
-        [HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
-        internal static class GeneratedBuildings_LoadGeneratedBuildings
+        public static void OnLoad()
         {
-            private static void Prefix()
-            {
-                Utils.AddBuildingToPlanScreen("Power", SquirrelGeneratorConfig.ID, SolarPanelConfig.ID);
-            }
+            PUtil.InitLibrary();
+            PUtil.RegisterPatchClass(typeof(SquirrelGeneratorPatches));
+            POptions.RegisterOptions(typeof(SquirrelGeneratorOptions));
         }
 
-        [HarmonyPatch(typeof(Db), "Initialize")]
-        internal static class Db_Initialize
+        [PLibMethod(RunAt.AfterModsLoad)]
+        private static void InitLocalization()
         {
-            private static void Prefix()
-            {
-                Utils.AddBuildingToTechnology("AnimalControl", SquirrelGeneratorConfig.ID);
-            }
+            Utils.InitLocalization(typeof(STRINGS));
         }
 
-        [HarmonyPatch(typeof(Localization), "Initialize")]
-        internal static class Localization_Initialize
+        [PLibMethod(RunAt.BeforeDbInit)]
+        private static void AddBuilding()
         {
-            private static void Postfix()
-            {
-                Utils.InitLocalization(typeof(STRINGS));
-                // чтобы подтянуть название белки из локализации
-                Utils.ReplaceLocString(ref STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.DESC, STRINGS.SQUIRREL, CREATURES.SPECIES.SQUIRREL.NAME);
-                Utils.ReplaceLocString(ref STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.EFFECT, STRINGS.SQUIRREL, CREATURES.SPECIES.SQUIRREL.NAME);
-                LocString.CreateLocStringKeys(typeof(STRINGS.BUILDINGS));
-
-                Config.Initialize();
-            }
+            Utils.AddBuildingToPlanScreen("Power", SquirrelGeneratorConfig.ID, SolarPanelConfig.ID);
+            Utils.AddBuildingToTechnology("AnimalControl", SquirrelGeneratorConfig.ID);
         }
 
         // добавить белкам новое поведение
@@ -54,8 +44,8 @@ namespace SquirrelGenerator
                 if (!is_baby)
                 {
                     var def = __result.AddOrGetDef<WheelRunningMonitor.Def>();
-                    def.searchMinInterval = Config.Get().SearchMinInterval;
-                    def.searchMaxInterval = Config.Get().SearchMaxInterval;
+                    def.searchMinInterval = SquirrelGeneratorOptions.Instance.SearchMinInterval;
+                    def.searchMaxInterval = SquirrelGeneratorOptions.Instance.SearchMaxInterval;
                 }
             }
 
@@ -80,6 +70,9 @@ namespace SquirrelGenerator
                     CodeInstruction instruction = instructionsList[i];
                     if (instruction.opcode == OpCodes.Newobj && (ConstructorInfo)instruction.operand == constructor)
                     {
+#if DEBUG
+                        PUtil.LogDebug($"'{nameof(BaseSquirrelConfig.BaseSquirrel)}' Transpiler injected");
+#endif
                         yield return new CodeInstruction(OpCodes.Callvirt, typeof(ChoreTable.Builder).GetMethod(nameof(ChoreTable.Builder.PushInterruptGroup), new Type[] { }));
                         yield return new CodeInstruction(OpCodes.Newobj, typeof(WheelRunningStates.Def).GetConstructors()[0]);
                         yield return new CodeInstruction(OpCodes.Ldc_I4_1);
@@ -88,6 +81,10 @@ namespace SquirrelGenerator
                         result = true;
                     }
                     yield return instruction;
+                }
+                if (!result)
+                {
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{nameof(BaseSquirrelConfig.BaseSquirrel)}'");
                 }
             }
         }

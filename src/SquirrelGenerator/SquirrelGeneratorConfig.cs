@@ -23,14 +23,14 @@ namespace SquirrelGenerator
                 build_location_rule: BuildLocationRule.OnFloor,
                 decor: BUILDINGS.DECOR.NONE
                 );
-            buildingDef.GeneratorWattageRating = Config.Get().GeneratorWattageRating;
+            buildingDef.GeneratorWattageRating = SquirrelGeneratorOptions.Instance.GeneratorWattageRating;
             buildingDef.GeneratorBaseCapacity = 10000f;
             buildingDef.ViewMode = OverlayModes.Power.ID;
             buildingDef.AudioCategory = "Metal";
             buildingDef.Breakable = true;
             buildingDef.ForegroundLayer = Grid.SceneLayer.BuildingFront;
             buildingDef.LogicInputPorts = LogicOperationalController.CreateSingleInputPortList(new CellOffset(0, 0));
-            buildingDef.SelfHeatKilowattsWhenActive = BUILDINGS.SELF_HEAT_KILOWATTS.TIER2;
+            buildingDef.SelfHeatKilowattsWhenActive = SquirrelGeneratorOptions.Instance.SelfHeatWatts / Constants.KW2DTU_S;
             return buildingDef;
         }
 

@@ -36,7 +36,7 @@ namespace SquirrelGenerator
                 chore.AddPrecondition(ChorePreconditions.instance.CheckBehaviourPrecondition, WantsToWheelRunning);
                 calories = Db.Get().Amounts.Calories.Lookup(gameObject);
                 metabolism = Db.Get().CritterAttributes.Metabolism.Lookup(gameObject);
-                metabolism_bonus = METABOLISM_BONUS + Config.Get().MetabolismBonus;
+                metabolism_bonus = METABOLISM_BONUS + SquirrelGeneratorOptions.Instance.MetabolismBonus;
                 effects = GetComponent<Effects>();
                 kbac = GetComponent<KBatchedAnimController>();
             }
@@ -68,8 +68,8 @@ namespace SquirrelGenerator
         public override void InitializeStates(out BaseState default_state)
         {
             RunInWheelEffect = new Effect("RunInWheel", STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.TOOLTIP, 0, true, false, false);
-            RunInWheelEffect.Add(new AttributeModifier(Db.Get().CritterAttributes.Metabolism.Id, Config.Get().MetabolismBonus, STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, false, false, true));
-            RunInWheelEffect.Add(new AttributeModifier(Db.Get().CritterAttributes.Happiness.Id, Config.Get().HappinessBonus, STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, false, false, true));
+            RunInWheelEffect.Add(new AttributeModifier(Db.Get().CritterAttributes.Metabolism.Id, SquirrelGeneratorOptions.Instance.MetabolismBonus, STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, false, false, true));
+            RunInWheelEffect.Add(new AttributeModifier(Db.Get().CritterAttributes.Happiness.Id, SquirrelGeneratorOptions.Instance.HappinessBonus, STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, false, false, true));
 
             serializable = true;
             default_state = moving;

@@ -38,3 +38,68 @@ msgctxt "SquirrelGenerator.STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL
 msgid "This creature has discovered an entertaining mechanical thing and is very interested"
 msgstr ""
 
+#. SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGE.TITLE
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGE.TITLE"
+msgid "Wattage"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGE.TOOLTIP
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGE.TOOLTIP"
+msgid "Maximum <style=\"KKeyword\">Wattage</style>,{WATT} of Squirrel Wheel"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.OPTIONS.HAPPINESSBONUS.TITLE
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.HAPPINESSBONUS.TITLE"
+msgid "Happiness Bonus"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.OPTIONS.HAPPINESSBONUS.TOOLTIP
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.HAPPINESSBONUS.TOOLTIP"
+msgid "<style=\"KKeyword\">Happiness</style> Bonus value when the {Squirrel} running in the Wheel"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.OPTIONS.METABOLISMBONUS.TITLE
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.METABOLISMBONUS.TITLE"
+msgid "Metabolism Bonus"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.OPTIONS.METABOLISMBONUS.TOOLTIP
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.METABOLISMBONUS.TOOLTIP"
+msgid "<style=\"KKeyword\">Metabolism</style> Bonus value when the {Squirrel} running in the Wheel"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.OPTIONS.SEARCHMAXINTERVAL.TITLE
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SEARCHMAXINTERVAL.TITLE"
+msgid "Search Max Interval"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.OPTIONS.SEARCHMININTERVAL.TITLE
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SEARCHMININTERVAL.TITLE"
+msgid "Search Min Interval"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.OPTIONS.SEARCHMININTERVAL.TOOLTIP
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SEARCHMININTERVAL.TOOLTIP"
+msgid "Time in seconds until next Wheel search is random value between <style=\"KKeyword\">Search Min Interval</style> and <style=\"KKeyword\">Search Max Interval</style>"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.OPTIONS.SEARCHWHEELRADIUS.TITLE
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SEARCHWHEELRADIUS.TITLE"
+msgid "Search Radius"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.OPTIONS.SEARCHWHEELRADIUS.TOOLTIP
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SEARCHWHEELRADIUS.TOOLTIP"
+msgid "Radius in cells in which the {Squirrel} is looking for a Wheel"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.OPTIONS.SELFHEAT.TITLE
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SELFHEAT.TITLE"
+msgid "Heat Production"
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.OPTIONS.SELFHEAT.TOOLTIP
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SELFHEAT.TOOLTIP"
+msgid "<style=\"KKeyword\">Heat</style> Production,{DTU_S} of Squirrel Wheel"
+msgstr ""
+
