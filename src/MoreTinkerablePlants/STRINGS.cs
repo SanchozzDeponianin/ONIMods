@@ -22,5 +22,24 @@ namespace MoreTinkerablePlants
                 }
             }
         }
+
+        public class OPTIONS
+        {
+            public class COLDBREATHER_MULTIPLIER
+            {
+                public static LocString TITLE = "";
+                public static LocString TOOLTIP = "";
+            }
+            public class OXYFERN_MULTIPLIER
+            {
+                public static LocString TITLE = "";
+                public static LocString TOOLTIP = "";
+            }
+        }
+
+        internal static void DoReplacement()
+        {
+            LocString.CreateLocStringKeys(typeof(DUPLICANTS));
+        }
     }
 }

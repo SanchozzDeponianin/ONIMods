@@ -1,12 +1,36 @@
 ﻿using Harmony;
 using Klei.AI;
 using UnityEngine;
+
 using SanchozzONIMods.Lib;
+using PeterHan.PLib;
+using PeterHan.PLib.Options;
 
 namespace MoreTinkerablePlants
 {
     internal static class MoreTinkerablePlantsPatches
     {
+        public static void OnLoad()
+        {
+            PUtil.InitLibrary();
+            PUtil.RegisterPatchClass(typeof(MoreTinkerablePlantsPatches));
+            POptions.RegisterOptions(typeof(MoreTinkerablePlantsOptions));
+        }
+
+        [PLibMethod(RunAt.AfterModsLoad)]
+        private static void InitLocalization()
+        {
+            Utils.InitLocalization(typeof(STRINGS));
+        }
+
+        [PLibMethod(RunAt.OnStartGame)]
+        private static void OnStartGame()
+        {
+            MoreTinkerablePlantsOptions.Reload();
+            TinkerableColdBreather.ThroughputMultiplier = MoreTinkerablePlantsOptions.Instance.ColdBreatherThroughputMultiplier;
+            TinkerableOxyfern.ThroughputMultiplier = MoreTinkerablePlantsOptions.Instance.OxyfernThroughputMultiplier;
+        }
+
         // Оксиферн
         [HarmonyPatch(typeof(OxyfernConfig), "CreatePrefab")]
         internal static class OxyfernConfig_CreatePrefab
@@ -17,7 +41,7 @@ namespace MoreTinkerablePlants
                 __result.AddOrGet<TinkerableOxyfern>();
             }
         }
-        
+
         [HarmonyPatch(typeof(OxyfernConfig), "OnSpawn")]
         internal static class OxyfernConfig_OnSpawn
         {
@@ -26,7 +50,7 @@ namespace MoreTinkerablePlants
                 inst.GetComponent<TinkerableOxyfern>()?.ApplyEffect();
             }
         }
-        
+
         // холодых
         [HarmonyPatch(typeof(ColdBreatherConfig), "CreatePrefab")]
         internal static class ColdBreatherConfig_CreatePrefab
@@ -84,23 +108,12 @@ namespace MoreTinkerablePlants
         {
             private static void Prefix(ref TreeBud __instance, Ref<BuddingTrunk> ___buddingTrunk)
             {
-                Effects parentEffects = ___buddingTrunk?.Get()?.GetComponent<Effects>();
-                Effects effects = __instance.GetComponent<Effects>();
+                var parentEffects = ___buddingTrunk?.Get()?.GetComponent<Effects>();
+                var effects = __instance.GetComponent<Effects>();
                 if (parentEffects != null && effects != null && parentEffects.HasEffect(TinkerableEffectMonitor.FARMTINKEREFFECTID))
                 {
                     effects.Add(TinkerableEffectMonitor.FARMTINKEREFFECTID, false).timeRemaining = parentEffects.Get(TinkerableEffectMonitor.FARMTINKEREFFECTID).timeRemaining;
                 }
-            }
-        }
-
-        // локализация дополнительного описания эффекта
-        [HarmonyPatch(typeof(Localization), "Initialize")]
-        internal static class Localization_Initialize
-        {
-            private static void Postfix()
-            {
-                Utils.InitLocalization(typeof(STRINGS));
-                LocString.CreateLocStringKeys(typeof(STRINGS.DUPLICANTS));
             }
         }
     }

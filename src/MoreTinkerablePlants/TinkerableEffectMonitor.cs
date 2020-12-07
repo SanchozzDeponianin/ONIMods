@@ -1,11 +1,10 @@
-﻿using System;
-using Klei.AI;
+﻿using Klei.AI;
 
 namespace MoreTinkerablePlants
 {
     public class TinkerableEffectMonitor : KMonoBehaviour
     {
-        protected const float PLANTTHROUGHPUTMODIFIER = 3f;
+        internal const float DefaultThroughputMultiplier = 3;
         public const string FARMTINKEREFFECTID = "FarmTinker";
 
         [MyCmpReq]
@@ -14,14 +13,14 @@ namespace MoreTinkerablePlants
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            Subscribe((int)GameHashes.EffectAdded,   new Action<object>(OnEffectChanged));
-            Subscribe((int)GameHashes.EffectRemoved, new Action<object>(OnEffectChanged));
+            Subscribe((int)GameHashes.EffectAdded, OnEffectChanged);
+            Subscribe((int)GameHashes.EffectRemoved, OnEffectChanged);
         }
 
         protected override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.EffectAdded,   new Action<object>(OnEffectChanged));
-            Unsubscribe((int)GameHashes.EffectRemoved, new Action<object>(OnEffectChanged));
+            Unsubscribe((int)GameHashes.EffectAdded, OnEffectChanged);
+            Unsubscribe((int)GameHashes.EffectRemoved, OnEffectChanged);
             base.OnCleanUp();
         }
 

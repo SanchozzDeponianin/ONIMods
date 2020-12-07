@@ -4,6 +4,8 @@ namespace MoreTinkerablePlants
 {
     public class TinkerableColdBreather : TinkerableEffectMonitor
     {
+        internal static float ThroughputMultiplier = DefaultThroughputMultiplier;
+
 #pragma warning disable CS0649
         [MyCmpReq]
         private ReceptacleMonitor receptacleMonitor;
@@ -28,7 +30,7 @@ namespace MoreTinkerablePlants
             }
             if (effects.HasEffect(FARMTINKEREFFECTID))
             {
-                elementConsumer.consumptionRate *= PLANTTHROUGHPUTMODIFIER;
+                elementConsumer.consumptionRate *= ThroughputMultiplier;
             }
             elementConsumer.RefreshConsumptionRate();
         }

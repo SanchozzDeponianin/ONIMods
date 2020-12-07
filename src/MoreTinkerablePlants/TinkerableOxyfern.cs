@@ -2,6 +2,8 @@
 {
     public class TinkerableOxyfern : TinkerableEffectMonitor
     {
+        internal static float ThroughputMultiplier = DefaultThroughputMultiplier;
+
 #pragma warning disable CS0649
         [MyCmpReq]
         private ElementConsumer elementConsumer;
@@ -19,8 +21,8 @@
             oxyfern.SetConsumptionRate();
             if (effects.HasEffect(FARMTINKEREFFECTID))
             {
-                elementConsumer.consumptionRate *= PLANTTHROUGHPUTMODIFIER;
-                elementConverter.SetWorkSpeedMultiplier(PLANTTHROUGHPUTMODIFIER);
+                elementConsumer.consumptionRate *= ThroughputMultiplier;
+                elementConverter.SetWorkSpeedMultiplier(ThroughputMultiplier);
             }
             else
             {
