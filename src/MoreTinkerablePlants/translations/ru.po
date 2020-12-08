@@ -3,8 +3,33 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. MoreTinkerablePlants.STRINGS.DUPLICANTS.ATTRIBUTES.OXYFERNTHROUGHPUT.NAME
+msgctxt "MoreTinkerablePlants.STRINGS.DUPLICANTS.ATTRIBUTES.OXYFERNTHROUGHPUT.NAME"
+msgid "Oxygen production"
+msgstr "Производство кислорода"
+
 #. MoreTinkerablePlants.STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.ADDITIONAL_EFFECTS
 msgctxt "MoreTinkerablePlants.STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.ADDITIONAL_EFFECTS"
-msgid "Increases the <style=\"KKeyword\">Throughput</style> of <link=\"OXYFERN\">Oxyfern</link> and <link=\"COLDBREATHER\">Wheezewort</link>"
-msgstr "Увеличивает <style=\"KKeyword\">производительность</style> <link=\"OXYFERN\">Оксиферна</link> и <link=\"COLDBREATHER\">Хладодыха</link>"
+msgid "Increases the <style=\"KKeyword\">Throughput</style> of <link=\"OXYFERN\">{OXYFERN}</link> and <link=\"COLDBREATHER\">{COLDBREATHER}</link>"
+msgstr "Увеличивает <style=\"KKeyword\">производительность</style> растений: <link=\"OXYFERN\">{OXYFERN}</link> и <link=\"COLDBREATHER\">{COLDBREATHER}</link>"
+
+#. MoreTinkerablePlants.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TITLE
+msgctxt "MoreTinkerablePlants.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TITLE"
+msgid "{COLDBREATHER} Throughput Multiplier"
+msgstr "{COLDBREATHER}: множитель производительности"
+
+#. MoreTinkerablePlants.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TOOLTIP
+msgctxt "MoreTinkerablePlants.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TOOLTIP"
+msgid "Increase Cooling power when exposed to {FARMTINKER} effect"
+msgstr "Увеличение охлаждающей способности при воздействии эффекта {FARMTINKER}"
+
+#. MoreTinkerablePlants.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TITLE
+msgctxt "MoreTinkerablePlants.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TITLE"
+msgid "{OXYFERN} Throughput Multiplier"
+msgstr "{OXYFERN}: множитель производительности"
+
+#. MoreTinkerablePlants.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TOOLTIP
+msgctxt "MoreTinkerablePlants.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TOOLTIP"
+msgid "Increase Oxygen production when exposed to {FARMTINKER} effect"
+msgstr "Увеличение производства кислорода при воздействии эффекта {FARMTINKER}"
 

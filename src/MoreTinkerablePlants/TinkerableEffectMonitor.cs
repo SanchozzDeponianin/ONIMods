@@ -4,7 +4,6 @@ namespace MoreTinkerablePlants
 {
     public class TinkerableEffectMonitor : KMonoBehaviour
     {
-        internal const float DefaultThroughputMultiplier = 3;
         public const string FARMTINKEREFFECTID = "FarmTinker";
 
         [MyCmpReq]
@@ -26,10 +25,10 @@ namespace MoreTinkerablePlants
 
         private void OnEffectChanged(object data)
         {
-            ApplyEffect();
+            ApplyModifier();
         }
 
-        public virtual void ApplyEffect()
+        public virtual void ApplyModifier()
         {
         }
     }

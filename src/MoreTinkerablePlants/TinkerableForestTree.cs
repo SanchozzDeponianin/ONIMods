@@ -12,15 +12,25 @@ namespace MoreTinkerablePlants
         private BuddingTrunk buddingTrunk;
 #pragma warning restore CS0649
 
-        public override void ApplyEffect()
+        public override void ApplyModifier()
         {
-            base.ApplyEffect();
+            base.ApplyModifier();
             if (growing.IsGrown() && effects.HasEffect(FARMTINKEREFFECTID))
             {
                 for (int i = 0; i < ForestTreeConfig.NUM_BRANCHES; i++)
                 {
                     buddingTrunk.GetBranchAtPosition(i)?.GetComponent<Effects>()?.Add(FARMTINKEREFFECTID, false);
                 }
+            }
+        }
+
+        public static void ApplyModifierToBranch(TreeBud branch, BuddingTrunk buddingTrunk)
+        {
+            var parentEffects = buddingTrunk?.GetComponent<Effects>();
+            var branchEffects = branch?.GetComponent<Effects>();
+            if (parentEffects != null && branchEffects != null && parentEffects.HasEffect(FARMTINKEREFFECTID))
+            {
+                branchEffects.Add(FARMTINKEREFFECTID, false).timeRemaining = parentEffects.Get(FARMTINKEREFFECTID).timeRemaining;
             }
         }
     }
