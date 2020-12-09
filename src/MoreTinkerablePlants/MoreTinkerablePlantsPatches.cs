@@ -86,7 +86,7 @@ namespace MoreTinkerablePlants
             }
         }
 
-        // холодых
+        // Холодых
         [HarmonyPatch(typeof(ColdBreatherConfig), nameof(ColdBreatherConfig.CreatePrefab))]
         internal static class ColdBreatherConfig_CreatePrefab
         {
@@ -106,6 +106,20 @@ namespace MoreTinkerablePlants
             }
         }
 
+        // фикс для элементконсумера, чтобы статуситем не исчезал после обновления
+        [HarmonyPatch(typeof(ElementConsumer), "UpdateStatusItem")]
+        internal static class ElementConsumer_UpdateStatusItem
+        {
+            private static void Prefix(ElementConsumer __instance, ref System.Guid ___statusHandle, KSelectable ___selectable)
+            {
+                if (__instance.showInStatusPanel && ___statusHandle != System.Guid.Empty)
+                {
+                    ___selectable.RemoveStatusItem(___statusHandle);
+                    ___statusHandle = System.Guid.Empty;
+                }
+            }
+        }
+
         // дерево
         [HarmonyPatch(typeof(ForestTreeConfig), nameof(ForestTreeConfig.CreatePrefab))]
         internal static class ForestTreeConfig_CreatePrefab
@@ -116,22 +130,20 @@ namespace MoreTinkerablePlants
             }
         }
 
-        /*
+        // в ванилле ветка имеет "тинкерабле" и  "эффекты"
+        // но её практически никогда не убобряют
+        // с модом тоже
+        // однако крайне редко удается случайно отловить когда убобряют
+        // как то связано с засыханием и ростом новых веток
+        // поэтому - грязный хак чтобы не могли убобрить
         [HarmonyPatch(typeof(ForestTreeBranchConfig), "CreatePrefab")]
         internal static class ForestTreeBranchConfig_CreatePrefab
         {
             private static void Postfix(ref GameObject __result)
             {
-                // в ванилле ветка обозначена "тинкерабле", и имеет "эффекты"
-                // но её никогда не удобряют
-                // чё за херня ??
-                // если добавить "эффекты", то начинают удобрять каждую ветку отдельно
-                //  убрать "тинкерабле" ????
-
-                //__result.AddOrGet<Effects>();
-                //Object.DestroyImmediate(__result.GetComponent<Tinkerable>());
+                __result.GetComponent<Tinkerable>().tinkerMaterialTag = GameTags.Void;
             }
-        }   */
+        }
 
         // применить эффект при росте новой ветки дерева
         [HarmonyPatch(typeof(TreeBud), "OnSpawn")]
