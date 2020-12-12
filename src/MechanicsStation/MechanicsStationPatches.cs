@@ -10,8 +10,16 @@ namespace MechanicsStation
 {
     internal static class MechanicsStationPatches
     {
+        public const string MACHINERY_SPEED_MODIFIER_NAME = "MachinerySpeed";
+        public const float MACHINERY_SPEED_MODIFIER = 0.5f;
+        public const string CRAFTING_SPEED_MODIFIER_NAME = "CraftingSpeed";
+        public const float CRAFTING_SPEED_MODIFIER = 1f;
+        public const string MACHINE_TINKER_EFFECT_NAME = "Machine_Tinker";
+        public const float MACHINE_TINKER_EFFECT_DURATION = 2f;
+        public const string REQUIRED_ROLE_PERK = "CanMachineTinker";
+
         public static SkillPerk CanMachineTinker;
-        public static Attribute craftingSpeedAttribute;
+        public static Attribute CraftingSpeed;
         public static Effect machineTinkerEffect;
 
         [HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
@@ -52,7 +60,7 @@ namespace MechanicsStation
                 __instance.RoomTypes.Add(__instance.RoomTypes.MachineShop);
 
                 // добавляем перк для работы на станции
-                CanMachineTinker = __instance.SkillPerks.Add(new SimpleSkillPerk(MechanicsStationConfig.ROLE_PERK, STRINGS.UI.ROLES_SCREEN.PERKS.CAN_MACHINE_TINKER.DESCRIPTION));
+                CanMachineTinker = __instance.SkillPerks.Add(new SimpleSkillPerk(REQUIRED_ROLE_PERK, STRINGS.PERK_CAN_MACHINE_TINKER.DESCRIPTION));
                 __instance.Skills.Technicals1.perks.Add(CanMachineTinker);
             }
         }
@@ -66,17 +74,17 @@ namespace MechanicsStation
                 string text = DUPLICANTS.MODIFIERS.MACHINETINKER.NAME;
                 string description = STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP;
 
-                if (craftingSpeedAttribute == null)
+                if (CraftingSpeed == null)
                 {
-                    craftingSpeedAttribute = __instance.Attributes.Add(new Attribute(MechanicsStationConfig.CRAFTINGSPEEDMODIFIERNAME, false, Attribute.Display.General, false, 1f, null, null));
-                    craftingSpeedAttribute.SetFormatter(new PercentAttributeFormatter());
+                    CraftingSpeed = __instance.Attributes.Add(new Attribute(CRAFTING_SPEED_MODIFIER_NAME, false, Attribute.Display.General, false, 1f));
+                    CraftingSpeed.SetFormatter(new PercentAttributeFormatter());
                 }
 
                 if (machineTinkerEffect == null)
                 {
-                    machineTinkerEffect = __instance.effects.Add(new Effect(MechanicsStationConfig.MACHINETINKEREFFECT, text, description, 2 * 600f, true, true, false));
-                    machineTinkerEffect.Add(new AttributeModifier(MechanicsStationConfig.MACHINERYSPEEDMODIFIERNAME, MechanicsStationConfig.MACHINERYSPEEDMODIFIERMULTIPLIER, text, false, false, true));
-                    machineTinkerEffect.Add(new AttributeModifier(MechanicsStationConfig.CRAFTINGSPEEDMODIFIERNAME, MechanicsStationConfig.CRAFTINGSPEEDMODIFIERMULTIPLIER, text, false, false, true));
+                    machineTinkerEffect = __instance.effects.Add(new Effect(MACHINE_TINKER_EFFECT_NAME, text, description, MACHINE_TINKER_EFFECT_DURATION * Constants.SECONDS_PER_CYCLE, true, true, false));
+                    machineTinkerEffect.Add(new AttributeModifier(MACHINERY_SPEED_MODIFIER_NAME, MACHINERY_SPEED_MODIFIER, text));
+                    machineTinkerEffect.Add(new AttributeModifier(CRAFTING_SPEED_MODIFIER_NAME, CRAFTING_SPEED_MODIFIER, text));
                 }
             }
         }
@@ -86,16 +94,12 @@ namespace MechanicsStation
         {
             private static void Postfix()
             {
-                Utils.InitLocalization(typeof(STRINGS));
-                LocString.CreateLocStringKeys(typeof(STRINGS.BUILDINGS));
-                LocString.CreateLocStringKeys(typeof(STRINGS.DUPLICANTS));
-                Strings.Add($"STRINGS.BUILDINGS.PREFABS.{MechanicsStationConfig.ID.ToUpperInvariant()}.DESC", BUILDINGS.PREFABS.MACHINESHOP.DESC);
-                Strings.Add($"STRINGS.BUILDINGS.PREFABS.{MechanicsStationConfig.ID.ToUpperInvariant()}.NAME", BUILDINGS.PREFABS.MACHINESHOP.NAME);
+                Utils.InitLocalization(typeof(STRINGS));    
             }
         }
 
         // шестеренки
-        [HarmonyPatch(typeof(MachinePartsConfig), "CreatePrefab")]
+        [HarmonyPatch(typeof(MachinePartsConfig), nameof(MachinePartsConfig.CreatePrefab))]
         internal static class MachinePartsConfig_CreatePrefab
         {
             private static void Postfix(ref GameObject __result)
@@ -118,11 +122,11 @@ namespace MechanicsStation
         // сделать постройку улучшаемой
         private static Tinkerable MakeMachineTinkerable(GameObject prefab)
         {
-            Tinkerable tinkerable = Tinkerable.MakePowerTinkerable(prefab);
+            var tinkerable = Tinkerable.MakePowerTinkerable(prefab);
             tinkerable.tinkerMaterialTag = MechanicsStationConfig.TINKER_TOOLS;
             tinkerable.tinkerMaterialAmount = 1f;
-            tinkerable.addedEffect = MechanicsStationConfig.MACHINETINKEREFFECT;
-            tinkerable.requiredSkillPerk = MechanicsStationConfig.ROLE_PERK;
+            tinkerable.addedEffect = MACHINE_TINKER_EFFECT_NAME;
+            tinkerable.requiredSkillPerk = REQUIRED_ROLE_PERK;
             tinkerable.SetWorkTime(20f);
             tinkerable.choreTypeTinker = Db.Get().ChoreTypes.MachineTinker.IdHash;
             tinkerable.choreTypeFetch = Db.Get().ChoreTypes.MachineFetch.IdHash;
@@ -133,24 +137,24 @@ namespace MechanicsStation
         // добавление построек для улучшения
         private static List<string> BuildingWithElementConverterStopList = new List<string>()
         {
-            "ResearchCenter",
-            "AdvancedResearchCenter",
-            "CosmicResearchCenter",
-            "OilRefinery",               // ограничение по трубе
+            ResearchCenterConfig.ID,            // слишком читерно
+            AdvancedResearchCenterConfig.ID,
+            CosmicResearchCenterConfig.ID,
+            OilRefineryConfig.ID,               // ограничение по трубе
         };
 
         private static List<string> BuildingWithComplexFabricatorWorkableStopList = new List<string>()
         {
-            "GenericFabricator",         // странная хрень
-            "EggCracker",
+            GenericFabricatorConfig.ID,         // странная старая хрень
+            EggCrackerConfig.ID,                // было бы нелепо ;-D
         };
 
-        [HarmonyPatch(typeof(Assets), "AddBuildingDef")]
+        [HarmonyPatch(typeof(Assets), nameof(Assets.AddBuildingDef))]
         internal static class Assets_AddBuildingDef
         {
             private static void Prefix(ref BuildingDef def)
             {
-                GameObject go = def.BuildingComplete;
+                var go = def.BuildingComplete;
                 if (go != null)
                 {
                     // перерабатывающие постройки, требующие искричество
@@ -158,34 +162,35 @@ namespace MechanicsStation
                     {
                         MakeMachineTinkerable(go);
 
+                        // todo: поразмыслить, как это можно сделать чтобы параметры устанавливались перед загрузкой сейва
                         // увеличить всасывание (впервую очередь для скруббера)
-                        ElementConsumer elementConsumer = go.GetComponent<PassiveElementConsumer>();
+                        var elementConsumer = go.GetComponent<PassiveElementConsumer>();
                         if (elementConsumer != null)
                         {
-                            elementConsumer.consumptionRate *= 1f + MechanicsStationConfig.MACHINERYSPEEDMODIFIERMULTIPLIER;
-                            elementConsumer.capacityKG *= 1f + MechanicsStationConfig.MACHINERYSPEEDMODIFIERMULTIPLIER;
+                            elementConsumer.consumptionRate *= 1f + MACHINERY_SPEED_MODIFIER;
+                            elementConsumer.capacityKG *= 1f + MACHINERY_SPEED_MODIFIER;
                         }
 
                         // увеличить ёмкость потребления из трубы
-                        foreach (ConduitConsumer conduitConsumer in go.GetComponents<ConduitConsumer>())
+                        foreach (var conduitConsumer in go.GetComponents<ConduitConsumer>())
                         {
                             if (conduitConsumer != null)
                             {
-                                conduitConsumer.consumptionRate *= 1f + MechanicsStationConfig.MACHINERYSPEEDMODIFIERMULTIPLIER;
-                                conduitConsumer.capacityKG *= 1f + MechanicsStationConfig.MACHINERYSPEEDMODIFIERMULTIPLIER;
+                                conduitConsumer.consumptionRate *= 1f + MACHINERY_SPEED_MODIFIER;
+                                conduitConsumer.capacityKG *= 1f + MACHINERY_SPEED_MODIFIER;
                             }
                         }
 
                         // скважина
-                        if (def.PrefabID == "OilWellCap")
+                        if (def.PrefabID == OilWellCapConfig.ID)
                         {
                             go.AddOrGet<TinkerableWorkable>();
                         }
                         // удобрятор
-                        if (def.PrefabID == "FertilizerMaker")
+                        if (def.PrefabID == FertilizerMakerConfig.ID)
                         {
                             go.AddOrGet<TinkerableFertilizerMaker>();
-                            BuildingElementEmitter buildingElementEmitter = go.GetComponent<BuildingElementEmitter>();
+                            var buildingElementEmitter = go.GetComponent<BuildingElementEmitter>();
                             if (buildingElementEmitter != null)
                             {
                                 TinkerableFertilizerMaker.base_methane_production_rate = buildingElementEmitter.emitRate;
@@ -203,12 +208,12 @@ namespace MechanicsStation
         }
 
         // хак для повышения скорости работы фабрикаторов
-        [HarmonyPatch(typeof(Workable), "GetEfficiencyMultiplier")]
+        [HarmonyPatch(typeof(Workable), nameof(Workable.GetEfficiencyMultiplier))]
         internal static class Workable_GetEfficiencyMultiplier
         {
             private static void Postfix(Workable __instance, ref float __result)
             {
-                TinkerableWorkable tinkerableWorkable = __instance.GetComponent<TinkerableWorkable>();
+                var tinkerableWorkable = __instance.GetComponent<TinkerableWorkable>();
                 if (tinkerableWorkable != null)
                 {
                     __result *= tinkerableWorkable.GetCraftingSpeedMultiplier();
@@ -217,12 +222,12 @@ namespace MechanicsStation
         }
 
         // хак для повышения скорости выработки газа скважиной
-        [HarmonyPatch(typeof(OilWellCap), "AddGasPressure")]
+        [HarmonyPatch(typeof(OilWellCap), nameof(OilWellCap.AddGasPressure))]
         internal static class OilWellCap_AddGasPressure
         {
             private static void Prefix(OilWellCap __instance, ref float dt)
             {
-                TinkerableWorkable tinkerableWorkable = __instance.GetComponent<TinkerableWorkable>();
+                var tinkerableWorkable = __instance.GetComponent<TinkerableWorkable>();
                 if (tinkerableWorkable != null)
                 {
                     dt *= tinkerableWorkable.GetMachinerySpeedMultiplier();
@@ -235,7 +240,7 @@ namespace MechanicsStation
         // объявляем растением саму нефтяную дырку, чтобы она получала сообщения о комнатах
         // и перенаправляем сообщения в скважину
 
-        [HarmonyPatch(typeof(OilWellConfig), "CreatePrefab")]
+        [HarmonyPatch(typeof(OilWellConfig), nameof(OilWellConfig.CreatePrefab))]
         internal static class OilWellConfig_CreatePrefab
         {
             private static void Postfix(ref GameObject __result)
@@ -247,11 +252,8 @@ namespace MechanicsStation
         private static void RetriggerOnUpdateRoom(this BuildingAttachPoint buildingAttachPoint, object data)
         {
             for (int i = 0; i < buildingAttachPoint.points.Length; i++)
-            {
-                if (buildingAttachPoint.points[i].attachedBuilding != null)
-                {
-                    buildingAttachPoint.points[i].attachedBuilding.Trigger((int)GameHashes.UpdateRoom, data);
-                }
+            {   
+                buildingAttachPoint.points[i].attachedBuilding?.Trigger((int)GameHashes.UpdateRoom, data);
             }
         }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using Harmony;
+﻿using Harmony;
 using Klei.AI;
 
 namespace MechanicsStation
@@ -17,15 +16,15 @@ namespace MechanicsStation
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            Subscribe((int)GameHashes.EffectAdded, new Action<object>(OnEffectChanged));
-            Subscribe((int)GameHashes.EffectRemoved, new Action<object>(OnEffectChanged));
+            Subscribe((int)GameHashes.EffectAdded, OnEffectChanged);
+            Subscribe((int)GameHashes.EffectRemoved, OnEffectChanged);
             OnEffectChanged(null);
         }
 
         protected override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.EffectAdded, new Action<object>(OnEffectChanged));
-            Unsubscribe((int)GameHashes.EffectRemoved, new Action<object>(OnEffectChanged));
+            Unsubscribe((int)GameHashes.EffectAdded, OnEffectChanged);
+            Unsubscribe((int)GameHashes.EffectRemoved, OnEffectChanged);
             base.OnCleanUp();
         }
 
@@ -33,7 +32,7 @@ namespace MechanicsStation
         {
             if (buildingElementEmitter != null)
             {
-                buildingElementEmitter.emitRate = base_methane_production_rate * gameObject.GetAttributes().GetValue(MechanicsStationConfig.MACHINERYSPEEDMODIFIERNAME);
+                buildingElementEmitter.emitRate = base_methane_production_rate * gameObject.GetAttributes().GetValue(MechanicsStationPatches.MACHINERY_SPEED_MODIFIER_NAME);
                 Traverse.Create(buildingElementEmitter).Field<bool>("dirty").Value = true;
             }
         }

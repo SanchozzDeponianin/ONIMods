@@ -10,18 +10,11 @@ namespace MechanicsStation
         public static readonly Tag MATERIAL_FOR_TINKER = GameTags.RefinedMetal;
         public static readonly Tag TINKER_TOOLS = MachinePartsConfig.TAG;
         public const float MASS_PER_TINKER = 5f;
-        public static readonly string ROLE_PERK = "CanMachineTinker";
         public const float OUTPUT_TEMPERATURE = 308.15f;
-        public const string MACHINETINKEREFFECT = "Machine_Tinker";
-
-        public const string MACHINERYSPEEDMODIFIERNAME          = "MachinerySpeed";
-        public const float  MACHINERYSPEEDMODIFIERMULTIPLIER    = 0.5f;
-        public const string CRAFTINGSPEEDMODIFIERNAME           = "CraftingSpeed";
-        public const float  CRAFTINGSPEEDMODIFIERMULTIPLIER     = 1f;
 
         public override BuildingDef CreateBuildingDef()
         {
-            BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(
+            var buildingDef = BuildingTemplates.CreateBuildingDef(
                 id: ID, 
                 width: 2, 
                 height: 2, 
@@ -51,27 +44,27 @@ namespace MechanicsStation
         public override void DoPostConfigureComplete(GameObject go)
         {
             go.AddOrGet<LogicOperationalController>();
-            Storage storage = go.AddOrGet<Storage>();
+            var storage = go.AddOrGet<Storage>();
             storage.capacityKg = 50f;
             storage.showInUI = true;
             storage.storageFilters = new List<Tag> { MATERIAL_FOR_TINKER };
-            TinkerStation tinkerStation = go.AddOrGet<TinkerStation>();
+            var tinkerStation = go.AddOrGet<TinkerStation>();
             tinkerStation.overrideAnims = new KAnimFile[1] { Assets.GetAnim("anim_interacts_craftingstation_kanim") };
             tinkerStation.inputMaterial = MATERIAL_FOR_TINKER;
             tinkerStation.massPerTinker = MASS_PER_TINKER;
             tinkerStation.outputPrefab = TINKER_TOOLS;
             tinkerStation.outputTemperature = OUTPUT_TEMPERATURE;
-            tinkerStation.requiredSkillPerk = ROLE_PERK;
+            tinkerStation.requiredSkillPerk = MechanicsStationPatches.REQUIRED_ROLE_PERK;
             tinkerStation.choreType = Db.Get().ChoreTypes.MachineTinker.IdHash;
             tinkerStation.useFilteredStorage = true;
             tinkerStation.fetchChoreType = Db.Get().ChoreTypes.MachineFetch.IdHash;
-            RoomTracker roomTracker = go.AddOrGet<RoomTracker>();
+            var roomTracker = go.AddOrGet<RoomTracker>();
             roomTracker.requiredRoomType = Db.Get().RoomTypes.MachineShop.Id;
             roomTracker.requirement = RoomTracker.Requirement.Required;
             Prioritizable.AddRef(go);
-            go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject game_object)
+            go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject gameObject)
             {
-                TinkerStation component = game_object.GetComponent<TinkerStation>();
+                var component = gameObject.GetComponent<TinkerStation>();
                 component.AttributeConverter = Db.Get().AttributeConverters.MachinerySpeed;
                 component.AttributeExperienceMultiplier = DUPLICANTSTATS.ATTRIBUTE_LEVELING.MOST_DAY_EXPERIENCE;
                 component.SkillExperienceSkillGroup = Db.Get().SkillGroups.Technicals.Id;
