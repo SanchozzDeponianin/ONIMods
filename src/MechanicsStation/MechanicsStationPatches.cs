@@ -4,7 +4,10 @@ using Database;
 using Klei.AI;
 using STRINGS;
 using UnityEngine;
+
 using SanchozzONIMods.Lib;
+using PeterHan.PLib;
+using PeterHan.PLib.Options;
 
 namespace MechanicsStation
 {
@@ -20,81 +23,75 @@ namespace MechanicsStation
 
         public static SkillPerk CanMachineTinker;
         public static Attribute CraftingSpeed;
-        public static Effect machineTinkerEffect;
+        public static Effect MachineTinkerEffect;
 
-        [HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
-        internal static class GeneratedBuildings_LoadGeneratedBuildings
+        public static void OnLoad()
         {
-            private static void Prefix()
-            {
-                Utils.AddBuildingToPlanScreen("Equipment", MechanicsStationConfig.ID, "PowerControlStation");
-            }
+            PUtil.InitLibrary();
+            PUtil.RegisterPatchClass(typeof(MechanicsStationPatches));
+            //POptions.RegisterOptions(typeof(MechanicsStationOptions));
         }
 
-        [HarmonyPatch(typeof(Db), "Initialize")]
-        internal static class Db_Initialize
+        [PLibMethod(RunAt.AfterModsLoad)]
+        private static void InitLocalization()
         {
-            private static void Prefix()
-            {
-                Utils.AddBuildingToTechnology("RefinedObjects", MechanicsStationConfig.ID);
-            }
-
-            private static void Postfix(ref Db __instance)
-            {
-                // тюнингуем и актифируем комнату
-                // подхватывать максимальный размер комнаты из тюнинга
-                int maxRoomSize = TuningData<RoomProber.Tuning>.Get().maxRoomSize;
-
-                RoomConstraints.Constraint MAXIMUM_SIZE_MAX = new RoomConstraints.Constraint(null, (Room room) => room.cavity.numCells <= maxRoomSize, 1, string.Format(ROOMS.CRITERIA.MAXIMUM_SIZE.NAME, maxRoomSize), string.Format(ROOMS.CRITERIA.MAXIMUM_SIZE.DESCRIPTION, maxRoomSize), null);
-
-                RoomConstraints.Constraint[] additional_constraints = __instance.RoomTypes.MachineShop.additional_constraints;
-                for (int i = 0; i < additional_constraints.Length; i++)
-                {
-                    if (additional_constraints[i] == RoomConstraints.MAXIMUM_SIZE_96)
-                    {
-                        additional_constraints[i] = MAXIMUM_SIZE_MAX;
-                        break;
-                    }
-                }
-
-                __instance.RoomTypes.Add(__instance.RoomTypes.MachineShop);
-
-                // добавляем перк для работы на станции
-                CanMachineTinker = __instance.SkillPerks.Add(new SimpleSkillPerk(REQUIRED_ROLE_PERK, STRINGS.PERK_CAN_MACHINE_TINKER.DESCRIPTION));
-                __instance.Skills.Technicals1.perks.Add(CanMachineTinker);
-            }
+            Utils.InitLocalization(typeof(STRINGS));
         }
 
-        // эффекты улучшения
-        [HarmonyPatch(typeof(ModifierSet), "LoadEffects")]
-        internal static class ModifierSet_LoadEffects
+        [PLibMethod(RunAt.BeforeDbInit)]
+        private static void AddBuilding()
         {
-            private static void Postfix(ModifierSet __instance)
-            {
-                string text = DUPLICANTS.MODIFIERS.MACHINETINKER.NAME;
-                string description = STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP;
-
-                if (CraftingSpeed == null)
-                {
-                    CraftingSpeed = __instance.Attributes.Add(new Attribute(CRAFTING_SPEED_MODIFIER_NAME, false, Attribute.Display.General, false, 1f));
-                    CraftingSpeed.SetFormatter(new PercentAttributeFormatter());
-                }
-
-                if (machineTinkerEffect == null)
-                {
-                    machineTinkerEffect = __instance.effects.Add(new Effect(MACHINE_TINKER_EFFECT_NAME, text, description, MACHINE_TINKER_EFFECT_DURATION * Constants.SECONDS_PER_CYCLE, true, true, false));
-                    machineTinkerEffect.Add(new AttributeModifier(MACHINERY_SPEED_MODIFIER_NAME, MACHINERY_SPEED_MODIFIER, text));
-                    machineTinkerEffect.Add(new AttributeModifier(CRAFTING_SPEED_MODIFIER_NAME, CRAFTING_SPEED_MODIFIER, text));
-                }
-            }
+            Utils.AddBuildingToPlanScreen("Equipment", MechanicsStationConfig.ID, PowerControlStationConfig.ID);
+            Utils.AddBuildingToTechnology("RefinedObjects", MechanicsStationConfig.ID);
         }
 
-        [HarmonyPatch(typeof(Localization), "Initialize")]
-        internal static class Localization_Initialize
+        [PLibMethod(RunAt.AfterDbInit)]
+        private static void InitDb()
         {
-            private static void Postfix()
+            var db = Db.Get();
+
+            // тюнингуем и актифируем комнату
+            // подхватывать максимальный размер комнаты из тюнинга
+            int maxRoomSize = TuningData<RoomProber.Tuning>.Get().maxRoomSize;
+            RoomConstraints.Constraint MAXIMUM_SIZE_MAX = new RoomConstraints.Constraint(
+                building_criteria: null, 
+                room_criteria: (Room room) => room.cavity.numCells <= maxRoomSize, 
+                times_required: 1, 
+                name: string.Format(ROOMS.CRITERIA.MAXIMUM_SIZE.NAME, maxRoomSize), 
+                description: string.Format(ROOMS.CRITERIA.MAXIMUM_SIZE.DESCRIPTION, maxRoomSize), 
+                stomp_in_conflict: null);
+
+            var additional_constraints = db.RoomTypes.MachineShop.additional_constraints;
+            for (int i = 0; i < additional_constraints.Length; i++)
             {
-                Utils.InitLocalization(typeof(STRINGS));    
+                if (additional_constraints[i] == RoomConstraints.MAXIMUM_SIZE_96)
+                {
+                    additional_constraints[i] = MAXIMUM_SIZE_MAX;
+                    break;
+                }
+            }
+
+            db.RoomTypes.Add(db.RoomTypes.MachineShop);
+
+            // добавляем перк для работы на станции
+            CanMachineTinker = db.SkillPerks.Add(new SimpleSkillPerk(REQUIRED_ROLE_PERK, STRINGS.PERK_CAN_MACHINE_TINKER.DESCRIPTION));
+            db.Skills.Technicals1.perks.Add(CanMachineTinker);
+
+            // добавляем модификаторы и эффекты 
+            string text = DUPLICANTS.MODIFIERS.MACHINETINKER.NAME;
+            string description = STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP;
+
+            if (CraftingSpeed == null)
+            {
+                CraftingSpeed = db.Attributes.Add(new Attribute(CRAFTING_SPEED_MODIFIER_NAME, false, Attribute.Display.General, false, 1f));
+                CraftingSpeed.SetFormatter(new PercentAttributeFormatter());
+            }
+
+            if (MachineTinkerEffect == null)
+            {
+                MachineTinkerEffect = db.effects.Add(new Effect(MACHINE_TINKER_EFFECT_NAME, text, description, MACHINE_TINKER_EFFECT_DURATION * Constants.SECONDS_PER_CYCLE, true, true, false));
+                MachineTinkerEffect.Add(new AttributeModifier(MACHINERY_SPEED_MODIFIER_NAME, MACHINERY_SPEED_MODIFIER, text));
+                MachineTinkerEffect.Add(new AttributeModifier(CRAFTING_SPEED_MODIFIER_NAME, CRAFTING_SPEED_MODIFIER, text));
             }
         }
 
@@ -252,7 +249,7 @@ namespace MechanicsStation
         private static void RetriggerOnUpdateRoom(this BuildingAttachPoint buildingAttachPoint, object data)
         {
             for (int i = 0; i < buildingAttachPoint.points.Length; i++)
-            {   
+            {
                 buildingAttachPoint.points[i].attachedBuilding?.Trigger((int)GameHashes.UpdateRoom, data);
             }
         }
