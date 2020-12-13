@@ -15,17 +15,17 @@ namespace MechanicsStation
         public override BuildingDef CreateBuildingDef()
         {
             var buildingDef = BuildingTemplates.CreateBuildingDef(
-                id: ID, 
-                width: 2, 
-                height: 2, 
+                id: ID,
+                width: 2,
+                height: 2,
                 anim: "craftingstation_kanim",
                 hitpoints: BUILDINGS.HITPOINTS.TIER1,
-                construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER2, 
-                construction_mass: BUILDINGS.CONSTRUCTION_MASS_KG.TIER3, 
-                construction_materials: MATERIALS.ALL_METALS, 
-                melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER1, 
-                build_location_rule: BuildLocationRule.OnFloor, 
-                decor: BUILDINGS.DECOR.NONE, 
+                construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER2,
+                construction_mass: BUILDINGS.CONSTRUCTION_MASS_KG.TIER3,
+                construction_materials: MATERIALS.ALL_METALS,
+                melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER1,
+                build_location_rule: BuildLocationRule.OnFloor,
+                decor: BUILDINGS.DECOR.NONE,
                 noise: NOISE_POLLUTION.NOISY.TIER1);
             buildingDef.ViewMode = OverlayModes.Rooms.ID;
             buildingDef.Overheatable = false;

@@ -32,9 +32,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\lib\BaseOptions.cs">
+      <Link>BaseOptions.cs</Link>
+    </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="MechanicsStationOptions.cs" />
     <Compile Include="MechanicsStationConfig.cs" />
     <Compile Include="MechanicsStationPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

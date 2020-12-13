@@ -170,5 +170,10 @@ namespace SanchozzONIMods.Lib
             LocString newlocString = new LocString(locString.text.Replace(search, replacement), locString.key.String);
             locString = newlocString;
         }
+        public static void ReplaceLocString(ref LocString locString, string newtext)
+        {
+            LocString newlocString = new LocString(newtext, locString.key.String);
+            locString = newlocString;
+        }
     }
 }

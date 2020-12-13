@@ -13,23 +13,27 @@ namespace MechanicsStation
 {
     internal static class MechanicsStationPatches
     {
+        public const float BASE_SPEED_VALUE = 1f;
         public const string MACHINERY_SPEED_MODIFIER_NAME = "MachinerySpeed";
         public const float MACHINERY_SPEED_MODIFIER = 0.5f;
         public const string CRAFTING_SPEED_MODIFIER_NAME = "CraftingSpeed";
         public const float CRAFTING_SPEED_MODIFIER = 1f;
         public const string MACHINE_TINKER_EFFECT_NAME = "Machine_Tinker";
         public const float MACHINE_TINKER_EFFECT_DURATION = 2f;
+        public const float MACHINE_TINKERABLE_WORKTIME = 20f;
         public const string REQUIRED_ROLE_PERK = "CanMachineTinker";
 
-        public static SkillPerk CanMachineTinker;
-        public static Attribute CraftingSpeed;
-        public static Effect MachineTinkerEffect;
+        private static SkillPerk CanMachineTinker;
+        internal static Attribute CraftingSpeed;
+        private static AttributeModifier MachinerySpeedModifier;
+        private static AttributeModifier CraftingSpeedModifier;
+        private static Effect MachineTinkerEffect;
 
         public static void OnLoad()
         {
             PUtil.InitLibrary();
             PUtil.RegisterPatchClass(typeof(MechanicsStationPatches));
-            //POptions.RegisterOptions(typeof(MechanicsStationOptions));
+            POptions.RegisterOptions(typeof(MechanicsStationOptions));
         }
 
         [PLibMethod(RunAt.AfterModsLoad)]
@@ -54,11 +58,11 @@ namespace MechanicsStation
             // подхватывать максимальный размер комнаты из тюнинга
             int maxRoomSize = TuningData<RoomProber.Tuning>.Get().maxRoomSize;
             RoomConstraints.Constraint MAXIMUM_SIZE_MAX = new RoomConstraints.Constraint(
-                building_criteria: null, 
-                room_criteria: (Room room) => room.cavity.numCells <= maxRoomSize, 
-                times_required: 1, 
-                name: string.Format(ROOMS.CRITERIA.MAXIMUM_SIZE.NAME, maxRoomSize), 
-                description: string.Format(ROOMS.CRITERIA.MAXIMUM_SIZE.DESCRIPTION, maxRoomSize), 
+                building_criteria: null,
+                room_criteria: (Room room) => room.cavity.numCells <= maxRoomSize,
+                times_required: 1,
+                name: string.Format(ROOMS.CRITERIA.MAXIMUM_SIZE.NAME, maxRoomSize),
+                description: string.Format(ROOMS.CRITERIA.MAXIMUM_SIZE.DESCRIPTION, maxRoomSize),
                 stomp_in_conflict: null);
 
             var additional_constraints = db.RoomTypes.MachineShop.additional_constraints;
@@ -81,18 +85,24 @@ namespace MechanicsStation
             string text = DUPLICANTS.MODIFIERS.MACHINETINKER.NAME;
             string description = STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP;
 
-            if (CraftingSpeed == null)
-            {
-                CraftingSpeed = db.Attributes.Add(new Attribute(CRAFTING_SPEED_MODIFIER_NAME, false, Attribute.Display.General, false, 1f));
-                CraftingSpeed.SetFormatter(new PercentAttributeFormatter());
-            }
+            CraftingSpeed = db.Attributes.Add(new Attribute(CRAFTING_SPEED_MODIFIER_NAME, false, Attribute.Display.General, false, BASE_SPEED_VALUE));
+            CraftingSpeed.SetFormatter(new PercentAttributeFormatter());
 
-            if (MachineTinkerEffect == null)
-            {
-                MachineTinkerEffect = db.effects.Add(new Effect(MACHINE_TINKER_EFFECT_NAME, text, description, MACHINE_TINKER_EFFECT_DURATION * Constants.SECONDS_PER_CYCLE, true, true, false));
-                MachineTinkerEffect.Add(new AttributeModifier(MACHINERY_SPEED_MODIFIER_NAME, MACHINERY_SPEED_MODIFIER, text));
-                MachineTinkerEffect.Add(new AttributeModifier(CRAFTING_SPEED_MODIFIER_NAME, CRAFTING_SPEED_MODIFIER, text));
-            }
+            MachinerySpeedModifier = new AttributeModifier(MACHINERY_SPEED_MODIFIER_NAME, MACHINERY_SPEED_MODIFIER, text);
+            CraftingSpeedModifier = new AttributeModifier(CRAFTING_SPEED_MODIFIER_NAME, CRAFTING_SPEED_MODIFIER, text);
+
+            MachineTinkerEffect = db.effects.Add(new Effect(MACHINE_TINKER_EFFECT_NAME, text, description, MACHINE_TINKER_EFFECT_DURATION * Constants.SECONDS_PER_CYCLE, true, true, false));
+            MachineTinkerEffect.Add(MachinerySpeedModifier);
+            MachineTinkerEffect.Add(CraftingSpeedModifier);
+        }
+
+        [PLibMethod(RunAt.OnStartGame)]
+        private static void OnStartGame()
+        {
+            MechanicsStationOptions.Reload();
+            MachinerySpeedModifier.SetValue(MechanicsStationOptions.Instance.MachinerySpeedModifier / 100);
+            CraftingSpeedModifier.SetValue(MechanicsStationOptions.Instance.CraftingSpeedModifier / 100);
+            MachineTinkerEffect.duration = MechanicsStationOptions.Instance.MachineTinkerEffectDuration * Constants.SECONDS_PER_CYCLE;
         }
 
         // шестеренки
@@ -117,17 +127,26 @@ namespace MechanicsStation
         }
 
         // сделать постройку улучшаемой
-        private static Tinkerable MakeMachineTinkerable(GameObject prefab)
+        private static Tinkerable MakeMachineTinkerable(GameObject go)
         {
-            var tinkerable = Tinkerable.MakePowerTinkerable(prefab);
+            var tinkerable = Tinkerable.MakePowerTinkerable(go);
             tinkerable.tinkerMaterialTag = MechanicsStationConfig.TINKER_TOOLS;
             tinkerable.tinkerMaterialAmount = 1f;
             tinkerable.addedEffect = MACHINE_TINKER_EFFECT_NAME;
             tinkerable.requiredSkillPerk = REQUIRED_ROLE_PERK;
-            tinkerable.SetWorkTime(20f);
+            tinkerable.SetWorkTime(MACHINE_TINKERABLE_WORKTIME);
             tinkerable.choreTypeTinker = Db.Get().ChoreTypes.MachineTinker.IdHash;
             tinkerable.choreTypeFetch = Db.Get().ChoreTypes.MachineFetch.IdHash;
-            prefab.AddOrGet<RoomTracker>().requiredRoomType = Db.Get().RoomTypes.MachineShop.Id;
+            go.AddOrGet<RoomTracker>().requiredRoomType = Db.Get().RoomTypes.MachineShop.Id;
+            go.GetComponent<KPrefabID>().prefabSpawnFn += delegate (GameObject prefab)
+            {
+                var _tinkerable = prefab.GetComponent<Tinkerable>();
+                if (_tinkerable != null)
+                {
+                    _tinkerable.workTime = MechanicsStationOptions.Instance.MachineTinkerableWorkTime;
+                    _tinkerable.WorkTimeRemaining = Mathf.Min(_tinkerable.WorkTimeRemaining, _tinkerable.workTime);
+                }
+            };
             return tinkerable;
         }
 
@@ -158,24 +177,29 @@ namespace MechanicsStation
                     if (def.RequiresPowerInput && go.GetComponent<ElementConverter>() != null && !BuildingWithElementConverterStopList.Contains(def.PrefabID))
                     {
                         MakeMachineTinkerable(go);
-
-                        // todo: поразмыслить, как это можно сделать чтобы параметры устанавливались перед загрузкой сейва
                         // увеличить всасывание (впервую очередь для скруббера)
-                        var elementConsumer = go.GetComponent<PassiveElementConsumer>();
-                        if (elementConsumer != null)
-                        {
-                            elementConsumer.consumptionRate *= 1f + MACHINERY_SPEED_MODIFIER;
-                            elementConsumer.capacityKG *= 1f + MACHINERY_SPEED_MODIFIER;
-                        }
-
                         // увеличить ёмкость потребления из трубы
-                        foreach (var conduitConsumer in go.GetComponents<ConduitConsumer>())
+                        if (go.GetComponent<ConduitConsumer>() != null || go.GetComponent<PassiveElementConsumer>() != null)
                         {
-                            if (conduitConsumer != null)
+                            go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject prefab)
                             {
-                                conduitConsumer.consumptionRate *= 1f + MACHINERY_SPEED_MODIFIER;
-                                conduitConsumer.capacityKG *= 1f + MACHINERY_SPEED_MODIFIER;
-                            }
+                                float multiplier = BASE_SPEED_VALUE + (MechanicsStationOptions.Instance.MachinerySpeedModifier / 100);
+                                var elementConsumer = prefab.GetComponent<PassiveElementConsumer>();
+                                if (elementConsumer != null)
+                                {
+                                    elementConsumer.consumptionRate *= multiplier;
+                                    elementConsumer.capacityKG *= multiplier;
+                                }
+
+                                foreach (var conduitConsumer in prefab.GetComponents<ConduitConsumer>())
+                                {
+                                    if (conduitConsumer != null)
+                                    {
+                                        conduitConsumer.consumptionRate *= multiplier;
+                                        conduitConsumer.capacityKG *= multiplier;
+                                    }
+                                }
+                            };
                         }
 
                         // скважина

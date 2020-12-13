@@ -1,5 +1,5 @@
-﻿using Harmony;
-using Klei.AI;
+﻿using Klei.AI;
+using PeterHan.PLib.Detours;
 
 namespace MechanicsStation
 {
@@ -12,6 +12,8 @@ namespace MechanicsStation
         [MyCmpGet]
         private BuildingElementEmitter buildingElementEmitter;
 #pragma warning restore CS0649
+
+        private readonly IDetouredField<BuildingElementEmitter, bool> DIRTY = PDetours.DetourField<BuildingElementEmitter, bool>("dirty");
 
         protected override void OnSpawn()
         {
@@ -33,7 +35,8 @@ namespace MechanicsStation
             if (buildingElementEmitter != null)
             {
                 buildingElementEmitter.emitRate = base_methane_production_rate * gameObject.GetAttributes().GetValue(MechanicsStationPatches.MACHINERY_SPEED_MODIFIER_NAME);
-                Traverse.Create(buildingElementEmitter).Field<bool>("dirty").Value = true;
+                //Traverse.Create(buildingElementEmitter).Field<bool>("dirty").Value = true;
+                DIRTY.Set(buildingElementEmitter, true);
             }
         }
     }
