@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using KSerialization;
 using STRINGS;
 using UnityEngine;
 
@@ -10,7 +10,8 @@ using PeterHan.PLib.Detours;
 namespace Smelter
 {
     // наследуемся от металлургического завода. так как хочется повторно использовать много кода.
-    public class LiquidCooledFueledRefinery : LiquidCooledRefinery
+    [SerializationConfig(MemberSerialization.OptIn)]
+    public class LiquidCooledFueledRefinery : LiquidCooledRefinery, ICheckboxControl
     {
         public new class StatesInstance : GameStateMachine<States, StatesInstance, LiquidCooledFueledRefinery, object>.GameInstance
         {
@@ -115,12 +116,19 @@ namespace Smelter
         private static readonly IntPtr ComplexFabricator_OnSpawn_Ptr;
         private readonly System.Action ComplexFabricator_OnSpawn;
 
+        [Serialize]
+        private bool allowOverheating = false;
+
         public Tag fuelTag;
 
 #pragma warning disable CS0649
         [MyCmpReq]
         private ElementConverter elementConverter;
 #pragma warning restore CS0649
+
+        public string CheckboxTitleKey => "lalala";
+        public string CheckboxLabel => "allowOverheating";
+        public string CheckboxTooltip => "allowOverheating";
 
         static LiquidCooledFueledRefinery()
         {
@@ -170,22 +178,84 @@ namespace Smelter
             operational.SetFlag(coolantOutputPipeEmpty, !outoffuel);
             return outoffuel;
         }
-
+        /*
         protected override bool HasIngredients(ComplexRecipe recipe, Storage storage)
         {
             return base.HasIngredients(recipe, storage) && HasEnoughFuel();
-        }
+        }*/
 
         protected override List<GameObject> SpawnOrderProduct(ComplexRecipe recipe)
         {
             // todo: сделать обработку выходной воды
+            // если температура выше точки кипения - вылить на пол
+            // если общая масса на выходе больше лимита - нужно заказать опустошение
             var result = base.SpawnOrderProduct(recipe);
             operational.SetActive(false, false);
+
+            var pooledList = ListPool<GameObject, LiquidCooledFueledRefinery>.Allocate();
+            outStorage.Find(coolantTag, pooledList);
+
+            foreach (GameObject gameObject in pooledList)
+            {
+                var primaryElement = gameObject.GetComponent<PrimaryElement>();
+                if (primaryElement.Temperature > primaryElement.Element.highTemp)
+                {
+                    outStorage.Drop(gameObject);
+                    gameObject.GetComponent<Dumpable>()?.Dump(transform.GetPosition() + Vector3.right);
+                }
+            }
+            pooledList.Recycle();
             return result;
         }
 
         protected override void TransferCurrentRecipeIngredientsForBuild()
         {
+            // высчитать бесопастное повышение температуры для текущего рецепта
+            // брать из выходного хранилища, если температура бесопастна или разрешен перегрев. помещать в рабочее
+            // недостающую массу добрать из входного хранилища
+
+            Debug.Log("TransferCurrentRecipeIngredientsForBuild begin");
+
+            var firstresult = CurrentWorkingOrder.results[0];
+            var element = ElementLoader.GetElement(firstresult.material);
+            float energyDelta = GameUtil.CalculateEnergyDeltaForElementChange(firstresult.amount, element.specificHeatCapacity, element.highTemp, outputTemperature) * thermalFudge;
+
+            Debug.Log($"element = {element.name}, energyDelta = {energyDelta}");
+
+            var pooledList = ListPool<GameObject, LiquidCooledFueledRefinery>.Allocate();
+            outStorage.Find(coolantTag, pooledList);
+
+            float remaining_mass = minCoolantMass;
+            foreach (GameObject gameObject in pooledList)
+            {
+                var pickupable = gameObject.GetComponent<Pickupable>();
+                var primaryElement = pickupable.PrimaryElement;
+                float mass = primaryElement.Mass;
+                float temperatureDelta = GameUtil.CalculateTemperatureChange(primaryElement.Element.specificHeatCapacity, minCoolantMass, -energyDelta);
+
+                Debug.Log($"remaining_mass = {remaining_mass}, mass = {mass}, temperatureDelta = {temperatureDelta}");
+
+                if (mass > 0 && (allowOverheating || (primaryElement.Temperature + temperatureDelta < primaryElement.Element.highTemp)))
+                {
+                    if (mass <= remaining_mass)
+                    {
+                        outStorage.Transfer(gameObject, buildStorage, false, true);
+                        remaining_mass -= mass;
+                    }
+                    else
+                    {
+                        var take = pickupable.Take(remaining_mass);
+                        buildStorage.Store(take.gameObject, true);
+                        remaining_mass -= take.PrimaryElement.Mass;
+                    }
+                    if (remaining_mass <= 0)
+                        break;
+                }
+            }
+            pooledList.Recycle();
+
+            Debug.Log("TransferCurrentRecipeIngredientsForBuild end");
+
             base.TransferCurrentRecipeIngredientsForBuild();
         }
 
@@ -197,10 +267,14 @@ namespace Smelter
             PUtil.LogDebug("IsFunctional: " + operational.IsFunctional);
         }
 
-        public static void Test2(ComplexFabricator fabricator)
+        public bool GetCheckboxValue()
         {
-            PUtil.LogDebug("lalala");
+            return allowOverheating;
         }
 
+        public void SetCheckboxValue(bool value)
+        {
+            allowOverheating = value;
+        }
     }
 }

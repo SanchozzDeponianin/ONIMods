@@ -21,7 +21,7 @@ namespace Smelter
         private const float LIQUID_COOLED_HEAT_PORTION = 0.8f;
         private static readonly Tag COOLANT_TAG = GameTags.Liquid;
         private const float COOLANT_MASS = 400f;
-        private const float FUEL_STORE_CAPACITY = 400f;
+        private const float FUEL_STORE_CAPACITY = 300f;
         private const float FUEL_CONSUME_RATE = 2f;
         private static readonly Tag FUEL_TAG = SimHashes.RefinedCarbon.CreateTag();
         internal const float START_FUEL_MASS = BUILDINGS.FABRICATION_TIME_SECONDS.SHORT * FUEL_CONSUME_RATE;
@@ -38,7 +38,6 @@ namespace Smelter
 
         public override BuildingDef CreateBuildingDef()
         {
-            // todo: причесать константы и оттюнить
             var buildingDef = BuildingTemplates.CreateBuildingDef(
                 id: ID,
                 width: 3,
@@ -46,15 +45,17 @@ namespace Smelter
                 anim: "smelter_kanim",
                 hitpoints: BUILDINGS.HITPOINTS.TIER1,
                 construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER3,
-                construction_mass: BUILDINGS.CONSTRUCTION_MASS_KG.TIER5,
-                construction_materials: MATERIALS.ALL_MINERALS,
+                construction_mass: new float[] { BUILDINGS.CONSTRUCTION_MASS_KG.TIER3[0], BUILDINGS.CONSTRUCTION_MASS_KG.TIER4[0] },
+                construction_materials: new string[] { MATERIALS.METAL, MATERIALS.BUILDABLERAW },
                 melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER2,
                 build_location_rule: BuildLocationRule.OnFloor,
                 decor: BUILDINGS.DECOR.PENALTY.TIER2,
                 noise: NOISE_POLLUTION.NOISY.TIER6
                 );
             buildingDef.RequiresPowerInput = false;
-            buildingDef.SelfHeatKilowattsWhenActive = 16f;
+            buildingDef.SelfHeatKilowattsWhenActive = BUILDINGS.SELF_HEAT_KILOWATTS.TIER4;
+            buildingDef.ExhaustKilowattsWhenActive = BUILDINGS.EXHAUST_ENERGY_ACTIVE.TIER8;
+            buildingDef.OverheatTemperature = BUILDINGS.OVERHEAT_TEMPERATURES.HIGH_2;
             buildingDef.InputConduitType = ConduitType.Liquid;
             buildingDef.UtilityInputOffset = new CellOffset(1, 0);
             buildingDef.OutputConduitType = ConduitType.None;
