@@ -15,9 +15,42 @@ namespace Smelter
     {
         public new class StatesInstance : GameStateMachine<States, StatesInstance, LiquidCooledFueledRefinery, object>.GameInstance
         {
+            public Chore emptyChore;
+
             public StatesInstance(LiquidCooledFueledRefinery master) : base(master)
             {
             }
+
+            public void CreateEmptyChore()
+            {
+                if (emptyChore != null)
+                {
+                    emptyChore.Cancel("dupe");
+                }
+                emptyChore = new WorkChore<SmelterWorkableEmpty>(
+                    chore_type: Db.Get().ChoreTypes.EmptyStorage,
+                    target: master.GetComponent<SmelterWorkableEmpty>(),
+                    on_complete: OnEmptyComplete,
+                    only_when_operational: false,
+                    ignore_building_assignment: true
+                    );
+            }
+
+            public void CancelEmptyChore()
+            {
+                if (emptyChore != null)
+                {
+                    emptyChore.Cancel("Cancelled");
+                    emptyChore = null;
+                }
+            }
+
+            private void OnEmptyComplete(Chore chore)
+            {
+                emptyChore = null;
+                master.DropCoolant();
+            }
+
             public void UpdateStates()
             {
                 if (master.HasEnoughCoolant())
@@ -48,9 +81,11 @@ namespace Smelter
 
             public static StatusItem waitingForCoolantStatus;
             public static StatusItem waitingForFuelStatus;
+
+            public Signal coolant_too_hot;
             public Waiting waiting;
             public State ready;
-            //public State output_blocked; // todo: подумоть. сливать автоматом или дупликами
+            public State needsEmptying;
 
             public override void InitializeStates(out BaseState default_state)
             {
@@ -76,35 +111,46 @@ namespace Smelter
                         }
                     };
                 }
+                // todo: нужен StatusItem для опустошения
 
                 default_state = waiting;
                 // у нас нет выходной трубы, однако воспользуемся готовым флагом для обработки нехватки топлива
-                // внимание! если событие OnStorageChange прилетело из глубины недр ComplexFabricator 
-                // попытка манипулировать флагами operational.SetFlag
+                // внимание! если событие OnStorageChange (или иное событие) 
+                // прилетело из глубины недр ComplexFabricator в процессе выполнения рецепта
+                // то попытка манипулировать флагами operational.SetFlag
                 // приводит к хитровыебанному вылету в недрах ComplexFabricator
-                // поэтому выключать флаг нужно только в проверке IsOutOfFuel
+                // поэтому выключать флаг нужно только в проверке IsOutOfFuel (прилетает от ElementConverter)
+                // или в проверках выполняемых не во время выполнения рецепта
+                root
+                    .OnSignal(coolant_too_hot, needsEmptying);
                 waiting
-                    .Enter((StatesInstance smi) => smi.master.Test("Enter waiting"))
                     .Enter((StatesInstance smi) => smi.UpdateStates())
                     .EventHandler(GameHashes.OnStorageChange, (StatesInstance smi) => smi.UpdateStates());
                 waiting.for_coolant
-                    .Enter((StatesInstance smi) => smi.master.Test("Enter for_coolant"))
                     .ToggleStatusItem(waitingForCoolantStatus, (StatesInstance smi) => smi.master);
                 waiting.for_fuel
-                    .Enter((StatesInstance smi) => smi.master.Test("Enter for_fuel"))
                     .ToggleStatusItem(waitingForFuelStatus, (StatesInstance smi) => smi.master);
                 waiting.for_coolant_and_fuel
-                    .Enter((StatesInstance smi) => smi.master.Test("Enter for_coolant_and_fuel"))
                     .ToggleStatusItem(waitingForCoolantStatus, (StatesInstance smi) => smi.master)
                     .ToggleStatusItem(waitingForFuelStatus, (StatesInstance smi) => smi.master);
                 ready
-                    .Enter((StatesInstance smi) => smi.master.Test("Enter ready"))
                     .Enter((StatesInstance smi) =>
                     {
                         smi.master.SetQueueDirty();
                         smi.master.operational.SetFlag(coolantOutputPipeEmpty, true);
                     })
                     .EventTransition(GameHashes.OnStorageChange, waiting, (StatesInstance smi) => !smi.master.HasEnoughCoolant() || smi.master.IsOutOfFuel());
+                needsEmptying
+                    .Enter((StatesInstance smi) =>
+                    {
+                        smi.master.operational.SetFlag(coolantOutputPipeEmpty, false);
+                        smi.master.SetQueueDirty();
+                        smi.Trigger((int)GameHashes.DroppedAll); // обработчик в ComplexFabricator очищает и обновляет очередь задач. должно помочь предотвратить сбои
+                        smi.CreateEmptyChore();
+                    })
+                    .Exit((StatesInstance smi) => smi.CancelEmptyChore())
+                    .EventTransition(GameHashes.OnStorageChange, waiting, (StatesInstance smi) => smi.master.IsHotCoolantIsRemoved())
+                    .ToggleStatusItem(Db.Get().BuildingStatusItems.DesalinatorNeedsEmptying);
             }
         }
 
@@ -119,6 +165,7 @@ namespace Smelter
         [Serialize]
         private bool allowOverheating = false;
 
+        public float maxCoolantMass;
         public Tag fuelTag;
 
 #pragma warning disable CS0649
@@ -126,9 +173,9 @@ namespace Smelter
         private ElementConverter elementConverter;
 #pragma warning restore CS0649
 
-        public string CheckboxTitleKey => "lalala";
-        public string CheckboxLabel => "allowOverheating";
-        public string CheckboxTooltip => "allowOverheating";
+        string ICheckboxControl.CheckboxTitleKey => "lalala";
+        string ICheckboxControl.CheckboxLabel => "allowOverheating";
+        string ICheckboxControl.CheckboxTooltip => "allowOverheating";
 
         static LiquidCooledFueledRefinery()
         {
@@ -178,49 +225,71 @@ namespace Smelter
             operational.SetFlag(coolantOutputPipeEmpty, !outoffuel);
             return outoffuel;
         }
-        /*
-        protected override bool HasIngredients(ComplexRecipe recipe, Storage storage)
-        {
-            return base.HasIngredients(recipe, storage) && HasEnoughFuel();
-        }*/
 
-        protected override List<GameObject> SpawnOrderProduct(ComplexRecipe recipe)
+        internal bool IsHotCoolantIsRemoved()
         {
-            // todo: сделать обработку выходной воды
-            // если температура выше точки кипения - вылить на пол
-            // если общая масса на выходе больше лимита - нужно заказать опустошение
-            var result = base.SpawnOrderProduct(recipe);
-            operational.SetActive(false, false);
+            return !outStorage.Has(coolantTag);
+        }
+
+        // формулы расчета тепла и прироста температуры для порции хладагента массой minCoolantMass
+        // для правильности расчета должны быть аналогичны формулам внутри LiquidCooledRefinery.SpawnOrderProduct
+        private float CalculateEnergyDelta(ComplexRecipe recipe)
+        {
+            var firstresult = recipe.results[0];
+            var element = ElementLoader.GetElement(firstresult.material);
+            return GameUtil.CalculateEnergyDeltaForElementChange(firstresult.amount, element.specificHeatCapacity, element.highTemp, outputTemperature) * thermalFudge;
+        }
+
+        private float CalculateTemperatureDelta(PrimaryElement primaryElement, float energyDelta)
+        {
+            return GameUtil.CalculateTemperatureChange(primaryElement.Element.specificHeatCapacity, minCoolantMass, -energyDelta);
+        }
+
+        internal void CheckCoolantIsTooHot()
+        {
+            // если общая масса на выходе слишком горячая и больше лимита - нужно заказать опустошение
+            // если разрешен перегрев, или отсутствует следующий в очереди заказ - проверка не нужна
+            if (allowOverheating || !operational.IsOperational)
+                return;
+
+            var nextorder = CurrentWorkingOrder ?? NextOrder;
+            if (nextorder == null)
+                return;
+
+            float total_mass = outStorage.GetAmountAvailable(coolantTag);
+            if (total_mass < maxCoolantMass)
+                return;
+
+            // если масса отработанного хладагента превышает лимит, 
+            // проверяем сколько его можно бесопасно использовать для следующего в очереди рецепта
+            float energyDelta = CalculateEnergyDelta(nextorder);
 
             var pooledList = ListPool<GameObject, LiquidCooledFueledRefinery>.Allocate();
             outStorage.Find(coolantTag, pooledList);
-
             foreach (GameObject gameObject in pooledList)
             {
                 var primaryElement = gameObject.GetComponent<PrimaryElement>();
-                if (primaryElement.Temperature > primaryElement.Element.highTemp)
+                float mass = primaryElement.Mass;
+                float temperatureDelta = CalculateTemperatureDelta(primaryElement, energyDelta);
+                if (mass > 0 && (primaryElement.Temperature + temperatureDelta < primaryElement.Element.highTemp))
                 {
-                    outStorage.Drop(gameObject);
-                    gameObject.GetComponent<Dumpable>()?.Dump(transform.GetPosition() + Vector3.right);
+                    total_mass -= mass;
                 }
             }
             pooledList.Recycle();
-            return result;
+
+            if (total_mass < maxCoolantMass)
+                return;
+
+            var smi = SMI.Get(this);
+            smi.sm.coolant_too_hot.Trigger(smi);
         }
 
-        protected override void TransferCurrentRecipeIngredientsForBuild()
+        private void ReuseCoolant()
         {
             // высчитать бесопастное повышение температуры для текущего рецепта
             // брать из выходного хранилища, если температура бесопастна или разрешен перегрев. помещать в рабочее
-            // недостающую массу добрать из входного хранилища
-
-            Debug.Log("TransferCurrentRecipeIngredientsForBuild begin");
-
-            var firstresult = CurrentWorkingOrder.results[0];
-            var element = ElementLoader.GetElement(firstresult.material);
-            float energyDelta = GameUtil.CalculateEnergyDeltaForElementChange(firstresult.amount, element.specificHeatCapacity, element.highTemp, outputTemperature) * thermalFudge;
-
-            Debug.Log($"element = {element.name}, energyDelta = {energyDelta}");
+            float energyDelta = CalculateEnergyDelta(CurrentWorkingOrder);
 
             var pooledList = ListPool<GameObject, LiquidCooledFueledRefinery>.Allocate();
             outStorage.Find(coolantTag, pooledList);
@@ -231,9 +300,7 @@ namespace Smelter
                 var pickupable = gameObject.GetComponent<Pickupable>();
                 var primaryElement = pickupable.PrimaryElement;
                 float mass = primaryElement.Mass;
-                float temperatureDelta = GameUtil.CalculateTemperatureChange(primaryElement.Element.specificHeatCapacity, minCoolantMass, -energyDelta);
-
-                Debug.Log($"remaining_mass = {remaining_mass}, mass = {mass}, temperatureDelta = {temperatureDelta}");
+                float temperatureDelta = CalculateTemperatureDelta(primaryElement, energyDelta);
 
                 if (mass > 0 && (allowOverheating || (primaryElement.Temperature + temperatureDelta < primaryElement.Element.highTemp)))
                 {
@@ -253,26 +320,52 @@ namespace Smelter
                 }
             }
             pooledList.Recycle();
+        }
 
-            Debug.Log("TransferCurrentRecipeIngredientsForBuild end");
+        internal void DropCoolant()
+        {
+            var position = Grid.CellToPosCCC(Grid.PosToCell(this), Grid.SceneLayer.Ore) + outputOffset;
+            var pooledList = ListPool<GameObject, LiquidCooledFueledRefinery>.Allocate();
+            outStorage.Find(coolantTag, pooledList);
+            foreach (GameObject gameObject in pooledList)
+            {
+                outStorage.Drop(gameObject)?.transform.SetPosition(position);
+            }
+            pooledList.Recycle();
+        }
 
+        protected override List<GameObject> SpawnOrderProduct(ComplexRecipe recipe)
+        {
+            // если температура выше точки кипения - вылить на пол
+            var result = base.SpawnOrderProduct(recipe);
+            operational.SetActive(false, false);
+
+            var pooledList = ListPool<GameObject, LiquidCooledFueledRefinery>.Allocate();
+            outStorage.Find(coolantTag, pooledList);
+            foreach (GameObject gameObject in pooledList)
+            {
+                var primaryElement = gameObject.GetComponent<PrimaryElement>();
+                if (primaryElement.Temperature > primaryElement.Element.highTemp)
+                {
+                    outStorage.Drop(gameObject)?.GetComponent<Dumpable>()?.Dump(transform.GetPosition() + Vector3.right);
+                }
+            }
+            pooledList.Recycle();
+            return result;
+        }
+
+        protected override void TransferCurrentRecipeIngredientsForBuild()
+        {
+            ReuseCoolant();
             base.TransferCurrentRecipeIngredientsForBuild();
         }
 
-        // todo: потом убрать
-        public void Test(string s)
-        {
-            PUtil.LogDebug(s);
-            PUtil.LogDebug("IsOperational: " + operational.IsOperational);
-            PUtil.LogDebug("IsFunctional: " + operational.IsFunctional);
-        }
-
-        public bool GetCheckboxValue()
+        bool ICheckboxControl.GetCheckboxValue()
         {
             return allowOverheating;
         }
 
-        public void SetCheckboxValue(bool value)
+        void ICheckboxControl.SetCheckboxValue(bool value)
         {
             allowOverheating = value;
         }

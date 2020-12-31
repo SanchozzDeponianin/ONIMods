@@ -68,8 +68,6 @@ namespace Smelter
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
-            // todo: сделать опустошение слишком горячей воды
-
             go.AddOrGet<DropAllWorkable>();
             go.AddOrGet<BuildingComplete>().isManuallyOperated = true;
             go.AddOrGet<FabricatorIngredientStatusManager>();
@@ -82,13 +80,14 @@ namespace Smelter
             BuildingTemplates.CreateComplexFabricatorStorage(go, lcfr);
             lcfr.coolantTag = COOLANT_TAG;
             lcfr.minCoolantMass = COOLANT_MASS;
+            lcfr.maxCoolantMass = COOLANT_MASS * 3;
             lcfr.outStorage.capacityKg = 2000f;
             lcfr.thermalFudge = LIQUID_COOLED_HEAT_PORTION;
             lcfr.fuelTag = FUEL_TAG;
             lcfr.inStorage.SetDefaultStoredItemModifiers(RefineryStoredItemModifiers);
             lcfr.buildStorage.SetDefaultStoredItemModifiers(RefineryStoredItemModifiers);
             lcfr.outStorage.SetDefaultStoredItemModifiers(RefineryStoredItemModifiers);
-            lcfr.outputOffset = new Vector3(1f, 0.5f);
+            lcfr.outputOffset = new Vector3(0.8f, 0.5f);
 
             var manualDeliveryKG = go.AddOrGet<ManualDeliveryKG>();
             manualDeliveryKG.SetStorage(lcfr.outStorage);
@@ -118,6 +117,10 @@ namespace Smelter
             {
                 new ElementConverter.OutputElement(CO2_EMIT_RATE, SimHashes.CarbonDioxide, CO2_OUTPUT_TEMPERATURE, false, false, 1f, 2f)
             };
+
+            var smelterWorkableEmpty = go.AddOrGet<SmelterWorkableEmpty>();
+            smelterWorkableEmpty.workTime = BUILDINGS.WORK_TIME_SECONDS.SHORT_WORK_TIME;
+            smelterWorkableEmpty.workLayer = Grid.SceneLayer.BuildingFront;
 
             Prioritizable.AddRef(go);
         }

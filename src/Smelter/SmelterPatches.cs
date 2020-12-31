@@ -38,5 +38,18 @@ namespace Smelter
                 SmelterConfig.ConfigureRecipes();
             }
         }
+
+        // проверяем отработанного хладагента перед началом следующего заказа.
+        // пытаемся предотвратить сбой при отключении в процессе работы
+        [HarmonyPatch(typeof(ComplexFabricator), "StartWorkingOrder")]
+        internal static class ComplexFabricator_StartWorkingOrder
+        {
+            private static bool Prefix(ComplexFabricator __instance, Operational ___operational)
+            {
+                
+                (__instance as LiquidCooledFueledRefinery)?.CheckCoolantIsTooHot();
+                return ___operational.IsOperational;
+            }
+        }
     }
 }
