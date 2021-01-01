@@ -1,0 +1,40 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.DESC
+msgctxt "Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.DESC"
+msgid ""
+msgstr ""
+
+#. Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.EFFECT
+msgctxt "Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.EFFECT"
+msgid "Produces <link=\"REFINEDMETAL\">Refined Metals</link> from raw <link=\"RAWMETAL\">Metal Ore</link>. Сonsumes <link=\"REFINEDCARBON\">Refined Carbon</link> as fuel.\n\nSignificantly <link=\"HEAT\">Heats</link> the <link=\"ELEMENTSLIQUID\">Liquid</link> piped into it. Must be clean out of too hot liquid, otherwise it will evaporate into the atmosphere.\n\nDuplicants will not fabricate items unless recipes are queued."
+msgstr ""
+
+#. Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.NAME
+msgctxt "Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.NAME"
+msgid "<link=\"SMELTER\">Smelter</link>"
+msgstr ""
+
+#. Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX
+msgctxt "Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX"
+msgid "Allow Overheating"
+msgstr ""
+
+#. Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX_TOOLTIP
+msgctxt "Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX_TOOLTIP"
+msgid "If enabled, the overheated Coolant will evaporate into the atmosphere\nIf disabled, Duplicants will empty too hot Coolant into bottles"
+msgstr ""
+
+#. Smelter.STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.NAME
+msgctxt "Smelter.STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.NAME"
+msgid "Requires Emptying"
+msgstr ""
+
+#. Smelter.STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.TOOLTIP
+msgctxt "Smelter.STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.TOOLTIP"
+msgid "This building needs to be emptied of <link=\"HEAT\">too hot</link> <link=\"ELEMENTSLIQUID\">Coolant</link> to resume function"
+msgstr ""
+

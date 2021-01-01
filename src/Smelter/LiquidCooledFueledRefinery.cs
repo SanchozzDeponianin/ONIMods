@@ -81,6 +81,7 @@ namespace Smelter
 
             public static StatusItem waitingForCoolantStatus;
             public static StatusItem waitingForFuelStatus;
+            public static StatusItem waitingForEmptying;
 
             public Signal coolant_too_hot;
             public Waiting waiting;
@@ -102,7 +103,7 @@ namespace Smelter
                 }
                 if (waitingForFuelStatus == null)
                 {
-                    waitingForFuelStatus = new StatusItem("waitingForFuelStatus", BUILDING.STATUSITEMS.ENOUGH_FUEL.NAME, BUILDING.STATUSITEMS.ENOUGH_FUEL.TOOLTIP, "status_item_fabricator_empty", StatusItem.IconType.Custom, NotificationType.BadMinor, false, OverlayModes.None.ID)
+                    waitingForFuelStatus = new StatusItem("waitingForFuelStatus", BUILDING.STATUSITEMS.ENOUGH_FUEL.NAME, BUILDING.STATUSITEMS.ENOUGH_FUEL.TOOLTIP, "status_item_resource_unavailable", StatusItem.IconType.Custom, NotificationType.BadMinor, false, OverlayModes.None.ID)
                     {
                         resolveStringCallback = delegate (string str, object obj)
                         {
@@ -111,7 +112,10 @@ namespace Smelter
                         }
                     };
                 }
-                // todo: нужен StatusItem для опустошения
+                if (waitingForEmptying == null)
+                {
+                    waitingForEmptying = new StatusItem("waitingForEmptying", STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.NAME, STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.TOOLTIP, "status_item_empty_pipe", StatusItem.IconType.Custom, NotificationType.BadMinor, false, OverlayModes.None.ID);
+                }
 
                 default_state = waiting;
                 // у нас нет выходной трубы, однако воспользуемся готовым флагом для обработки нехватки топлива
@@ -150,7 +154,7 @@ namespace Smelter
                     })
                     .Exit((StatesInstance smi) => smi.CancelEmptyChore())
                     .EventTransition(GameHashes.OnStorageChange, waiting, (StatesInstance smi) => smi.master.IsHotCoolantIsRemoved())
-                    .ToggleStatusItem(Db.Get().BuildingStatusItems.DesalinatorNeedsEmptying);
+                    .ToggleStatusItem(waitingForEmptying);
             }
         }
 
@@ -173,14 +177,17 @@ namespace Smelter
         private ElementConverter elementConverter;
 #pragma warning restore CS0649
 
-        string ICheckboxControl.CheckboxTitleKey => "lalala";
-        string ICheckboxControl.CheckboxLabel => "allowOverheating";
-        string ICheckboxControl.CheckboxTooltip => "allowOverheating";
+        string ICheckboxControl.CheckboxTitleKey => STRINGS.BUILDINGS.PREFABS.SMELTER.NAME.key.String;
+        string ICheckboxControl.CheckboxLabel => STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX;
+        string ICheckboxControl.CheckboxTooltip => STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX_TOOLTIP;
 
         static LiquidCooledFueledRefinery()
         {
-            // todo: сделать обработку внезапной ситуации
-            ComplexFabricator_OnSpawn_Ptr = PPatchTools.GetMethodSafe(typeof(ComplexFabricator), nameof(OnSpawn), false, PPatchTools.AnyArguments).MethodHandle.GetFunctionPointer();
+            var methodInfo = typeof(ComplexFabricator).GetMethodSafe(nameof(OnSpawn), false, PPatchTools.AnyArguments);
+            if (methodInfo == null)
+                PUtil.LogError("ComplexFabricator.OnSpawn method not found.");
+            else
+                ComplexFabricator_OnSpawn_Ptr = methodInfo.MethodHandle.GetFunctionPointer();
         }
 
         LiquidCooledFueledRefinery()

@@ -11,15 +11,14 @@ namespace Smelter
         {
             PUtil.InitLibrary();
             PUtil.RegisterPatchClass(typeof(SmelterPatches));
-            // todo: обдумать нужность опций
+            // todo: обдумать нужность опций. а) отключение доп рецептов. б) переиспользование воды в электроплавильне
             //POptions.RegisterOptions(typeof(SquirrelGeneratorOptions));
         }
 
         [PLibMethod(RunAt.AfterModsLoad)]
         private static void InitLocalization()
         {
-            // todo: сделать строки
-            //Utils.InitLocalization(typeof(STRINGS));
+            Utils.InitLocalization(typeof(STRINGS)/*, "", true*/);
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -51,5 +50,7 @@ namespace Smelter
                 return ___operational.IsOperational;
             }
         }
+
+        // todo: газообразные продукты нужно выпускать в атмосферу
     }
 }
