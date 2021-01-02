@@ -34,11 +34,40 @@ namespace Smelter
                 }
             }
         }
-
-        /*public class OPTIONS
+        // todo: доделать 
+        public class OPTIONS
         {
-            
-        }*/
+            public class KATAIRITE_TO_TUNGSTEN
+            {
+                public static LocString TITLE = "KATAIRITE_TO_TUNGSTEN";
+                public static LocString TOOLTIP = "";
+            }
+            public class PHOSPHORITE_TO_PHOSPHORUS
+            {
+                public static LocString TITLE = "PHOSPHORITE_TO_PHOSPHORUS";
+                public static LocString TOOLTIP = "";
+            }
+            public class PLASTIC_TO_NAPHTHA
+            {
+                public static LocString TITLE = "PLASTIC_TO_NAPHTHA";
+                public static LocString TOOLTIP = "";
+            }
+            public class WOOD_TO_CARBON
+            {
+                public static LocString TITLE = "WOOD_TO_CARBON";
+                public static LocString TOOLTIP = "";
+            }
+            public class DROP_OVERHEATED_COOLANT
+            {
+                public static LocString TITLE = "DROP_OVERHEATED_COOLANT";
+                public static LocString TOOLTIP = "";
+            }
+            public class REUSE_COOLANT
+            {
+                public static LocString TITLE = "REUSE_COOLANT";
+                public static LocString TOOLTIP = "";
+            }
+        }
 
         internal static void DoReplacement()
         {

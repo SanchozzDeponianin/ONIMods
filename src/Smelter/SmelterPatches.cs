@@ -1,7 +1,10 @@
-﻿using Harmony;
+﻿using System.Collections.Generic;
+using Harmony;
+using UnityEngine;
 
 using SanchozzONIMods.Lib;
 using PeterHan.PLib;
+using PeterHan.PLib.Options;
 
 namespace Smelter
 {
@@ -11,8 +14,7 @@ namespace Smelter
         {
             PUtil.InitLibrary();
             PUtil.RegisterPatchClass(typeof(SmelterPatches));
-            // todo: обдумать нужность опций. а) отключение доп рецептов. б) переиспользование воды в электроплавильне
-            //POptions.RegisterOptions(typeof(SquirrelGeneratorOptions));
+            POptions.RegisterOptions(typeof(SmelterOptions));
         }
 
         [PLibMethod(RunAt.AfterModsLoad)]
@@ -45,12 +47,60 @@ namespace Smelter
         {
             private static bool Prefix(ComplexFabricator __instance, Operational ___operational)
             {
-                
+
                 (__instance as LiquidCooledFueledRefinery)?.CheckCoolantIsTooHot();
                 return ___operational.IsOperational;
             }
         }
 
-        // todo: газообразные продукты нужно выпускать в атмосферу
+        // газообразные продукты нужно выпускать в атмосферу
+        // ограничимся только теми постройкаи куда мы добавили такие рецепты
+        private static List<string> fabricators = new List<string>() { SmelterConfig.ID, MetalRefineryConfig.ID, KilnConfig.ID };
+
+        [HarmonyPatch(typeof(ComplexFabricator), "SpawnOrderProduct")]
+        internal static class ComplexFabricator_SpawnOrderProduct
+        {
+            private static void Postfix(ComplexFabricator __instance, List<GameObject> __result)
+            {
+                if (fabricators.Contains(__instance.PrefabID().Name))
+                {
+                    foreach (GameObject gameObject in __result)
+                    {
+                        if (gameObject?.GetComponent<PrimaryElement>().Element.IsGas ?? false)
+                        {
+                            gameObject.GetComponent<Dumpable>()?.Dump();
+                        }
+                    }
+                }
+            }
+        }
+
+        // сброс перегретого хладагента
+        [HarmonyPatch(typeof(LiquidCooledRefinery), "SpawnOrderProduct")]
+        internal static class LiquidCooledRefinery_SpawnOrderProduct
+        {
+            private static void Postfix(LiquidCooledRefinery __instance)
+            {
+                if (__instance is LiquidCooledFueledRefinery || SmelterOptions.Instance.MetalRefineryDropOverheatedCoolant)
+                {
+                    __instance.DropOverheatedCoolant();
+                }
+            }
+        }
+
+        // переиспользование отработанного хладагента
+        [HarmonyPatch(typeof(LiquidCooledRefinery), "TransferCurrentRecipeIngredientsForBuild")]
+        internal static class LiquidCooledRefinery_TransferCurrentRecipeIngredientsForBuild
+        {
+            private static void Prefix(LiquidCooledRefinery __instance)
+            {
+                var lcfr = (__instance as LiquidCooledFueledRefinery);
+                bool allowOverheating = lcfr?.AllowOverheating ?? false;
+                if (lcfr != null || SmelterOptions.Instance.MetalRefineryReuseCoolant)
+                {
+                    __instance.ReuseCoolant(allowOverheating);
+                }
+            }
+        }
     }
 }

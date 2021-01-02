@@ -48,7 +48,7 @@ namespace Smelter
             private void OnEmptyComplete(Chore chore)
             {
                 emptyChore = null;
-                master.DropCoolant();
+                master.DropAllCoolant();
             }
 
             public void UpdateStates()
@@ -177,6 +177,7 @@ namespace Smelter
         private ElementConverter elementConverter;
 #pragma warning restore CS0649
 
+        public bool AllowOverheating { get => allowOverheating; }
         string ICheckboxControl.CheckboxTitleKey => STRINGS.BUILDINGS.PREFABS.SMELTER.NAME.key.String;
         string ICheckboxControl.CheckboxLabel => STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX;
         string ICheckboxControl.CheckboxTooltip => STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX_TOOLTIP;
@@ -238,20 +239,6 @@ namespace Smelter
             return !outStorage.Has(coolantTag);
         }
 
-        // формулы расчета тепла и прироста температуры для порции хладагента массой minCoolantMass
-        // для правильности расчета должны быть аналогичны формулам внутри LiquidCooledRefinery.SpawnOrderProduct
-        private float CalculateEnergyDelta(ComplexRecipe recipe)
-        {
-            var firstresult = recipe.results[0];
-            var element = ElementLoader.GetElement(firstresult.material);
-            return GameUtil.CalculateEnergyDeltaForElementChange(firstresult.amount, element.specificHeatCapacity, element.highTemp, outputTemperature) * thermalFudge;
-        }
-
-        private float CalculateTemperatureDelta(PrimaryElement primaryElement, float energyDelta)
-        {
-            return GameUtil.CalculateTemperatureChange(primaryElement.Element.specificHeatCapacity, minCoolantMass, -energyDelta);
-        }
-
         internal void CheckCoolantIsTooHot()
         {
             // если общая масса на выходе слишком горячая и больше лимита - нужно заказать опустошение
@@ -269,7 +256,7 @@ namespace Smelter
 
             // если масса отработанного хладагента превышает лимит, 
             // проверяем сколько его можно бесопасно использовать для следующего в очереди рецепта
-            float energyDelta = CalculateEnergyDelta(nextorder);
+            float energyDelta = this.CalculateEnergyDelta(nextorder);
 
             var pooledList = ListPool<GameObject, LiquidCooledFueledRefinery>.Allocate();
             outStorage.Find(coolantTag, pooledList);
@@ -277,7 +264,7 @@ namespace Smelter
             {
                 var primaryElement = gameObject.GetComponent<PrimaryElement>();
                 float mass = primaryElement.Mass;
-                float temperatureDelta = CalculateTemperatureDelta(primaryElement, energyDelta);
+                float temperatureDelta = this.CalculateTemperatureDelta(primaryElement, energyDelta);
                 if (mass > 0 && (primaryElement.Temperature + temperatureDelta < primaryElement.Element.highTemp))
                 {
                     total_mass -= mass;
@@ -292,44 +279,7 @@ namespace Smelter
             smi.sm.coolant_too_hot.Trigger(smi);
         }
 
-        private void ReuseCoolant()
-        {
-            // высчитать бесопастное повышение температуры для текущего рецепта
-            // брать из выходного хранилища, если температура бесопастна или разрешен перегрев. помещать в рабочее
-            float energyDelta = CalculateEnergyDelta(CurrentWorkingOrder);
-
-            var pooledList = ListPool<GameObject, LiquidCooledFueledRefinery>.Allocate();
-            outStorage.Find(coolantTag, pooledList);
-
-            float remaining_mass = minCoolantMass;
-            foreach (GameObject gameObject in pooledList)
-            {
-                var pickupable = gameObject.GetComponent<Pickupable>();
-                var primaryElement = pickupable.PrimaryElement;
-                float mass = primaryElement.Mass;
-                float temperatureDelta = CalculateTemperatureDelta(primaryElement, energyDelta);
-
-                if (mass > 0 && (allowOverheating || (primaryElement.Temperature + temperatureDelta < primaryElement.Element.highTemp)))
-                {
-                    if (mass <= remaining_mass)
-                    {
-                        outStorage.Transfer(gameObject, buildStorage, false, true);
-                        remaining_mass -= mass;
-                    }
-                    else
-                    {
-                        var take = pickupable.Take(remaining_mass);
-                        buildStorage.Store(take.gameObject, true);
-                        remaining_mass -= take.PrimaryElement.Mass;
-                    }
-                    if (remaining_mass <= 0)
-                        break;
-                }
-            }
-            pooledList.Recycle();
-        }
-
-        internal void DropCoolant()
+        internal void DropAllCoolant()
         {
             var position = Grid.CellToPosCCC(Grid.PosToCell(this), Grid.SceneLayer.Ore) + outputOffset;
             var pooledList = ListPool<GameObject, LiquidCooledFueledRefinery>.Allocate();
@@ -343,28 +293,9 @@ namespace Smelter
 
         protected override List<GameObject> SpawnOrderProduct(ComplexRecipe recipe)
         {
-            // если температура выше точки кипения - вылить на пол
             var result = base.SpawnOrderProduct(recipe);
             operational.SetActive(false, false);
-
-            var pooledList = ListPool<GameObject, LiquidCooledFueledRefinery>.Allocate();
-            outStorage.Find(coolantTag, pooledList);
-            foreach (GameObject gameObject in pooledList)
-            {
-                var primaryElement = gameObject.GetComponent<PrimaryElement>();
-                if (primaryElement.Temperature > primaryElement.Element.highTemp)
-                {
-                    outStorage.Drop(gameObject)?.GetComponent<Dumpable>()?.Dump(transform.GetPosition() + Vector3.right);
-                }
-            }
-            pooledList.Recycle();
             return result;
-        }
-
-        protected override void TransferCurrentRecipeIngredientsForBuild()
-        {
-            ReuseCoolant();
-            base.TransferCurrentRecipeIngredientsForBuild();
         }
 
         bool ICheckboxControl.GetCheckboxValue()
