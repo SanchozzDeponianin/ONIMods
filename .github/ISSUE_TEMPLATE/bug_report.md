@@ -26,9 +26,10 @@ assignees: ''
 3.
 4.
 
-## Output Log
-<!--- Include an output log to allow us to understand your issue. This file is located at -->
-
+## Game Log
+<!--- Include an game log to allow us to understand your issue. -->
+<!--- Please do not copy the contents of the log here. Just add it as an attachment. -->
+<!--- This file is located at -->
 <!--- Windows: %userprofile%\AppData\LocalLow\Klei\Oxygen Not Included\output.log -->
 <!--- Mac: ~/Library/Logs/Unity/Player.log -->
 <!--- Linux: ~/.config/unity3d/Klei/Oxygen Not Included/Player.log -->
