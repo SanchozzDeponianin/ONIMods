@@ -28,7 +28,7 @@ assignees: ''
 
 ## Game Log
 <!--- Include an game log to allow us to understand your issue. -->
-<!--- Please do not copy the contents of the log here. Just add it as an attachment. -->
+<!--- Please do not copypaste the contents of the log here. Just add it as an attachment. -->
 <!--- This file is located at -->
 <!--- Windows: %userprofile%\AppData\LocalLow\Klei\Oxygen Not Included\output.log -->
 <!--- Mac: ~/Library/Logs/Unity/Player.log -->
