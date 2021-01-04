@@ -38,3 +38,73 @@ msgctxt "Smelter.STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.TOOLTIP"
 msgid "This building needs to be emptied of <link=\"HEAT\">too hot</link> <link=\"ELEMENTSLIQUID\">Coolant</link> to resume function"
 msgstr ""
 
+#. Smelter.STRINGS.OPTIONS.DROP_OVERHEATED_COOLANT.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.DROP_OVERHEATED_COOLANT.TITLE"
+msgid "{METALREFINERY} will drop the overheated <style=\"KKeyword\">Coolant</style>"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.DROP_OVERHEATED_COOLANT.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.DROP_OVERHEATED_COOLANT.TOOLTIP"
+msgid "The overheated <style=\"KKeyword\">Coolant</style> is dropped directly into the atmosphere\nThis will help prevent damage to the output Pipe"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.FEATURES.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.FEATURES.TITLE"
+msgid "Enable some features for vanilla buildings"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.KATAIRITE_TO_TUNGSTEN.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.KATAIRITE_TO_TUNGSTEN.TITLE"
+msgid "Recipe {KATAIRITE} to {TUNGSTEN}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.KATAIRITE_TO_TUNGSTEN.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.KATAIRITE_TO_TUNGSTEN.TOOLTIP"
+msgid "Available at {SMELTER}, {METALREFINERY}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.PHOSPHORITE_TO_PHOSPHORUS.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.PHOSPHORITE_TO_PHOSPHORUS.TITLE"
+msgid "Recipe {PHOSPHORITE} to {PHOSPHORUS}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.PHOSPHORITE_TO_PHOSPHORUS.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.PHOSPHORITE_TO_PHOSPHORUS.TOOLTIP"
+msgid "Available at {SMELTER}, {GLASSFORGE}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.POLYPROPYLENE_TO_NAPHTHA.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.POLYPROPYLENE_TO_NAPHTHA.TITLE"
+msgid "Recipe {POLYPROPYLENE} to {NAPHTHA}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.POLYPROPYLENE_TO_NAPHTHA.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.POLYPROPYLENE_TO_NAPHTHA.TOOLTIP"
+msgid "Available at {SMELTER}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.RECIPES.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.RECIPES.TITLE"
+msgid "Enable new recipes"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.REUSE_COOLANT.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.REUSE_COOLANT.TITLE"
+msgid "{METALREFINERY} will re-use the waste <style=\"KKeyword\">Coolant</style>"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.REUSE_COOLANT.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.REUSE_COOLANT.TOOLTIP"
+msgid "This can speed up production and reduce <style=\"KKeyword\">Coolant</style> consumption"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.WOOD_TO_REFINEDCARBON.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.WOOD_TO_REFINEDCARBON.TITLE"
+msgid "Recipe {WOOD} to {REFINEDCARBON}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.WOOD_TO_REFINEDCARBON.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.WOOD_TO_REFINEDCARBON.TOOLTIP"
+msgid "Available at {KILN}"
+msgstr ""
+

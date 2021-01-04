@@ -17,15 +17,10 @@ namespace Smelter
             POptions.RegisterOptions(typeof(SmelterOptions));
         }
 
-        [PLibMethod(RunAt.AfterModsLoad)]
-        private static void InitLocalization()
-        {
-            Utils.InitLocalization(typeof(STRINGS)/*, "", true*/);
-        }
-
         [PLibMethod(RunAt.BeforeDbInit)]
         private static void AddBuilding()
         {
+            Utils.InitLocalization(typeof(STRINGS));
             Utils.AddBuildingToPlanScreen("Refining", SmelterConfig.ID, KilnConfig.ID);
             Utils.AddBuildingToTechnology("BasicRefinement", SmelterConfig.ID);
         }

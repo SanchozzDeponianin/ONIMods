@@ -1,4 +1,5 @@
-﻿using STRINGS;
+﻿using System.Linq;
+using STRINGS;
 using SanchozzONIMods.Lib;
 
 namespace Smelter
@@ -34,38 +35,63 @@ namespace Smelter
                 }
             }
         }
-        // todo: доделать 
+
+        private const string KATAIRITE = "{KATAIRITE}";
+        private const string TUNGSTEN = "{TUNGSTEN}";
+        private const string PHOSPHORITE = "{PHOSPHORITE}";
+        private const string PHOSPHORUS = "{PHOSPHORUS}";
+        private const string POLYPROPYLENE = "{POLYPROPYLENE}";
+        private const string NAPHTHA = "{NAPHTHA}";
+        private const string WOOD = "{WOOD}";
+        private const string REFINEDCARBON = "{REFINEDCARBON}";
+
+        private const string SMELTER = "{SMELTER}";
+        private const string METALREFINERY = "{METALREFINERY}";
+        private const string GLASSFORGE = "{GLASSFORGE}";
+        private const string KILN = "{KILN}";
+
         public class OPTIONS
         {
+            public class RECIPES
+            {
+                public static LocString TITLE = $"Enable new recipes";
+            }
+
             public class KATAIRITE_TO_TUNGSTEN
             {
-                public static LocString TITLE = "KATAIRITE_TO_TUNGSTEN";
-                public static LocString TOOLTIP = "";
+                public static LocString TITLE = $"Recipe {KATAIRITE} to {TUNGSTEN}";
+                public static LocString TOOLTIP = $"Available at {SMELTER}, {METALREFINERY}";
             }
             public class PHOSPHORITE_TO_PHOSPHORUS
             {
-                public static LocString TITLE = "PHOSPHORITE_TO_PHOSPHORUS";
-                public static LocString TOOLTIP = "";
+                public static LocString TITLE = $"Recipe {PHOSPHORITE} to {PHOSPHORUS}";
+                public static LocString TOOLTIP = $"Available at {SMELTER}, {GLASSFORGE}";
             }
-            public class PLASTIC_TO_NAPHTHA
+            public class POLYPROPYLENE_TO_NAPHTHA
             {
-                public static LocString TITLE = "PLASTIC_TO_NAPHTHA";
-                public static LocString TOOLTIP = "";
+                public static LocString TITLE = $"Recipe {POLYPROPYLENE} to {NAPHTHA}";
+                public static LocString TOOLTIP = $"Available at {SMELTER}";
             }
-            public class WOOD_TO_CARBON
+            public class WOOD_TO_REFINEDCARBON
             {
-                public static LocString TITLE = "WOOD_TO_CARBON";
-                public static LocString TOOLTIP = "";
+                public static LocString TITLE = $"Recipe {WOOD} to {REFINEDCARBON}";
+                public static LocString TOOLTIP = $"Available at {KILN}";
             }
+
+            public class FEATURES
+            {
+                public static LocString TITLE = $"Enable some features for vanilla buildings";
+            }
+
             public class DROP_OVERHEATED_COOLANT
             {
-                public static LocString TITLE = "DROP_OVERHEATED_COOLANT";
-                public static LocString TOOLTIP = "";
+                public static LocString TITLE = $"{METALREFINERY} will drop the overheated {UI.FormatAsKeyWord("Coolant")}";
+                public static LocString TOOLTIP = $"The overheated {UI.FormatAsKeyWord("Coolant")} is dropped directly into the atmosphere\nThis will help prevent damage to the output Pipe";
             }
             public class REUSE_COOLANT
             {
-                public static LocString TITLE = "REUSE_COOLANT";
-                public static LocString TOOLTIP = "";
+                public static LocString TITLE = $"{METALREFINERY} will re-use the waste {UI.FormatAsKeyWord("Coolant")}";
+                public static LocString TOOLTIP = $"This can speed up production and reduce {UI.FormatAsKeyWord("Coolant")} consumption";
             }
         }
 
@@ -73,6 +99,24 @@ namespace Smelter
         {
             BUILDINGS.PREFABS.SMELTER.DESC = global::STRINGS.BUILDINGS.PREFABS.METALREFINERY.DESC;
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
+
+            var elements = new string[] { KATAIRITE, TUNGSTEN, PHOSPHORITE, PHOSPHORUS, POLYPROPYLENE, NAPHTHA, REFINEDCARBON };
+            //var buildings = new string[] { SMELTER, METALREFINERY, GLASSFORGE, KILN};
+            var dictionary = Utils.PrepareReplacementDictionary(null, elements, "STRINGS.ELEMENTS.{0}.NAME");
+            //.PrepareReplacementDictionary(buildings, "STRINGS.BUILDINGS.PREFABS.{0}.NAME");
+            // блядь! ключи для "STRINGS.BUILDINGS.PREFABS" создаются слишком поздно, в LegacyModMain.LoadBuildings
+            // диалог опций судя по всему инициируется раньше. поэтому обломалась идея сделать красивую подстановку.
+            dictionary.Add(SMELTER, BUILDINGS.PREFABS.SMELTER.NAME);
+            dictionary.Add(METALREFINERY, global::STRINGS.BUILDINGS.PREFABS.METALREFINERY.NAME);
+            dictionary.Add(GLASSFORGE, global::STRINGS.BUILDINGS.PREFABS.GLASSFORGE.NAME);
+            dictionary.Add(KILN, global::STRINGS.BUILDINGS.PREFABS.KILN.NAME);
+
+            dictionary.Add(WOOD, ITEMS.INDUSTRIAL_PRODUCTS.WOOD.NAME);
+            foreach (var key in dictionary.Keys.ToList())
+            {
+                dictionary[key] = UI.FormatAsKeyWord(UI.StripLinkFormatting(dictionary[key]));
+            }
+            Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
         }
     }
 }
