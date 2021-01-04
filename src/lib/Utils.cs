@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using TUNING;
 using Harmony;
+#if USESPLIB
+using PeterHan.PLib.Detours;
+#endif
 
 namespace SanchozzONIMods.Lib
 {
@@ -165,6 +168,7 @@ namespace SanchozzONIMods.Lib
         }
 
         // замена текста в загруженной локализации
+        // todo: старый вариант. оставить для совместимости, потом постепенно убрать.
         public static void ReplaceLocString(ref LocString locString, string search, string replacement)
         {
             LocString newlocString = new LocString(locString.text.Replace(search, replacement), locString.key.String);
@@ -174,6 +178,65 @@ namespace SanchozzONIMods.Lib
         {
             LocString newlocString = new LocString(newtext, locString.key.String);
             locString = newlocString;
+        }
+
+        // замена текста в загруженной локализации
+#if USESPLIB
+        private static readonly IDetouredField<LocString, string> LocStringText = PDetours.DetourField<LocString, string>("text");
+        public static void ReplaceText(this LocString locString, string search, string replacement)
+        {
+            LocStringText.Set(locString, locString.text.Replace(search, replacement));
+        }
+        public static void ReplaceText(this LocString locString, string newtext)
+        {
+            LocStringText.Set(locString, newtext);
+        }
+#else
+    // todo: сделать вариант без PLIB
+#endif
+
+        public static Dictionary<string, string> PrepareReplacementDictionary(this Dictionary<string, string> dictionary, string[] search, string replacementKeyTemplate)
+        {
+            if (dictionary == null)
+                dictionary = new Dictionary<string, string>();
+            foreach (string key in search)
+            {
+                if (!key.IsNullOrWhiteSpace())
+                {
+                    StringEntry entry;
+                    if (Strings.TryGet(string.Format(replacementKeyTemplate, key.Replace("{", "").Replace("}", "")), out entry))
+                    {
+                        dictionary[key] = entry;
+                    }
+                }
+            }
+            return dictionary;
+        }
+
+        public static void ReplaceAllLocStringTextByDictionary(Type type, Dictionary<string, string> replacementDictionary)
+        {
+            var fields = type.GetFields(LocString.data_member_fields);
+            foreach (var fieldInfo in fields)
+            {
+                if (fieldInfo.FieldType == typeof(LocString))
+                {
+                    var locString = (LocString)fieldInfo.GetValue(null);
+                    string text = locString.text;
+                    foreach(var replacement in replacementDictionary)
+                    {
+                        text = text.Replace(replacement.Key, replacement.Value);
+                    }
+                    if (text != locString.text)
+                    {
+                        locString.ReplaceText(text);
+                    }
+                }
+            }
+            var nestedTypes = type.GetNestedTypes(LocString.data_member_fields);
+            foreach (var nestedType in nestedTypes)
+            {
+                ReplaceAllLocStringTextByDictionary(nestedType, replacementDictionary);
+            }
         }
     }
 }
