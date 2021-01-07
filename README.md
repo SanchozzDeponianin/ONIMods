@@ -6,7 +6,7 @@ Steam Workshop: https://steamcommunity.com/profiles/76561198341359629/myworkshop
 # Local Downloads
 Steam users: Before trying a local download or reporting an issue, use [PeterHan's Mod Updater](https://steamcommunity.com/sharedfiles/filedetails/?id=2018291283)  \(recommended\) or [Ony's Mod Manager](https://steamcommunity.com/sharedfiles/filedetails/?id=1843965353) to see if the mod is out of date.
 
-Steam sometimes serves outdated mod versions, and Oxygen Not Included is also available on the Epic Games Store. Local copies of these mods are available in the [Releases](https://github.com/SanchozzDeponianin/ONIMods/releases/tag/ModsLatest) section, or you can just press `"Code" -> "Download ZIP"`. These mods should be installed into the `Local` folder, creating it if it does not already exist. Mods should remain in their own subfolder.
+Steam sometimes serves outdated mod versions, and Oxygen Not Included is also available on the Epic Games Store. Local copies of these mods are available in the [Releases](https://github.com/SanchozzDeponianin/ONIMods/releases) section, or you can just press `"Code" -> "Download ZIP"`. These mods should be installed into the `Local` folder, creating it if it does not already exist. Mods should remain in their own subfolder.
 
 ![Location where local mods should be installed](Docs/localmods.png)
 
