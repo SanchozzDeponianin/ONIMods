@@ -18,11 +18,11 @@ namespace DeathReimagined
         [HarmonyPatch(typeof(Localization), "Initialize")]
         internal static class Localization_Initialize
         {
-            private static void Postfix(Localization.Locale ___sLocale)
+            private static void Postfix()
             {
                 Debug.Log("Localization_Initialize");
 
-                Utils.InitLocalization(typeof(STRINGS), ___sLocale);
+                Utils.InitLocalization(typeof(STRINGS));
                 // чтобы подтянуть "раздробить в известь" из локализации
                 Utils.ReplaceLocString(ref STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.SKELETON.DESC, "{crushed}", ITEMS.INDUSTRIAL_PRODUCTS.CRAB_SHELL.DESC);
 

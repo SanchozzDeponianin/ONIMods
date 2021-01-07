@@ -182,18 +182,22 @@ namespace SanchozzONIMods.Lib
 
         // замена текста в загруженной локализации
 #if USESPLIB
-        private static readonly IDetouredField<LocString, string> LocStringText = PDetours.DetourField<LocString, string>("text");
-        public static void ReplaceText(this LocString locString, string search, string replacement)
-        {
-            LocStringText.Set(locString, locString.text.Replace(search, replacement));
-        }
+        private static readonly IDetouredField<LocString, string> LocStringText = PDetours.DetourField<LocString, string>(nameof(LocString.text));
         public static void ReplaceText(this LocString locString, string newtext)
         {
             LocStringText.Set(locString, newtext);
         }
 #else
-    // todo: сделать вариант без PLIB
+        private static readonly MethodInfo LocStringSetText = typeof(LocString).GetProperty(nameof(LocString.text)).GetSetMethod(true);
+        public static void ReplaceText(this LocString locString, string newtext)
+        {
+            LocStringSetText.Invoke(locString, new object[] { newtext });
+        }
 #endif
+        public static void ReplaceText(this LocString locString, string search, string replacement)
+        {
+            locString.ReplaceText(locString, locString.text.Replace(search, replacement));
+        }
 
         public static Dictionary<string, string> PrepareReplacementDictionary(this Dictionary<string, string> dictionary, string[] search, string replacementKeyTemplate)
         {
