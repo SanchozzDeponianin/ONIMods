@@ -81,7 +81,7 @@ namespace Smelter
 
             public static StatusItem waitingForCoolantStatus;
             public static StatusItem waitingForFuelStatus;
-            public static StatusItem waitingForEmptying;
+            public static StatusItem waitingForEmptyingStatus;
 
             public Signal coolant_too_hot;
             public Waiting waiting;
@@ -112,9 +112,9 @@ namespace Smelter
                         }
                     };
                 }
-                if (waitingForEmptying == null)
+                if (waitingForEmptyingStatus == null)
                 {
-                    waitingForEmptying = new StatusItem("waitingForEmptying", STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.NAME, STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.TOOLTIP, "status_item_empty_pipe", StatusItem.IconType.Custom, NotificationType.BadMinor, false, OverlayModes.None.ID);
+                    waitingForEmptyingStatus = new StatusItem("waitingForEmptying", STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.NAME, STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.TOOLTIP, "status_item_empty_pipe", StatusItem.IconType.Custom, NotificationType.BadMinor, false, OverlayModes.None.ID);
                 }
 
                 default_state = waiting;
@@ -154,7 +154,7 @@ namespace Smelter
                     })
                     .Exit((StatesInstance smi) => smi.CancelEmptyChore())
                     .EventTransition(GameHashes.OnStorageChange, waiting, (StatesInstance smi) => smi.master.IsHotCoolantIsRemoved())
-                    .ToggleStatusItem(waitingForEmptying);
+                    .ToggleStatusItem(waitingForEmptyingStatus);
             }
         }
 
