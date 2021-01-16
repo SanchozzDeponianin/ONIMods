@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Reflection;
+using Database;
 using TUNING;
 using Harmony;
 #if USESPLIB
@@ -86,7 +87,7 @@ namespace SanchozzONIMods.Lib
                 return;
             }
 
-            IList<string> planOrderList = BUILDINGS.PLANORDER[index].data as IList<string>;
+            var planOrderList = Traverse.Create(BUILDINGS.PLANORDER[index])?.Field("data")?.GetValue<List<string>>();
             if (planOrderList == null)
             {
                 Debug.LogWarning($"{modInfo.assemblyName}: Could not add '{buildingId}' to the building menu.");
@@ -102,6 +103,8 @@ namespace SanchozzONIMods.Lib
         }
 
         // добавляем постройки в технологии
+        // ванилька
+        /* 
         public static void AddBuildingToTechnology(string tech, string buildingId)
         {
             if (Database.Techs.TECH_GROUPING.ContainsKey(tech))
@@ -114,6 +117,53 @@ namespace SanchozzONIMods.Lib
                 Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{tech}' tech in TECH_GROUPING.");
             }
         }
+        */
+        // длц
+        /*
+        public static void AddBuildingToTechnology(string tech, string buildingId)
+        {
+            var targetTech = Db.Get().Techs.TryGet(tech);
+            if (targetTech != null)
+            {
+                targetTech.unlockedItemIDs.Add(buildingId);
+            }
+            else
+            {
+                Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{tech}' tech.");
+            }
+        }
+        */
+        // "а теперь тушим оба окурка одновременно" (с)
+        public static void AddBuildingToTechnology(string tech, string buildingId)
+        {
+            var tech_grouping = Traverse.Create(typeof(Techs))?.Field("TECH_GROUPING")?.GetValue<Dictionary<string, string[]>>();
+            if (tech_grouping != null)
+            {
+                if (tech_grouping.ContainsKey(tech))
+                {
+                    List<string> techList = new List<string>(tech_grouping[tech]) { buildingId };
+                    tech_grouping[tech] = techList.ToArray();
+                }
+                else
+                {
+                    Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{tech}' tech in TECH_GROUPING.");
+                }
+            }
+            else
+            {
+                var targetTech = Db.Get().Techs.TryGet(tech);
+                if (targetTech != null)
+                {
+                    //targetTech.unlockedItemIDs.Add(buildingId);
+                    Traverse.Create(targetTech)?.Field("unlockedItemIDs")?.GetValue<List<string>>()?.Add(buildingId);
+                }
+                else
+                {
+                    Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{tech}' tech.");
+                }
+            }
+        }
+
 
         // загружаем строки для локализации
         public static void InitLocalization(Type locstring_tree_root, string filename_prefix = "", bool writeStringsTemplate = false)
@@ -207,8 +257,7 @@ namespace SanchozzONIMods.Lib
             {
                 if (!key.IsNullOrWhiteSpace())
                 {
-                    StringEntry entry;
-                    if (Strings.TryGet(string.Format(replacementKeyTemplate, key.Replace("{", "").Replace("}", "")), out entry))
+                    if (Strings.TryGet(string.Format(replacementKeyTemplate, key.Replace("{", "").Replace("}", "")), out StringEntry entry))
                     {
                         dictionary[key] = entry;
                     }
