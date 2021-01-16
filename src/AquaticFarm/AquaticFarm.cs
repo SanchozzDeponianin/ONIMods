@@ -2,7 +2,6 @@
 using Harmony;
 using UnityEngine;
 
-
 namespace AquaticFarm
 {
     public class AquaticFarm : KMonoBehaviour
@@ -27,7 +26,7 @@ namespace AquaticFarm
 
         private void OnOccupantChanged(object data)
         {
-            PassiveElementConsumer[] elementConsumers = GetComponents<PassiveElementConsumer>();
+            var elementConsumers = GetComponents<PassiveElementConsumer>();
             foreach (PassiveElementConsumer elementConsumer in elementConsumers)
             {
                 elementConsumer.EnableConsumption(false);
@@ -35,20 +34,19 @@ namespace AquaticFarm
 
             if (data != null)
             {
-                PlantElementAbsorber.ConsumeInfo[] consumed_infos = null;
-                consumed_infos = ((GameObject)data)?.GetSMI<IrrigationMonitor.Instance>()?.def.consumedElements;
+                var consumed_infos = ((GameObject)data)?.GetSMI<IrrigationMonitor.Instance>()?.def.consumedElements;
                 if (consumed_infos != null)
                 {
-                    foreach (PlantElementAbsorber.ConsumeInfo consumeInfo in consumed_infos)
+                    foreach (var consumeInfo in consumed_infos)
                     {
-                        foreach (PassiveElementConsumer elementConsumer in elementConsumers)
+                        foreach (var elementConsumer in elementConsumers)
                         {
-                            Element element = ElementLoader.FindElementByHash(elementConsumer.elementToConsume);
+                            var element = ElementLoader.FindElementByHash(elementConsumer.elementToConsume);
                             if (element != null)
                             {
                                 if (element.tag != consumeInfo.tag)
                                 {
-                                    Traverse traverse = Traverse.Create(elementConsumer);
+                                    var traverse = Traverse.Create(elementConsumer);
                                     traverse.Method("SimUnregister").GetValue();
                                     elementConsumer.elementToConsume = ElementLoader.GetElementID(consumeInfo.tag);
                                     traverse.Method("SimRegister").GetValue();
