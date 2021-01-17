@@ -18,9 +18,14 @@ namespace Smelter
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
-        private static void AddBuilding()
+        private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));
+        }
+
+        [PLibMethod(RunAt.AfterDbInit)]
+        private static void AddBuilding()
+        {
             Utils.AddBuildingToPlanScreen("Refining", SmelterConfig.ID, KilnConfig.ID);
             Utils.AddBuildingToTechnology("BasicRefinement", SmelterConfig.ID);
         }
