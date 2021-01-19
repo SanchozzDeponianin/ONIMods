@@ -1,8 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
   <PropertyGroup>
+    <!--  if necessary, make copy this file named as 'Directory.Build.props.user' 
+          and write down the correct paths to the game files, vanilla and dlc -->
     <SteamFolder>$(MSBuildProgramFiles32)Steam</SteamFolder>
-    <GameFolder>$(SteamFolder)\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameFolder>
+    <GameFolderVanilla>$(SteamFolder)\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameFolderVanilla>
+    <GameFolderExpansion1>$(SteamFolder)\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameFolderExpansion1>
     <ModOutputFolderDebug>$(UserProfile)\Documents\Klei\OxygenNotIncluded\mods\Dev</ModOutputFolderDebug>
     <ModOutputFolderRelease>$(MSBuildProjectDirectory)\..\..\Mods</ModOutputFolderRelease>
   </PropertyGroup>

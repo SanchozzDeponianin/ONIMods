@@ -7,6 +7,7 @@
     </ItemGroup>
   </Target>
 
+  <!-- определяем константы для компилятора -->
   <Target Name="DefineConstants" BeforeTargets="CoreCompile">
     <PropertyGroup Condition=" '$(UsesPLib)' == 'true' ">
       <DefineConstants>$(DefineConstants);USESPLIB</DefineConstants>
@@ -16,7 +17,15 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="AssemblyInfos" BeforeTargets="CoreCompile" Outputs="UpdatedAssemblyInfoFiles">
+  <!-- кидаем ошибку если выбрана фейковая конфигурация проекта.
+       в Диспечере конфигураций следует указать её, 
+       если какой-либо проект не должен собираться при какой-либо конфигурации решения -->
+  <Target Name="CheckConfiguration" BeforeTargets="CoreCompile" Condition="'$(Configuration)' == 'Fake'">
+    <Error Text="This Project must be builded in a different Configuration." />
+  </Target>
+  
+  <!-- обновляем сведения о сборке -->
+  <Target Name="AssemblyInfos" BeforeTargets="CoreCompile" AfterTargets="CheckConfiguration" Outputs="UpdatedAssemblyInfoFiles">
     <ItemGroup>
       <AssemblyInfoFiles Include="Properties\AssemblyInfos.cs"/>
     </ItemGroup>
@@ -39,9 +48,9 @@
     <ItemGroup>
       <Compile Include="%(UpdatedAssemblyInfoFiles.FullPath)" />
     </ItemGroup>
-
   </Target>
 
+  <!-- перепаковка вместе с PLib -->
   <Target Name="ILRepack" AfterTargets="Build" Condition=" '$(UsesPLib)' == 'true'  Or  '$(UsesPLibOptions)' == 'true' ">
     <ItemGroup>
       <InputAssemblies Include="$(TargetPath)" />
@@ -55,15 +64,44 @@
         OutputFile="$(TargetPath)"
         InputAssemblies="@(InputAssemblies)"
         LibraryPath="$(GameFolder)" />
-
   </Target>
 
-  <Target Name="CopyArtifactsToInstallFolder" AfterTargets="ILRepack">
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <!-- создание ямл файла и подготовкa к вычислению правильного пути для выходный файлов -->
+  <UsingTask
+    Condition=" '$(MSBuildProjectName)' != 'MSBuildTasksHelper' "
+    TaskName="SanchozzONIMods.WriteYamlFile"
+    AssemblyFile="$(MSBuildProjectDirectory)\..\..\bin\MSBuildTasksHelper.dll" />
+
+  <Target Name="WriteYamlFile" AfterTargets="ILRepack" Condition=" '$(MSBuildProjectName)' != 'MSBuildTasksHelper' ">
+    <SanchozzONIMods.WriteYamlFile
+      ConfigurationName="$(Configuration)"
+      GameFolder="$(GameFolder)"
+      OutputYamlFile="$(TargetDir)mod_info.yaml" >
+      <Output TaskParameter="KleiBuildVersion" PropertyName="KleiBuildVersion"/>
+      <Output TaskParameter="KleiBuildBranch" PropertyName="KleiBuildBranch"/>
+    </SanchozzONIMods.WriteYamlFile>
+  </Target>
+
+  <!-- копируем все потроха в целевую папку -->
+  <Target Name="CopyArtifactsToInstallFolder" AfterTargets="ILRepack;WriteYamlFile" >
+
+    <!-- todo: сдесь нужно настроить правильный путь в зависимости от конфигурации -->
+    <!-- хрен бы с ним. пусть дебуг пишет в корень -->
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <InstallFolder>$(ModOutputFolderDebug)\$(ProjectName)</InstallFolder>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <InstallFolder>$(ModOutputFolderRelease)\$(ProjectName)</InstallFolder>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-      <InstallFolder>$(ModOutputFolderDebug)\$(ProjectName)</InstallFolder>
+    <PropertyGroup Condition=" '$(Configuration)' == 'VANILLA' ">
+      <InstallFolder>$(ModOutputFolderRelease)\$(ProjectName)\archived_versions\$(Configuration)_$(KleiBuildBranch)_$(KleiBuildVersion)</InstallFolder>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'EXPANSION1' ">
+      <InstallFolder>$(ModOutputFolderRelease)\$(ProjectName)\archived_versions\$(Configuration)_$(KleiBuildBranch)_$(KleiBuildVersion)</InstallFolder>
+    </PropertyGroup>
+    <!-- вспомогательный хелпер копируем в бин, чтобы не потерялся при очистке -->
+    <PropertyGroup Condition=" '$(MSBuildProjectName)' == 'MSBuildTasksHelper' ">
+      <InstallFolder>$(MSBuildProjectDirectory)\..\..\bin</InstallFolder>
     </PropertyGroup>
 
     <ItemGroup>
@@ -75,6 +113,7 @@
       <TranslationFiles Include="$(MSBuildProjectDirectory)\..\..\PLib\*.po" Condition=" '$(UsesPLibOptions)' == 'true'" />
       <WorldGenFiles Include="$(MSBuildProjectDirectory)\worldgen\**\*.*" />
       <YamlFiles Include="$(MSBuildProjectDirectory)\*.yaml" />
+      <YamlFiles Include="$(TargetDir)mod_info.yaml" Condition="Exists('$(TargetDir)mod_info.yaml')" />
     </ItemGroup>
 
     <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(InstallFolder)\$(TargetFileName)" />
@@ -86,7 +125,6 @@
     <Copy SourceFiles="@(WorldGenFiles)" DestinationFiles="@(WorldGenFiles->'$(InstallFolder)\worldgen\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(YamlFiles)" DestinationFolder="$(InstallFolder)" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)\Preview.png" DestinationFiles="$(InstallFolder)\preview.png" Condition=" $(CopyPreview) == true " />
-
   </Target>
 
 </Project>

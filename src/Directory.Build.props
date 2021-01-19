@@ -4,6 +4,7 @@
   <Import Condition=" Exists('Directory.Build.props.user') " Project="Directory.Build.props.user" />
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 
+  <!-- сведения о сборке -->
   <PropertyGroup>
     <Author>Sanchozz</Author>
     <Company>Sanchozz (https://github.com/SanchozzDeponianin)</Company>
@@ -11,16 +12,56 @@
     <Copyright>Copyright © Sanchozz 2021</Copyright>
   </PropertyGroup>
 
+  <!-- конфигурации. предполагается VANILLA, EXPANSION1, Release=ALL  -->
+  <!-- тут же выбор пути где лежат соответсвующие файлы -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GameFolder>$(GameFolderVanilla)</GameFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' != 'Debug|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <OutputPath>bin\Release\</OutputPath>
+    <GameFolder>$(GameFolderVanilla)</GameFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Fake'">
+    <OutputPath>bin\Release\</OutputPath>
+    <GameFolder>$(GameFolderVanilla)</GameFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'VANILLA'">
+    <OutputPath>bin\VANILLA\</OutputPath>
+    <GameFolder>$(GameFolderVanilla)</GameFolder>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'EXPANSION1'">
+    <OutputPath>bin\EXPANSION1\</OutputPath>
+    <GameFolder>$(GameFolderExpansion1)</GameFolder>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GameFolder Condition=" '$(GameFolder)' == '' ">$(GameFolderVanilla)</GameFolder>
+  </PropertyGroup>
+
+  <!-- подключаем DLL -->
   <ItemDefinitionGroup>
     <Reference Private="false" SpecificVersion="false" />
-	<ProjectReference Private="false" />
+    <ProjectReference Private="false" />
   </ItemDefinitionGroup>
 
   <ItemGroup Condition=" '$(UsesPLib)' == 'true'  Or  '$(UsesPLibOptions)' == 'true' ">
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.1" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(MSBuildProjectName)' != 'MSBuildTasksHelper' ">
     <Reference Include="0Harmony" HintPath="$(GameFolder)/0Harmony.dll" />
     <Reference Include="Assembly-CSharp" HintPath="$(GameFolder)/Assembly-CSharp.dll" />
     <Reference Include="Assembly-CSharp-firstpass" HintPath="$(GameFolder)/Assembly-CSharp-firstpass.dll" />
@@ -35,11 +76,11 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(UsesPLib)' == 'true' ">
-    <Reference Include="PLib" HintPath="..\..\PLib\PLib.dll" />
+    <Reference Include="PLib" HintPath="../../PLib/PLib.dll" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(UsesPLibOptions)' == 'true' ">
-    <Reference Include="PLibOptions" HintPath="..\..\PLib\PLibOptions.dll" />
+    <Reference Include="PLibOptions" HintPath="../../PLib/PLibOptions.dll" />
   </ItemGroup>
 
 </Project>
