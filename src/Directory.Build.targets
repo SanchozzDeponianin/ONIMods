@@ -99,6 +99,10 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'EXPANSION1' ">
       <InstallFolder>$(ModOutputFolderRelease)\$(ProjectName)\archived_versions\$(Configuration)_$(KleiBuildBranch)_$(KleiBuildVersion)</InstallFolder>
     </PropertyGroup>
+    <!-- специальная отметка что нужно писать в корень -->
+    <PropertyGroup Condition=" '$(OutputIntoRoot)' == 'true' ">
+      <InstallFolder>$(ModOutputFolderRelease)\$(ProjectName)</InstallFolder>
+    </PropertyGroup>
     <!-- вспомогательный хелпер копируем в бин, чтобы не потерялся при очистке -->
     <PropertyGroup Condition=" '$(MSBuildProjectName)' == 'MSBuildTasksHelper' ">
       <InstallFolder>$(MSBuildProjectDirectory)\..\..\bin</InstallFolder>
