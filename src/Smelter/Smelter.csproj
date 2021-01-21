@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <UsesPLib>true</UsesPLib>
+    <OutputIntoRootOnEXPANSION1>true</OutputIntoRootOnEXPANSION1>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

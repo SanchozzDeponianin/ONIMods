@@ -100,7 +100,8 @@
       <InstallFolder>$(ModOutputFolderRelease)\$(ProjectName)\archived_versions\$(Configuration)_$(KleiBuildBranch)_$(KleiBuildVersion)</InstallFolder>
     </PropertyGroup>
     <!-- специальная отметка что нужно писать в корень -->
-    <PropertyGroup Condition=" '$(OutputIntoRoot)' == 'true' ">
+    <PropertyGroup Condition=" ( '$(Configuration)' == 'VANILLA' And '$(OutputIntoRootOnVANILLA)' == 'true' ) 
+                   Or ( '$(Configuration)' == 'EXPANSION1' And '$(OutputIntoRootOnEXPANSION1)' == 'true' ) ">
       <InstallFolder>$(ModOutputFolderRelease)\$(ProjectName)</InstallFolder>
     </PropertyGroup>
     <!-- вспомогательный хелпер копируем в бин, чтобы не потерялся при очистке -->
