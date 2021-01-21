@@ -6,6 +6,7 @@ using Harmony;
 
 namespace FixedGenerator
 {
+    [Obsolete("Not needed any more", true)]
     internal static class FixedGeneratorPatches
     {
         // исправляем проверку наличия горючки
