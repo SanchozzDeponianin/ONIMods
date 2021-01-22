@@ -29,12 +29,12 @@ namespace SquirrelGenerator
         }
 
         [PLibMethod(RunAt.AfterModsLoad)]
-        private static void InitLocalization()
+        private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));
         }
 
-        [PLibMethod(RunAt.BeforeDbInit)]
+        [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuilding()
         {
             Utils.AddBuildingToPlanScreen("Power", SquirrelGeneratorConfig.ID, SolarPanelConfig.ID);
@@ -66,10 +66,11 @@ namespace SquirrelGenerator
                 .PopInterruptGroup()
                 .Add(new IdleStates.Def(), true);
             */
-            internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
             {
                 List<CodeInstruction> instructionsList = instructions.ToList();
                 ConstructorInfo constructor = typeof(SeedPlantingStates.Def).GetConstructors()[0];
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
                 bool result = false;
                 for (int i = 0; i < instructionsList.Count; i++)
                 {
@@ -77,7 +78,7 @@ namespace SquirrelGenerator
                     if (instruction.opcode == OpCodes.Newobj && (ConstructorInfo)instruction.operand == constructor)
                     {
 #if DEBUG
-                        PUtil.LogDebug($"'{nameof(BaseSquirrelConfig.BaseSquirrel)}' Transpiler injected");
+                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
 #endif
                         yield return new CodeInstruction(OpCodes.Callvirt, typeof(ChoreTable.Builder).GetMethod(nameof(ChoreTable.Builder.PushInterruptGroup), new Type[] { }));
                         yield return new CodeInstruction(OpCodes.Newobj, typeof(WheelRunningStates.Def).GetConstructors()[0]);
@@ -90,7 +91,7 @@ namespace SquirrelGenerator
                 }
                 if (!result)
                 {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{nameof(BaseSquirrelConfig.BaseSquirrel)}'");
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
                 }
             }
         }

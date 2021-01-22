@@ -28,7 +28,7 @@ namespace SquirrelGenerator
             public override void InitializeStates(out BaseState default_state)
             {
                 default_state = off;
-                serializable = true;
+                //serializable = true;
                 off.EventTransition(GameHashes.OperationalChanged, on, (Instance smi) => smi.master.operational.IsOperational)
                     .PlayAnim("off");
                 on.EventTransition(GameHashes.OperationalChanged, off, (Instance smi) => !smi.master.operational.IsOperational)

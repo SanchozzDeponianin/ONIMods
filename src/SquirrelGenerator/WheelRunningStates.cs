@@ -67,11 +67,30 @@ namespace SquirrelGenerator
 
         public override void InitializeStates(out BaseState default_state)
         {
-            RunInWheelEffect = new Effect("RunInWheel", STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.TOOLTIP, 0, true, false, false);
-            RunInWheelEffect.Add(new AttributeModifier(Db.Get().CritterAttributes.Metabolism.Id, SquirrelGeneratorOptions.Instance.MetabolismBonus, STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, false, false, true));
-            RunInWheelEffect.Add(new AttributeModifier(Db.Get().CritterAttributes.Happiness.Id, SquirrelGeneratorOptions.Instance.HappinessBonus, STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, false, false, true));
+            RunInWheelEffect = new Effect(
+                id: "RunInWheel", 
+                name: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, 
+                description: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.TOOLTIP, 
+                duration: 0, 
+                show_in_ui: true, 
+                trigger_floating_text: false, 
+                is_bad: false);
+            RunInWheelEffect.Add(new AttributeModifier(
+                attribute_id: Db.Get().CritterAttributes.Metabolism.Id, 
+                value: SquirrelGeneratorOptions.Instance.MetabolismBonus, 
+                description: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, 
+                is_multiplier: false, 
+                uiOnly: false, 
+                is_readonly: true));
+            RunInWheelEffect.Add(new AttributeModifier(
+                attribute_id: Db.Get().CritterAttributes.Happiness.Id, 
+                value: SquirrelGeneratorOptions.Instance.HappinessBonus, 
+                description: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, 
+                is_multiplier: false, 
+                uiOnly: false, 
+                is_readonly: true));
 
-            serializable = true;
+            //serializable = true;
             default_state = moving;
 
             root.Enter(delegate (Instance smi)

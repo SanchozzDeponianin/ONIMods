@@ -84,7 +84,7 @@ namespace SquirrelGenerator
 
         public override void InitializeStates(out BaseState default_state)
         {
-            serializable = true;
+            //serializable = true;
             default_state = root;
             root.ToggleBehaviour(WheelRunningStates.WantsToWheelRunning, (Instance smi) => smi.ShouldRunInWheel(), (Instance smi) => smi.OnRunningComplete());
         }
