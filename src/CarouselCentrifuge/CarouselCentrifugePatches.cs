@@ -8,6 +8,10 @@ namespace CarouselCentrifuge
 {
     internal static class CarouselCentrifugePatches
     {
+        private static Effect specificEffect;
+        private static Effect trackingEffect;
+        private static AttributeModifier moraleModifier;
+
         public static void OnLoad()
         {
             PUtil.InitLibrary();
@@ -16,23 +20,33 @@ namespace CarouselCentrifuge
         }
 
         [PLibMethod(RunAt.AfterModsLoad)]
-        private static void InitLocalization()
+        private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));
         }
 
-        [PLibMethod(RunAt.BeforeDbInit)]
-        private static void AddBuilding()
+        [PLibMethod(RunAt.AfterDbInit)]
+        private static void AddBuildingAndEffects()
         {
             Utils.AddBuildingToPlanScreen("Furniture", CarouselCentrifugeConfig.ID, EspressoMachineConfig.ID);
-            Utils.AddBuildingToTechnology("SkyDetectors", CarouselCentrifugeConfig.ID);
-        }
+#if VANILLA
+            const string requiredTech = "ArtificialFriends";
+#elif EXPANSION1
+            const string requiredTech = "SpaceProgram";
+#endif
+            Utils.AddBuildingToTechnology(requiredTech, CarouselCentrifugeConfig.ID);
 
-        [PLibMethod(RunAt.AfterDbInit)]
-        private static void AddEffects()
-        {
-            Effect specificEffect = new Effect(
-                id: CarouselCentrifugeWorkable.specificEffect,
+            moraleModifier = new AttributeModifier(
+                attribute_id: "QualityOfLife",
+                value: CarouselCentrifugeOptions.Instance.MoraleBonus,
+                description: STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.NAME,
+                is_multiplier: false,
+                uiOnly: false,
+                is_readonly: true
+                );
+
+            specificEffect = new Effect(
+                id: CarouselCentrifugeWorkable.specificEffectName,
                 name: STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.NAME,
                 description: STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.TOOLTIP,
                 duration: (CarouselCentrifugeOptions.Instance.SpecificEffectDuration - 0.05f) * Constants.SECONDS_PER_CYCLE,
@@ -40,18 +54,10 @@ namespace CarouselCentrifuge
                 trigger_floating_text: true,
                 is_bad: false
                 );
+            specificEffect.Add(moraleModifier);
 
-            specificEffect.Add(new AttributeModifier(
-                attribute_id: "QualityOfLife",
-                value: CarouselCentrifugeOptions.Instance.MoraleBonus,
-                description: STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.NAME,
-                is_multiplier: false,
-                uiOnly: false,
-                is_readonly: true
-                ));
-
-            Effect trackingEffect = new Effect(
-                id: CarouselCentrifugeWorkable.trackingEffect,
+            trackingEffect = new Effect(
+                id: CarouselCentrifugeWorkable.trackingEffectName,
                 name: "",
                 description: "",
                 duration: CarouselCentrifugeOptions.Instance.TrackingEffectDuration * Constants.SECONDS_PER_CYCLE,
@@ -62,6 +68,15 @@ namespace CarouselCentrifuge
 
             Db.Get().effects.Add(specificEffect);
             Db.Get().effects.Add(trackingEffect);
+        }
+
+        [PLibMethod(RunAt.OnStartGame)]
+        private static void OnStartGame()
+        {
+            CarouselCentrifugeOptions.Reload();
+            moraleModifier.SetValue(CarouselCentrifugeOptions.Instance.MoraleBonus);
+            specificEffect.duration = (CarouselCentrifugeOptions.Instance.SpecificEffectDuration - 0.05f) * Constants.SECONDS_PER_CYCLE;
+            trackingEffect.duration = CarouselCentrifugeOptions.Instance.TrackingEffectDuration * Constants.SECONDS_PER_CYCLE;
         }
     }
 }

@@ -8,24 +8,25 @@ namespace CarouselCentrifuge
 {
     public class CarouselCentrifugeWorkable : Workable, IWorkerPrioritizable, IGameObjectEffectDescriptor
     {
+        public const string specificEffectName = "RideonCarousel";
+        public const string trackingEffectName = "RecentlyRideonCarousel";
+      
+        private static StatusItem vomitStatusItem;
+        private static float vomitChancePercent = 5f;
+        private static readonly int basePriority = RELAXATION.PRIORITY.TIER5;
+        private Chore chore;
+
 #pragma warning disable CS0649
         [MyCmpReq]
         private Operational operational;
 #pragma warning restore CS0649
-
-        private Chore chore;
-        private static StatusItem vomitStatusItem;
-        private static float vomitChancePercent = 5f;
-        private static readonly int basePriority = RELAXATION.PRIORITY.TIER5;
-        public static readonly string specificEffect = "RideonCarousel";
-        public static readonly string trackingEffect = "RecentlyRideonCarousel";
 
         // эмоции после успешного катания
         private static readonly Tuple<HashedString, HashedString[]>[] emote_anims =
         {
             new Tuple<HashedString, HashedString[]>("anim_cheer_kanim", new HashedString[] { "cheer_pre", "cheer_loop", "cheer_pst" }),
             new Tuple<HashedString, HashedString[]>("anim_clapcheer_kanim", new HashedString[] { "clapcheer_pre", "clapcheer_loop", "clapcheer_pst" }),
-            new Tuple<HashedString, HashedString[]>("anim_react_thumbsup_kanim", new HashedString[] { "react" }),
+            //new Tuple<HashedString, HashedString[]>("anim_react_thumbsup_kanim", new HashedString[] { "react" }),
         };
 
         public CarouselCentrifugeWorkable()
@@ -48,8 +49,9 @@ namespace CarouselCentrifuge
             if (vomitStatusItem == null)
             {
                 vomitStatusItem = new StatusItem("CarouselVomiting", STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NAME, STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.TOOLTIP, string.Empty, StatusItem.IconType.Info, NotificationType.BadMinor, false, OverlayModes.None.ID);
-                vomitChancePercent = CarouselCentrifugeOptions.Instance.DizzinessChancePercent;
+                
             }
+            vomitChancePercent = CarouselCentrifugeOptions.Instance.DizzinessChancePercent;
         }
 
         protected override void OnSpawn()
@@ -86,8 +88,8 @@ namespace CarouselCentrifuge
             var effects = worker.GetComponent<Effects>();
             if (effects != null)
             {
-                effects.Add(trackingEffect, true);
-                if (flag) effects.Add(specificEffect, true);
+                effects.Add(trackingEffectName, true);
+                if (flag) effects.Add(specificEffectName, true);
 
                 var chore_provider = worker.GetComponent<ChoreProvider>();
                 if (chore_provider != null)
@@ -108,8 +110,11 @@ namespace CarouselCentrifuge
                         var notification = new Notification(
                             title: STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_NAME,
                             type: NotificationType.BadMinor,
-                            group: HashedString.Invalid,
                             tooltip: (List<Notification> notificationList, object data) => STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_TOOLTIP + notificationList.ReduceMessages(false)
+#if VANILLA
+                            , group: HashedString.Invalid
+#endif
+
                             );
                         new VomitChore(
                             chore_type: Db.Get().ChoreTypes.Vomit,
@@ -137,12 +142,12 @@ namespace CarouselCentrifuge
         {
             priority = basePriority;
             var effects = worker.GetComponent<Effects>();
-            if (effects.HasEffect(trackingEffect))
+            if (effects.HasEffect(trackingEffectName))
             {
                 priority = 0;
                 return false;
             }
-            if (effects.HasEffect(specificEffect))
+            if (effects.HasEffect(specificEffectName))
             {
                 priority = RELAXATION.PRIORITY.RECENTLY_USED;
             }
@@ -154,7 +159,7 @@ namespace CarouselCentrifuge
             Descriptor item = default;
             item.SetupDescriptor(UI.BUILDINGEFFECTS.RECREATION, UI.BUILDINGEFFECTS.TOOLTIPS.RECREATION, Descriptor.DescriptorType.Effect);
             var list = new List<Descriptor> { item };
-            Effect.AddModifierDescriptions(gameObject, list, specificEffect, true);
+            Effect.AddModifierDescriptions(gameObject, list, specificEffectName, true);
             return list;
         }
     }

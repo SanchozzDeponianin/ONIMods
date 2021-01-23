@@ -1,4 +1,5 @@
-﻿using STRINGS;
+﻿using System.Collections.Generic;
+using STRINGS;
 using SanchozzONIMods.Lib;
 
 namespace CarouselCentrifuge
@@ -78,9 +79,11 @@ namespace CarouselCentrifuge
 
         internal static void DoReplacement()
         {
-            Utils.ReplaceLocString(ref BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.EFFECT, MORALE, global::STRINGS.DUPLICANTS.ATTRIBUTES.QUALITYOFLIFE.NAME);
-            Utils.ReplaceLocString(ref DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.TOOLTIP, MORALE, global::STRINGS.DUPLICANTS.ATTRIBUTES.QUALITYOFLIFE.NAME);
-            Utils.ReplaceLocString(ref OPTIONS.MORALEBONUS.TITLE, MORALE, global::STRINGS.DUPLICANTS.ATTRIBUTES.QUALITYOFLIFE.NAME);
+            var dictionary = new Dictionary<string, string>
+            {
+                { MORALE, global::STRINGS.DUPLICANTS.ATTRIBUTES.QUALITYOFLIFE.NAME }
+            };
+            Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
         }
     }

@@ -10,7 +10,6 @@ namespace CarouselCentrifuge
     [JsonObject(MemberSerialization.OptIn)]
     [ModInfo("Carousel", "https://steamcommunity.com/sharedfiles/filedetails/?id=1899088142")]
     [ConfigFile(IndentOutput: true)]
-    [RestartRequired]
     internal sealed class CarouselCentrifugeOptions : BaseOptions<CarouselCentrifugeOptions>
     {
         [JsonIgnore]
