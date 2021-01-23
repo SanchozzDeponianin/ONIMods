@@ -219,11 +219,13 @@ namespace SanchozzONIMods.Lib
 
         // замена текста в загруженной локализации
         // todo: старый вариант. оставить для совместимости, потом постепенно убрать.
+        [Obsolete("need to replace it to 'ReplaceText'", false)]
         public static void ReplaceLocString(ref LocString locString, string search, string replacement)
         {
             LocString newlocString = new LocString(locString.text.Replace(search, replacement), locString.key.String);
             locString = newlocString;
         }
+        [Obsolete("need to replace it to 'ReplaceText'", false)]
         public static void ReplaceLocString(ref LocString locString, string newtext)
         {
             LocString newlocString = new LocString(newtext, locString.key.String);

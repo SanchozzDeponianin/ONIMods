@@ -38,7 +38,7 @@ namespace SquirrelGenerator
         private static void AddBuilding()
         {
             Utils.AddBuildingToPlanScreen("Power", SquirrelGeneratorConfig.ID, SolarPanelConfig.ID);
-            Utils.AddBuildingToTechnology("AnimalControl", SquirrelGeneratorConfig.ID);
+            Utils.AddBuildingToTechnology("Ranching", SquirrelGeneratorConfig.ID);
         }
 
         // добавить белкам новое поведение

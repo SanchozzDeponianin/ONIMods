@@ -1,4 +1,5 @@
-﻿using STRINGS;
+﻿using System.Collections.Generic;
+using STRINGS;
 using SanchozzONIMods.Lib;
 
 namespace SquirrelGenerator
@@ -89,14 +90,13 @@ namespace SquirrelGenerator
 
         internal static void DoReplacement()
         {
-            string squirrel = UI.FormatAsKeyWord(global::STRINGS.CREATURES.SPECIES.SQUIRREL.NAME);
-            Utils.ReplaceLocString(ref BUILDINGS.PREFABS.SQUIRRELGENERATOR.DESC, SQUIRREL, squirrel);
-            Utils.ReplaceLocString(ref BUILDINGS.PREFABS.SQUIRRELGENERATOR.EFFECT, SQUIRREL, squirrel);
-            Utils.ReplaceLocString(ref OPTIONS.SEARCHWHEELRADIUS.TOOLTIP, SQUIRREL, squirrel);
-            Utils.ReplaceLocString(ref OPTIONS.HAPPINESSBONUS.TOOLTIP, SQUIRREL, squirrel);
-            Utils.ReplaceLocString(ref OPTIONS.METABOLISMBONUS.TOOLTIP, SQUIRREL, squirrel);
-            Utils.ReplaceLocString(ref OPTIONS.GENERATORWATTAGE.TOOLTIP, WATT, UI.UNITSUFFIXES.ELECTRICAL.WATT);
-            Utils.ReplaceLocString(ref OPTIONS.SELFHEAT.TOOLTIP, DTU_S, UI.UNITSUFFIXES.HEAT.DTU_S);
+            var dictionary = new Dictionary<string, string>
+            {
+                { SQUIRREL, UI.FormatAsKeyWord(global::STRINGS.CREATURES.SPECIES.SQUIRREL.NAME) },
+                { WATT, UI.UNITSUFFIXES.ELECTRICAL.WATT },
+                { DTU_S, UI.UNITSUFFIXES.HEAT.DTU_S }
+            };
+            Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
         }
     }
