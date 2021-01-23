@@ -1,4 +1,5 @@
-﻿using STRINGS;
+﻿using System.Collections.Generic;
+using STRINGS;
 using SanchozzONIMods.Lib;
 
 namespace NoManualDelivery
@@ -34,10 +35,14 @@ namespace NoManualDelivery
         }
 
         internal static void DoReplacement()
-        { 
-            Utils.ReplaceLocString(ref OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP, ALLOWMANUALBUTTON, UI.UISIDESCREENS.AUTOMATABLE_SIDE_SCREEN.ALLOWMANUALBUTTON);
-            Utils.ReplaceLocString(ref OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TITLE, SOLIDTRANSFERARM, UI.StripLinkFormatting(BUILDINGS.PREFABS.SOLIDTRANSFERARM.NAME));
-            Utils.ReplaceLocString(ref OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP, ALLOWMANUALBUTTON, UI.UISIDESCREENS.AUTOMATABLE_SIDE_SCREEN.ALLOWMANUALBUTTON);
+        {
+
+            var dictionary = new Dictionary<string, string>
+            {
+                { ALLOWMANUALBUTTON, UI.UISIDESCREENS.AUTOMATABLE_SIDE_SCREEN.ALLOWMANUALBUTTON },
+                { SOLIDTRANSFERARM, UI.StripLinkFormatting(BUILDINGS.PREFABS.SOLIDTRANSFERARM.NAME) }
+            };
+            Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
         }
     }
 }

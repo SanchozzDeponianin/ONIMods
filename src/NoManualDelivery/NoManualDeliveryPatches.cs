@@ -7,20 +7,18 @@ using Harmony;
 using UnityEngine;
 using TUNING;
 using SanchozzONIMods.Lib;
-//using PeterHan.PLib;
-//using PeterHan.PLib.Datafiles;
-using PeterHan.PLib.UI;
+using PeterHan.PLib;
+using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
 
 namespace NoManualDelivery
 {
     internal static class NoManualDeliveryPatches
     {
-        public static void OnLoad(string path)
+        public static void OnLoad()
         {
-            //PUtil.InitLibrary();
-            //PUtil.RegisterPatchClass(typeof (NoManualDeliveryPatches));
-            //PLocalization.Register();
+            PUtil.InitLibrary();
+            PUtil.RegisterPatchClass(typeof(NoManualDeliveryPatches));
             POptions.RegisterOptions(typeof(NoManualDeliveryOptions));
 
             NoManualDeliveryOptions.Reload();
@@ -41,30 +39,11 @@ namespace NoManualDelivery
             }
         }
 
-        [HarmonyPatch(typeof(Localization), nameof(Localization.Initialize))]
-        internal static class Localization_Initialize
-        {
-            private static void Postfix()
-            {
-                Utils.InitLocalization(typeof(STRINGS));
-                Utils.InitLocalization(typeof(PUIStrings), "peterhan.plib.ui_", false);
-            }
-        }
-
-        /*
         [PLibMethod(RunAt.AfterModsLoad)]
-        private static void AdditionalLocalization()
+        private static void Localize()
         {
-            Debug.Log("PLibMethod AdditionalLocalization");
-            Assembly assembly = Assembly.GetCallingAssembly();
-            Type type = assembly.GetType("PeterHan.PLib.UI.PUIStrings");
-            if (type != null)
-            {
-                Debug.Log("GawGaw!!");
-                Utils.InitLocalization(type, Localization.GetLocale(), "peterhan.plib.ui_", false);
-            }
+            Utils.InitLocalization(typeof(STRINGS));
         }
-        */
 
         // ручной список добавленных построек
         private static List<string> BuildingToMakeAutomatable = new List<string>()
@@ -112,7 +91,7 @@ namespace NoManualDelivery
         [HarmonyPatch(typeof(Assets), nameof(Assets.AddBuildingDef))]
         internal static class Assets_AddBuildingDef
         {
-            private static void Prefix(ref BuildingDef def)
+            private static void Prefix(BuildingDef def)
             {
                 GameObject go = def.BuildingComplete;
                 if (go != null)
@@ -134,14 +113,21 @@ namespace NoManualDelivery
         [HarmonyPatch(typeof(Tinkerable), "UpdateChore")]
         internal static class Tinkerable_UpdateChore
         {
-            private static void Postfix(ref Chore ___chore)
+            private static readonly IDetouredField<Chore, bool> arePreconditionsDirty = PDetours.DetourField<Chore, bool>("arePreconditionsDirty");
+            private static readonly IDetouredField<Chore, List<Chore.PreconditionInstance>> preconditions = PDetours.DetourField<Chore, List<Chore.PreconditionInstance>>("preconditions");
+
+            private static void Postfix(Chore ___chore)
             {
                 if (___chore != null && ___chore is FetchChore)
                 {
                     string id = ChorePreconditions.instance.IsAllowedByAutomation.id;
+                    /*
                     Traverse traverse = Traverse.Create(___chore);
                     traverse.Field<bool>("arePreconditionsDirty").Value = true;
                     traverse.Field<List<Chore.PreconditionInstance>>("preconditions").Value.RemoveAll((Chore.PreconditionInstance x) => x.id == id);
+                    */
+                    arePreconditionsDirty.Set(___chore, true);
+                    preconditions.Get(___chore).RemoveAll((Chore.PreconditionInstance x) => x.id == id);
                     ((FetchChore)___chore).automatable = null;
                 }
             }
@@ -207,12 +193,12 @@ namespace NoManualDelivery
         [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
         internal static class DetailsScreen_OnPrefabInit
         {
-            private static void Prefix(ref List<DetailsScreen.SideScreenRef> ___sideScreens)
+            private static void Prefix(List<DetailsScreen.SideScreenRef> ___sideScreens)
             {
                 DetailsScreen.SideScreenRef sideScreen;
                 for (int i = 0; i < ___sideScreens.Count; i++)
                 {
-                    
+
                     if (___sideScreens[i].name == "Automatable Side Screen")
                     {
                         sideScreen = ___sideScreens[i];
