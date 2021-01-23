@@ -42,7 +42,7 @@ namespace CarouselCentrifuge
                 description: STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.NAME,
                 is_multiplier: false,
                 uiOnly: false,
-                is_readonly: true
+                is_readonly: false
                 );
 
             specificEffect = new Effect(
