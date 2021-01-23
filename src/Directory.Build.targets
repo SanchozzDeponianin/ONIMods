@@ -15,6 +15,15 @@
     <PropertyGroup Condition=" '$(UsesPLibOptions)' == 'true' ">
       <DefineConstants>$(DefineConstants);USESPLIBOPTIONS</DefineConstants>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+      <DefineConstants>$(DefineConstants);VANILLA;EXPANSION1;ALL</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'VANILLA'">
+      <DefineConstants>$(DefineConstants);VANILLA;VANILLA_ONLY</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'EXPANSION1'">
+      <DefineConstants>$(DefineConstants);EXPANSION1;EXPANSION1_ONLY</DefineConstants>
+    </PropertyGroup>
   </Target>
 
   <!-- кидаем ошибку если выбрана фейковая конфигурация проекта.
