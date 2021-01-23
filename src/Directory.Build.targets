@@ -124,7 +124,6 @@
       <ArchivedModVersions Include="$(MSBuildProjectDirectory)\archived_versions\**\*.*" />
       <TranslationFiles Include="$(MSBuildProjectDirectory)\translations\*.po" />
       <TranslationFiles Include="$(MSBuildProjectDirectory)\translations\*.pot" />
-      <TranslationFiles Include="$(MSBuildProjectDirectory)\..\..\PLib\*.po" Condition=" '$(UsesPLibOptions)' == 'true'" />
       <WorldGenFiles Include="$(MSBuildProjectDirectory)\worldgen\**\*.*" />
       <YamlFiles Include="$(MSBuildProjectDirectory)\*.yaml" />
       <YamlFiles Include="$(TargetDir)mod_info.yaml" Condition="Exists('$(TargetDir)mod_info.yaml')" />
