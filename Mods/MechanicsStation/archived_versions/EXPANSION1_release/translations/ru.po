@@ -1,0 +1,84 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. MechanicsStation.STRINGS.BUILDINGS.PREFABS.MECHANICSSTATION.EFFECT
+msgctxt "MechanicsStation.STRINGS.BUILDINGS.PREFABS.MECHANICSSTATION.EFFECT"
+msgid "Produces <link=\"MACHINEPARTS\">{MACHINE_PARTS}</link> to improve building production efficiency.\n\nAssigned Duplicants must possess the <link=\"TECHNICALS1\">{MACHINE_TECHNICIAN}</link> trait.\n\nThis building is a necessary component of the {MACHINE_SHOP} room."
+msgstr "Производит <link=\"MACHINEPARTS\">{MACHINE_PARTS}</link>, позволяющие увеличить эффективность работы построек.\n\nНазначенные дупликанты должны обладать навыком <link=\"TECHNICALS1\">{MACHINE_TECHNICIAN}</link>.\n\nЭта постройка – необходимый компонент комнаты {MACHINE_SHOP}."
+
+#. MechanicsStation.STRINGS.DUPLICANTS.ATTRIBUTES.CRAFTINGSPEED.NAME
+msgctxt "MechanicsStation.STRINGS.DUPLICANTS.ATTRIBUTES.CRAFTINGSPEED.NAME"
+msgid "Fabrication Speed"
+msgstr "Скорость изготовления"
+
+#. MechanicsStation.STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP
+msgctxt "MechanicsStation.STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP"
+msgid "A skilled Duplicant has jerry rigged this <style=\"KKeyword\">Building</style> to temporarily run faster"
+msgstr "Опытный Дупликант тщательно настроил все шестерёнки  в этой <style=\"KKeyword\">постройке</style>, чтобы ускорить производство"
+
+#. MechanicsStation.STRINGS.OPTIONS.CRAFTING_SPEED_MODIFIER.TITLE
+msgctxt "MechanicsStation.STRINGS.OPTIONS.CRAFTING_SPEED_MODIFIER.TITLE"
+msgid "<style=\"KKeyword\">Fabrication Speed</style> +X% value"
+msgstr "Величина <style=\"KKeyword\">Скорость изготовления</style> +X%"
+
+#. MechanicsStation.STRINGS.OPTIONS.CRAFTING_SPEED_MODIFIER.TOOLTIP
+msgctxt "MechanicsStation.STRINGS.OPTIONS.CRAFTING_SPEED_MODIFIER.TOOLTIP"
+msgid "Increases work speed of duplicant-operated buildings"
+msgstr "Повышает скорость работы построек, управляемых дупликантами"
+
+#. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION.TITLE
+msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION.TITLE"
+msgid "The <style=\"KKeyword\">{MACHINE_TINKER}</style> effect duration, cycles"
+msgstr "Длительность эффекта <style=\"KKeyword\">{MACHINE_TINKER}</style>, циклы"
+
+#. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKERABLE_WORKTIME.TITLE
+msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKERABLE_WORKTIME.TITLE"
+msgid "The time required to tune up buildings, seconds"
+msgstr "Время, необходимое для настройки построек, секунды"
+
+#. MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.TITLE
+msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.TITLE"
+msgid "<style=\"KKeyword\">{MACHINERY_SPEED}</style> +X% value"
+msgstr "Величина <style=\"KKeyword\">{MACHINERY_SPEED}</style> +X%"
+
+#. MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.TOOLTIP
+msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.TOOLTIP"
+msgid "Increases work speed of autonomously working buildings"
+msgstr "Повышает скорость работы автономно работающих построек"
+
+#. MechanicsStation.STRINGS.PERK_CAN_MACHINE_TINKER.DESCRIPTION
+msgctxt "MechanicsStation.STRINGS.PERK_CAN_MACHINE_TINKER.DESCRIPTION"
+msgid "<link=\"BUILDINGS\">{MACHINE_TINKER}</link> and <style=\"KKeyword\">{MACHINE_PARTS}</style> Crafting"
+msgstr "<link=\"BUILDINGS\">{MACHINE_TINKER}</link> и создание <style=\"KKeyword\">{MACHINE_PARTS}</style>"
+
+# далее следует хак чтобы переопределить перевод используемых модом неиспользуемых ванильных сущностей
+# а то чтото они как попало переведены в разных переводах
+
+#. STRINGS.BUILDINGS.PREFABS.MACHINESHOP.NAME
+msgctxt "STRINGS.BUILDINGS.PREFABS.MACHINESHOP.NAME"
+msgid "<link=\"MACHINESHOP\">Mechanics Station</link>"
+msgstr "<link=\"MACHINESHOP\">Механическая станция</link>"
+
+#. STRINGS.DUPLICANTS.ATTRIBUTES.MACHINERYSPEED.NAME
+msgctxt "STRINGS.DUPLICANTS.ATTRIBUTES.MACHINERYSPEED.NAME"
+msgid "Machinery Speed"
+msgstr "Скорость работы машины"
+
+#. STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.NAME
+msgctxt "STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.NAME"
+msgid "Engie's Jerry Rig"
+msgstr "Инженерная настройка"
+
+#. STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.MACHINE_PARTS.DESC
+msgctxt "STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.MACHINE_PARTS.DESC"
+msgid "Specialized Parts crafted by a professional engineer.\n\n<style=\"KKeyword\">Jerry Rig</style> machine buildings to increase their efficiency."
+msgstr "Специальные детали и механизмы, сделанные профессиональным инженером.\n\n<style=\"KKeyword\">Инженерная настройка</style> машины увеличивает её эффективность."
+
+#. STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.MACHINE_PARTS.NAME
+msgctxt "STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.MACHINE_PARTS.NAME"
+msgid "Custom Parts"
+msgstr "Механизмы"
+
+

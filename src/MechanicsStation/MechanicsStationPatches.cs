@@ -37,27 +37,22 @@ namespace MechanicsStation
         }
 
         [PLibMethod(RunAt.AfterModsLoad)]
-        private static void InitLocalization()
+        private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));
         }
 
-        [PLibMethod(RunAt.BeforeDbInit)]
-        private static void AddBuilding()
+        [PLibMethod(RunAt.AfterDbInit)]
+        private static void AddBuildingAndModifiers()
         {
             Utils.AddBuildingToPlanScreen("Equipment", MechanicsStationConfig.ID, PowerControlStationConfig.ID);
             Utils.AddBuildingToTechnology("RefinedObjects", MechanicsStationConfig.ID);
-        }
-
-        [PLibMethod(RunAt.AfterDbInit)]
-        private static void InitDb()
-        {
             var db = Db.Get();
 
             // тюнингуем и актифируем комнату
             // подхватывать максимальный размер комнаты из тюнинга
             int maxRoomSize = TuningData<RoomProber.Tuning>.Get().maxRoomSize;
-            RoomConstraints.Constraint MAXIMUM_SIZE_MAX = new RoomConstraints.Constraint(
+            var MAXIMUM_SIZE_MAX = new RoomConstraints.Constraint(
                 building_criteria: null,
                 room_criteria: (Room room) => room.cavity.numCells <= maxRoomSize,
                 times_required: 1,
@@ -129,6 +124,7 @@ namespace MechanicsStation
         // сделать постройку улучшаемой
         private static Tinkerable MakeMachineTinkerable(GameObject go)
         {
+            // todo: увеличение времени эффекта в длц
             var tinkerable = Tinkerable.MakePowerTinkerable(go);
             tinkerable.tinkerMaterialTag = MechanicsStationConfig.TINKER_TOOLS;
             tinkerable.tinkerMaterialAmount = 1f;

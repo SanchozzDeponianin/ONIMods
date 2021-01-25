@@ -27,7 +27,7 @@ namespace MoreTinkerablePlants
         }
 
         [PLibMethod(RunAt.AfterModsLoad)]
-        private static void InitLocalization()
+        private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));
         }

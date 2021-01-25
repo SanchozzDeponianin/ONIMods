@@ -1,4 +1,5 @@
-﻿using STRINGS;
+﻿using System.Collections.Generic;
+using STRINGS;
 using SanchozzONIMods.Lib;
 
 namespace MechanicsStation
@@ -75,19 +76,15 @@ namespace MechanicsStation
 
         internal static void DoReplacement()
         {
-            string text = BUILDINGS.PREFABS.MECHANICSSTATION.EFFECT.text
-                .Replace(MACHINE_PARTS, ITEMS.INDUSTRIAL_PRODUCTS.MACHINE_PARTS.NAME)
-                .Replace(MACHINE_TECHNICIAN, global::STRINGS.DUPLICANTS.ROLES.MACHINE_TECHNICIAN.NAME)
-                .Replace(MACHINE_SHOP, ROOMS.TYPES.MACHINE_SHOP.NAME);
-            Utils.ReplaceLocString(ref BUILDINGS.PREFABS.MECHANICSSTATION.EFFECT, text);
-
-            text = PERK_CAN_MACHINE_TINKER.DESCRIPTION.text
-                .Replace(MACHINE_TINKER, global::STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.NAME)
-                .Replace(MACHINE_PARTS, ITEMS.INDUSTRIAL_PRODUCTS.MACHINE_PARTS.NAME);
-            Utils.ReplaceLocString(ref PERK_CAN_MACHINE_TINKER.DESCRIPTION, text);
-
-            Utils.ReplaceLocString(ref OPTIONS.MACHINERY_SPEED_MODIFIER.TITLE, MACHINERY_SPEED, global::STRINGS.DUPLICANTS.ATTRIBUTES.MACHINERYSPEED.NAME);
-            Utils.ReplaceLocString(ref OPTIONS.MACHINE_TINKER_EFFECT_DURATION.TITLE, MACHINE_TINKER, global::STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.NAME);
+            var dictionary = new Dictionary<string, string>
+            {
+                { MACHINE_PARTS, ITEMS.INDUSTRIAL_PRODUCTS.MACHINE_PARTS.NAME },
+                { MACHINERY_SPEED, global::STRINGS.DUPLICANTS.ATTRIBUTES.MACHINERYSPEED.NAME },
+                { MACHINE_TECHNICIAN, global::STRINGS.DUPLICANTS.ROLES.MACHINE_TECHNICIAN.NAME },
+                { MACHINE_TINKER, global::STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.NAME },
+                { MACHINE_SHOP, ROOMS.TYPES.MACHINE_SHOP.NAME }
+            };
+            Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
 
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
             LocString.CreateLocStringKeys(typeof(DUPLICANTS));

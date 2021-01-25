@@ -1,4 +1,5 @@
-﻿using STRINGS;
+﻿using System.Collections.Generic;
+using STRINGS;
 using SanchozzONIMods.Lib;
 
 namespace MoreTinkerablePlants
@@ -51,15 +52,15 @@ namespace MoreTinkerablePlants
         internal static void DoReplacement()
         {
             Strings.Add("STRINGS.DUPLICANTS.ATTRIBUTES.COLDBREATHERTHROUGHPUT.NAME", CREATURES.STATUSITEMS.COOLING.NAME.text);
-            string coldbreather = CREATURES.SPECIES.COLDBREATHER.NAME;
-            string oxyfern = CREATURES.SPECIES.OXYFERN.NAME;
-            string farmtinker = UI.FormatAsKeyWord(global::STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.NAME);
-            Utils.ReplaceLocString(ref DUPLICANTS.MODIFIERS.FARMTINKER.ADDITIONAL_EFFECTS, COLDBREATHER, coldbreather);
-            Utils.ReplaceLocString(ref DUPLICANTS.MODIFIERS.FARMTINKER.ADDITIONAL_EFFECTS, OXYFERN, oxyfern);
-            Utils.ReplaceLocString(ref OPTIONS.COLDBREATHER_MULTIPLIER.TITLE, COLDBREATHER, UI.FormatAsKeyWord(coldbreather));
-            Utils.ReplaceLocString(ref OPTIONS.COLDBREATHER_MULTIPLIER.TOOLTIP, FARMTINKER, farmtinker);
-            Utils.ReplaceLocString(ref OPTIONS.OXYFERN_MULTIPLIER.TITLE, OXYFERN, UI.FormatAsKeyWord(oxyfern));
-            Utils.ReplaceLocString(ref OPTIONS.OXYFERN_MULTIPLIER.TOOLTIP, FARMTINKER, farmtinker);
+
+            var dictionary = new Dictionary<string, string>
+            {
+                { COLDBREATHER, UI.FormatAsKeyWord(CREATURES.SPECIES.COLDBREATHER.NAME) },
+                { OXYFERN, UI.FormatAsKeyWord(CREATURES.SPECIES.OXYFERN.NAME) },
+                { FARMTINKER, UI.FormatAsKeyWord(global::STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.NAME) }
+            };
+            Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
+
             LocString.CreateLocStringKeys(typeof(DUPLICANTS));
         }
     }

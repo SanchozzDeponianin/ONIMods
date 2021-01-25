@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <UsesPLib>true</UsesPLib>
+    <OutputIntoRootOnVANILLA>true</OutputIntoRootOnVANILLA>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\BaseOptions.cs">
