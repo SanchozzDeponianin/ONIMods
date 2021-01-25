@@ -38,7 +38,7 @@ namespace MoreTinkerablePlants
         private static void AfterDbInit()
         {
             var db = Db.Get();
-            var effectFarmTinker = db.effects.Get(TinkerableEffectMonitor.FARMTINKEREFFECTID);
+            var effectFarmTinker = db.effects.Get(TinkerableEffectMonitor.FARM_TINKER_EFFECT_ID);
 
             ColdBreatherThroughput = new Attribute(nameof(ColdBreatherThroughput), false, Attribute.Display.General, false, THROUGHPUT_BASE_VALUE);
             ColdBreatherThroughput.SetFormatter(new PercentAttributeFormatter());
@@ -67,7 +67,7 @@ namespace MoreTinkerablePlants
         [HarmonyPatch(typeof(OxyfernConfig), nameof(OxyfernConfig.CreatePrefab))]
         internal static class OxyfernConfig_CreatePrefab
         {
-            private static void Postfix(ref GameObject __result)
+            private static void Postfix(GameObject __result)
             {
                 Tinkerable.MakeFarmTinkerable(__result);
                 __result.AddOrGet<TinkerableOxyfern>();
@@ -90,7 +90,7 @@ namespace MoreTinkerablePlants
         [HarmonyPatch(typeof(ColdBreatherConfig), nameof(ColdBreatherConfig.CreatePrefab))]
         internal static class ColdBreatherConfig_CreatePrefab
         {
-            private static void Postfix(ref GameObject __result)
+            private static void Postfix(GameObject __result)
             {
                 Tinkerable.MakeFarmTinkerable(__result);
                 __result.AddOrGet<TinkerableColdBreather>();
@@ -124,7 +124,7 @@ namespace MoreTinkerablePlants
         [HarmonyPatch(typeof(ForestTreeConfig), nameof(ForestTreeConfig.CreatePrefab))]
         internal static class ForestTreeConfig_CreatePrefab
         {
-            private static void Postfix(ref GameObject __result)
+            private static void Postfix(GameObject __result)
             {
                 __result.AddOrGet<TinkerableForestTree>();
             }
@@ -139,7 +139,7 @@ namespace MoreTinkerablePlants
         [HarmonyPatch(typeof(ForestTreeBranchConfig), "CreatePrefab")]
         internal static class ForestTreeBranchConfig_CreatePrefab
         {
-            private static void Postfix(ref GameObject __result)
+            private static void Postfix(GameObject __result)
             {
                 __result.GetComponent<Tinkerable>().tinkerMaterialTag = GameTags.Void;
             }
@@ -149,10 +149,16 @@ namespace MoreTinkerablePlants
         [HarmonyPatch(typeof(TreeBud), "OnSpawn")]
         internal static class TreeBud_OnSpawn
         {
-            private static void Prefix(ref TreeBud __instance, Ref<BuddingTrunk> ___buddingTrunk)
+            private static void Prefix(TreeBud __instance, Ref<BuddingTrunk> ___buddingTrunk)
             {
                 TinkerableForestTree.ApplyModifierToBranch(__instance, ___buddingTrunk.Get());
             }
         }
+
+        // todo: проверить почему жучинкусы не хотят убобрять ствол когда выросли ветки
+
+        // todo: научить жучинкусов убобрять холодых и оксихрен
+
+        // todo: сделать чтобы производство газа растением-ловушкой зависило от её скорости роста
     }
 }

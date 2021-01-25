@@ -4,7 +4,17 @@ namespace MoreTinkerablePlants
 {
     public class TinkerableEffectMonitor : KMonoBehaviour
     {
-        public const string FARMTINKEREFFECTID = "FarmTinker";
+        public const string FARM_TINKER_EFFECT_ID = "FarmTinker";
+        public const string DIVERGENT_CROP_TENDED_EFFECT_ID = "DivergentCropTended";
+        public const string DIVERGENT_CROP_TENDED_WORM_EFFECT_ID = "DivergentCropTendedWorm";
+
+        protected static readonly string[] CropTendingEffects = new string[] {
+            FARM_TINKER_EFFECT_ID,
+#if EXPANSION1
+            DIVERGENT_CROP_TENDED_EFFECT_ID,
+            DIVERGENT_CROP_TENDED_WORM_EFFECT_ID,
+#endif
+        };
 
         [MyCmpReq]
         protected Effects effects;

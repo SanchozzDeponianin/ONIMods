@@ -15,11 +15,27 @@ namespace MoreTinkerablePlants
         public override void ApplyModifier()
         {
             base.ApplyModifier();
-            if (growing.IsGrown() && effects.HasEffect(FARMTINKEREFFECTID))
+            GameScheduler.Instance.Schedule("ApplyModifier", 0.2f, ApplyModifierToAllBranches);
+        }
+
+        private void ApplyModifierToAllBranches(object callbackParam)
+        {
+            if (this != null && growing.IsGrown())
             {
-                for (int i = 0; i < ForestTreeConfig.NUM_BRANCHES; i++)
+                foreach (var effect_id in CropTendingEffects)
                 {
-                    buddingTrunk.GetBranchAtPosition(i)?.GetComponent<Effects>()?.Add(FARMTINKEREFFECTID, false);
+                    var effectInstanceTrunk = effects.Get(effect_id);
+                    if (effectInstanceTrunk != null)
+                    {
+                        for (int i = 0; i < ForestTreeConfig.NUM_BRANCHES; i++)
+                        {
+                            var effectInstanceBranch = buddingTrunk.GetBranchAtPosition(i)?.GetComponent<Effects>()?.Add(effect_id, false);
+                            if (effectInstanceBranch != null)
+                            {
+                                effectInstanceBranch.timeRemaining = effectInstanceTrunk.timeRemaining;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -28,9 +44,20 @@ namespace MoreTinkerablePlants
         {
             var parentEffects = buddingTrunk?.GetComponent<Effects>();
             var branchEffects = branch?.GetComponent<Effects>();
-            if (parentEffects != null && branchEffects != null && parentEffects.HasEffect(FARMTINKEREFFECTID))
+            if (parentEffects != null && branchEffects != null)
             {
-                branchEffects.Add(FARMTINKEREFFECTID, false).timeRemaining = parentEffects.Get(FARMTINKEREFFECTID).timeRemaining;
+                foreach (var effect_id in CropTendingEffects)
+                {
+                    var effectInstanceTrunk = parentEffects.Get(effect_id);
+                    if (effectInstanceTrunk != null)
+                    {
+                        var effectInstanceBranch = branchEffects.Add(effect_id, false);
+                        if (effectInstanceBranch != null)
+                        {
+                            effectInstanceBranch.timeRemaining = effectInstanceTrunk.timeRemaining;
+                        }
+                    }
+                }
             }
         }
     }
