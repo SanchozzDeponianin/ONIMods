@@ -4,10 +4,12 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Harmony;
 using Klei.AI;
+using TUNING;
 using UnityEngine;
 
 using SanchozzONIMods.Lib;
 using PeterHan.PLib;
+using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
 
 namespace MoreTinkerablePlants
@@ -282,10 +284,20 @@ namespace MoreTinkerablePlants
                 return instructionsList;
             }
 
+            // todo: для отладки, потом убрать
             private static void Postfix(CropTendingStates.Instance smi)
             {
                 var x = smi.sm.targetCrop.Get(smi);
                 Debug.Log("selected plant: " + x.GetProperName());
+                if (x is null)
+                    return;
+                var t = x.GetComponent<KPrefabID>().Tags;
+                string s = "";
+                foreach (var tt in t)
+                {
+                    s = s + " " + tt.Name;
+                }
+                Debug.Log("selected plant Tags: " + s);
             }
         }
 
@@ -293,8 +305,20 @@ namespace MoreTinkerablePlants
 
         // todo: научить белочек делать экстракцию декоративных семян
 
-        // todo: сделать чтобы производство газа растением-ловушкой зависило от её скорости роста
+        // растение-ловушка: производство газа  пропорционально её скорости роста
+        // todo: сделать опционально
+        [HarmonyPatch(typeof(CritterTrapPlant.StatesInstance), nameof(CritterTrapPlant.StatesInstance.AddGas))]
+        internal static class CritterTrapPlant_StatesInstance_AddGas
+        {
+            private static readonly IDetouredField<CritterTrapPlant, ReceptacleMonitor> RM = PDetours.DetourField<CritterTrapPlant, ReceptacleMonitor>("rm");
 
+            private static void Prefix(CritterTrapPlant.StatesInstance __instance, ref float dt)
+            {
+                var id = Db.Get().Amounts.Maturity.deltaAttribute.Id;
+                var ai = __instance.master.GetAttributes().Get(id);
+                dt *= ai.GetTotalValue() / (RM.Get(__instance.master).Replanted ? CROPS.GROWTH_RATE : CROPS.WILD_GROWTH_RATE);
+            }
+        }
 #endif
     }
 }
