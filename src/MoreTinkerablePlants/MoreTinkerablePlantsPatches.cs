@@ -1,4 +1,8 @@
-﻿using Harmony;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using Harmony;
 using Klei.AI;
 using UnityEngine;
 
@@ -53,6 +57,8 @@ namespace MoreTinkerablePlants
 
             OxyfernThroughputModifier = new AttributeModifier(OxyfernThroughput.Id, THROUGHPUT_MULTIPLIER - THROUGHPUT_BASE_VALUE);
             effectFarmTinker.Add(OxyfernThroughputModifier);
+
+            // todo: добавить модификаторы для жучинкусов
         }
 
         [PLibMethod(RunAt.OnStartGame)]
@@ -106,6 +112,8 @@ namespace MoreTinkerablePlants
             }
         }
 
+#if false
+        // todo: нужно перепроверить это!
         // фикс для элементконсумера, чтобы статуситем не исчезал после обновления
         [HarmonyPatch(typeof(ElementConsumer), "UpdateStatusItem")]
         internal static class ElementConsumer_UpdateStatusItem
@@ -119,6 +127,7 @@ namespace MoreTinkerablePlants
                 }
             }
         }
+#endif
 
         // дерево
         [HarmonyPatch(typeof(ForestTreeConfig), nameof(ForestTreeConfig.CreatePrefab))]
@@ -155,10 +164,137 @@ namespace MoreTinkerablePlants
             }
         }
 
-        // todo: проверить почему жучинкусы не хотят убобрять ствол когда выросли ветки
+#if EXPANSION1
 
-        // todo: научить жучинкусов убобрять холодых и оксихрен
+        // научиваем жучинкусов убобрять безурожайные растения, такие как холодых и оксихрен, и декоративочка
+        // а также корректируем убобрение дерева
+        // использован достаточно грязный хак. но все работает.
+        [HarmonyPatch(typeof(CropTendingStates), "FindCrop")]
+        internal static class CropTendingStates_FindCrop
+        {
+            private static bool IsNotNeedTending(Growing growing)
+            {
+                if (growing == null)
+                    return true;
+                if (growing.HasTag(ForestTreeBranchConfig.ID)) // не нужно убобрять отдельные ветки
+                    return true;
+                if (growing.HasTag(ForestTreeConfig.ID)) // дерево
+                {
+                    if (growing.IsGrown())
+                    {
+                        // todo: не нужно убобрять дерево если все ветки выросли
+                        var buddingTrunk = growing.GetComponent<BuddingTrunk>();
+                        if (buddingTrunk != null)
+                        {
+                            for (int i = 0; i < ForestTreeConfig.NUM_BRANCHES; i++)
+                            {
+                                var growingBranch = buddingTrunk.GetBranchAtPosition(i)?.GetComponent<Growing>();
+                                if (growingBranch != null && !growingBranch.IsGrown())
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+                // остальные растения не нужно убобрять если выросли
+                return growing.IsGrown();
+            }
+
+            // поиск растений для убобрения.
+            // Клеи зачем-то перебирают список всех урожайных растений на карте
+            // а мы заменим на GameScenePartitioner
+            private static List<KMonoBehaviour> FindPlants(int myWorldId, CropTendingStates.Instance smi)
+            {
+                var entries = ListPool<ScenePartitionerEntry, GameScenePartitioner>.Allocate();
+                // todo: вычислять радиус из константы
+                var search_extents = new Extents(Grid.PosToCell(smi.master.transform.GetPosition()), 25);
+                GameScenePartitioner.Instance.GatherEntries(search_extents, GameScenePartitioner.Instance.plants, entries);
+                // todo: сдесь должны быть дополнительные проверки. в частности - опция убобрения декоративки
+                var plants = entries
+                    .Select((e) => e.obj as KMonoBehaviour)
+                    .Where((kmb) => kmb.GetMyWorldId() == myWorldId)
+                    .ToList();
+                entries.Recycle();
+                return plants;
+            }
+
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                var instructionsList = instructions.ToList();
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
+
+                var IsGrown = PPatchTools.GetMethodSafe(typeof(Growing), "IsGrown", false, PPatchTools.AnyArguments);
+                var GetWorldItems = PPatchTools.GetMethodSafe(typeof(Components.Cmps<Crop>), "GetWorldItems", false, PPatchTools.AnyArguments);
+                var findPlants = PPatchTools.GetMethodSafe(typeof(CropTendingStates_FindCrop), nameof(FindPlants), true, PPatchTools.AnyArguments);
+                var isNotNeedTending = PPatchTools.GetMethodSafe(typeof(CropTendingStates_FindCrop), nameof(IsNotNeedTending), true, PPatchTools.AnyArguments);
+
+                bool r1 = false, r2 = false;
+#if DEBUG
+                Debug.Log("---------------------------------- ORIGINAL ----------------------------------");
+                PPatchTools.DumpMethodBody(instructionsList);
+#endif
+                for (int i = 0; i < instructionsList.Count; i++)
+                {
+                    var instruction = instructionsList[i];
+
+                    /*
+                    foreach (Crop worldItem in 
+                ---         Components.Crops.GetWorldItems(smi.gameObject.GetMyWorldId()))
+                +++         FindPlants(smi.gameObject.GetMyWorldId(), smi))
+                    */
+                    if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (MethodInfo)instruction.operand == GetWorldItems)
+                    {
+                        instructionsList[i] = new CodeInstruction(OpCodes.Ldarg_1);
+                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, findPlants));
+                        r1 = true;
+#if DEBUG
+                        PUtil.LogDebug($"'{methodName}' Transpiler #1 injected");
+#endif
+                    }
+
+                    /*        
+                    Growing growing = worldItem.GetComponent<Growing>();
+	            ---	if (!(growing != null && growing.IsGrown()) && блаблабла ...)
+                +++ if (!(growing != null && isNotNeedTending(growing)) && блаблабла ...)
+                    */
+                    if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (MethodInfo)instruction.operand == IsGrown)
+                    {
+                        instructionsList[i] = new CodeInstruction(OpCodes.Call, isNotNeedTending);
+                        r2 = true;
+#if DEBUG
+                        PUtil.LogDebug($"'{methodName}' Transpiler #2 injected");
+#endif
+                        break;
+                    }
+                }
+#if DEBUG
+                Debug.Log("---------------------------------- PATCHED  ----------------------------------");
+                PPatchTools.DumpMethodBody(instructionsList);
+#endif               
+                if (!r1 || !r2)
+                {
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
+                }
+                return instructionsList;
+            }
+
+            private static void Postfix(CropTendingStates.Instance smi)
+            {
+                var x = smi.sm.targetCrop.Get(smi);
+                Debug.Log("selected plant: " + x.GetProperName());
+            }
+        }
+
+        // todo: сделать спавн доп семян при убобрении декоративных растений
+
+        // todo: научить белочек делать экстракцию декоративных семян
 
         // todo: сделать чтобы производство газа растением-ловушкой зависило от её скорости роста
+
+#endif
     }
 }
