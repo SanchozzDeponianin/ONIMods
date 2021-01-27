@@ -1,5 +1,6 @@
 ﻿using Klei.AI;
 using TUNING;
+using static BetterPlantTending.BetterPlantTendingAttributes;
 
 namespace BetterPlantTending
 {
@@ -22,8 +23,8 @@ namespace BetterPlantTending
         {
             base.OnPrefabInit();
             var attributes = this.GetAttributes();
-            attributes.Add(BetterPlantTendingPatches.ColdBreatherThroughput);
-            attributes.Add(BetterPlantTendingPatches.ColdBreatherThroughputBaseValue);
+            attributes.Add(ColdBreatherThroughput);
+            attributes.Add(ColdBreatherThroughputBaseValue);
         }
 
         protected override void OnSpawn()
@@ -35,7 +36,7 @@ namespace BetterPlantTending
         public override void ApplyModifier()
         {
             base.ApplyModifier();
-            float multiplier = this.GetAttributes().Get(BetterPlantTendingPatches.ColdBreatherThroughput).GetTotalValue();
+            float multiplier = this.GetAttributes().Get(ColdBreatherThroughput).GetTotalValue();
             elementConsumer.consumptionRate = coldBreather.consumptionRate * (receptacleMonitor.Replanted ? 1 : CROPS.WILD_GROWTH_RATE_MODIFIER) * multiplier;
             elementConsumer.RefreshConsumptionRate();
         }

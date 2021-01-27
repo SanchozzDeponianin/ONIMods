@@ -24,6 +24,8 @@
     </Compile>
     <Compile Include="BetterPlantTendingOptions.cs" />
     <Compile Include="BetterPlantTendingPatches.cs" />
+    <Compile Include="BetterPlantTendingAttributes.cs" />
+    <Compile Include="TendedExtraSeedsPlant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="STRINGS.cs" />
     <Compile Include="TendedColdBreather.cs" />

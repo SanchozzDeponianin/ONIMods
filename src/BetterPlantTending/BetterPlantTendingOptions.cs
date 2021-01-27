@@ -4,6 +4,7 @@ using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib;
 using PeterHan.PLib.Options;
+using static BetterPlantTending.BetterPlantTendingAttributes;
 
 namespace BetterPlantTending
 {
@@ -14,7 +15,7 @@ namespace BetterPlantTending
     {
         // фермер
         [JsonIgnore]
-        private float coldbreatherthroughputfarmtinkermodifier = BetterPlantTendingPatches.THROUGHPUT_MODIFIER_FARMTINKER;
+        private float coldbreatherthroughputfarmtinkermodifier = THROUGHPUT_MODIFIER_FARMTINKER;
 
         [JsonProperty]
         [Option(
@@ -26,7 +27,7 @@ namespace BetterPlantTending
         public float ColdBreatherThroughputFarmTinkerModifier { get => coldbreatherthroughputfarmtinkermodifier; set => coldbreatherthroughputfarmtinkermodifier = Mathf.Clamp(value, 1, 4); }
 
         [JsonIgnore]
-        private float oxyfernthroughputfarmtinkermodifier = BetterPlantTendingPatches.THROUGHPUT_MODIFIER_FARMTINKER;
+        private float oxyfernthroughputfarmtinkermodifier = THROUGHPUT_MODIFIER_FARMTINKER;
 
         [JsonProperty]
         [Option(
@@ -40,7 +41,7 @@ namespace BetterPlantTending
 #if EXPANSION1
         // жучара
         [JsonIgnore]
-        private float coldbreatherthroughputdivergentmodifier = BetterPlantTendingPatches.THROUGHPUT_MODIFIER_DIVERGENT;
+        private float coldbreatherthroughputdivergentmodifier = THROUGHPUT_MODIFIER_DIVERGENT;
 
         [JsonProperty]
         [Option(
@@ -52,7 +53,7 @@ namespace BetterPlantTending
         public float ColdBreatherThroughputDivergentModifier { get => coldbreatherthroughputdivergentmodifier; set => coldbreatherthroughputdivergentmodifier = Mathf.Clamp(value, 0.05f, 0.5f); }
 
         [JsonIgnore]
-        private float oxyfernthroughputdivergentmodifier = BetterPlantTendingPatches.THROUGHPUT_MODIFIER_DIVERGENT;
+        private float oxyfernthroughputdivergentmodifier = THROUGHPUT_MODIFIER_DIVERGENT;
 
         [JsonProperty]
         [Option(
@@ -65,7 +66,7 @@ namespace BetterPlantTending
 
         // червячара
         [JsonIgnore]
-        private float coldbreatherthroughputwormmodifier = BetterPlantTendingPatches.THROUGHPUT_MODIFIER_WORM;
+        private float coldbreatherthroughputwormmodifier = THROUGHPUT_MODIFIER_WORM;
 
         [JsonProperty]
         [Option(
@@ -77,7 +78,7 @@ namespace BetterPlantTending
         public float ColdBreatherThroughputWormModifier { get => coldbreatherthroughputwormmodifier; set => coldbreatherthroughputwormmodifier = Mathf.Clamp(value, 0.5f, 2); }
 
         [JsonIgnore]
-        private float oxyfernthroughputwormmodifier = BetterPlantTendingPatches.THROUGHPUT_MODIFIER_WORM;
+        private float oxyfernthroughputwormmodifier = THROUGHPUT_MODIFIER_WORM;
 
         [JsonProperty]
         [Option(

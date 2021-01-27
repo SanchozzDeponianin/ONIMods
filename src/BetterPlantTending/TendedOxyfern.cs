@@ -1,4 +1,5 @@
 ﻿using Klei.AI;
+using static BetterPlantTending.BetterPlantTendingAttributes;
 
 namespace BetterPlantTending
 {
@@ -15,8 +16,8 @@ namespace BetterPlantTending
         {
             base.OnPrefabInit();
             var attributes = this.GetAttributes();
-            attributes.Add(BetterPlantTendingPatches.OxyfernThroughput);
-            attributes.Add(BetterPlantTendingPatches.OxyfernThroughputBaseValue);
+            attributes.Add(OxyfernThroughput);
+            attributes.Add(OxyfernThroughputBaseValue);
         }
 
         public override void ApplyModifier()
