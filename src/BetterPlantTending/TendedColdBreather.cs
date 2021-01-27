@@ -21,7 +21,9 @@ namespace BetterPlantTending
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
-            this.GetAttributes().Add(BetterPlantTendingPatches.ColdBreatherThroughput);
+            var attributes = this.GetAttributes();
+            attributes.Add(BetterPlantTendingPatches.ColdBreatherThroughput);
+            attributes.Add(BetterPlantTendingPatches.ColdBreatherThroughputBaseValue);
         }
 
         protected override void OnSpawn()

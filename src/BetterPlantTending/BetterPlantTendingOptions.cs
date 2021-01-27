@@ -14,19 +14,19 @@ namespace BetterPlantTending
     internal class BetterPlantTendingOptions : BaseOptions<BetterPlantTendingOptions>
     {
         [JsonIgnore]
-        private float coldbreatherthroughputmultiplier = BetterPlantTendingPatches.THROUGHPUT_MULTIPLIER;
+        private float coldbreatherthroughputfarmtinkermodifier = BetterPlantTendingPatches.THROUGHPUT_MODIFIER_FARMTINKER;
 
         [JsonProperty]
-        [Option("MoreTinkerablePlants.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TITLE", "MoreTinkerablePlants.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TOOLTIP", Format = "F1")]
-        [Limit(2, 5)]
-        public float ColdBreatherThroughputMultiplier { get => coldbreatherthroughputmultiplier; set => coldbreatherthroughputmultiplier = Mathf.Clamp(value, 2, 5); }
+        [Option("BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TITLE", "BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TOOLTIP", Format = "F1")]
+        [Limit(1, 4)]
+        public float ColdBreatherThroughputFarmTinkerModifier { get => coldbreatherthroughputfarmtinkermodifier; set => coldbreatherthroughputfarmtinkermodifier = Mathf.Clamp(value, 1, 4); }
 
         [JsonIgnore]
-        private float oxyfernthroughputmultiplier = BetterPlantTendingPatches.THROUGHPUT_MULTIPLIER;
+        private float oxyfernthroughputfarmtinkermodifier = BetterPlantTendingPatches.THROUGHPUT_MODIFIER_FARMTINKER;
 
         [JsonProperty]
-        [Option("MoreTinkerablePlants.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TITLE", "MoreTinkerablePlants.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TOOLTIP", Format = "F1")]
-        [Limit(2, 5)]
-        public float OxyfernThroughputMultiplier { get => oxyfernthroughputmultiplier; set => oxyfernthroughputmultiplier = Mathf.Clamp(value, 2, 5); }
+        [Option("BetterPlantTending.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TITLE", "BetterPlantTending.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TOOLTIP", Format = "F1")]
+        [Limit(1, 4)]
+        public float OxyfernThroughputFarmTinkerModifier { get => oxyfernthroughputfarmtinkermodifier; set => oxyfernthroughputfarmtinkermodifier = Mathf.Clamp(value, 1, 4); }
     }
 }

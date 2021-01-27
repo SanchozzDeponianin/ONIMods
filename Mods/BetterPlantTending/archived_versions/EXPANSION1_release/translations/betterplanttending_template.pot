@@ -1,0 +1,35 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. BetterPlantTending.STRINGS.DUPLICANTS.ATTRIBUTES.OXYFERNTHROUGHPUT.NAME
+msgctxt "BetterPlantTending.STRINGS.DUPLICANTS.ATTRIBUTES.OXYFERNTHROUGHPUT.NAME"
+msgid "Oxygen emitting"
+msgstr ""
+
+#. BetterPlantTending.STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.ADDITIONAL_EFFECTS
+msgctxt "BetterPlantTending.STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.ADDITIONAL_EFFECTS"
+msgid "Increases the <style=\"KKeyword\">Throughput</style> of <link=\"OXYFERN\">{OXYFERN}</link> and <link=\"COLDBREATHER\">{COLDBREATHER}</link>"
+msgstr ""
+
+#. BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TITLE
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TITLE"
+msgid "{COLDBREATHER} Throughput Multiplier"
+msgstr ""
+
+#. BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TOOLTIP"
+msgid "Increase Cooling power when exposed to {FARMTINKER} effect"
+msgstr ""
+
+#. BetterPlantTending.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TITLE
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TITLE"
+msgid "{OXYFERN} Throughput Multiplier"
+msgstr ""
+
+#. BetterPlantTending.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TOOLTIP"
+msgid "Increase Oxygen production when exposed to {FARMTINKER} effect"
+msgstr ""
+

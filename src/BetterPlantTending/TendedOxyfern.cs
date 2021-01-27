@@ -14,7 +14,9 @@ namespace BetterPlantTending
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
-            this.GetAttributes().Add(BetterPlantTendingPatches.OxyfernThroughput);
+            var attributes = this.GetAttributes();
+            attributes.Add(BetterPlantTendingPatches.OxyfernThroughput);
+            attributes.Add(BetterPlantTendingPatches.OxyfernThroughputBaseValue);
         }
 
         public override void ApplyModifier()
