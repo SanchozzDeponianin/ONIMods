@@ -30,7 +30,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AquaticFarm", "AquaticFarm\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archaeologist", "Archaeologist\Archaeologist.csproj", "{901C7D96-27FB-4BBF-A3C0-6A668CE9F3F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreTinkerablePlants", "MoreTinkerablePlants\MoreTinkerablePlants.csproj", "{D9C6A940-106C-42E4-BA4D-F3E92EFA5340}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetterPlantTending", "BetterPlantTending\BetterPlantTending.csproj", "{D9C6A940-106C-42E4-BA4D-F3E92EFA5340}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MechanicsStation", "MechanicsStation\MechanicsStation.csproj", "{9462C9FD-5EB3-4024-AF98-E2FEF20DF112}"
 EndProject
