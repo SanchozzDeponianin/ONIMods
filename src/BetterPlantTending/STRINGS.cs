@@ -9,6 +9,8 @@ namespace BetterPlantTending
         private const string COLDBREATHER = "{COLDBREATHER}";
         private const string OXYFERN = "{OXYFERN}";
         private const string FARMTINKER = "{FARMTINKER}";
+        private const string DIVERGENTCROPTENDED = "{DIVERGENTCROPTENDED}";
+        private const string WORMCROPTENDED = "{WORMCROPTENDED}";
         public class DUPLICANTS
         {
             public class ATTRIBUTES
@@ -37,15 +39,22 @@ namespace BetterPlantTending
 
         public class OPTIONS
         {
-            public class COLDBREATHER_MULTIPLIER
+            public class COLDBREATHER_MODIFIER
             {
-                public static LocString TITLE = $"{COLDBREATHER} Throughput Multiplier";
-                public static LocString TOOLTIP = $"Increase Cooling power when exposed to {FARMTINKER} effect";
+                public static LocString TITLE = $"{COLDBREATHER} Throughput +X% Modifier";
+                public static LocString TOOLTIP = $"Increase Cooling power when exposed to effect";
             }
-            public class OXYFERN_MULTIPLIER
+            public class OXYFERN_MODIFIER
             {
-                public static LocString TITLE = $"{OXYFERN} Throughput Multiplier";
-                public static LocString TOOLTIP = $"Increase Oxygen production when exposed to {FARMTINKER} effect";
+                public static LocString TITLE = $"{OXYFERN} Throughput +X% Modifier";
+                public static LocString TOOLTIP = $"Increase Oxygen production when exposed to effect";
+            }
+
+            public class CATEGORY
+            {
+                public static LocString FARMTINKER = "\"{FARMTINKER}\" additional effects";
+                public static LocString DIVERGENTCROPTENDED = "\"{DIVERGENTCROPTENDED}\" additional effects";
+                public static LocString WORMCROPTENDED = "\"{WORMCROPTENDED}\" additional effects";
             }
         }
 
@@ -57,7 +66,11 @@ namespace BetterPlantTending
             {
                 { COLDBREATHER, UI.FormatAsKeyWord(CREATURES.SPECIES.COLDBREATHER.NAME) },
                 { OXYFERN, UI.FormatAsKeyWord(CREATURES.SPECIES.OXYFERN.NAME) },
-                { FARMTINKER, UI.FormatAsKeyWord(global::STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.NAME) }
+                { FARMTINKER, UI.FormatAsKeyWord(global::STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.NAME) },
+#if EXPANSION1
+                { DIVERGENTCROPTENDED, UI.FormatAsKeyWord(CREATURES.MODIFIERS.DIVERGENTPLANTTENDED.NAME)},
+                { WORMCROPTENDED, UI.FormatAsKeyWord(CREATURES.MODIFIERS.DIVERGENTPLANTTENDEDWORM.NAME)}
+#endif
             };
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
 

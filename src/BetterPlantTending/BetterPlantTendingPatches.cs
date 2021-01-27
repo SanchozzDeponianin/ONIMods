@@ -46,7 +46,7 @@ namespace BetterPlantTending
         [PLibMethod(RunAt.AfterModsLoad)]
         private static void Localize()
         {
-            Utils.InitLocalization(typeof(STRINGS));
+            Utils.InitLocalization(typeof(STRINGS)/*, writeStringsTemplate: true*/);
         }
 
         // добавляем атрибуты и модификаторы 
@@ -57,10 +57,10 @@ namespace BetterPlantTending
             var effectFarmTinker = db.effects.Get(TendedPlant.FARM_TINKER_EFFECT_ID);
 
             ColdBreatherThroughput = new Attribute(
-                id: nameof(ColdBreatherThroughput), 
-                is_trainable: false, 
-                show_in_ui: Attribute.Display.General, 
-                is_profession: false, 
+                id: nameof(ColdBreatherThroughput),
+                is_trainable: false,
+                show_in_ui: Attribute.Display.General,
+                is_profession: false,
                 base_value: 0);
             ColdBreatherThroughput.SetFormatter(new PercentAttributeFormatter());
             db.Attributes.Add(ColdBreatherThroughput);
@@ -70,17 +70,17 @@ namespace BetterPlantTending
                 value: THROUGHPUT_BASE_VALUE);
 
             ColdBreatherThroughputFarmTinkerModifier = new AttributeModifier(
-                attribute_id: ColdBreatherThroughput.Id, 
+                attribute_id: ColdBreatherThroughput.Id,
                 value: THROUGHPUT_MODIFIER_FARMTINKER,
                 is_multiplier: true,
                 is_readonly: false);
             effectFarmTinker.Add(ColdBreatherThroughputFarmTinkerModifier);
 
             OxyfernThroughput = new Attribute(
-                id: nameof(OxyfernThroughput), 
-                is_trainable: false, 
-                show_in_ui: Attribute.Display.General, 
-                is_profession: false, 
+                id: nameof(OxyfernThroughput),
+                is_trainable: false,
+                show_in_ui: Attribute.Display.General,
+                is_profession: false,
                 base_value: 0);
             OxyfernThroughput.SetFormatter(new PercentAttributeFormatter());
             db.Attributes.Add(OxyfernThroughput);
@@ -90,13 +90,44 @@ namespace BetterPlantTending
                 value: THROUGHPUT_BASE_VALUE);
 
             OxyfernThroughputFarmTinkerModifier = new AttributeModifier(
-                attribute_id: OxyfernThroughput.Id, 
+                attribute_id: OxyfernThroughput.Id,
                 value: THROUGHPUT_MODIFIER_FARMTINKER,
                 is_multiplier: true,
                 is_readonly: false);
             effectFarmTinker.Add(OxyfernThroughputFarmTinkerModifier);
+#if EXPANSION1
+            // модификаторы для жучинкусов
+            var effectDivergentCropTended = db.effects.Get(TendedPlant.DIVERGENT_CROP_TENDED_EFFECT_ID);
+            var effectWormCropTended = db.effects.Get(TendedPlant.DIVERGENT_CROP_TENDED_WORM_EFFECT_ID);
 
-            // todo: добавить модификаторы для жучинкусов
+            ColdBreatherThroughputDivergentModifier = new AttributeModifier(
+                attribute_id: ColdBreatherThroughput.Id,
+                value: THROUGHPUT_MODIFIER_DIVERGENT,
+                is_multiplier: true,
+                is_readonly: false);
+            effectDivergentCropTended.Add(ColdBreatherThroughputDivergentModifier);
+
+            ColdBreatherThroughputWormModifier = new AttributeModifier(
+                attribute_id: ColdBreatherThroughput.Id,
+                value: THROUGHPUT_MODIFIER_WORM,
+                is_multiplier: true,
+                is_readonly: false);
+            effectWormCropTended.Add(ColdBreatherThroughputWormModifier);
+
+            OxyfernThroughputDivergentModifier = new AttributeModifier(
+                attribute_id: OxyfernThroughput.Id,
+                value: THROUGHPUT_MODIFIER_DIVERGENT,
+                is_multiplier: true,
+                is_readonly: false);
+            effectDivergentCropTended.Add(OxyfernThroughputDivergentModifier);
+
+            OxyfernThroughputWormModifier = new AttributeModifier(
+                attribute_id: OxyfernThroughput.Id,
+                value: THROUGHPUT_MODIFIER_WORM,
+                is_multiplier: true,
+                is_readonly: false);
+            effectWormCropTended.Add(OxyfernThroughputWormModifier);
+#endif
         }
 
         [PLibMethod(RunAt.OnStartGame)]
@@ -105,7 +136,12 @@ namespace BetterPlantTending
             BetterPlantTendingOptions.Reload();
             ColdBreatherThroughputFarmTinkerModifier.SetValue(BetterPlantTendingOptions.Instance.ColdBreatherThroughputFarmTinkerModifier);
             OxyfernThroughputFarmTinkerModifier.SetValue(BetterPlantTendingOptions.Instance.OxyfernThroughputFarmTinkerModifier);
-            // todo: добавить модификаторы для жучинкусов
+#if EXPANSION1
+            ColdBreatherThroughputDivergentModifier.SetValue(BetterPlantTendingOptions.Instance.ColdBreatherThroughputDivergentModifier);
+            OxyfernThroughputDivergentModifier.SetValue(BetterPlantTendingOptions.Instance.OxyfernThroughputDivergentModifier);
+            ColdBreatherThroughputWormModifier.SetValue(BetterPlantTendingOptions.Instance.ColdBreatherThroughputWormModifier);
+            OxyfernThroughputWormModifier.SetValue(BetterPlantTendingOptions.Instance.OxyfernThroughputWormModifier);
+#endif
         }
 
         // Оксихрен
