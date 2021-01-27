@@ -1,8 +1,8 @@
 ﻿using Klei.AI;
 
-namespace MoreTinkerablePlants
+namespace BetterPlantTending
 {
-    public class TinkerableForestTree : TinkerableEffectMonitor
+    public class TendedForestTree : TendedPlant
     {
 #pragma warning disable CS0649
         [MyCmpReq]

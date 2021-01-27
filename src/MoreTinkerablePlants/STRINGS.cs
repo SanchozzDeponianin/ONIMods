@@ -2,7 +2,7 @@
 using STRINGS;
 using SanchozzONIMods.Lib;
 
-namespace MoreTinkerablePlants
+namespace BetterPlantTending
 {
     public class STRINGS
     {

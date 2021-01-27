@@ -5,16 +5,16 @@ using SanchozzONIMods.Lib;
 using PeterHan.PLib;
 using PeterHan.PLib.Options;
 
-namespace MoreTinkerablePlants
+namespace BetterPlantTending
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ModInfo("Farmer's Touch on more Plants", "https://steamcommunity.com/sharedfiles/filedetails/?id=1933433002")]
+    [ModInfo("Better Plant Tending", "https://steamcommunity.com/sharedfiles/filedetails/?id=1933433002")]
     [ConfigFile(IndentOutput: true)]
     //[RestartRequired]
-    internal class MoreTinkerablePlantsOptions : BaseOptions<MoreTinkerablePlantsOptions>
+    internal class BetterPlantTendingOptions : BaseOptions<BetterPlantTendingOptions>
     {
         [JsonIgnore]
-        private float coldbreatherthroughputmultiplier = MoreTinkerablePlantsPatches.THROUGHPUT_MULTIPLIER;
+        private float coldbreatherthroughputmultiplier = BetterPlantTendingPatches.THROUGHPUT_MULTIPLIER;
 
         [JsonProperty]
         [Option("MoreTinkerablePlants.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TITLE", "MoreTinkerablePlants.STRINGS.OPTIONS.COLDBREATHER_MULTIPLIER.TOOLTIP", Format = "F1")]
@@ -22,7 +22,7 @@ namespace MoreTinkerablePlants
         public float ColdBreatherThroughputMultiplier { get => coldbreatherthroughputmultiplier; set => coldbreatherthroughputmultiplier = Mathf.Clamp(value, 2, 5); }
 
         [JsonIgnore]
-        private float oxyfernthroughputmultiplier = MoreTinkerablePlantsPatches.THROUGHPUT_MULTIPLIER;
+        private float oxyfernthroughputmultiplier = BetterPlantTendingPatches.THROUGHPUT_MULTIPLIER;
 
         [JsonProperty]
         [Option("MoreTinkerablePlants.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TITLE", "MoreTinkerablePlants.STRINGS.OPTIONS.OXYFERN_MULTIPLIER.TOOLTIP", Format = "F1")]

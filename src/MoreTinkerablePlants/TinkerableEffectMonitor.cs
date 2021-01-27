@@ -1,8 +1,8 @@
 ﻿using Klei.AI;
 
-namespace MoreTinkerablePlants
+namespace BetterPlantTending
 {
-    public class TinkerableEffectMonitor : KMonoBehaviour
+    public class TendedPlant : KMonoBehaviour
     {
         public const string FARM_TINKER_EFFECT_ID = "FarmTinker";
         public const string DIVERGENT_CROP_TENDED_EFFECT_ID = "DivergentCropTended";

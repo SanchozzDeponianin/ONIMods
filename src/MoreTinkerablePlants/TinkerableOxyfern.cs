@@ -1,8 +1,8 @@
 ﻿using Klei.AI;
 
-namespace MoreTinkerablePlants
+namespace BetterPlantTending
 {
-    public class TinkerableOxyfern : TinkerableEffectMonitor
+    public class TendedOxyfern : TendedPlant
     {
 #pragma warning disable CS0649
         [MyCmpReq]
@@ -12,7 +12,7 @@ namespace MoreTinkerablePlants
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
-            this.GetAttributes().Add(MoreTinkerablePlantsPatches.OxyfernThroughput);
+            this.GetAttributes().Add(BetterPlantTendingPatches.OxyfernThroughput);
         }
 
         public override void ApplyModifier()

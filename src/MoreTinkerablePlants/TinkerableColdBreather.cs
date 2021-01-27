@@ -1,9 +1,9 @@
 ﻿using Klei.AI;
 using TUNING;
 
-namespace MoreTinkerablePlants
+namespace BetterPlantTending
 {
-    public class TinkerableColdBreather : TinkerableEffectMonitor
+    public class TendedColdBreather : TendedPlant
     {
 #pragma warning disable CS0649
         [MyCmpReq]
@@ -19,7 +19,7 @@ namespace MoreTinkerablePlants
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
-            this.GetAttributes().Add(MoreTinkerablePlantsPatches.ColdBreatherThroughput);
+            this.GetAttributes().Add(BetterPlantTendingPatches.ColdBreatherThroughput);
         }
 
         protected override void OnSpawn()
@@ -31,7 +31,7 @@ namespace MoreTinkerablePlants
         public override void ApplyModifier()
         {
             base.ApplyModifier();
-            float multiplier = this.GetAttributes().Get(MoreTinkerablePlantsPatches.ColdBreatherThroughput).GetTotalValue();
+            float multiplier = this.GetAttributes().Get(BetterPlantTendingPatches.ColdBreatherThroughput).GetTotalValue();
             elementConsumer.consumptionRate = coldBreather.consumptionRate * (receptacleMonitor.Replanted ? 1 : CROPS.WILD_GROWTH_RATE_MODIFIER) * multiplier;
             elementConsumer.RefreshConsumptionRate();
         }

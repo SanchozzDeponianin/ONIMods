@@ -12,9 +12,9 @@ using PeterHan.PLib;
 using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
 
-namespace MoreTinkerablePlants
+namespace BetterPlantTending
 {
-    internal static class MoreTinkerablePlantsPatches
+    internal static class BetterPlantTendingPatches
     {
         internal const float THROUGHPUT_BASE_VALUE = 1;
         internal const float THROUGHPUT_MULTIPLIER = 3;
@@ -28,8 +28,8 @@ namespace MoreTinkerablePlants
         public static void OnLoad()
         {
             PUtil.InitLibrary();
-            PUtil.RegisterPatchClass(typeof(MoreTinkerablePlantsPatches));
-            POptions.RegisterOptions(typeof(MoreTinkerablePlantsOptions));
+            PUtil.RegisterPatchClass(typeof(BetterPlantTendingPatches));
+            POptions.RegisterOptions(typeof(BetterPlantTendingOptions));
         }
 
         [PLibMethod(RunAt.AfterModsLoad)]
@@ -44,7 +44,7 @@ namespace MoreTinkerablePlants
         private static void AfterDbInit()
         {
             var db = Db.Get();
-            var effectFarmTinker = db.effects.Get(TinkerableEffectMonitor.FARM_TINKER_EFFECT_ID);
+            var effectFarmTinker = db.effects.Get(TendedPlant.FARM_TINKER_EFFECT_ID);
 
             ColdBreatherThroughput = new Attribute(nameof(ColdBreatherThroughput), false, Attribute.Display.General, false, THROUGHPUT_BASE_VALUE);
             ColdBreatherThroughput.SetFormatter(new PercentAttributeFormatter());
@@ -66,9 +66,9 @@ namespace MoreTinkerablePlants
         [PLibMethod(RunAt.OnStartGame)]
         private static void OnStartGame()
         {
-            MoreTinkerablePlantsOptions.Reload();
-            ColdBreatherThroughputModifier.SetValue(MoreTinkerablePlantsOptions.Instance.ColdBreatherThroughputMultiplier - THROUGHPUT_BASE_VALUE);
-            OxyfernThroughputModifier.SetValue(MoreTinkerablePlantsOptions.Instance.OxyfernThroughputMultiplier - THROUGHPUT_BASE_VALUE);
+            BetterPlantTendingOptions.Reload();
+            ColdBreatherThroughputModifier.SetValue(BetterPlantTendingOptions.Instance.ColdBreatherThroughputMultiplier - THROUGHPUT_BASE_VALUE);
+            OxyfernThroughputModifier.SetValue(BetterPlantTendingOptions.Instance.OxyfernThroughputMultiplier - THROUGHPUT_BASE_VALUE);
         }
 
         // Оксихрен
@@ -78,7 +78,7 @@ namespace MoreTinkerablePlants
             private static void Postfix(GameObject __result)
             {
                 Tinkerable.MakeFarmTinkerable(__result);
-                __result.AddOrGet<TinkerableOxyfern>();
+                __result.AddOrGet<TendedOxyfern>();
             }
         }
 
@@ -101,7 +101,7 @@ namespace MoreTinkerablePlants
             private static void Postfix(GameObject __result)
             {
                 Tinkerable.MakeFarmTinkerable(__result);
-                __result.AddOrGet<TinkerableColdBreather>();
+                __result.AddOrGet<TendedColdBreather>();
             }
         }
 
@@ -110,7 +110,7 @@ namespace MoreTinkerablePlants
         {
             private static void Postfix(ColdBreather __instance)
             {
-                __instance.GetComponent<TinkerableColdBreather>()?.ApplyModifier();
+                __instance.GetComponent<TendedColdBreather>()?.ApplyModifier();
             }
         }
 
@@ -137,7 +137,7 @@ namespace MoreTinkerablePlants
         {
             private static void Postfix(GameObject __result)
             {
-                __result.AddOrGet<TinkerableForestTree>();
+                __result.AddOrGet<TendedForestTree>();
             }
         }
 
@@ -162,7 +162,7 @@ namespace MoreTinkerablePlants
         {
             private static void Prefix(TreeBud __instance, Ref<BuddingTrunk> ___buddingTrunk)
             {
-                TinkerableForestTree.ApplyModifierToBranch(__instance, ___buddingTrunk.Get());
+                TendedForestTree.ApplyModifierToBranch(__instance, ___buddingTrunk.Get());
             }
         }
 
