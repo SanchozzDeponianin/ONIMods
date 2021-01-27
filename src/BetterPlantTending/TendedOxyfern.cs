@@ -9,6 +9,8 @@ namespace BetterPlantTending
         private Oxyfern oxyfern;
 #pragma warning restore CS0649
 
+        protected override bool ApplyModifierOnEffectRemoved => true;
+
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
