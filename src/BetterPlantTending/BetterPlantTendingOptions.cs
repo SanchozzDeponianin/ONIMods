@@ -4,7 +4,7 @@ using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib;
 using PeterHan.PLib.Options;
-using static BetterPlantTending.BetterPlantTendingAttributes;
+using static BetterPlantTending.BetterPlantTendingAssets;
 
 namespace BetterPlantTending
 {
@@ -15,7 +15,7 @@ namespace BetterPlantTending
     {
         // фермер
         [JsonIgnore]
-        private float coldbreatherthroughputfarmtinkermodifier = THROUGHPUT_MODIFIER_FARMTINKER;
+        private float coldBreatherThroughputFarmTinkerModifier = THROUGHPUT_MODIFIER_FARMTINKER;
 
         [JsonProperty]
         [Option(
@@ -24,10 +24,10 @@ namespace BetterPlantTending
             "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER",
              Format = "F1")]
         [Limit(1, 4)]
-        public float ColdBreatherThroughputFarmTinkerModifier { get => coldbreatherthroughputfarmtinkermodifier; set => coldbreatherthroughputfarmtinkermodifier = Mathf.Clamp(value, 1, 4); }
+        public float ColdBreatherThroughputFarmTinkerModifier { get => coldBreatherThroughputFarmTinkerModifier; set => coldBreatherThroughputFarmTinkerModifier = Mathf.Clamp(value, 1, 4); }
 
         [JsonIgnore]
-        private float oxyfernthroughputfarmtinkermodifier = THROUGHPUT_MODIFIER_FARMTINKER;
+        private float oxyfernThroughputFarmTinkerModifier = THROUGHPUT_MODIFIER_FARMTINKER;
 
         [JsonProperty]
         [Option(
@@ -36,12 +36,27 @@ namespace BetterPlantTending
             "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER",
             Format = "F1")]
         [Limit(1, 4)]
-        public float OxyfernThroughputFarmTinkerModifier { get => oxyfernthroughputfarmtinkermodifier; set => oxyfernthroughputfarmtinkermodifier = Mathf.Clamp(value, 1, 4); }
+        public float OxyfernThroughputFarmTinkerModifier { get => oxyfernThroughputFarmTinkerModifier; set => oxyfernThroughputFarmTinkerModifier = Mathf.Clamp(value, 1, 4); }
+
+        // todo: причесать
+        [JsonIgnore]
+        private bool allowFarmTinkerDecorative = true;
+
+        [JsonProperty]
+        [Option("allowDecorative", "allowDecorative", "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER")]
+        public bool AllowFarmTinkerDecorative => allowFarmTinkerDecorative;
+
+        [JsonIgnore]
+        private bool allowFarmTinkerGrownOrWilting = true;
+
+        [JsonProperty]
+        [Option("allowGrownOrWilting", "allowGrownOrWilting", "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER")]
+        public bool AllowFarmTinkerGrownOrWilting => allowFarmTinkerGrownOrWilting;
 
 #if EXPANSION1
         // жучара
         [JsonIgnore]
-        private float coldbreatherthroughputdivergentmodifier = THROUGHPUT_MODIFIER_DIVERGENT;
+        private float coldBreatherThroughputDivergentModifier = THROUGHPUT_MODIFIER_DIVERGENT;
 
         [JsonProperty]
         [Option(
@@ -50,10 +65,10 @@ namespace BetterPlantTending
             "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.DIVERGENTCROPTENDED",
             Format = "F1")]
         [Limit(0.05, 0.5)]
-        public float ColdBreatherThroughputDivergentModifier { get => coldbreatherthroughputdivergentmodifier; set => coldbreatherthroughputdivergentmodifier = Mathf.Clamp(value, 0.05f, 0.5f); }
+        public float ColdBreatherThroughputDivergentModifier { get => coldBreatherThroughputDivergentModifier; set => coldBreatherThroughputDivergentModifier = Mathf.Clamp(value, 0.05f, 0.5f); }
 
         [JsonIgnore]
-        private float oxyfernthroughputdivergentmodifier = THROUGHPUT_MODIFIER_DIVERGENT;
+        private float oxyfernThroughputDivergentModifier = THROUGHPUT_MODIFIER_DIVERGENT;
 
         [JsonProperty]
         [Option(
@@ -62,11 +77,11 @@ namespace BetterPlantTending
             "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.DIVERGENTCROPTENDED",
             Format = "F2")]
         [Limit(0.05, 0.5)]
-        public float OxyfernThroughputDivergentModifier { get => oxyfernthroughputdivergentmodifier; set => oxyfernthroughputdivergentmodifier = Mathf.Clamp(value, 0.05f, 0.5f); }
+        public float OxyfernThroughputDivergentModifier { get => oxyfernThroughputDivergentModifier; set => oxyfernThroughputDivergentModifier = Mathf.Clamp(value, 0.05f, 0.5f); }
 
         // червячара
         [JsonIgnore]
-        private float coldbreatherthroughputwormmodifier = THROUGHPUT_MODIFIER_WORM;
+        private float coldBreatherThroughputWormModifier = THROUGHPUT_MODIFIER_WORM;
 
         [JsonProperty]
         [Option(
@@ -75,10 +90,10 @@ namespace BetterPlantTending
             "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.WORMCROPTENDED",
             Format = "F1")]
         [Limit(0.5, 2)]
-        public float ColdBreatherThroughputWormModifier { get => coldbreatherthroughputwormmodifier; set => coldbreatherthroughputwormmodifier = Mathf.Clamp(value, 0.5f, 2); }
+        public float ColdBreatherThroughputWormModifier { get => coldBreatherThroughputWormModifier; set => coldBreatherThroughputWormModifier = Mathf.Clamp(value, 0.5f, 2); }
 
         [JsonIgnore]
-        private float oxyfernthroughputwormmodifier = THROUGHPUT_MODIFIER_WORM;
+        private float oxyfernThroughputWormModifier = THROUGHPUT_MODIFIER_WORM;
 
         [JsonProperty]
         [Option(
@@ -87,7 +102,7 @@ namespace BetterPlantTending
             "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.WORMCROPTENDED",
             Format = "F1")]
         [Limit(0.5, 2)]
-        public float OxyfernThroughputWormModifier { get => oxyfernthroughputwormmodifier; set => oxyfernthroughputwormmodifier = Mathf.Clamp(value, 0.5f, 2); }
+        public float OxyfernThroughputWormModifier { get => oxyfernThroughputWormModifier; set => oxyfernThroughputWormModifier = Mathf.Clamp(value, 0.5f, 2); }
 #endif
     }
 }

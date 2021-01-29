@@ -1,6 +1,6 @@
 ﻿using Klei.AI;
 using TUNING;
-using static BetterPlantTending.BetterPlantTendingAttributes;
+using static BetterPlantTending.BetterPlantTendingAssets;
 
 namespace BetterPlantTending
 {

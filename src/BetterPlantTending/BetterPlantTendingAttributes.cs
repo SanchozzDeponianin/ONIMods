@@ -2,7 +2,7 @@
 
 namespace BetterPlantTending
 {
-    internal static class BetterPlantTendingAttributes
+    internal static class BetterPlantTendingAssets
     {
         public const string FARM_TINKER_EFFECT_ID = "FarmTinker";
         public const string DIVERGENT_CROP_TENDED_EFFECT_ID = "DivergentCropTended";
