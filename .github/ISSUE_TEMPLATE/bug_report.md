@@ -11,6 +11,7 @@ assignees: ''
 
 ## Expected Behavior
 <!--- Tell us what should happen -->
+<!--- Tell us if you have the Spaced Out! DLC installed, and if you are using any of the public preview branches -->
 
 ## Current Behavior
 <!--- Tell us what happens instead of the expected behavior -->
@@ -30,7 +31,7 @@ assignees: ''
 <!--- Include an game log to allow us to understand your issue. -->
 <!--- Please do not copypaste the contents of the log here. Just add it as an attachment. -->
 <!--- This file is located at -->
-<!--- Windows: %userprofile%\AppData\LocalLow\Klei\Oxygen Not Included\output.log -->
+<!--- Windows: %userprofile%\AppData\LocalLow\Klei\Oxygen Not Included\Player.log -->
 <!--- Mac: ~/Library/Logs/Unity/Player.log -->
 <!--- Linux: ~/.config/unity3d/Klei/Oxygen Not Included/Player.log -->
 

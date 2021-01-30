@@ -45,7 +45,7 @@ namespace SquirrelGenerator
         [HarmonyPatch(typeof(BaseSquirrelConfig), nameof(BaseSquirrelConfig.BaseSquirrel))]
         internal static class BaseSquirrelConfig_BaseSquirrel
         {
-            internal static void Postfix(ref GameObject __result, bool is_baby)
+            internal static void Postfix(GameObject __result, bool is_baby)
             {
                 if (!is_baby)
                 {
@@ -66,26 +66,27 @@ namespace SquirrelGenerator
                 .PopInterruptGroup()
                 .Add(new IdleStates.Def(), true);
             */
+            private static ChoreTable.Builder Inject(ChoreTable.Builder builder)
+            {
+                return builder.PushInterruptGroup().Add(new WheelRunningStates.Def()).PopInterruptGroup();
+            }
+
             internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
             {
-                List<CodeInstruction> instructionsList = instructions.ToList();
-                ConstructorInfo constructor = typeof(SeedPlantingStates.Def).GetConstructors()[0];
+                var instructionsList = instructions.ToList();
                 string methodName = method.DeclaringType.FullName + "." + method.Name;
+                var constructor = typeof(SeedPlantingStates.Def).GetConstructors()[0];
                 bool result = false;
                 for (int i = 0; i < instructionsList.Count; i++)
                 {
                     CodeInstruction instruction = instructionsList[i];
-                    if (instruction.opcode == OpCodes.Newobj && (ConstructorInfo)instruction.operand == constructor)
+                    if (instruction.opcode == OpCodes.Newobj && (instruction.operand is ConstructorInfo info) && info == constructor)
                     {
+                        yield return new CodeInstruction(OpCodes.Call, typeof(BaseSquirrelConfig_BaseSquirrel).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments));
+                        result = true;
 #if DEBUG
                         PUtil.LogDebug($"'{methodName}' Transpiler injected");
 #endif
-                        yield return new CodeInstruction(OpCodes.Callvirt, typeof(ChoreTable.Builder).GetMethod(nameof(ChoreTable.Builder.PushInterruptGroup), new Type[] { }));
-                        yield return new CodeInstruction(OpCodes.Newobj, typeof(WheelRunningStates.Def).GetConstructors()[0]);
-                        yield return new CodeInstruction(OpCodes.Ldc_I4_1);
-                        yield return new CodeInstruction(OpCodes.Callvirt, typeof(ChoreTable.Builder).GetMethod(nameof(ChoreTable.Builder.Add), new Type[] { typeof(StateMachine.BaseDef), typeof(bool) }));
-                        yield return new CodeInstruction(OpCodes.Callvirt, typeof(ChoreTable.Builder).GetMethod(nameof(ChoreTable.Builder.PopInterruptGroup), new Type[] { }));
-                        result = true;
                     }
                     yield return instruction;
                 }
