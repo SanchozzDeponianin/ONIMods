@@ -16,7 +16,7 @@ namespace BetterPlantTending
         [MyCmpReq]
         protected Effects effects;
 
-        protected virtual bool ApplyModifierOnEffectRemoved => false;
+        protected virtual bool ApplyModifierOnEffectRemoved => true;
 
         protected override void OnSpawn()
         {

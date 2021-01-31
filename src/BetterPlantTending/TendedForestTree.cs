@@ -12,6 +12,8 @@ namespace BetterPlantTending
         private BuddingTrunk buddingTrunk;
 #pragma warning restore CS0649
 
+        protected override bool ApplyModifierOnEffectRemoved => false;
+
         public override void ApplyModifier()
         {
             base.ApplyModifier();

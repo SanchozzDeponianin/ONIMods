@@ -163,9 +163,21 @@ namespace BetterPlantTending
             private static void Postfix(Tinkerable __instance, Worker worker)
             {
                 var extra = __instance.GetComponent<ExtraSeedProducer>();
-                if (extra != null)
+                if (extra != null && !extra.ExtraSeedAvailable)
                 {
-                    extra.CreateExtraSeed(worker);
+                    // шанс получить семя за счет навыка фермера
+                    float seedChance = worker.GetComponent<AttributeConverters>().Get(ExtraSeedTendingChance).Evaluate();
+                    // множитель длительности эффекта.
+                    float effectMultiplier =
+#if EXPANSION1
+                        worker.GetAttributes().Get(Db.Get().Attributes.Get(__instance.effectAttributeId)).GetTotalValue() * __instance.effectMultiplier + 
+#endif
+                        1f;
+                    // чем выше навык, тем дольше эффект, тем реже убобряют, поэтому перемножаем чтобы выровнять шансы
+
+                    Debug.Log($"Tinkerable ExtraSeed effectMultiplier={effectMultiplier}, seedChance={seedChance}");
+
+                    extra.CreateExtraSeed(seedChance * effectMultiplier);
                 }
             }
         }
@@ -239,7 +251,7 @@ namespace BetterPlantTending
 #if DEBUG
                 Debug.Log("---------------------------------- PATCHED  ----------------------------------");
                 PPatchTools.DumpMethodBody(instructionsList);
-#endif               
+#endif
                 if (!result)
                 {
                     PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
@@ -367,7 +379,7 @@ namespace BetterPlantTending
 #if DEBUG
                 Debug.Log("---------------------------------- PATCHED  ----------------------------------");
                 PPatchTools.DumpMethodBody(instructionsList);
-#endif               
+#endif
                 if (!r1 || !r2)
                 {
                     PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
