@@ -18,25 +18,25 @@ namespace BetterPlantTending
 
         protected virtual bool ApplyModifierOnEffectRemoved => true;
 
+        private static readonly EventSystem.IntraObjectHandler<TendedPlant> OnEffectChangedDelegate = new EventSystem.IntraObjectHandler<TendedPlant>(delegate (TendedPlant component, object data)
+        {
+            component.ApplyModifier();
+        });
+
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            Subscribe((int)GameHashes.EffectAdded, OnEffectChanged);
+            Subscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
             if (ApplyModifierOnEffectRemoved)
-                Subscribe((int)GameHashes.EffectRemoved, OnEffectChanged);
+                Subscribe((int)GameHashes.EffectRemoved, OnEffectChangedDelegate);
         }
 
         protected override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.EffectAdded, OnEffectChanged);
+            Unsubscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
             if (ApplyModifierOnEffectRemoved)
-                Unsubscribe((int)GameHashes.EffectRemoved, OnEffectChanged);
+                Unsubscribe((int)GameHashes.EffectRemoved, OnEffectChangedDelegate);
             base.OnCleanUp();
-        }
-
-        private void OnEffectChanged(object data)
-        {
-            ApplyModifier();
         }
 
         public virtual void ApplyModifier()

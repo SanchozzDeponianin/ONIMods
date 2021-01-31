@@ -150,7 +150,7 @@ namespace BetterPlantTending
             {
                 if (plant.GetComponent<Crop>() == null)
                 {
-                    plant.AddOrGet<ExtraSeedProducer>();
+                    plant.AddOrGet<ExtraSeedProducer>().isNotDecorative = plant.HasTag(OxyfernConfig.ID) || plant.HasTag(ColdBreatherConfig.ID);
                     Tinkerable.MakeFarmTinkerable(plant);
                 }
             }
@@ -170,7 +170,7 @@ namespace BetterPlantTending
                     // множитель длительности эффекта.
                     float effectMultiplier =
 #if EXPANSION1
-                        worker.GetAttributes().Get(Db.Get().Attributes.Get(__instance.effectAttributeId)).GetTotalValue() * __instance.effectMultiplier + 
+                        worker.GetAttributes().Get(Db.Get().Attributes.Get(__instance.effectAttributeId)).GetTotalValue() * __instance.effectMultiplier +
 #endif
                         1f;
                     // чем выше навык, тем дольше эффект, тем реже убобряют, поэтому перемножаем чтобы выровнять шансы
@@ -196,8 +196,6 @@ namespace BetterPlantTending
                 // todo: может быть. прикрутить запрет убобрять засохшие или полностью выросшие.
             }
         }
-
-        // todo: починить баг с прокачкой механики вместо фермерства
 
         // научиваем белочек делать экстракцию декоративных безурожайных семян
         [HarmonyPatch(typeof(ClimbableTreeMonitor.Instance), "FindClimbableTree")]
@@ -228,10 +226,6 @@ namespace BetterPlantTending
                 var addPlant = typeof(ClimbableTreeMonitor_Instance_FindClimbableTree).GetMethodSafe(nameof(AddPlant), true, PPatchTools.AnyArguments);
 
                 bool result = false;
-#if DEBUG
-                Debug.Log("---------------------------------- ORIGINAL ----------------------------------");
-                PPatchTools.DumpMethodBody(instructionsList);
-#endif
                 for (int i = 0; i < instructionsList.Count; i++)
                 {
                     var instruction = instructionsList[i];
@@ -248,10 +242,6 @@ namespace BetterPlantTending
 #endif
                     }
                 }
-#if DEBUG
-                Debug.Log("---------------------------------- PATCHED  ----------------------------------");
-                PPatchTools.DumpMethodBody(instructionsList);
-#endif
                 if (!result)
                 {
                     PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
@@ -268,6 +258,53 @@ namespace BetterPlantTending
                 smi.sm.target.Get(smi)?.GetComponent<ExtraSeedProducer>()?.ExtractExtraSeed();
             }
         }
+
+        // исправление для отображения шанса доп семян в интерфейсе ферм и кодексе.
+        // заодно начал отображаться и декор.
+        // а то обычно для неурожайных растений "эффекты" вообще не отображаются.
+        // грязновато. но ладно.
+        [HarmonyPatch(typeof(GameUtil), nameof(GameUtil.GetPlantEffectDescriptors))]
+        internal static class GameUtil_GetPlantEffectDescriptors
+        {
+            private static Component GetTwoComponents(GameObject go)
+            {
+                return (Component)go.GetComponent<Growing>() ?? go.GetComponent<ExtraSeedProducer>();
+            }
+            /*
+        --- Growing growing = go.GetComponent<Growing>();
+        +++ Growing growing = go.GetComponent<Growing>() ?? go.GetComponent<ExtraSeedProducer>();
+	        bool flag = growing == null;
+            */
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                var instructionsList = instructions.ToList();
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
+
+                var getComponent = typeof(GameObject).GetMethod(nameof(GameObject.GetComponent), new Type[0]).MakeGenericMethod(typeof(Growing));
+                var getTwoComponents = typeof(GameUtil_GetPlantEffectDescriptors).GetMethodSafe(nameof(GetTwoComponents), true, PPatchTools.AnyArguments);
+
+                bool result = false;
+                for (int i = 0; i < instructionsList.Count; i++)
+                {
+                    var instruction = instructionsList[i];
+                    if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && getComponent == info)
+                    {
+                        instructionsList[i] = new CodeInstruction(OpCodes.Call, getTwoComponents);
+                        result = true;
+#if DEBUG
+                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
+#endif
+                    }
+                }
+                if (!result)
+                {
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
+                }
+                return instructionsList;
+            }
+        }
+
+        // todo: починить баг с прокачкой механики вместо фермерства
 
 #if EXPANSION1
 
@@ -287,7 +324,7 @@ namespace BetterPlantTending
                 {
                     if (growing.IsGrown())
                     {
-                        // не нужно убобрять дерево если все ветки выросли
+                        // не нужно убобрять дерево если все ветки выросли // todo: проверить можно ли упростить
                         var buddingTrunk = growing.GetComponent<BuddingTrunk>();
                         if (buddingTrunk != null)
                         {
@@ -321,7 +358,7 @@ namespace BetterPlantTending
                 var plants = entries
                     .Select((e) => e.obj as KMonoBehaviour)
                     .Where((kmb) => (kmb.GetMyWorldId() == myWorldId)
-                        && ((kmb.GetComponent<Crop>() != null) || ( kmb.GetComponent<ExtraSeedProducer>()?.ShouldDivergentTending ?? false)))
+                        && ((kmb.GetComponent<Crop>() != null) || (kmb.GetComponent<ExtraSeedProducer>()?.ShouldDivergentTending ?? false)))
                     .ToList();
                 entries.Recycle();
                 return plants;
@@ -338,14 +375,9 @@ namespace BetterPlantTending
                 var isNotNeedTending = typeof(CropTendingStates_FindCrop).GetMethodSafe(nameof(IsNotNeedTending), true, PPatchTools.AnyArguments);
 
                 bool r1 = false, r2 = false;
-#if DEBUG
-                Debug.Log("---------------------------------- ORIGINAL ----------------------------------");
-                PPatchTools.DumpMethodBody(instructionsList);
-#endif
                 for (int i = 0; i < instructionsList.Count; i++)
                 {
                     var instruction = instructionsList[i];
-
                     /*
                     foreach (Crop worldItem in 
                 ---         Components.Crops.GetWorldItems(smi.gameObject.GetMyWorldId()))
@@ -360,7 +392,6 @@ namespace BetterPlantTending
                         PUtil.LogDebug($"'{methodName}' Transpiler #1 injected");
 #endif
                     }
-
                     /*        
                     Growing growing = worldItem.GetComponent<Growing>();
 	            ---	if (!(growing != null && growing.IsGrown()) && блаблабла ...)
@@ -376,31 +407,11 @@ namespace BetterPlantTending
                         break;
                     }
                 }
-#if DEBUG
-                Debug.Log("---------------------------------- PATCHED  ----------------------------------");
-                PPatchTools.DumpMethodBody(instructionsList);
-#endif
                 if (!r1 || !r2)
                 {
                     PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
                 }
                 return instructionsList;
-            }
-
-            // todo: для отладки, потом убрать
-            private static void Postfix(CropTendingStates.Instance smi)
-            {
-                var x = smi.sm.targetCrop.Get(smi);
-                Debug.Log("selected Tending plant: " + x.GetProperName());
-                if (x is null)
-                    return;
-                var t = x.GetComponent<KPrefabID>().Tags;
-                string s = "";
-                foreach (var tt in t)
-                {
-                    s = s + " " + tt.Name;
-                }
-                Debug.Log("selected plant Tags: " + s);
             }
         }
 
