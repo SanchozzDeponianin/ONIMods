@@ -47,7 +47,7 @@ namespace BetterPlantTending
             else
                 attributes.Add(ExtraSeedChanceDecorativeBaseValue);
 
-            // todo: убрать
+            // todo: потом убрать
             Debug.Log($"ExtraSeedProducer.OnPrefabInit name={gameObject.name}, isNotDecorative = {isNotDecorative}, allowFarmTinkerDecorative = {allowFarmTinkerDecorative}");
         }
 
@@ -62,7 +62,7 @@ namespace BetterPlantTending
             Subscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
 #endif
 
-            // todo: убрать
+            // todo: потом убрать
             Debug.Log($"ExtraSeedProducer.OnSpawn name={gameObject.name}, isNotDecorative = {isNotDecorative}, allowFarmTinkerDecorative = {allowFarmTinkerDecorative}");
         }
 

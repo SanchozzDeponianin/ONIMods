@@ -143,6 +143,7 @@ namespace BetterPlantTending
         }
 
         // дополнительные семена безурожайных растений
+        // todo: растение ловушка тоже не даёт семян. обдумать это.
         [HarmonyPatch(typeof(EntityTemplates), nameof(EntityTemplates.CreateAndRegisterSeedForPlant))]
         internal static class EntityTemplates_CreateAndRegisterSeedForPlant
         {
@@ -318,13 +319,15 @@ namespace BetterPlantTending
             {
                 if (growing == null)
                     return true;
+                // todo: сделать опционально
                 if (growing.HasTag(ForestTreeBranchConfig.ID)) // не нужно убобрять отдельные ветки
                     return true;
                 if (growing.HasTag(ForestTreeConfig.ID)) // дерево
                 {
                     if (growing.IsGrown())
                     {
-                        // не нужно убобрять дерево если все ветки выросли // todo: проверить можно ли упростить
+                        // не нужно убобрять дерево если все ветки выросли
+                        // todo: проверить можно ли упростить
                         var buddingTrunk = growing.GetComponent<BuddingTrunk>();
                         if (buddingTrunk != null)
                         {
