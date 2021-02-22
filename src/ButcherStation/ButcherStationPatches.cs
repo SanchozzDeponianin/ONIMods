@@ -13,15 +13,15 @@ namespace ButcherStation
 {
     class ButcherStationPatches
     {
-/*
-        public static class Mod_OnLoad
-        {
-            public static void OnLoad()
-            {
-            }
-        }
-*/
-  
+        /*
+                public static class Mod_OnLoad
+                {
+                    public static void OnLoad()
+                    {
+                    }
+                }
+        */
+
         public static AttributeConverter RanchingEffectExtraMeat;
 
         [HarmonyPatch(typeof(GeneratedBuildings), "LoadGeneratedBuildings")]
@@ -43,7 +43,7 @@ namespace ButcherStation
                 Utils.AddBuildingToTechnology("AnimalControl", FishingStationConfig.ID);
             }
 
-            public static void Postfix(ref Db __instance)
+            public static void Postfix(Db __instance)
             {
                 ToPercentAttributeFormatter formatter = new ToPercentAttributeFormatter(1f, GameUtil.TimeSlice.None);
                 RanchingEffectExtraMeat = __instance.AttributeConverters.Create("RanchingEffectExtraMeat", "Ranching Effect Extra Meat", STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMODIFIER, Db.Get().Attributes.Ranching, Config.Get().EXTRAMEATPERRANCHINGATTRIBUTE, 0f, formatter);
@@ -60,7 +60,7 @@ namespace ButcherStation
                 LocString.CreateLocStringKeys(typeof(STRINGS.BUILDINGS));
                 LocString.CreateLocStringKeys(typeof(STRINGS.UI));
                 Strings.Add($"STRINGS.MISC.TAGS.{ButcherStation.ButcherableCreature.ToString().ToUpperInvariant()}", MISC.TAGS.BAGABLECREATURE);
-                Strings.Add($"STRINGS.MISC.TAGS.{ButcherStation.FisherableCreature.ToString().ToUpperInvariant()}",  MISC.TAGS.SWIMMINGCREATURE);
+                Strings.Add($"STRINGS.MISC.TAGS.{ButcherStation.FisherableCreature.ToString().ToUpperInvariant()}", MISC.TAGS.SWIMMINGCREATURE);
 
                 Config.Initialize();
             }
@@ -70,7 +70,7 @@ namespace ButcherStation
         [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
         public static class DetailsScreen_OnPrefabInit
         {
-            public static void Prefix(ref List<DetailsScreen.SideScreenRef> ___sideScreens)
+            public static void Prefix(List<DetailsScreen.SideScreenRef> ___sideScreens)
             {
                 DetailsScreen.SideScreenRef sideScreen;
                 for (int i = 0; i < ___sideScreens.Count; i++)
@@ -83,7 +83,7 @@ namespace ButcherStation
                         {
                             if (___sideScreens[j].name == "SingleCheckboxSideScreen")
                             {
-                                ___sideScreens.Insert(j+1, sideScreen);
+                                ___sideScreens.Insert(j + 1, sideScreen);
                                 break;
                             }
                         }
@@ -93,16 +93,16 @@ namespace ButcherStation
             }
         }
 
-        // хак чтобы добавить категорию для убиваемых животных и дополнительное мясо
+        // добавляем тэги для убиваемых животных и дополнительное мясо
         [HarmonyPatch(typeof(EntityTemplates), "ExtendEntityToBasicCreature")]
         public class EntityTemplates_ExtendEntityToBasicCreature
         {
-            public static void Postfix(ref GameObject __result, string onDeathDropID, int onDeathDropCount)
+            public static void Postfix(GameObject __result, string onDeathDropID, int onDeathDropCount)
             {
                 if (onDeathDropCount > 0 && (onDeathDropID == "Meat" || onDeathDropID == "FishMeat"))
                 {
                     ExtraMeatSpawner extraMeatSpawner = __result.AddOrGet<ExtraMeatSpawner>();
-                    extraMeatSpawner.onDeathDropID    = onDeathDropID;
+                    extraMeatSpawner.onDeathDropID = onDeathDropID;
                     extraMeatSpawner.onDeathDropCount = onDeathDropCount;
                 }
                 __result.GetComponent<KPrefabID>().prefabSpawnFn += delegate (GameObject inst)
@@ -120,7 +120,9 @@ namespace ButcherStation
                             creatureEligibleTag = ButcherStation.ButcherableCreature;
                         }
                         creature_prefab_id.AddTag(creatureEligibleTag, false);
+#if VANILLA
                         WorldInventory.Instance.Discover(creature_prefab_id.PrefabTag, creatureEligibleTag);
+#endif
                     }
                 };
             }
@@ -129,7 +131,7 @@ namespace ButcherStation
         [HarmonyPatch(typeof(EntityTemplates), "ExtendEntityToFertileCreature")]
         static class EntityTemplates_ExtendEntityToFertileCreature
         {
-            public static void Postfix(ref GameObject __result, bool add_fish_overcrowding_monitor)
+            public static void Postfix(GameObject __result, bool add_fish_overcrowding_monitor)
             {
                 if (add_fish_overcrowding_monitor)
                 {
@@ -138,13 +140,13 @@ namespace ButcherStation
             }
         }
 
-        // Чёрная магия !! чтобы сделать рыб приручаемыми.
+        // хак чтобы сделать рыб приручаемыми - чтобы ловились на рыбалке
         /*
          ChoreTable.Builder chore_table = new ChoreTable.Builder().Add
          blablabla
          .PushInterruptGroup()
     +++  .Add(new RanchedStates.Def(), true)
-		 .Add(new FixedCaptureStates.Def(), true)
+         .Add(new FixedCaptureStates.Def(), true)
          blablabla
          */
         [HarmonyPatch(typeof(BasePacuConfig), "CreatePrefab")]
@@ -157,22 +159,23 @@ namespace ButcherStation
                 {
                     CodeInstruction instruction = instructionsList[i];
                     yield return instruction;
-                    if (instruction.opcode == OpCodes.Callvirt && (MethodInfo) instruction.operand == typeof(ChoreTable.Builder).GetMethod("PushInterruptGroup", new Type[] { } ))
+                    if (instruction.opcode == OpCodes.Callvirt && (MethodInfo)instruction.operand == typeof(ChoreTable.Builder).GetMethod("PushInterruptGroup", new Type[] { }))
                     {
                         Debug.Log("BasePacuConfig CreatePrefab Transpiler injected");
                         yield return new CodeInstruction(OpCodes.Newobj, typeof(RanchedStates.Def).GetConstructors()[0]);
-                        yield return new CodeInstruction(OpCodes.Ldc_I4_1 );
-                        yield return new CodeInstruction(OpCodes.Callvirt, typeof(ChoreTable.Builder).GetMethod("Add", new Type[] { typeof(StateMachine.BaseDef), typeof(bool) } ));
+                        yield return new CodeInstruction(OpCodes.Ldc_I4_1);
+                        yield return new CodeInstruction(OpCodes.Callvirt, typeof(ChoreTable.Builder).GetMethod("Add", new Type[] { typeof(StateMachine.BaseDef), typeof(bool) }));
                     }
                 }
             }
         }
 
-        // Чёрная магия !!  грязный хак, чтобы ранчо-станции проверяли допустимость комнаты по главной клетке постройки, а не по конечной клетке для приручения жеготного
+        // хак, чтобы ранчо-станции проверяли допустимость комнаты по главной клетке постройки
+        // а не по конечной клетке для приручения жеготного. иначе рыбалка не работает
         /*
     --- int targetRanchCell = this.GetTargetRanchCell();
     +++ int targetRanchCell = Grid.PosToCell(this);
-	    CavityInfo cavityForCell = Game.Instance.roomProber.GetCavityForCell(targetRanchCell);
+        CavityInfo cavityForCell = Game.Instance.roomProber.GetCavityForCell(targetRanchCell);
 
         blablabla {
             return;
@@ -213,7 +216,7 @@ namespace ButcherStation
                         yield return instruction;
                         flag2 = false;
                     }
-                    else 
+                    else
                     {
                         yield return instruction;
                     }
@@ -221,7 +224,8 @@ namespace ButcherStation
             }
         }
 
-        // Чёрная магия !!  для правильного подсчета рыбы в точке доставки
+        // фикс для правильного подсчета рыбы в точке доставки
+#if VANILLA
         /*
     --- int cell = Grid.PosToCell(this);
     +++ int cell = Grid.OffsetCell( Grid.PosToCell(this), spawnOffset );
@@ -247,8 +251,10 @@ namespace ButcherStation
                 }
             }
         }
-        
+#endif
+
         // для замены максимума жеготных
+        // todo: добавить проверку наличия другого мода для этой же опции
         [HarmonyPatch(typeof(CreatureDeliveryPoint), "IUserControlledCapacity.get_MaxCapacity")]
         static class CreatureDeliveryPoint_get_MaxCapacity
         {

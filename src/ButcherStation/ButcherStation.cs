@@ -17,7 +17,7 @@ namespace ButcherStation
 
         public class States : GameStateMachine<States, SMInstance, ButcherStation>
         {
-		    public override void InitializeStates(out BaseState default_state)
+            public override void InitializeStates(out BaseState default_state)
             {
                 default_state = root;
                 root.Update("RefreshCreatureCount", delegate (SMInstance smi, float dt)
@@ -28,7 +28,7 @@ namespace ButcherStation
         }
 
         public static readonly Tag ButcherableCreature = TagManager.Create("ButcherableCreature");
-        public static readonly Tag FisherableCreature  = TagManager.Create("FisherableCreature");
+        public static readonly Tag FisherableCreature = TagManager.Create("FisherableCreature");
 
         public Tag creatureEligibleTag = ButcherableCreature;
 
@@ -55,16 +55,14 @@ namespace ButcherStation
             base.OnPrefabInit();
             if (capacityStatusItem == null)
             {
-                capacityStatusItem = new StatusItem("StorageLocker", "BUILDING", string.Empty, StatusItem.IconType.Info, NotificationType.Neutral, false, OverlayModes.None.ID, true, 129022)
+                capacityStatusItem = new StatusItem("StorageLocker", "BUILDING", string.Empty, StatusItem.IconType.Info, NotificationType.Neutral, false, OverlayModes.None.ID)
                 {
                     resolveStringCallback = delegate (string str, object data)
                     {
-                        IUserControlledCapacity userControlledCapacity = (IUserControlledCapacity)data;
-                        string newValue = Util.FormatWholeNumber(Mathf.Floor(userControlledCapacity.AmountStored));
-                        float userMaxCapacity = userControlledCapacity.UserMaxCapacity;
-                        string newValue2 = Util.FormatWholeNumber(userMaxCapacity);
-                        str = str.Replace("{Stored}", newValue).Replace("{Capacity}", newValue2).Replace("{Units}", userControlledCapacity.CapacityUnits);
-                        return str;
+                        var userControlledCapacity = (IUserControlledCapacity)data;
+                        string stored = Util.FormatWholeNumber(Mathf.Floor(userControlledCapacity.AmountStored));
+                        string capacity = Util.FormatWholeNumber(userControlledCapacity.UserMaxCapacity);
+                        return str.Replace("{Stored}", stored).Replace("{Capacity}", capacity).Replace("{Units}", userControlledCapacity.CapacityUnits);
                     }
                 };
             }
@@ -74,36 +72,31 @@ namespace ButcherStation
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            base.smi.StartSM();
-            Subscribe((int)GameHashes.CopySettings, new Action<object>(this.OnCopySettings));
+            smi.StartSM();
+            Subscribe((int)GameHashes.CopySettings, OnCopySettings);
             RefreshCreatureCount(null);
         }
 
         protected override void OnCleanUp()
         {
-            base.smi.StopSM("OnCleanUp");
+            smi.StopSM("OnCleanUp");
             base.OnCleanUp();
         }
 
         private void OnCopySettings(object data)
         {
-            GameObject gameObject = (GameObject)data;
-            if (gameObject != null)
+            var butcherStation = ((GameObject)data)?.GetComponent<ButcherStation>();
+            if (butcherStation != null)
             {
-                ButcherStation component = gameObject.GetComponent<ButcherStation>();
-                if (component != null)
-                {
-                    creatureLimit = component.creatureLimit;
-                    ageButchThresold = component.ageButchThresold;
-                }
+                creatureLimit = butcherStation.creatureLimit;
+                ageButchThresold = butcherStation.ageButchThresold;
             }
         }
 
         private void RefreshCreatureCount(object data = null)
         {
             int cell = this.GetSMI<RanchStation.Instance>().GetTargetRanchCell();
-            CavityInfo cavityForCell = Game.Instance.roomProber.GetCavityForCell(cell);
-            int num = storedCreatureCount;
+            var cavityForCell = Game.Instance.roomProber.GetCavityForCell(cell);
             storedCreatureCount = 0;
             if (cavityForCell != null)
             {
@@ -120,25 +113,19 @@ namespace ButcherStation
         public bool IsCreatureEligibleToBeButched(GameObject creature_go)
         {
             if (!creature_go.HasTag(creatureEligibleTag))
-            {
                 return false;
-            }
-            bool flag = treeFilterable != null && treeFilterable.ContainsTag(creature_go.GetComponent<KPrefabID>().PrefabTag);
-            if (autoButchSurplus && (!flag || storedCreatureCount > creatureLimit))
-            {
+            bool surplus = !treeFilterable?.ContainsTag(creature_go.GetComponent<KPrefabID>().PrefabTag) ?? false;
+            if (autoButchSurplus && (surplus || storedCreatureCount > creatureLimit))
                 return true;
-            }
-            AmountInstance age = Db.Get().Amounts.Age.Lookup(creature_go);
+            var age = Db.Get().Amounts.Age.Lookup(creature_go);
             if (age != null)
-            {
-                return flag && ageButchThresold < age.value / age.GetMax();
-            }
+                return !surplus && ageButchThresold < age.value / age.GetMax();
             return false;
         }
 
         public static void ButchCreature(GameObject creature_go, bool moveCreatureToButcherStation = false)
         {
-            RanchStation.Instance targetRanchStation = creature_go.GetSMI<RanchableMonitor.Instance>()?.targetRanchStation;
+            var targetRanchStation = creature_go.GetSMI<RanchableMonitor.Instance>()?.targetRanchStation;
             if (targetRanchStation != null)
             {
                 if (moveCreatureToButcherStation)
@@ -146,25 +133,26 @@ namespace ButcherStation
                     creature_go.transform.SetPosition(targetRanchStation.transform.GetPosition());
                 }
 
-                ExtraMeatSpawner extraMeatSpawner = creature_go.GetComponent<ExtraMeatSpawner>();
+                var extraMeatSpawner = creature_go.GetComponent<ExtraMeatSpawner>();
                 if (extraMeatSpawner != null)
                 {
-                    RancherChore.RancherChoreStates.Instance smi = targetRanchStation.GetSMI<RancherChore.RancherChoreStates.Instance>();
-                    GameObject rancher = smi.sm.rancher.Get(smi);
+                    var smi = targetRanchStation.GetSMI<RancherChore.RancherChoreStates.Instance>();
+                    var rancher = smi.sm.rancher.Get(smi);
                     extraMeatSpawner.onDeathDropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * Config.Get().EXTRAMEATPERRANCHINGATTRIBUTE;
                 }
             }
             creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);
         }
 
-        float IUserControlledCapacity.UserMaxCapacity { get => (float)creatureLimit; set => creatureLimit = Mathf.RoundToInt(value);  }
-        float IUserControlledCapacity.AmountStored => (float)storedCreatureCount;
+        // лимит количества жеготных
+        float IUserControlledCapacity.UserMaxCapacity { get => creatureLimit; set => creatureLimit = Mathf.RoundToInt(value); }
+        float IUserControlledCapacity.AmountStored => storedCreatureCount;
         float IUserControlledCapacity.MinCapacity => 0;
         float IUserControlledCapacity.MaxCapacity => Config.Get().MAXCREATURELIMIT;
         bool IUserControlledCapacity.WholeValues => true;
         LocString IUserControlledCapacity.CapacityUnits => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.UNITS_SUFFIX;
 
-
+        // ползун настройки максимального возраста
         //string ISliderControl.SliderTitleKey => STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TITLE.key.String;
         string ISliderControl.SliderTitleKey => "STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TITLE";
         string ISliderControl.SliderUnits => UI.UNITSUFFIXES.PERCENT;
@@ -191,7 +179,7 @@ namespace ButcherStation
             {
                 s = s + "\n" + Math.Floor(ageButchThresold * max_age) + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_OUTOF + Math.Floor(max_age) + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_CYCLES;
             }
-            return string.Format(STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP, ageButchThresold * 100f) + s; 
+            return string.Format(STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP, ageButchThresold * 100f) + s;
         }
 
         string ISliderControl.GetSliderTooltipKey(int index)
@@ -215,7 +203,7 @@ namespace ButcherStation
             return 0;
         }
 
-
+        // флажёк "убивать лишних"
         string ICheckboxControl.CheckboxTitleKey => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.TITLE.key.String;
         string ICheckboxControl.CheckboxLabel => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.AUTOWRANGLE;
         string ICheckboxControl.CheckboxTooltip => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.AUTOWRANGLE_TOOLTIP;
@@ -229,6 +217,5 @@ namespace ButcherStation
         {
             autoButchSurplus = value;
         }
-
     }
 }

@@ -49,7 +49,7 @@ namespace ButcherStation
             int depthAvailable = GetDepthAvailable(parent, out waterFound);
             if (depthAvailable != previousDepthAvailable || waterFound != previousWaterFound)
             {
-                KBatchedAnimController kBatchedAnimController = GetComponent<KBatchedAnimController>();
+                var kBatchedAnimController = GetComponent<KBatchedAnimController>();
                 if (depthAvailable == 0)
                 {
                     kBatchedAnimController.enabled = false;
@@ -72,7 +72,7 @@ namespace ButcherStation
                 }
                 if (!isPreview)
                 {
-                    KSelectable kSelectable = parent.GetComponent<KSelectable>();
+                    var kSelectable = parent.GetComponent<KSelectable>();
                     if (kSelectable != null)
                     {
                         kSelectable.ToggleStatusItem(statusItemNoDepth, depthAvailable == 0);

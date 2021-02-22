@@ -4,7 +4,7 @@ using SanchozzONIMods.Lib;
 
 namespace ButcherStation
 {
-    class Config : BaseConfig<Config>
+    public class Config : BaseConfig<Config>
     {
         [JsonIgnore]
         private int maxcreaturelimit = ButcherStation.CREATURELIMIT;
