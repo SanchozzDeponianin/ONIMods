@@ -1,4 +1,5 @@
-﻿using static STRINGS.UI;
+﻿using STRINGS;
+using static STRINGS.UI;
 
 namespace ButcherStation
 {
@@ -99,6 +100,15 @@ namespace ButcherStation
                     public static LocString TOOLTIP_CYCLES = " cycles";
                 }
             }
+        }
+
+        internal static void DoReplacement()
+        {
+            //LocString.CreateLocStringKeys(typeof(BUILDING));
+            LocString.CreateLocStringKeys(typeof(BUILDINGS));
+            //LocString.CreateLocStringKeys(typeof(UI));
+            Strings.Add($"STRINGS.MISC.TAGS.{ButcherStation.ButcherableCreature.ToString().ToUpperInvariant()}", MISC.TAGS.BAGABLECREATURE);
+            Strings.Add($"STRINGS.MISC.TAGS.{ButcherStation.FisherableCreature.ToString().ToUpperInvariant()}", MISC.TAGS.SWIMMINGCREATURE);
         }
     }
 }

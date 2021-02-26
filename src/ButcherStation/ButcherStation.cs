@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Klei.AI;
 using KSerialization;
 using STRINGS;
@@ -6,27 +8,8 @@ using UnityEngine;
 
 namespace ButcherStation
 {
-    public class ButcherStation : StateMachineComponent<ButcherStation.SMInstance>, IIntSliderControl, ISliderControl, IUserControlledCapacity, ICheckboxControl
+    public class ButcherStation : KMonoBehaviour, ISim4000ms, IIntSliderControl, ISliderControl, IUserControlledCapacity, ICheckboxControl
     {
-        public class SMInstance : GameStateMachine<States, SMInstance, ButcherStation, object>.GameInstance
-        {
-            public SMInstance(ButcherStation master) : base(master)
-            {
-            }
-        }
-
-        public class States : GameStateMachine<States, SMInstance, ButcherStation>
-        {
-            public override void InitializeStates(out BaseState default_state)
-            {
-                default_state = root;
-                root.Update("RefreshCreatureCount", delegate (SMInstance smi, float dt)
-                {
-                    smi.master.RefreshCreatureCount(null);
-                }, UpdateRate.SIM_1000ms, false);
-            }
-        }
-
         public static readonly Tag ButcherableCreature = TagManager.Create("ButcherableCreature");
         public static readonly Tag FisherableCreature = TagManager.Create("FisherableCreature");
 
@@ -38,15 +21,19 @@ namespace ButcherStation
         [Serialize]
         private int creatureLimit = Config.Get().MAXCREATURELIMIT;
         private int storedCreatureCount;
+        internal List<KPrefabID> Creatures { get; private set; } = new List<KPrefabID>();
+        bool dirty = true;
 
         [Serialize]
         private float ageButchThresold = 0.85f;
 
         [Serialize]
-        bool autoButchSurplus = false;
+        private bool autoButchSurplus = false;
 
+#pragma warning disable CS0649
         [MyCmpReq]
         TreeFilterable treeFilterable;
+#pragma warning restore CS0649
 
         private static StatusItem capacityStatusItem;
 
@@ -72,14 +59,15 @@ namespace ButcherStation
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            smi.StartSM();
             Subscribe((int)GameHashes.CopySettings, OnCopySettings);
-            RefreshCreatureCount(null);
+            treeFilterable.OnFilterChanged += OnFilterChanged;
+            RefreshCreatures();
         }
 
         protected override void OnCleanUp()
         {
-            smi.StopSM("OnCleanUp");
+            Unsubscribe((int)GameHashes.CopySettings, OnCopySettings);
+            treeFilterable.OnFilterChanged -= OnFilterChanged;
             base.OnCleanUp();
         }
 
@@ -90,29 +78,66 @@ namespace ButcherStation
             {
                 creatureLimit = butcherStation.creatureLimit;
                 ageButchThresold = butcherStation.ageButchThresold;
+                autoButchSurplus = butcherStation.autoButchSurplus;
             }
         }
 
-        private void RefreshCreatureCount(object data = null)
+        private void OnFilterChanged(Tag[] tags)
         {
-            int cell = this.GetSMI<RanchStation.Instance>().GetTargetRanchCell();
-            var cavityForCell = Game.Instance.roomProber.GetCavityForCell(cell);
-            storedCreatureCount = 0;
-            if (cavityForCell != null)
+            dirty = true;
+        }
+
+        public void Sim4000ms(float dt)
+        {
+            RefreshCreatures();
+        }
+
+        internal void RefreshCreatures(List<KPrefabID> creatures = null)
+        {
+            // обновляем число жеготных в комнате
+            // список может передаваться из патча для RanchStation.Instance
+            if (creatures == null)
             {
-                foreach (KPrefabID creature in cavityForCell.creatures)
+                int cell = this.GetSMI<RanchStation.Instance>()?.GetTargetRanchCell() ?? Grid.InvalidCell;
+                creatures = Game.Instance.roomProber.GetCavityForCell(cell)?.creatures ?? new List<KPrefabID>();
+            }
+            int old = storedCreatureCount;
+            storedCreatureCount = 0;
+            foreach (KPrefabID creature in creatures)
+            {
+                if (!creature.HasTag(GameTags.Creatures.Bagged) && !creature.HasTag(GameTags.Trapped) && !creature.HasTag(GameTags.Dying))
                 {
-                    if (!creature.HasTag(GameTags.Creatures.Bagged) && !creature.HasTag(GameTags.Trapped))
-                    {
-                        storedCreatureCount++;
-                    }
+                    storedCreatureCount++;
                 }
+            }
+            if (old != storedCreatureCount)
+                dirty = true;
+            if (dirty)
+            {
+                // для оптимизации упорядочиваем список жеготных. 
+                // вначале идут не выбранные в фильтре, затем по возрасту.
+                Creatures.Clear();
+                var Age = Db.Get().Amounts.Age;
+                Creatures.AddRange(creatures
+                    .Where(creature => creature != null && creature.gameObject != null)
+                    .OrderByDescending(delegate (KPrefabID creature)
+                    {
+                        if (!treeFilterable?.ContainsTag(creature.PrefabTag) ?? false)
+                            return 1f;
+                        var age = Age.Lookup(creature);
+                        if (age == null)
+                            return 0;
+                        return age.value / age.GetMax();
+                    }));
+                dirty = false;
             }
         }
 
         public bool IsCreatureEligibleToBeButched(GameObject creature_go)
         {
             if (!creature_go.HasTag(creatureEligibleTag))
+                return false;
+            if (creature_go.HasTag(GameTags.Dying))
                 return false;
             bool surplus = !treeFilterable?.ContainsTag(creature_go.GetComponent<KPrefabID>().PrefabTag) ?? false;
             if (autoButchSurplus && (surplus || storedCreatureCount > creatureLimit))
@@ -141,11 +166,17 @@ namespace ButcherStation
                     extraMeatSpawner.onDeathDropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * Config.Get().EXTRAMEATPERRANCHINGATTRIBUTE;
                 }
             }
-            creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);
+            var deathMonitor = creature_go.GetSMI<DeathMonitor.Instance>();
+            if (deathMonitor != null)
+            {
+                creature_go.AddTag(GameTags.Dying);
+                deathMonitor.Kill(Db.Get().Deaths.Generic);
+            }
         }
 
         // лимит количества жеготных
         float IUserControlledCapacity.UserMaxCapacity { get => creatureLimit; set => creatureLimit = Mathf.RoundToInt(value); }
+
         float IUserControlledCapacity.AmountStored => storedCreatureCount;
         float IUserControlledCapacity.MinCapacity => 0;
         float IUserControlledCapacity.MaxCapacity => Config.Get().MAXCREATURELIMIT;
@@ -153,8 +184,7 @@ namespace ButcherStation
         LocString IUserControlledCapacity.CapacityUnits => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.UNITS_SUFFIX;
 
         // ползун настройки максимального возраста
-        //string ISliderControl.SliderTitleKey => STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TITLE.key.String;
-        string ISliderControl.SliderTitleKey => "STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TITLE";
+        string ISliderControl.SliderTitleKey => STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TITLE.key.String;
         string ISliderControl.SliderUnits => UI.UNITSUFFIXES.PERCENT;
 
         float ISliderControl.GetSliderMax(int index)
@@ -177,15 +207,14 @@ namespace ButcherStation
                 TUNING.CREATURES.LIFESPAN.TIER4,
                     })
             {
-                s = s + "\n" + Math.Floor(ageButchThresold * max_age) + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_OUTOF + Math.Floor(max_age) + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_CYCLES;
+                s = s + "\n" + (ageButchThresold * max_age).ToString("F1") /*Math.Floor(ageButchThresold * max_age)*/ + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_OUTOF + Math.Floor(max_age) + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_CYCLES;
             }
             return string.Format(STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP, ageButchThresold * 100f) + s;
         }
 
         string ISliderControl.GetSliderTooltipKey(int index)
         {
-            //return STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP.key.String; 
-            return "STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP";
+            return STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP.key.String;
         }
 
         float ISliderControl.GetSliderValue(int index)
