@@ -75,11 +75,16 @@ namespace ButcherStation
                 if (!smi.IsNullOrStopped())
                 {
                     num = Grid.PosToCell(smi.transform.GetPosition());
-                    if (!smi.targetRanchable.IsNullOrStopped())
+                    var targetRanchable = smi.targetRanchable;
+                    if (!targetRanchable.IsNullOrStopped())
                     {
-                        if (smi.targetRanchable.HasTag(GameTags.Creatures.Flyer))
+                        if (targetRanchable.HasTag(GameTags.Creatures.Flyer))
                         {
                             num = Grid.CellAbove(num);
+                            if (targetRanchable.HasTag(MooConfig.ID))
+                            {
+                                num = Grid.CellLeft(num);
+                            }
                         }
                     }
                 }

@@ -286,7 +286,9 @@ namespace ButcherStation
         {
             private static void Postfix(RanchedStates.State ___runaway, RanchedStates.State ___behaviourcomplete)
             {
-                ___runaway.TagTransition(GameTags.Dying, ___behaviourcomplete);
+                ___runaway
+                    .TagTransition(GameTags.Creatures.Die, ___behaviourcomplete)
+                    .TagTransition(GameTags.Dead, ___behaviourcomplete);
             }
         }
 

@@ -22,7 +22,7 @@ namespace ButcherStation
         private int creatureLimit = Config.Get().MAXCREATURELIMIT;
         private int storedCreatureCount;
         internal List<KPrefabID> Creatures { get; private set; } = new List<KPrefabID>();
-        bool dirty = true;
+        private bool dirty = true;
 
         [Serialize]
         private float ageButchThresold = 0.85f;
@@ -105,7 +105,7 @@ namespace ButcherStation
             storedCreatureCount = 0;
             foreach (KPrefabID creature in creatures)
             {
-                if (!creature.HasTag(GameTags.Creatures.Bagged) && !creature.HasTag(GameTags.Trapped) && !creature.HasTag(GameTags.Dying))
+                if (!creature.HasTag(GameTags.Creatures.Bagged) && !creature.HasTag(GameTags.Trapped) && !creature.HasTag(GameTags.Creatures.Die) && !creature.HasTag(GameTags.Dead))
                 {
                     storedCreatureCount++;
                 }
@@ -135,9 +135,7 @@ namespace ButcherStation
 
         public bool IsCreatureEligibleToBeButched(GameObject creature_go)
         {
-            if (!creature_go.HasTag(creatureEligibleTag))
-                return false;
-            if (creature_go.HasTag(GameTags.Dying))
+            if (!creature_go.HasTag(creatureEligibleTag) || creature_go.HasTag(GameTags.Creatures.Die) || creature_go.HasTag(GameTags.Dead))
                 return false;
             bool surplus = !treeFilterable?.ContainsTag(creature_go.GetComponent<KPrefabID>().PrefabTag) ?? false;
             if (autoButchSurplus && (surplus || storedCreatureCount > creatureLimit))
@@ -157,7 +155,6 @@ namespace ButcherStation
                 {
                     creature_go.transform.SetPosition(targetRanchStation.transform.GetPosition());
                 }
-
                 var extraMeatSpawner = creature_go.GetComponent<ExtraMeatSpawner>();
                 if (extraMeatSpawner != null)
                 {
@@ -166,12 +163,7 @@ namespace ButcherStation
                     extraMeatSpawner.onDeathDropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * Config.Get().EXTRAMEATPERRANCHINGATTRIBUTE;
                 }
             }
-            var deathMonitor = creature_go.GetSMI<DeathMonitor.Instance>();
-            if (deathMonitor != null)
-            {
-                creature_go.AddTag(GameTags.Dying);
-                deathMonitor.Kill(Db.Get().Deaths.Generic);
-            }
+            creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);
         }
 
         // лимит количества жеготных
@@ -207,7 +199,7 @@ namespace ButcherStation
                 TUNING.CREATURES.LIFESPAN.TIER4,
                     })
             {
-                s = s + "\n" + (ageButchThresold * max_age).ToString("F1") /*Math.Floor(ageButchThresold * max_age)*/ + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_OUTOF + Math.Floor(max_age) + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_CYCLES;
+                s = s + "\n" + (ageButchThresold * max_age).ToString("F1") + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_OUTOF + Math.Floor(max_age) + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_CYCLES;
             }
             return string.Format(STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP, ageButchThresold * 100f) + s;
         }
