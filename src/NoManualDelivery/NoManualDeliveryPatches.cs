@@ -63,9 +63,16 @@ namespace NoManualDelivery
             IceCooledFanConfig.ID,
             SolidBoosterConfig.ID,
             ResearchCenterConfig.ID,
+            SweepBotStationConfig.ID,
+            // из ДЛЦ:
+            "UraniumCentrifuge",
+            "NuclearReactor",
+
             // из модов:
             // Aquatic Farm https://steamcommunity.com/sharedfiles/filedetails/?id=1910961538
             "AquaticFarm",
+            // Advanced Refrigeration https://steamcommunity.com/sharedfiles/filedetails/?id=2021324045
+            "SimpleFridge", "FridgeRed", "FridgeYellow", "FridgeBlue", "FridgeAdvanced",
             // Storage Pod  https://steamcommunity.com/sharedfiles/filedetails/?id=1873476551
             "StoragePodConfig",
             // Big Storage  https://steamcommunity.com/sharedfiles/filedetails/?id=1913589787
@@ -160,32 +167,37 @@ namespace NoManualDelivery
         ---         .CouldBePickedUpByMinion(base.gameObject)
         +++         .CouldBePickedUpByTransferArm(base.gameObject)
                )
-			{
+            {
                 блаблабла
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
             {
-                MethodInfo CouldBePickedUpByMinion = typeof(Pickupable).GetMethod(nameof(Pickupable.CouldBePickedUpByMinion), new Type[] { typeof(GameObject) });
-                MethodInfo CouldBePickedUpByTransferArm = typeof(Pickupable).GetMethod(nameof(Pickupable.CouldBePickedUpByTransferArm), new Type[] { typeof(GameObject) });
+                var instructionsList = instructions.ToList();
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
+                var CouldBePickedUpByMinion = typeof(Pickupable).GetMethod(nameof(Pickupable.CouldBePickedUpByMinion), new Type[] { typeof(GameObject) });
+                var CouldBePickedUpByTransferArm = typeof(Pickupable).GetMethod(nameof(Pickupable.CouldBePickedUpByTransferArm), new Type[] { typeof(GameObject) });
                 bool result = false;
-                List<CodeInstruction> instructionsList = instructions.ToList();
-                for (int i = 0; i < instructionsList.Count; i++)
+                if (CouldBePickedUpByMinion != null && CouldBePickedUpByTransferArm != null)
                 {
-                    CodeInstruction instruction = instructionsList[i];
-                    if (instruction.opcode == OpCodes.Callvirt && (MethodInfo)instruction.operand == CouldBePickedUpByMinion)
+                    for (int i = 0; i < instructionsList.Count; i++)
                     {
-                        yield return new CodeInstruction(OpCodes.Callvirt, CouldBePickedUpByTransferArm);
-                        result = true;
-                    }
-                    else
-                    {
-                        yield return instruction;
+                        var instruction = instructionsList[i];
+                        if (instruction.opcode == OpCodes.Callvirt && (instruction.operand is MethodInfo info) && info == CouldBePickedUpByMinion)
+                        {
+                            instructionsList[i] = new CodeInstruction(OpCodes.Callvirt, CouldBePickedUpByTransferArm);
+                            result = true;
+#if DEBUG
+                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
+#endif
+                            break;
+                        }
                     }
                 }
                 if (!result)
                 {
-                    Debug.LogWarning($"{ Utils.modInfo.assemblyName}: Could not apply apply Transpiler to the 'BingeEatChore.StatesInstance.FindFood'");
+                    PUtil.LogWarning($"{ Utils.modInfo.assemblyName}: Could not apply apply Transpiler to the '{methodName}'");
                 }
+                return instructionsList;
             }
         }
 
@@ -207,6 +219,74 @@ namespace NoManualDelivery
                         break;
                     }
                 }
+            }
+        }
+
+        // хаки для станции бота.
+        // при изменении хранилища станция принудительно помечает все ресурсы "для переноски"
+        // изза этого дуплы всегда будут игнорировать установленную галку (другая задача переноски, не учитывает галку вообще)
+        // поэтому нужно при установленной галке - отменить пометки "для переноски"
+
+        private static readonly IDetouredField<SweepBotStation, Storage> SWEEP_STORAGE = PDetours.DetourField<SweepBotStation, Storage>("sweepStorage");
+
+        private static void FixSweepBotStationStorage(Storage sweepStorage)
+        {
+            bool automationOnly = (sweepStorage?.automatable?.GetAutomationOnly()) ?? false;
+            for (int i = 0; i < sweepStorage.Count; i++)
+            {
+                var clearable = sweepStorage[i].GetComponent<Clearable>();
+                if (automationOnly)
+                    clearable.CancelClearing();
+                else
+                    clearable.MarkForClear(false, true);
+            }
+        }
+
+        private static void UpdateSweepBotStationStorage(KMonoBehaviour kMonoBehaviour)
+        {
+            var sweepBotStation = kMonoBehaviour.GetComponent<SweepBotStation>();
+            if (sweepBotStation != null)
+            {
+                var storage = SWEEP_STORAGE.Get(sweepBotStation);
+                if (storage != null)
+                    FixSweepBotStationStorage(storage);
+            }
+        }
+
+        [HarmonyPatch(typeof(SweepBotStation), "OnStorageChanged")]
+        internal static class SweepBotStation_OnStorageChanged
+        {
+            private static void Postfix(Storage ___sweepStorage)
+            {
+                FixSweepBotStationStorage(___sweepStorage);
+            }
+        }
+
+        // нужно обновить хранилище при загрузке, и при изменении галки
+        [HarmonyPatch(typeof(SweepBotStation), "OnSpawn")]
+        internal static class SweepBotStation_OnSpawn
+        {
+            private static void Postfix(Storage ___sweepStorage)
+            {
+                FixSweepBotStationStorage(___sweepStorage);
+            }
+        }
+
+        [HarmonyPatch(typeof(Automatable), "OnCopySettings")]
+        internal static class Automatable_OnCopySettings
+        {
+            private static void Postfix(Automatable __instance)
+            {
+                UpdateSweepBotStationStorage(__instance);
+            }
+        }
+
+        [HarmonyPatch(typeof(AutomatableSideScreen), "OnAllowManualChanged")]
+        internal static class AutomatableSideScreen_OnAllowManualChanged
+        {
+            private static void Postfix(Automatable ___targetAutomatable)
+            {
+                UpdateSweepBotStationStorage(___targetAutomatable);
             }
         }
     }
