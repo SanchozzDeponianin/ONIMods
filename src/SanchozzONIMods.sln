@@ -50,6 +50,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smelter", "Smelter\Smelter.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuildTasksHelper", "MSBuildTasksHelper\MSBuildTasksHelper.csproj", "{6B568584-6E83-486A-A278-E58271DCD8DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HEPWallBridge", "HEPWallBridge\HEPWallBridge.csproj", "{18F0CD86-A2D9-4E41-9509-95A6685F241C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -197,6 +199,13 @@ Global
 		{6B568584-6E83-486A-A278-E58271DCD8DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B568584-6E83-486A-A278-E58271DCD8DA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B568584-6E83-486A-A278-E58271DCD8DA}.VANILLA|Any CPU.ActiveCfg = Fake|Any CPU
+		{18F0CD86-A2D9-4E41-9509-95A6685F241C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18F0CD86-A2D9-4E41-9509-95A6685F241C}.EXPANSION1|Any CPU.ActiveCfg = EXPANSION1|Any CPU
+		{18F0CD86-A2D9-4E41-9509-95A6685F241C}.EXPANSION1|Any CPU.Build.0 = EXPANSION1|Any CPU
+		{18F0CD86-A2D9-4E41-9509-95A6685F241C}.Fake|Any CPU.ActiveCfg = Fake|Any CPU
+		{18F0CD86-A2D9-4E41-9509-95A6685F241C}.Fake|Any CPU.Build.0 = Fake|Any CPU
+		{18F0CD86-A2D9-4E41-9509-95A6685F241C}.Release|Any CPU.ActiveCfg = Fake|Any CPU
+		{18F0CD86-A2D9-4E41-9509-95A6685F241C}.VANILLA|Any CPU.ActiveCfg = Fake|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
