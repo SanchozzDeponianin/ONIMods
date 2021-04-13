@@ -52,6 +52,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuildTasksHelper", "MSBui
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HEPWallBridge", "HEPWallBridge\HEPWallBridge.csproj", "{18F0CD86-A2D9-4E41-9509-95A6685F241C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtifactCarePackages", "ArtifactCarePackages\ArtifactCarePackages.csproj", "{20E68470-1CAA-413F-B69B-551D68D721FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -186,6 +188,12 @@ Global
 		{18F0CD86-A2D9-4E41-9509-95A6685F241C}.Fake|Any CPU.ActiveCfg = Fake|Any CPU
 		{18F0CD86-A2D9-4E41-9509-95A6685F241C}.Release|Any CPU.ActiveCfg = Fake|Any CPU
 		{18F0CD86-A2D9-4E41-9509-95A6685F241C}.VANILLA|Any CPU.ActiveCfg = Fake|Any CPU
+		{20E68470-1CAA-413F-B69B-551D68D721FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20E68470-1CAA-413F-B69B-551D68D721FF}.EXPANSION1|Any CPU.ActiveCfg = Fake|Any CPU
+		{20E68470-1CAA-413F-B69B-551D68D721FF}.Fake|Any CPU.ActiveCfg = Fake|Any CPU
+		{20E68470-1CAA-413F-B69B-551D68D721FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20E68470-1CAA-413F-B69B-551D68D721FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20E68470-1CAA-413F-B69B-551D68D721FF}.VANILLA|Any CPU.ActiveCfg = Fake|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{20E68470-1CAA-413F-B69B-551D68D721FF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ArtifactCarePackages</RootNamespace>
+    <AssemblyName>ArtifactCarePackages</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <UsesPLib>true</UsesPLib>
+    <OutputIntoRootOnEXPANSION1>true</OutputIntoRootOnEXPANSION1>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\lib\BaseOptions.cs">
+      <Link>BaseOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\Utils.cs">
+      <Link>Utils.cs</Link>
+    </Compile>
+    <Compile Include="ArtifactCarePackagePatches.cs" />
+    <Compile Include="ArtifactImmigration.cs" />
+    <Compile Include="ArtifactCarePackageOptions.cs" />
+    <Compile Include="STRINGS.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
