@@ -32,6 +32,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 ## Tweaks
 |  **Name**  |  **Description**  |  **Vanilla**  |  **Spaced Out! DLC**  |
 | :--------: | :---------------: | :-----------: | :-------------------: |
+| [Artifacts in Care Packages](https://steamcommunity.com/sharedfiles/filedetails/?id=2455735197) | Allows to get Artifacts in Care Packages | Yes | Yes
 | [Farmer's Touch on more Plants](https://steamcommunity.com/sharedfiles/filedetails/?id=1933433002) | Allows Farmers can use Micronutrient Fertilizer and give the Farmer's Touch effect on Oxyfern, Wheezewort and Arbor Tree. | Yes | planned |
 | [No Manual Delivery](https://steamcommunity.com/sharedfiles/filedetails/?id=2047308624) | Adds a "Allow Manual Use" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings. | Yes | Yes |
 | [[Visual] Old Liquid Reservoir](https://steamcommunity.com/sharedfiles/filedetails/?id=1904543022) | Returns the old visual art of the Liquid Reservoir from older "early access" versions of the game. | Yes | Yes |
