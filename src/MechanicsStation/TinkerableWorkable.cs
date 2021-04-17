@@ -11,7 +11,7 @@ namespace MechanicsStation
         {
             base.OnPrefabInit();
             var attributes = gameObject.GetAttributes();
-            craftingSpeed = attributes.Add(MechanicsStationPatches.CraftingSpeed);
+            craftingSpeed = attributes.Add(MechanicsStationAssets.CraftingSpeed);
             machinerySpeed = attributes.Add(Db.Get().Attributes.MachinerySpeed);
         }
 

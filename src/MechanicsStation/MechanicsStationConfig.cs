@@ -54,7 +54,7 @@ namespace MechanicsStation
             tinkerStation.massPerTinker = MASS_PER_TINKER;
             tinkerStation.outputPrefab = TINKER_TOOLS;
             tinkerStation.outputTemperature = OUTPUT_TEMPERATURE;
-            tinkerStation.requiredSkillPerk = MechanicsStationPatches.REQUIRED_ROLE_PERK;
+            tinkerStation.requiredSkillPerk = MechanicsStationAssets.REQUIRED_ROLE_PERK;
             tinkerStation.choreType = Db.Get().ChoreTypes.MachineTinker.IdHash;
             tinkerStation.useFilteredStorage = true;
             tinkerStation.fetchChoreType = Db.Get().ChoreTypes.MachineFetch.IdHash;

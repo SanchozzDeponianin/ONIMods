@@ -34,7 +34,7 @@ namespace MechanicsStation
         {
             if (buildingElementEmitter != null)
             {
-                buildingElementEmitter.emitRate = base_methane_production_rate * gameObject.GetAttributes().GetValue(MechanicsStationPatches.MACHINERY_SPEED_MODIFIER_NAME);
+                buildingElementEmitter.emitRate = base_methane_production_rate * gameObject.GetAttributes().GetValue(MechanicsStationAssets.MACHINERY_SPEED_MODIFIER_NAME);
                 //Traverse.Create(buildingElementEmitter).Field<bool>("dirty").Value = true;
                 DIRTY.Set(buildingElementEmitter, true);
             }
