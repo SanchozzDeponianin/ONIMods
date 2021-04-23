@@ -59,10 +59,20 @@ namespace HEPWallBridge
             var redirector = go.AddOrGet<HighEnergyParticleRedirector>();
             redirector.directorDelay = HighEnergyParticleRedirectorConfig.TRAVEL_DELAY;
         }
+        /*
+        public override void DoPostConfigurePreview(BuildingDef def, GameObject go)
+        {
+            go.AddOrGetDef<MakeBaseSolid.Def>().solidOffsets = new CellOffset[] { new CellOffset(0, 0) };
+        }
+
+        public override void DoPostConfigureUnderConstruction(GameObject go)
+        {
+            go.AddOrGetDef<MakeBaseSolid.Def>().solidOffsets = new CellOffset[] { new CellOffset(0, 0) };
+        }*/
 
         public override void DoPostConfigureComplete(GameObject go)
         {
-            go.AddOrGetDef<MakeBaseSolid.Def>();
+            go.AddOrGetDef<MakeBaseSolid.Def>().solidOffsets = new CellOffset[] { new CellOffset(0, 0) };
         }
     }
 }
