@@ -37,9 +37,10 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [No Manual Delivery](https://steamcommunity.com/sharedfiles/filedetails/?id=2047308624) | Adds a "Allow Manual Use" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings. | Yes | Yes |
 | [[Visual] Old Liquid Reservoir](https://steamcommunity.com/sharedfiles/filedetails/?id=1904543022) | Returns the old visual art of the Liquid Reservoir from older "early access" versions of the game. | Yes | Yes |
 | [Relic Hunter](https://steamcommunity.com/sharedfiles/filedetails/?id=1927259233) | Unlocks the Relic Hunter trait that exists in vanilla but is not used. A duplicant with this trait almost always finds Artifacts when traveling to other planets. | Yes | No |
+| [Sandbox: Mutant Plants](https://steamcommunity.com/sharedfiles/filedetails/?id=2493249462) | Allows to quickly receive mutant Seeds and Plants in the Sandbox mode | No | Yes |
 | [Tweaked Biological Cargo Bay](https://steamcommunity.com/sharedfiles/filedetails/?id=1891479671) | Allows Duplicants independently transport animals directly from the Biological Cargo Bay to the Critter Drop-Off, without performing any unnecessary intermediate actions. | Yes | No |
 | [Varicoloured Balloons](https://steamcommunity.com/sharedfiles/filedetails/?id=2293939893) | Adds more different colors and variations of balloons. | Yes | Yes |
-<!--| []() |  |-->
+<!--| []() |  | No | Yes | -->
 
 # Special thanks to
 - [@pardeike](https://github.com/pardeike), creator of [Harmony](https://github.com/pardeike/Harmony), the library that made oni modding possible.
