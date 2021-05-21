@@ -54,6 +54,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HEPWallBridge", "HEPWallBri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtifactCarePackages", "ArtifactCarePackages\ArtifactCarePackages.csproj", "{20E68470-1CAA-413F-B69B-551D68D721FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandboxMutantPlant", "SandboxMutantPlant\SandboxMutantPlant.csproj", "{52BA699E-3223-48A5-8674-009EAF64D745}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -194,6 +196,13 @@ Global
 		{20E68470-1CAA-413F-B69B-551D68D721FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20E68470-1CAA-413F-B69B-551D68D721FF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{20E68470-1CAA-413F-B69B-551D68D721FF}.VANILLA|Any CPU.ActiveCfg = Fake|Any CPU
+		{52BA699E-3223-48A5-8674-009EAF64D745}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52BA699E-3223-48A5-8674-009EAF64D745}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52BA699E-3223-48A5-8674-009EAF64D745}.EXPANSION1|Any CPU.ActiveCfg = EXPANSION1|Any CPU
+		{52BA699E-3223-48A5-8674-009EAF64D745}.EXPANSION1|Any CPU.Build.0 = EXPANSION1|Any CPU
+		{52BA699E-3223-48A5-8674-009EAF64D745}.Fake|Any CPU.ActiveCfg = Fake|Any CPU
+		{52BA699E-3223-48A5-8674-009EAF64D745}.Release|Any CPU.ActiveCfg = Fake|Any CPU
+		{52BA699E-3223-48A5-8674-009EAF64D745}.VANILLA|Any CPU.ActiveCfg = Fake|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
