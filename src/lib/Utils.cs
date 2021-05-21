@@ -248,7 +248,7 @@ namespace SanchozzONIMods.Lib
 #endif
         public static void ReplaceText(this LocString locString, string search, string replacement)
         {
-            locString.ReplaceText(locString, locString.text.Replace(search, replacement));
+            locString.ReplaceText(locString.text.Replace(search, replacement));
         }
 
         public static Dictionary<string, string> PrepareReplacementDictionary(this Dictionary<string, string> dictionary, string[] search, string replacementKeyTemplate)
