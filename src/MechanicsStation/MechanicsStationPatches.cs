@@ -183,8 +183,8 @@ namespace MechanicsStation
             }
         }
 
-        private static readonly EventSystem.IntraObjectHandler<BuildingAttachPoint> OnUpdateRoomDelegate = 
-            new EventSystem.IntraObjectHandler<BuildingAttachPoint>((BuildingAttachPoint component, object data) 
+        private static readonly EventSystem.IntraObjectHandler<BuildingAttachPoint> OnUpdateRoomDelegate =
+            new EventSystem.IntraObjectHandler<BuildingAttachPoint>((BuildingAttachPoint component, object data)
                 => component.RetriggerOnUpdateRoom(data));
 
         private static void RetriggerOnUpdateRoom(this BuildingAttachPoint buildingAttachPoint, object data)

@@ -13,6 +13,11 @@ msgctxt "MechanicsStation.STRINGS.DUPLICANTS.ATTRIBUTES.CRAFTINGSPEED.NAME"
 msgid "Fabrication Speed"
 msgstr "Скорость изготовления"
 
+#. MechanicsStation.STRINGS.DUPLICANTS.ATTRIBUTES.MACHINERY.MACHINE_TINKER_EFFECT_MODIFIER
+msgctxt "MechanicsStation.STRINGS.DUPLICANTS.ATTRIBUTES.MACHINERY.MACHINE_TINKER_EFFECT_MODIFIER"
+msgid "{0} {MACHINE_TINKER} Effect Duration"
+msgstr "Длительность эффекта {MACHINE_TINKER}: {0}"
+
 #. MechanicsStation.STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP
 msgctxt "MechanicsStation.STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP"
 msgid "A skilled Duplicant has jerry rigged this <style=\"KKeyword\">Building</style> to temporarily run faster"
@@ -32,6 +37,11 @@ msgstr "Повышает скорость работы построек, упр�
 msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION.TITLE"
 msgid "The <style=\"KKeyword\">{MACHINE_TINKER}</style> effect duration, cycles"
 msgstr "Длительность эффекта <style=\"KKeyword\">{MACHINE_TINKER}</style>, циклы"
+
+#. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION_PER_SKILL.TITLE
+msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION_PER_SKILL.TITLE"
+msgid "The <style=\"KKeyword\">{MACHINE_TINKER}</style> effect +X% duration per <style=\"KKeyword\">{MACHINERY}</style> attribute level"
+msgstr "Длительность эффекта <style=\"KKeyword\">{MACHINE_TINKER}</style> +X% за уровень аттрибута <style=\"KKeyword\">{MACHINERY}</style>"
 
 #. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKERABLE_WORKTIME.TITLE
 msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKERABLE_WORKTIME.TITLE"

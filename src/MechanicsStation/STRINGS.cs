@@ -6,6 +6,7 @@ namespace MechanicsStation
 {
     public class STRINGS
     {
+        private const string MACHINERY = "{MACHINERY}";
         private const string MACHINE_PARTS = "{MACHINE_PARTS}";
         private const string MACHINE_TECHNICIAN = "{MACHINE_TECHNICIAN}";
         private const string MACHINERY_SPEED = "{MACHINERY_SPEED}";
@@ -35,6 +36,10 @@ namespace MechanicsStation
                 public class CRAFTINGSPEED
                 {
                     public static LocString NAME = "Fabrication Speed";
+                }
+                public class MACHINERY
+                {
+                    public static LocString MACHINE_TINKER_EFFECT_MODIFIER = "{0} {MACHINE_TINKER} Effect Duration";
                 }
             }
 
@@ -68,6 +73,10 @@ namespace MechanicsStation
             {
                 public static LocString TITLE = $"The {UI.FormatAsKeyWord(MACHINE_TINKER)} effect duration, cycles";
             }
+            public class MACHINE_TINKER_EFFECT_DURATION_PER_SKILL
+            {
+                public static LocString TITLE = $"The {UI.FormatAsKeyWord(MACHINE_TINKER)} effect +X% duration per {UI.FormatAsKeyWord(MACHINERY)} attribute level";
+            }
             public class MACHINE_TINKERABLE_WORKTIME
             {
                 public static LocString TITLE = "The time required to tune up buildings, seconds";
@@ -79,6 +88,7 @@ namespace MechanicsStation
             var dictionary = new Dictionary<string, string>
             {
                 { MACHINE_PARTS, ITEMS.INDUSTRIAL_PRODUCTS.MACHINE_PARTS.NAME },
+                { MACHINERY, global::STRINGS.DUPLICANTS.ATTRIBUTES.MACHINERY.NAME },
                 { MACHINERY_SPEED, global::STRINGS.DUPLICANTS.ATTRIBUTES.MACHINERYSPEED.NAME },
                 { MACHINE_TECHNICIAN, global::STRINGS.DUPLICANTS.ROLES.MACHINE_TECHNICIAN.NAME },
                 { MACHINE_TINKER, global::STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.NAME },

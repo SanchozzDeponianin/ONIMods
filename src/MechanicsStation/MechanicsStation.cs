@@ -5,7 +5,7 @@ namespace MechanicsStation
     public class MechanicsStation : KMonoBehaviour
     {
         private static readonly KAnimHashedString oreSymbolHash = new KAnimHashedString("rock");
-        private static readonly EventSystem.IntraObjectHandler<MechanicsStation> OnStorageChangeDelegate = 
+        private static readonly EventSystem.IntraObjectHandler<MechanicsStation> OnStorageChangeDelegate =
             new EventSystem.IntraObjectHandler<MechanicsStation>((MechanicsStation component, object data) => component.OnStorageChange(data));
 
 #pragma warning disable CS0649

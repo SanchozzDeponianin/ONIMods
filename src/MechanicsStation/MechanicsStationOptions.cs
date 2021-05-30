@@ -27,6 +27,13 @@ namespace MechanicsStation
         [Limit(1, 3)]
         public float MachineTinkerEffectDuration { get; set; } = MACHINE_TINKER_EFFECT_DURATION;
 
+#if EXPANSION1
+        [JsonProperty]
+        [Option("MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION_PER_SKILL.TITLE", Format = "F1")]
+        [Limit(2.5, 10)]
+#endif
+        public float MachineTinkerEffectDurationPerSkill { get; set; } = MACHINE_TINKER_EFFECT_DURATION_PER_SKILL * 100;
+
         [JsonProperty]
         [Option("MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKERABLE_WORKTIME.TITLE", Format = "F0")]
         [Limit(BUILDINGS.WORK_TIME_SECONDS.SHORT_WORK_TIME, BUILDINGS.WORK_TIME_SECONDS.VERY_LONG_WORK_TIME)]
