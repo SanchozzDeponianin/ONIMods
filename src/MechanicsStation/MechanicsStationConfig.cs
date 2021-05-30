@@ -18,7 +18,7 @@ namespace MechanicsStation
                 id: ID,
                 width: 2,
                 height: 2,
-                anim: "craftingstation_kanim",
+                anim: "mechanicstation_kanim", // "craftingstation_kanim",
                 hitpoints: BUILDINGS.HITPOINTS.TIER1,
                 construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER2,
                 construction_mass: BUILDINGS.CONSTRUCTION_MASS_KG.TIER3,
@@ -70,6 +70,8 @@ namespace MechanicsStation
                 component.SkillExperienceSkillGroup = Db.Get().SkillGroups.Technicals.Id;
                 component.SkillExperienceMultiplier = SKILLS.MOST_DAY_EXPERIENCE;
             };
+            SymbolOverrideControllerUtil.AddToPrefab(go);
+            go.AddOrGet<MechanicsStation>();
         }
     }
 }

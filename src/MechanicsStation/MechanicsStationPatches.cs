@@ -59,7 +59,7 @@ namespace MechanicsStation
         }
 
         // добавление построек для улучшения
-        // todo: добавить постройки из длц
+        // todo: добавлять постройки из длц по мере необходимости
         private static List<string> BuildingWithElementConverterStopList = new List<string>()
         {
             ResearchCenterConfig.ID,            // слишком читерно
@@ -183,6 +183,10 @@ namespace MechanicsStation
             }
         }
 
+        private static readonly EventSystem.IntraObjectHandler<BuildingAttachPoint> OnUpdateRoomDelegate = 
+            new EventSystem.IntraObjectHandler<BuildingAttachPoint>((BuildingAttachPoint component, object data) 
+                => component.RetriggerOnUpdateRoom(data));
+
         private static void RetriggerOnUpdateRoom(this BuildingAttachPoint buildingAttachPoint, object data)
         {
             for (int i = 0; i < buildingAttachPoint.points.Length; i++)
@@ -196,16 +200,16 @@ namespace MechanicsStation
         {
             private static void Postfix(BuildingAttachPoint __instance)
             {
-                __instance.Subscribe((int)GameHashes.UpdateRoom, __instance.RetriggerOnUpdateRoom);
+                __instance.Subscribe((int)GameHashes.UpdateRoom, OnUpdateRoomDelegate);
             }
         }
 
         [HarmonyPatch(typeof(BuildingAttachPoint), "OnCleanUp")]
         internal static class BuildingAttachPoint_OnCleanUp
         {
-            private static void Postfix(BuildingAttachPoint __instance)
+            private static void Prefix(BuildingAttachPoint __instance)
             {
-                __instance.Unsubscribe((int)GameHashes.UpdateRoom, __instance.RetriggerOnUpdateRoom);
+                __instance.Unsubscribe((int)GameHashes.UpdateRoom, OnUpdateRoomDelegate);
             }
         }
     }
