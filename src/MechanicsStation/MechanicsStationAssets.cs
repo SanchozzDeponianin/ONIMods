@@ -1,7 +1,9 @@
 ﻿using Database;
 using Klei.AI;
 using STRINGS;
+using Harmony;
 using UnityEngine;
+using PeterHan.PLib;
 
 namespace MechanicsStation
 {
@@ -26,6 +28,10 @@ namespace MechanicsStation
 #if EXPANSION1
         private static AttributeConverter MachineTinkerEffectDuration;
 #endif
+        // для устранения конфликта с модом "Rooms Expanded" с комнатой "кухня"
+        public static bool RoomsExpandedFound { get; private set; } = false;
+        private static RoomType KitchenRoom;
+        private static Tag KitchenBuildingTag = Tag.Invalid;
 
         internal static void Init()
         {
@@ -53,6 +59,29 @@ namespace MechanicsStation
             }
 
             db.RoomTypes.Add(db.RoomTypes.MachineShop);
+
+            // детектим "Rooms Expanded". модифицируем "мастерскую" чтобы она могла быть обгрейднутна до "кухни"
+            var RoomsExpanded = PPatchTools.GetTypeSafe("RoomsExpanded.RoomTypes_AllModded", "RoomsExpandedMerged");
+            if (RoomsExpanded != null)
+            {
+                PUtil.LogDebug("RoomsExpanded found. Attempt to add compatibility.");
+                try
+                {
+                    KitchenRoom = (RoomType)RoomsExpanded.GetPropertySafe<RoomType>("KitchenRoom", true)?.GetValue(null, null);
+                    if (KitchenRoom != null)
+                    {
+                        var upgrade_paths = db.RoomTypes.MachineShop.upgrade_paths.AddToArray(KitchenRoom);
+                        Traverse.Create(db.RoomTypes.MachineShop).Property(nameof(RoomType.upgrade_paths)).SetValue(upgrade_paths);
+                        Traverse.Create(db.RoomTypes.MachineShop).Property(nameof(RoomType.priority)).SetValue(KitchenRoom.priority);
+                        KitchenBuildingTag = "KitchenBuildingTag".ToTag();
+                        RoomsExpandedFound = true;
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    PUtil.LogExcWarn(e);
+                }
+            }
 
             // добавляем перк для работы на станции
             CanMachineTinker = db.SkillPerks.Add(new SimpleSkillPerk(
@@ -147,6 +176,12 @@ namespace MechanicsStation
 #endif
                 }
             };
+            // если "Rooms Expanded" найден, добавляем в кухонные постройки компонент для работы в нескольких комнатах.
+            if (RoomsExpandedFound && go.HasTag(KitchenBuildingTag))
+            {
+                var multiRoomTracker = go.AddOrGet<MultiRoomTracker>();
+                multiRoomTracker.possibleRoomTypes = new string[] { Db.Get().RoomTypes.MachineShop.Id, KitchenRoom.Id };
+            }
             return tinkerable;
         }
     }

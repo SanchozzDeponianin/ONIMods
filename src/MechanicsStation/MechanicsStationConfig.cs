@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TUNING;
 using UnityEngine;
+using static MechanicsStation.MechanicsStationAssets;
 
 namespace MechanicsStation
 {
@@ -54,13 +55,13 @@ namespace MechanicsStation
             tinkerStation.massPerTinker = MASS_PER_TINKER;
             tinkerStation.outputPrefab = TINKER_TOOLS;
             tinkerStation.outputTemperature = OUTPUT_TEMPERATURE;
-            tinkerStation.requiredSkillPerk = MechanicsStationAssets.REQUIRED_ROLE_PERK;
+            tinkerStation.requiredSkillPerk = REQUIRED_ROLE_PERK;
             tinkerStation.choreType = Db.Get().ChoreTypes.MachineTinker.IdHash;
             tinkerStation.useFilteredStorage = true;
             tinkerStation.fetchChoreType = Db.Get().ChoreTypes.MachineFetch.IdHash;
             var roomTracker = go.AddOrGet<RoomTracker>();
             roomTracker.requiredRoomType = Db.Get().RoomTypes.MachineShop.Id;
-            roomTracker.requirement = RoomTracker.Requirement.Required;
+            roomTracker.requirement = RoomsExpandedFound ? RoomTracker.Requirement.Recommended : RoomTracker.Requirement.Required;
             Prioritizable.AddRef(go);
             go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject gameObject)
             {

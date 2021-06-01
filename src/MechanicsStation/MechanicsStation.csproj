@@ -22,6 +22,7 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="MultiRoomTracker.cs" />
     <Compile Include="MechanicsStation.cs" />
     <Compile Include="MechanicsStationAssets.cs" />
     <Compile Include="MechanicsStationOptions.cs" />
