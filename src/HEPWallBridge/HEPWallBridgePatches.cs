@@ -41,5 +41,17 @@ namespace HEPWallBridge
                 }
             }
         }
+
+        // включаем и выключаем потребление искричества
+        [HarmonyPatch(typeof(HighEnergyParticleRedirector.States), nameof(HighEnergyParticleRedirector.States.InitializeStates))]
+        internal static class HighEnergyParticleRedirector_States_InitializeStates
+        {
+            private static void Postfix(HighEnergyParticleRedirector.States __instance)
+            {
+                __instance.redirect
+                    .Enter(smi => smi.GetComponent<Operational>().SetActive(true, false))
+                    .Exit(smi => smi.GetComponent<Operational>().SetActive(false, false));
+            }
+        }
     }
 }
