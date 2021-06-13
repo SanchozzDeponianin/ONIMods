@@ -78,6 +78,8 @@ namespace NoManualDelivery
             // Big Storage  https://steamcommunity.com/sharedfiles/filedetails/?id=1913589787
             "BigSolidStorage",
             "BigBeautifulStorage",
+            // Trashcans    https://steamcommunity.com/sharedfiles/filedetails/?id=2037089892
+            "SolidTrashcan",
         };
 
         private static List<string> BuildingToMakeAutomatableWithTransferArmPickupGasLiquid = new List<string>()
