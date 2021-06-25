@@ -56,6 +56,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtifactCarePackages", "Art
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandboxMutantPlant", "SandboxMutantPlant\SandboxMutantPlant.csproj", "{52BA699E-3223-48A5-8674-009EAF64D745}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuitRecharger", "SuitRecharger\SuitRecharger.csproj", "{023EA272-2876-4AA8-A58D-9F5C97109201}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -203,6 +205,12 @@ Global
 		{52BA699E-3223-48A5-8674-009EAF64D745}.Fake|Any CPU.ActiveCfg = Fake|Any CPU
 		{52BA699E-3223-48A5-8674-009EAF64D745}.Release|Any CPU.ActiveCfg = Fake|Any CPU
 		{52BA699E-3223-48A5-8674-009EAF64D745}.VANILLA|Any CPU.ActiveCfg = Fake|Any CPU
+		{023EA272-2876-4AA8-A58D-9F5C97109201}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{023EA272-2876-4AA8-A58D-9F5C97109201}.EXPANSION1|Any CPU.ActiveCfg = EXPANSION1|Any CPU
+		{023EA272-2876-4AA8-A58D-9F5C97109201}.EXPANSION1|Any CPU.Build.0 = EXPANSION1|Any CPU
+		{023EA272-2876-4AA8-A58D-9F5C97109201}.Fake|Any CPU.ActiveCfg = Fake|Any CPU
+		{023EA272-2876-4AA8-A58D-9F5C97109201}.Release|Any CPU.ActiveCfg = Fake|Any CPU
+		{023EA272-2876-4AA8-A58D-9F5C97109201}.VANILLA|Any CPU.ActiveCfg = Fake|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

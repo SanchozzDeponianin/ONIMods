@@ -155,6 +155,7 @@ namespace SanchozzONIMods.Lib
                 if (targetTech != null)
                 {
                     //targetTech.unlockedItemIDs.Add(buildingId);
+                    // todo: можно упростить через AddUnlockedItemIDs
                     Traverse.Create(targetTech)?.Field("unlockedItemIDs")?.GetValue<List<string>>()?.Add(buildingId);
                 }
                 else
