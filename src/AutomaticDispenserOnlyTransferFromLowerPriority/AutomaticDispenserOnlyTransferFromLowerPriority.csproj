@@ -14,7 +14,7 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup>
-    <Title></Title>
+    <Title>Automatic Dispenser Only Transfer From Lower Priority</Title>
     <Description></Description>
     <ModVersion>1.1.0</ModVersion>
   </PropertyGroup>

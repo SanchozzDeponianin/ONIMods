@@ -1,8 +1,8 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 
 namespace OldLiquidReservoir
 {
-    internal static class OldLiquidReservoirPatches
+    internal sealed class OldLiquidReservoirPatches : KMod.UserMod2
     {
         [HarmonyPatch(typeof(LiquidReservoirConfig), nameof(LiquidReservoirConfig.CreateBuildingDef))]
         internal static class LiquidReservoirConfig_CreateBuildingDef

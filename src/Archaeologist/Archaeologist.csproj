@@ -18,6 +18,7 @@
     <Title>Relic Hunter</Title>
     <Description></Description>
     <ModVersion>1.2.0</ModVersion>
+    <SupportedContent>VANILLA_ID</SupportedContent>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\Utils.cs">

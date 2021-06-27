@@ -18,11 +18,13 @@
     <Title>Sandbox: Mutant Plants</Title>
     <Description>Allows to quickly receive mutant Seeds and Plants in the Sandbox mode</Description>
     <ModVersion>1.1.0</ModVersion>
+    <SupportedContent>EXPANSION1_ID</SupportedContent>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="MutantPlantExtensions.cs" />
     <Compile Include="SandboxMutantPlantPatches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="STRINGS.cs" />

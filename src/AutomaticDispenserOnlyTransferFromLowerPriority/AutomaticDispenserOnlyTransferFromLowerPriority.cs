@@ -1,14 +1,17 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using UnityEngine;
 
 namespace AutomaticDispenserOnlyTransferFromLowerPriority
 {
-    [HarmonyPatch(typeof(ObjectDispenserConfig), nameof(ObjectDispenserConfig.DoPostConfigureComplete))]
-    public class AutomaticDispenser_DoPostConfigureComplete
+    internal sealed class AutomaticDispenserOnlyTransferFromLowerPriorityPatches : KMod.UserMod2
     {
-        public static void Postfix(GameObject go)
+        [HarmonyPatch(typeof(ObjectDispenserConfig), nameof(ObjectDispenserConfig.DoPostConfigureComplete))]
+        internal static class AutomaticDispenser_DoPostConfigureComplete
         {
-            go.GetComponent<Storage>().onlyTransferFromLowerPriority = true;
+            private static void Postfix(GameObject go)
+            {
+                go.GetComponent<Storage>().onlyTransferFromLowerPriority = true;
+            }
         }
     }
 }

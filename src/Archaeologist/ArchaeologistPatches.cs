@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Harmony;
+using HarmonyLib;
 using TUNING;
 using SanchozzONIMods.Lib;
 
 namespace Archaeologist
 {
-    internal static class ArchaeologistPatches
+    internal sealed class ArchaeologistPatches : KMod.UserMod2
     {
         private const string Archaeologist = "Archaeologist";
 
@@ -21,8 +21,8 @@ namespace Archaeologist
                     new DUPLICANTSTATS.TraitVal
                     {
                         id = Archaeologist,
-                        statBonus = -DUPLICANTSTATS.MEDIUM_STATPOINT_BONUS,
-                        probability = DUPLICANTSTATS.PROBABILITY_MED,
+                        statBonus = -DUPLICANTSTATS.SMALL_STATPOINT_BONUS,
+                        rarity = DUPLICANTSTATS.RARITY_EPIC,
                         mutuallyExclusiveTraits = new List<string>
                         {
                             "CantResearch",

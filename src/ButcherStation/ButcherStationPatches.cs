@@ -1,23 +1,20 @@
-﻿using System;
+﻿#define EXPANSION1
+// todo: потом убрать эту залипуху
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Harmony;
+using System.Reflection;
+using System.Reflection.Emit;
+using HarmonyLib;
 using Klei.AI;
 using UnityEngine;
 using SanchozzONIMods.Lib;
-using System.Reflection;
-using System.Reflection.Emit;
 
 namespace ButcherStation
 {
-    internal static class ButcherStationPatches
+    internal sealed class ButcherStationPatches : KMod.UserMod2
     {
         public static AttributeConverter RanchingEffectExtraMeat;
-
-        /*
-        public static void OnLoad()
-        {
-        }*/
 
         [HarmonyPatch(typeof(Db), "Initialize")]
         internal static class Db_Initialize
@@ -26,8 +23,7 @@ namespace ButcherStation
             {
                 Utils.AddBuildingToPlanScreen("Equipment", FishingStationConfig.ID, "ShearingStation");
                 Utils.AddBuildingToPlanScreen("Equipment", ButcherStationConfig.ID, "ShearingStation");
-                Utils.AddBuildingToTechnology("AnimalControl", ButcherStationConfig.ID);
-                Utils.AddBuildingToTechnology("AnimalControl", FishingStationConfig.ID);
+                Utils.AddBuildingToTechnology("AnimalControl", ButcherStationConfig.ID, FishingStationConfig.ID);
 
                 var formatter = new ToPercentAttributeFormatter(1f, GameUtil.TimeSlice.None);
                 RanchingEffectExtraMeat = __instance.AttributeConverters.Create("RanchingEffectExtraMeat", "Ranching Effect Extra Meat", STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMODIFIER, Db.Get().Attributes.Ranching, Config.Get().EXTRAMEATPERRANCHINGATTRIBUTE, 0f, formatter);
