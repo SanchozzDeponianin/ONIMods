@@ -117,7 +117,9 @@ staticID: Sanchozz.ONIMods.$(AssemblyName)
         TargetKind="SameAsPrimaryAssembly"
         OutputFile="$(MergedAssembly)"
         InputAssemblies="@(InputAssemblies)"
-        LibraryPath="$(GameFolder)" />
+        LibraryPath="$(GameFolder)"
+        Internalize="true"
+        XmlDocumentation="false" />
   </Target>
 
   <!-- копируем все потроха в целевую папку -->
