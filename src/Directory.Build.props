@@ -4,16 +4,7 @@
   <Import Condition=" Exists('Directory.Build.props.user') " Project="Directory.Build.props.user" />
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
 
-  <!-- сведения о сборке -->
-  <PropertyGroup>
-    <Author>Sanchozz</Author>
-    <Company>Sanchozz (https://github.com/SanchozzDeponianin)</Company>
-    <Product>Sanchozz's ONI Mods</Product>
-    <Copyright>Copyright © Sanchozz 2021</Copyright>
-  </PropertyGroup>
-
-  <!-- конфигурации. предполагается VANILLA, EXPANSION1, Release=ALL  -->
-  <!-- тут же выбор пути где лежат соответсвующие файлы -->
+  <!-- конфигурации -->
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -22,33 +13,24 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <GameFolder>$(GameFolderVanilla)</GameFolder>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' != 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <OutputPath>bin\Release\</OutputPath>
-    <GameFolder>$(GameFolderVanilla)</GameFolder>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Fake'">
-    <OutputPath>bin\Release\</OutputPath>
-    <GameFolder>$(GameFolderVanilla)</GameFolder>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'VANILLA'">
-    <OutputPath>bin\VANILLA\</OutputPath>
-    <GameFolder>$(GameFolderVanilla)</GameFolder>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'EXPANSION1'">
-    <OutputPath>bin\EXPANSION1\</OutputPath>
-    <GameFolder>$(GameFolderExpansion1)</GameFolder>
-  </PropertyGroup>
+
+  <!-- выбор пути где лежат соответсвующие файлы игры -->
+  <!-- todo: на старую ваниллу пока хуй забъём -->
   <PropertyGroup>
-    <GameFolder Condition=" '$(GameFolder)' == '' ">$(GameFolderVanilla)</GameFolder>
+    <GameFolder>$(GameFolderSpacedOut)</GameFolder>
+    <SupportedContent>VANILLA_ID,EXPANSION1_ID</SupportedContent>
+    <APIVersion>2</APIVersion>
+    <ModVersion>1.0.0</ModVersion>
+    <DistributeMod Condition=" '$(MSBuildProjectName)' != 'MSBuildTasksHelper' ">true</DistributeMod>
   </PropertyGroup>
 
   <!-- подключаем DLL -->
@@ -57,11 +39,11 @@
     <ProjectReference Private="false" />
   </ItemDefinitionGroup>
 
-  <ItemGroup Condition=" '$(UsesPLib)' == 'true'  Or  '$(UsesPLibOptions)' == 'true' ">
+  <ItemGroup Condition=" '$(UsesPLib)' == 'true' ">
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.1" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(MSBuildProjectName)' != 'MSBuildTasksHelper' ">
+  <ItemGroup Condition=" '$(DistributeMod)' == 'true' ">
     <Reference Include="0Harmony" HintPath="$(GameFolder)/0Harmony.dll" />
     <Reference Include="Assembly-CSharp" HintPath="$(GameFolder)/Assembly-CSharp.dll" />
     <Reference Include="Assembly-CSharp-firstpass" HintPath="$(GameFolder)/Assembly-CSharp-firstpass.dll" />
@@ -76,11 +58,22 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(UsesPLib)' == 'true' ">
-    <Reference Include="PLib" HintPath="../../PLib/PLib.dll" />
+    <Reference Include="PLibCore" HintPath="$(PLibFolder)/PLibCore.dll" />
+    <Reference Include="PLibActions" HintPath="$(PLibFolder)/PLibActions.dll" />
+    <Reference Include="PLibAVC" HintPath="$(PLibFolder)/PLibAVC.dll" />
+    <Reference Include="PLibBuildings" HintPath="$(PLibFolder)/PLibBuildings.dll" />
+    <Reference Include="PLibDatabase" HintPath="$(PLibFolder)/PLibDatabase.dll" />
+    <Reference Include="PLibLighting" HintPath="$(PLibFolder)/PLibLighting.dll" />
+    <Reference Include="PLibOptions" HintPath="$(PLibFolder)/PLibOptions.dll" />
+    <Reference Include="PLibUI" HintPath="$(PLibFolder)/PLibUI.dll" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(UsesPLibOptions)' == 'true' ">
-    <Reference Include="PLibOptions" HintPath="../../PLib/PLibOptions.dll" />
-  </ItemGroup>
+  <!-- сведения о сборке -->
+  <PropertyGroup>
+    <Author>Sanchozz</Author>
+    <Company>Sanchozz (https://github.com/SanchozzDeponianin)</Company>
+    <Product>Sanchozz's ONI Mods</Product>
+    <Copyright>Copyright © Sanchozz 2021</Copyright>
+  </PropertyGroup>
 
 </Project>

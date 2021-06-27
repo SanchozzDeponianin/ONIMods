@@ -9,10 +9,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SuitRecharger</RootNamespace>
     <AssemblyName>SuitRecharger</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <OutputIntoRootOnVANILLA>true</OutputIntoRootOnVANILLA>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Title>Suit Recharger</Title>
+    <Description>not ready yet</Description>
+    <ModVersion>0.0.0</ModVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\Utils.cs">

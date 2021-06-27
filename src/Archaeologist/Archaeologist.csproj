@@ -9,10 +9,15 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Archaeologist</RootNamespace>
     <AssemblyName>Archaeologist</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <OutputIntoRootOnVANILLA>true</OutputIntoRootOnVANILLA>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Title>Relic Hunter</Title>
+    <Description></Description>
+    <ModVersion>1.2.0</ModVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\Utils.cs">

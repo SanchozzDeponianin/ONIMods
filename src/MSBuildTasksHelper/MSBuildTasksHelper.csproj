@@ -9,12 +9,19 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SanchozzONIMods</RootNamespace>
     <AssemblyName>MSBuildTasksHelper</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
+  <PropertyGroup>
+    <Title>MSBuildTasksHelper</Title>
+    <Description>
+    </Description>
+    <ModVersion>1.1.0</ModVersion>
+  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="WriteYamlFile.cs" />
+    <Compile Include="GetReallyReferencedAssembliesAtFolder.cs" />
+    <Compile Include="GetKleiAssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

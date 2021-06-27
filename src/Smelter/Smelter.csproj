@@ -9,21 +9,16 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Smelter</RootNamespace>
     <AssemblyName>Smelter</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <UsesPLib>true</UsesPLib>
-    <OutputIntoRootOnEXPANSION1>true</OutputIntoRootOnEXPANSION1>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
+  <PropertyGroup>
+    <Title>Smelter</Title>
+    <Description>Adds a new Smelter building designed to smelt metals in the early game, and a few new recipes.</Description>
+    <ModVersion>1.2.0</ModVersion>
+    <UsesPLib>true</UsesPLib>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\BaseOptions.cs">
       <Link>BaseOptions.cs</Link>

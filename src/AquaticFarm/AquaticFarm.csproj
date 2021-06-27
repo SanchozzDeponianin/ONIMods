@@ -9,9 +9,15 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AquaticFarm</RootNamespace>
     <AssemblyName>AquaticFarm</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Title>Aquatic Farm</Title>
+    <Description>Adds a new Aquatic Farm tile that can absorbs Liquids from the world for irrigation. Does not require Liquid Piping.</Description>
+    <ModVersion>1.2.0</ModVersion>
+    <UsesPLib>false</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\Utils.cs">

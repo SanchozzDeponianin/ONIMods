@@ -9,10 +9,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TweakedBiologicalCargoBay</RootNamespace>
     <AssemblyName>TweakedBiologicalCargoBay</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <OutputIntoRootOnVANILLA>true</OutputIntoRootOnVANILLA>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Title>Tweaked Biological Cargo Bay</Title>
+    <Description>Allows Duplicants independently transport animals directly from the Biological Cargo Bay to the Critter Drop-Off, without performing any unnecessary intermediate actions.</Description>
+    <ModVersion>1.1.0</ModVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />

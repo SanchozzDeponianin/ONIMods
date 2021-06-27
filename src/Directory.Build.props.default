@@ -2,10 +2,11 @@
 <Project>
   <PropertyGroup>
     <!--  if necessary, make copy this file named as 'Directory.Build.props.user' 
-          and write down the correct paths to the game files, vanilla and dlc -->
+          and write down the correct paths to the game files, vanilla and dlc, and PLib*.dll s -->
     <SteamFolder>$(MSBuildProgramFiles32)Steam</SteamFolder>
     <GameFolderVanilla>$(SteamFolder)\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameFolderVanilla>
-    <GameFolderExpansion1>$(SteamFolder)\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameFolderExpansion1>
+    <GameFolderSpacedOut>$(SteamFolder)\steamapps\common\OxygenNotIncluded\OxygenNotIncluded_Data\Managed</GameFolderSpacedOut>
+    <PLibFolder>path\to\plibs.dlls</PLibFolder>
     <ModOutputFolderDebug>$(UserProfile)\Documents\Klei\OxygenNotIncluded\mods\Dev</ModOutputFolderDebug>
     <ModOutputFolderRelease>$(MSBuildProjectDirectory)\..\..\Mods</ModOutputFolderRelease>
   </PropertyGroup>
