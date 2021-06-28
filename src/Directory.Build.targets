@@ -6,7 +6,13 @@
       <ReferenceCopyLocalPaths Remove="$(GameFolder)\*" />
     </ItemGroup>
   </Target>
-
+  
+  <Target Name="SetPlatform" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <PlatformTarget>AnyCPU</PlatformTarget>
+    </PropertyGroup>
+  </Target>
+  
   <!-- определяем константы для компилятора -->
   <Target Name="DefineConstants" BeforeTargets="CoreCompile">
     <PropertyGroup Condition=" '$(UsesPLib)' == 'true' ">
@@ -37,16 +43,11 @@
         ComVisible="false" >
       <Output TaskParameter="OutputFile" ItemName="UpdatedAssemblyInfoFiles"/>
     </AssemblyInfo>
-
-    <!-- <ItemGroup>
+    <!-- 
+    <ItemGroup>
       <Compile Include="%(UpdatedAssemblyInfoFiles.FullPath)" />
-    </ItemGroup> -->
-  </Target>
-
-  <Target Name="SetPlatform" BeforeTargets="CoreCompile">
-    <PropertyGroup>
-      <PlatformTarget>AnyCPU</PlatformTarget>
-    </PropertyGroup>
+    </ItemGroup> 
+    -->
   </Target>
 
   <!-- вытаскиваем информацию о версии и ветке из файлов игры. для записи ямлов и вычисления конечного пути -->
@@ -63,31 +64,26 @@
   </Target>
 
   <!-- создание ямлов файлов  -->
-  <Target Name="WriteModInfoFile" BeforeTargets="PreBuildEvent"  AfterTargets="GetKleiAssemblyInfo" Condition=" '$(DistributeMod)' == 'true' ">
+  <Target Name="WriteYamlFiles" BeforeTargets="PreBuildEvent"  AfterTargets="GetKleiAssemblyInfo" Condition=" '$(DistributeMod)' == 'true' ">
     <PropertyGroup>
       <ModInfoFile>$(IntermediateOutputPath)\mod_info.yaml</ModInfoFile>
-      <ModInfoFileContent>
-supportedContent: $(SupportedContent)
-minimumSupportedBuild: $(KleiBuildVersion)
-version: $(ModVersion)
-APIVersion: $(APIVersion)
-      </ModInfoFileContent>
-    </PropertyGroup>
-    <WriteLinesToFile File="$(ModInfoFile)" Overwrite="true" Lines="$(ModInfoFileContent)"/>
-  </Target>
-
-  <Target Name="ModDescriptionFile" BeforeTargets="PreBuildEvent" Condition=" '$(DistributeMod)' == 'true' ">
-    <PropertyGroup>
       <ModDescriptionFile>$(IntermediateOutputPath)\mod.yaml</ModDescriptionFile>
-      <ModDescriptionFileContent>
-title: "$(Title)"
-description: "$(Description)"
-staticID: Sanchozz.ONIMods.$(AssemblyName)
-      </ModDescriptionFileContent>
     </PropertyGroup>
-    <WriteLinesToFile File="$(ModDescriptionFile)" Overwrite="true" Lines="$(ModDescriptionFileContent)"/>
-  </Target>
+    
+    <GenerateMetadataFiles
+      OutputPath="$(IntermediateOutputPath)"
 
+      Title="$(Title)"
+      Description="$(Description)"
+      StaticID="Sanchozz.ONIMods.$(AssemblyName)"
+      
+      SupportedContent="$(SupportedContent)"
+      MinimumSupportedBuild="$(KleiBuildVersion)"
+      Version="$(ModVersion)"
+      APIVersion="$(APIVersion)"
+    />
+  </Target>
+  
   <!-- перепаковка вместе с PLib -->
   <!-- так как теперь PLib имеет модульную архитектуру, сделана детекция и перепаковка только нужных PLib*.dll-->
   <!-- немного грубовато, но сойдёт -->

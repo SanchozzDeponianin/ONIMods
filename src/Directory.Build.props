@@ -37,12 +37,15 @@
   <ItemDefinitionGroup>
     <Reference Private="false" SpecificVersion="false" />
     <ProjectReference Private="false" />
+    <PackageReference GeneratePathProperty="true" />
   </ItemDefinitionGroup>
 
-  <ItemGroup Condition=" '$(UsesPLib)' == 'true' ">
-    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
+  <ItemGroup>
+    <PackageReference Include="Cairath.ONIMetadataFileGenerator" Version="1.0.0" Condition=" '$(DistributeMod)' == 'true' " />
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" Condition=" '$(UsesPLib)' == 'true' " />
   </ItemGroup>
-
+  
+  
   <ItemGroup Condition=" '$(DistributeMod)' == 'true' ">
     <Reference Include="0Harmony" HintPath="$(GameFolder)/0Harmony.dll" />
     <Reference Include="Assembly-CSharp" HintPath="$(GameFolder)/Assembly-CSharp.dll" />
