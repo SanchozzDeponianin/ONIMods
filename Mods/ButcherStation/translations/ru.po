@@ -1,0 +1,79 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHDEPTH.NAME
+msgctxt "ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHDEPTH.NAME"
+msgid "Not enough depth"
+msgstr "Недостаточная глубина"
+
+#. ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHDEPTH.TOOLTIP
+msgctxt "ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHDEPTH.TOOLTIP"
+msgid "Not enough depth to place a fishing hook, or other buildings interfere."
+msgstr "Недостаточная глубина чтобы разместить рыболовный крюк, либо мешают другие постройки."
+
+#. ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHWATER.NAME
+msgctxt "ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHWATER.NAME"
+msgid "Not enough liquid"
+msgstr "Недостаточно жидкости"
+
+#. ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHWATER.TOOLTIP
+msgctxt "ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHWATER.TOOLTIP"
+msgid "The fishing hook is not submerged in enough <style=\"KKeyword\">Liquid</style>."
+msgstr "Рыболовный крюк не погружен в достаточное количество жидкости."
+
+#. ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.DESC
+msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.DESC"
+msgid "Grooming critters make them look nice, feel happy... and more yummy."
+msgstr "Уход за животными делает их красивыми, счастливыми... и вкусными."
+
+#. ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.EFFECT
+msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.EFFECT"
+msgid "Allows the assigned <link=\"RANCHER\">Rancher</link> to control the population and butchering too old, surplus, or unwanted <link=\"CRITTERS\">Critters</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHER\">Critter Wrangling</link> trait."
+msgstr "Позволяет назначенному <link=\"RANCHER\">животноводу</link> контролировать популяцию, и убивать слишком старых, лишних, или нежелательных <link=\"CRITTERS\">животных</link>.\n\nНазначенные Дупликанты должны иметь черту <link=\"RANCHER\">Уход за животными</link>."
+
+#. ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.NAME
+msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.NAME"
+msgid "<link=\"BUTCHERSTATION\">Butcher Station</link>"
+msgstr "Станция живодёра"
+
+#. ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.DESC
+msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.DESC"
+msgid "Fishing Stations allows to safely fishing <link=\"PACU\">Pacu</link> and not soak your feet."
+msgstr "Станции рыбалки позволяют безопасно рыбачить на <link=\"PACU\">паку</link> и не замочить ноги."
+
+#. ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.EFFECT
+msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.EFFECT"
+msgid "Allows the assigned <link=\"RANCHER\">Rancher</link> to control the population and fishing too old, surplus, or unwanted <link=\"PACU\">Fishes</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHER\">Critter Wrangling</link> trait.\n\nA <link=\"ELEMENTSLIQUID\">Liquid</link> depth of 2 to 4 tiles is required to place a fishing hook."
+msgstr "Позволяет назначенному <link=\"RANCHER\">животноводу</link> контролировать популяцию, и вылавливать слишком старых, лишних, или нежелательных <link=\"PACU\">рыб</link>.\n\nНазначенные Дупликанты должны иметь черту <link=\"RANCHER\">Уход за животными</link>.\n\nДля размещения рыболовного крюка требуется глубина <link=\"ELEMENTSLIQUID\">жидкости</link> от 2 до 4 плиток."
+
+#. ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.NAME
+msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.NAME"
+msgid "<link=\"FISHINGSTATION\">Fishing Station</link>"
+msgstr "Станция рыбалки"
+
+#. ButcherStation.STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMODIFIER
+msgctxt "ButcherStation.STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMODIFIER"
+msgid "{0} Extra <style=\"KKeyword\">Meat</style> when working at the <style=\"KKeyword\">Butcher</style> and <style=\"KKeyword\">Fishing Stations</style>"
+msgstr "{0} дополнительное <style=\"KKeyword\">Мясо</style> при работе на <style=\"KKeyword\">Станциях Живодёра</style> и <style=\"KKeyword\">Рыбалки</style>"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TITLE
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TITLE"
+msgid "Creature Age Threshold"
+msgstr "Предельный возраст животного"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP"
+msgid "A Duplicant will automatically wrangle selected <style=\"KKeyword\">Critters</style>, if their <style=\"KKeyword\">Age</style> is older than the specified value <b>{0}%</b>"
+msgstr "Дупликант будет автоматически отлавливать выбранных <style=\"KKeyword\">животных</style>, если их <style=\"KKeyword\">возраст</style> старше указанного значения <b>{0}%</b>"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_CYCLES
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_CYCLES"
+msgid " cycles"
+msgstr " циклов"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_OUTOF
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_OUTOF"
+msgid " out of "
+msgstr " из "
