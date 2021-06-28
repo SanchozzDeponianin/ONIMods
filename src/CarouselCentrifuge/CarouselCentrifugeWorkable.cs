@@ -44,7 +44,7 @@ namespace CarouselCentrifuge
             workLayer = Grid.SceneLayer.BuildingFront;
             showProgressBar = true;
             resetProgressOnStop = true;
-            synchronizeAnims = true;
+            synchronizeAnims = false;
             SetWorkTime(TUNING.BUILDINGS.WORK_TIME_SECONDS.MEDIUM_WORK_TIME);
             if (vomitStatusItem == null)
             {

@@ -9,7 +9,7 @@ namespace SquirrelGenerator
 
         public override BuildingDef CreateBuildingDef()
         {
-            BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(
+            var buildingDef = BuildingTemplates.CreateBuildingDef(
                 id: ID,
                 width: 2,
                 height: 2,
@@ -25,6 +25,8 @@ namespace SquirrelGenerator
                 );
             buildingDef.GeneratorWattageRating = SquirrelGeneratorOptions.Instance.GeneratorWattageRating;
             buildingDef.GeneratorBaseCapacity = 10000f;
+            buildingDef.RequiresPowerOutput = true;
+            buildingDef.PowerOutputOffset = new CellOffset(0, 0);
             buildingDef.ViewMode = OverlayModes.Power.ID;
             buildingDef.AudioCategory = "Metal";
             buildingDef.Breakable = true;
