@@ -40,7 +40,7 @@ namespace NoManualDelivery
             }
         }
 
-        [PLibMethod(RunAt.AfterModsLoad)]
+        [PLibMethod(RunAt.BeforeDbInit)]
         private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));

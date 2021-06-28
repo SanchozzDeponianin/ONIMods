@@ -26,7 +26,7 @@ namespace VaricolouredBalloons
             new POptions().RegisterOptions(this, typeof(VaricolouredBalloonsOptions));
         }
 
-        [PLibMethod(RunAt.AfterModsLoad)]
+        [PLibMethod(RunAt.BeforeDbInit)]
         private static void InitLocalization()
         {
             Utils.InitLocalization(typeof(STRINGS));

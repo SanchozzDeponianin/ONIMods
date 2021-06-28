@@ -14,8 +14,8 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup>
-    <Title>Old Liquid Reservoir</Title>
-    <Description>Returns the old visual art of the Liquid Reservoir from older early access versions of the game.</Description>
+    <Title>[Visual] Old Liquid Reservoir</Title>
+    <Description>Returns the old visual art of the Liquid Reservoir from older "early access" versions of the game.</Description>
     <ModVersion>1.1.0</ModVersion>
   </PropertyGroup>
   <ItemGroup>

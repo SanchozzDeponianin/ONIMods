@@ -19,7 +19,7 @@ namespace MechanicsStation
             new POptions().RegisterOptions(this, typeof(MechanicsStationOptions));
         }
 
-        [PLibMethod(RunAt.AfterModsLoad)]
+        [PLibMethod(RunAt.BeforeDbInit)]
         private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));

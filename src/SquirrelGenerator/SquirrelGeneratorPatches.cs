@@ -24,7 +24,7 @@ namespace SquirrelGenerator
             new POptions().RegisterOptions(this, typeof(SquirrelGeneratorOptions));
         }
 
-        [PLibMethod(RunAt.AfterModsLoad)]
+        [PLibMethod(RunAt.BeforeDbInit)]
         private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));

@@ -14,7 +14,7 @@ namespace HEPWallBridge
             new PPatchManager(harmony).RegisterPatchClass(typeof(HEPWallBridgePatches));
         }
 
-        [PLibMethod(RunAt.AfterModsLoad)]
+        [PLibMethod(RunAt.BeforeDbInit)]
         private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));

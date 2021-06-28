@@ -1,6 +1,4 @@
-﻿#define EXPANSION1
-// todo: потом убрать эту залипуху
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -41,33 +39,6 @@ namespace ButcherStation
         }
 
         // хаки для того чтобы отобразить заголовок и начинку бокового окна в правильном порядке
-#if VANILLA
-        // на ванилле просто сортируем список sideScreens
-        [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
-        internal static class DetailsScreen_OnPrefabInit
-        {
-            private static void Prefix(List<DetailsScreen.SideScreenRef> ___sideScreens)
-            {
-                for (int i = 0; i < ___sideScreens.Count; i++)
-                {
-                    if (___sideScreens[i].name == "IntSliderSideScreen")
-                    {
-                        var sideScreen = ___sideScreens[i];
-                        ___sideScreens.RemoveAt(i);
-                        for (int j = 0; j < ___sideScreens.Count; j++)
-                        {
-                            if (___sideScreens[j].name == "SingleCheckboxSideScreen")
-                            {
-                                ___sideScreens.Insert(j + 1, sideScreen);
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-#elif EXPANSION1
         // на длц переопределяем GetSideScreenSortOrder
         [HarmonyPatch(typeof(SideScreenContent), nameof(SideScreenContent.GetSideScreenSortOrder))]
         internal static class SideScreenContent_GetSideScreenSortOrder
@@ -88,7 +59,6 @@ namespace ButcherStation
                 }
             }
         }
-#endif
 
         // добавляем тэги для убиваемых животных и дополнительное мясо
         [HarmonyPatch(typeof(EntityTemplates), nameof(EntityTemplates.ExtendEntityToBasicCreature))]
@@ -109,11 +79,7 @@ namespace ButcherStation
                         var prefabID = inst.GetComponent<KPrefabID>();
                         Tag creatureEligibleTag = prefabID.HasTag(GameTags.SwimmingCreature) ? ButcherStation.FisherableCreature : ButcherStation.ButcherableCreature;
                         prefabID.AddTag(creatureEligibleTag);
-#if VANILLA
-                        WorldInventory.Instance.Discover(prefabID.PrefabTag, creatureEligibleTag);
-#elif EXPANSION1
                         DiscoveredResources.Instance.Discover(prefabID.PrefabTag, creatureEligibleTag);
-#endif
                     }
                 };
             }
