@@ -46,14 +46,6 @@ namespace SanchozzONIMods.Lib
             }
         }
 
-/*
-#if !USESPLIB
-        public static void OnLoad()
-        {
-            Debug.Log($"Mod {modInfo.assemblyName} loaded, version: {modInfo.version}");
-        }
-#endif
-*/
         // логирование со стактрасом
         public static void LogExcWarn(Exception thrown)
         {

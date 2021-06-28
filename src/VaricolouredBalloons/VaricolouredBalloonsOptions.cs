@@ -1,12 +1,10 @@
 ﻿using Newtonsoft.Json;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
 using PeterHan.PLib.Options;
 
 namespace VaricolouredBalloons
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ModInfo("Varicoloured Balloons")]
     [ConfigFile(IndentOutput: true)]
     internal sealed class VaricolouredBalloonsOptions : BaseOptions<VaricolouredBalloonsOptions>
     {

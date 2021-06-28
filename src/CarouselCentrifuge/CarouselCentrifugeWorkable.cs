@@ -111,10 +111,6 @@ namespace CarouselCentrifuge
                             title: STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_NAME,
                             type: NotificationType.BadMinor,
                             tooltip: (List<Notification> notificationList, object data) => STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_TOOLTIP + notificationList.ReduceMessages(false)
-#if VANILLA
-                            , group: HashedString.Invalid
-#endif
-
                             );
                         new VomitChore(
                             chore_type: Db.Get().ChoreTypes.Vomit,

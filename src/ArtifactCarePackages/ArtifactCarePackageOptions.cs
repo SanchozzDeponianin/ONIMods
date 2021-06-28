@@ -1,12 +1,10 @@
 ﻿using Newtonsoft.Json;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
 using PeterHan.PLib.Options;
 
 namespace ArtifactCarePackages
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ModInfo("Artifacts in Care Packages")]
     [ConfigFile(IndentOutput: true)]
     internal class ArtifactCarePackageOptions : BaseOptions<ArtifactCarePackageOptions>
     {

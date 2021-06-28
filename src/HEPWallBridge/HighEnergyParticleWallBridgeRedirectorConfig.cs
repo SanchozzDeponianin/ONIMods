@@ -24,7 +24,6 @@ namespace HEPWallBridge
                 build_location_rule: BuildLocationRule.NotInTiles,
                 decor: BUILDINGS.DECOR.PENALTY.TIER1,
                 noise: NOISE_POLLUTION.NONE);
-            def.RequiredDlcId = DlcManager.EXPANSION1_ID;
             def.Floodable = false;
             def.AudioCategory = "Metal";
             def.Overheatable = false;
@@ -73,6 +72,11 @@ namespace HEPWallBridge
         public override void DoPostConfigureComplete(GameObject go)
         {
             go.AddOrGetDef<MakeBaseSolid.Def>().solidOffsets = new CellOffset[] { new CellOffset(0, 0) };
+        }
+
+        public override string[] GetDlcIds()
+        {
+            return DlcManager.AVAILABLE_EXPANSION1_ONLY;
         }
     }
 }

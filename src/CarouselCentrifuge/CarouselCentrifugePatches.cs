@@ -1,22 +1,24 @@
 ﻿using Klei.AI;
-
+using HarmonyLib;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.Options;
+using PeterHan.PLib.PatchManager;
 
 namespace CarouselCentrifuge
 {
-    internal static class CarouselCentrifugePatches
+    internal sealed class CarouselCentrifugePatches : KMod.UserMod2
     {
         private static Effect specificEffect;
         private static Effect trackingEffect;
         private static AttributeModifier moraleModifier;
 
-        public static void OnLoad()
+        public override void OnLoad(Harmony harmony)
         {
+            base.OnLoad(harmony);
             PUtil.InitLibrary();
-            PUtil.RegisterPatchClass(typeof(CarouselCentrifugePatches));
-            POptions.RegisterOptions(typeof(CarouselCentrifugeOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(CarouselCentrifugePatches));
+            new POptions().RegisterOptions(this, typeof(CarouselCentrifugeOptions));
         }
 
         [PLibMethod(RunAt.AfterModsLoad)]
@@ -29,11 +31,7 @@ namespace CarouselCentrifuge
         private static void AddBuildingAndEffects()
         {
             Utils.AddBuildingToPlanScreen("Furniture", CarouselCentrifugeConfig.ID, EspressoMachineConfig.ID);
-#if VANILLA
-            const string requiredTech = "ArtificialFriends";
-#elif EXPANSION1
-            const string requiredTech = "SpaceProgram";
-#endif
+            string requiredTech = DlcManager.IsExpansion1Active() ? "SpaceProgram" : "ArtificialFriends";
             Utils.AddBuildingToTechnology(requiredTech, CarouselCentrifugeConfig.ID);
 
             moraleModifier = new AttributeModifier(

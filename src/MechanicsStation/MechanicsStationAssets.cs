@@ -1,9 +1,9 @@
 ﻿using Database;
 using Klei.AI;
 using STRINGS;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 
 namespace MechanicsStation
 {
@@ -25,9 +25,8 @@ namespace MechanicsStation
         private static AttributeModifier MachinerySpeedModifier;
         private static AttributeModifier CraftingSpeedModifier;
         private static Effect MachineTinkerEffect;
-#if EXPANSION1
         private static AttributeConverter MachineTinkerEffectDuration;
-#endif
+
         // для устранения конфликта с модом "Rooms Expanded" с комнатой "кухня"
         public static bool RoomsExpandedFound { get; private set; } = false;
         private static RoomType KitchenRoom;
@@ -123,7 +122,6 @@ namespace MechanicsStation
             MachineTinkerEffect.Add(MachinerySpeedModifier);
             MachineTinkerEffect.Add(CraftingSpeedModifier);
 
-#if EXPANSION1
             MachineTinkerEffectDuration = db.AttributeConverters.Create(
                 id: "MachineTinkerEffectDuration",
                 name: "Engie's Jerry Rig Effect Duration",
@@ -132,7 +130,6 @@ namespace MechanicsStation
                 multiplier: MACHINE_TINKER_EFFECT_DURATION_PER_SKILL,
                 base_value: 0,
                 formatter: new ToPercentAttributeFormatter(1f, GameUtil.TimeSlice.None));
-#endif
         }
 
         internal static void LoadOptions()
@@ -141,9 +138,7 @@ namespace MechanicsStation
             MachinerySpeedModifier.SetValue(MechanicsStationOptions.Instance.MachinerySpeedModifier / 100);
             CraftingSpeedModifier.SetValue(MechanicsStationOptions.Instance.CraftingSpeedModifier / 100);
             MachineTinkerEffect.duration = MechanicsStationOptions.Instance.MachineTinkerEffectDuration * Constants.SECONDS_PER_CYCLE;
-#if EXPANSION1
             MachineTinkerEffectDuration.multiplier = MechanicsStationOptions.Instance.MachineTinkerEffectDurationPerSkill / 100;
-#endif
         }
 
         // сделать постройку улучшаемой
@@ -158,10 +153,9 @@ namespace MechanicsStation
             tinkerable.choreTypeTinker = Db.Get().ChoreTypes.MachineTinker.IdHash;
             tinkerable.choreTypeFetch = Db.Get().ChoreTypes.MachineFetch.IdHash;
             // увеличение времени эффекта в длц
-#if EXPANSION1
             tinkerable.effectAttributeId = Db.Get().Attributes.Machinery.Id;
             tinkerable.effectMultiplier = MACHINE_TINKER_EFFECT_DURATION_PER_SKILL;
-#endif
+
             go.AddOrGet<RoomTracker>().requiredRoomType = Db.Get().RoomTypes.MachineShop.Id;
             // а это для корректного изменения времени работы после изменения в настройках
             go.GetComponent<KPrefabID>().prefabSpawnFn += delegate (GameObject prefab)
@@ -171,9 +165,7 @@ namespace MechanicsStation
                 {
                     _tinkerable.workTime = MechanicsStationOptions.Instance.MachineTinkerableWorkTime;
                     _tinkerable.WorkTimeRemaining = Mathf.Min(_tinkerable.WorkTimeRemaining, _tinkerable.workTime);
-#if EXPANSION1
                     _tinkerable.effectMultiplier = MechanicsStationOptions.Instance.MachineTinkerEffectDurationPerSkill / 100;
-#endif
                 }
             };
             // если "Rooms Expanded" найден, добавляем в кухонные постройки компонент для работы в нескольких комнатах.

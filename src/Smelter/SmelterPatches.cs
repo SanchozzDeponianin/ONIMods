@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
-
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.Options;
+using PeterHan.PLib.PatchManager;
 
 namespace Smelter
 {
-    internal static class SmelterPatches
+    internal sealed class SmelterPatches : KMod.UserMod2
     {
-        public static void OnLoad()
+        public override void OnLoad(Harmony harmony)
         {
+            base.OnLoad(harmony);
             PUtil.InitLibrary();
-            PUtil.RegisterPatchClass(typeof(SmelterPatches));
-            POptions.RegisterOptions(typeof(SmelterOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(SmelterPatches));
+            new POptions().RegisterOptions(this, typeof(SmelterOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]

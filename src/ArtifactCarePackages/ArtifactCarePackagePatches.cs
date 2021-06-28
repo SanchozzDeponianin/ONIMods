@@ -3,20 +3,22 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using STRINGS;
-using Harmony;
+using HarmonyLib;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.Options;
+using PeterHan.PLib.PatchManager;
 
 namespace ArtifactCarePackages
 {
-    internal static class ArtifactCarePackagePatches
+    internal sealed class ArtifactCarePackagePatches : KMod.UserMod2
     {
-        public static void OnLoad()
+        public override void OnLoad(Harmony harmony)
         {
+            base.OnLoad(harmony);
             PUtil.InitLibrary();
-            PUtil.RegisterPatchClass(typeof(ArtifactCarePackagePatches));
-            POptions.RegisterOptions(typeof(ArtifactCarePackageOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(ArtifactCarePackagePatches));
+            new POptions().RegisterOptions(this, typeof(ArtifactCarePackageOptions));           
         }
 
         [PLibMethod(RunAt.AfterModsLoad)]

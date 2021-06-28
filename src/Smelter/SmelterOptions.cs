@@ -1,12 +1,10 @@
 ﻿using Newtonsoft.Json;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
 using PeterHan.PLib.Options;
 
 namespace Smelter
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ModInfo("Smelter")]
     [ConfigFile(IndentOutput: true)]
     [RestartRequired]
     internal sealed class SmelterOptions : BaseOptions<SmelterOptions>

@@ -1,31 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
-
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.Options;
+using PeterHan.PLib.PatchManager;
 
 namespace SquirrelGenerator
 {
-    internal static class SquirrelGeneratorPatches
+    internal sealed class SquirrelGeneratorPatches : KMod.UserMod2
     {
-        private static HarmonyInstance harmonyInstance;
-        public static void PrePatch(HarmonyInstance instance)
-        {
-            harmonyInstance = instance;
-        }
+        private static Harmony harmonyInstance;
 
-        public static void OnLoad()
+        public override void OnLoad(Harmony harmony)
         {
+            base.OnLoad(harmony);
+            harmonyInstance = harmony;
             PUtil.InitLibrary();
-            PUtil.RegisterPatchClass(typeof(SquirrelGeneratorPatches));
-            POptions.RegisterOptions(typeof(SquirrelGeneratorOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(SquirrelGeneratorPatches));
+            new POptions().RegisterOptions(this, typeof(SquirrelGeneratorOptions));
         }
 
         [PLibMethod(RunAt.AfterModsLoad)]

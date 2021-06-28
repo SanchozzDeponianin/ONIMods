@@ -3,24 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
 using TUNING;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
+using PeterHan.PLib.PatchManager;
 
 namespace NoManualDelivery
 {
-    internal static class NoManualDeliveryPatches
+    internal sealed class NoManualDeliveryPatches:KMod.UserMod2
     {
-        public static void OnLoad()
+        public override void OnLoad(Harmony harmony)
         {
+            base.OnLoad(harmony);
             PUtil.InitLibrary();
-            PUtil.RegisterPatchClass(typeof(NoManualDeliveryPatches));
-            POptions.RegisterOptions(typeof(NoManualDeliveryOptions));
-
+            new PPatchManager(harmony).RegisterPatchClass(typeof(NoManualDeliveryPatches));
+            new POptions().RegisterOptions(this, typeof(NoManualDeliveryOptions));
             NoManualDeliveryOptions.Reload();
 
             // хак для того чтобы разрешить руке хватать бутылки
@@ -35,7 +36,7 @@ namespace NoManualDelivery
             AlwaysCouldBePickedUpByMinionTags = new Tag[] { GameTags.Creatures.Deliverable };
             if (NoManualDeliveryOptions.Instance.AllowAlwaysPickupEdible)
             {
-                AlwaysCouldBePickedUpByMinionTags = AlwaysCouldBePickedUpByMinionTags.Concat(STORAGEFILTERS.FOOD).Add(GameTags.MedicalSupplies).ToArray();
+                AlwaysCouldBePickedUpByMinionTags = AlwaysCouldBePickedUpByMinionTags.Concat(STORAGEFILTERS.FOOD).AddItem(GameTags.MedicalSupplies).ToArray();
             }
         }
 
@@ -65,8 +66,8 @@ namespace NoManualDelivery
             ResearchCenterConfig.ID,
             SweepBotStationConfig.ID,
             // из ДЛЦ:
-            "UraniumCentrifuge",
-            "NuclearReactor",
+            UraniumCentrifugeConfig.ID,
+            NuclearReactorConfig.ID,
 
             // из модов:
             // Aquatic Farm https://steamcommunity.com/sharedfiles/filedetails/?id=1910961538

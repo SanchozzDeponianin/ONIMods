@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using KSerialization;
 using STRINGS;
 using UnityEngine;
-
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 
 namespace Smelter
