@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using KSerialization;
 using STRINGS;
 using UnityEngine;
-using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 
 namespace Smelter
@@ -159,17 +157,13 @@ namespace Smelter
 
         // доступ к приватным шнягам
         private static readonly IDetouredField<LiquidCooledRefinery, MeterController> METER_COOLANT = PDetours.DetourField<LiquidCooledRefinery, MeterController>("meter_coolant");
-        private static readonly IDetouredField<LiquidCooledRefinery, StatesInstance> SMI = PDetours.DetourField<LiquidCooledRefinery, StatesInstance>("smi");
-
-        // доступ к ComplexFabricator (base.base.)
-        private static readonly IntPtr ComplexFabricator_OnSpawn_Ptr;
-        private readonly System.Action ComplexFabricator_OnSpawn;
 
         [Serialize]
         private bool allowOverheating = false;
 
         public float maxCoolantMass;
         public Tag fuelTag;
+        private StatesInstance smi;
 
 #pragma warning disable CS0649
         [MyCmpReq]
@@ -181,43 +175,22 @@ namespace Smelter
         string ICheckboxControl.CheckboxLabel => STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX;
         string ICheckboxControl.CheckboxTooltip => STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX_TOOLTIP;
 
-        static LiquidCooledFueledRefinery()
-        {
-            var methodInfo = typeof(ComplexFabricator).GetMethodSafe(nameof(OnSpawn), false, PPatchTools.AnyArguments);
-            if (methodInfo == null)
-                PUtil.LogError("ComplexFabricator.OnSpawn method not found.");
-            else
-                ComplexFabricator_OnSpawn_Ptr = methodInfo.MethodHandle.GetFunctionPointer();
-        }
-
-        LiquidCooledFueledRefinery()
-        {
-            ComplexFabricator_OnSpawn = (System.Action)Activator.CreateInstance(typeof(System.Action), this, ComplexFabricator_OnSpawn_Ptr);
-        }
-
         protected override void OnSpawn()
         {
-            ComplexFabricator_OnSpawn();
-
+            base.OnSpawn();
             // настраиваем метер воды
             METER_COOLANT.Set(this, new MeterController(GetComponent<KBatchedAnimController>(), "meter_target", "meter", Meter.Offset.Behind, Grid.SceneLayer.NoLayer, Vector3.zero, null));
-
             // у нас нет выходной трубы
             operational.SetFlag(coolantOutputPipeEmpty, false);
-
             // брать топливо из выходного хранилища. так как входное для рецептов. чтобы не было путаницы углерода для топлива и стали.
             elementConverter.SetStorage(outStorage);
-
-            // переопределяем сми
-            //SMI.Get(this).StopSM("override");
-            var smi = new StatesInstance(this);
-            SMI.Set(this, smi);
+            smi = new StatesInstance(this);
             smi.StartSM();
         }
 
         protected override void OnCleanUp()
         {
-            SMI.Get(this).StopSM("cleanup");
+            smi.StopSM("cleanup");
             base.OnCleanUp();
         }
 
@@ -273,8 +246,6 @@ namespace Smelter
 
             if (total_mass < maxCoolantMass)
                 return;
-
-            var smi = SMI.Get(this);
             smi.sm.coolant_too_hot.Trigger(smi);
         }
 
@@ -290,11 +261,19 @@ namespace Smelter
             pooledList.Recycle();
         }
 
+        // некоторые продукты имеют более низкую т плавления чем выходная т
+        // сделаем их холоднее
         protected override List<GameObject> SpawnOrderProduct(ComplexRecipe recipe)
         {
-            var result = base.SpawnOrderProduct(recipe);
+            var results = base.SpawnOrderProduct(recipe);
+            foreach (var result in results)
+            {
+                var primaryElement = result?.GetComponent<PrimaryElement>();
+                if (primaryElement != null && primaryElement.Temperature >= primaryElement.Element.highTemp)
+                    primaryElement.Temperature = primaryElement.Element.highTemp - SimMessages.STATE_TRANSITION_TEMPERATURE_BUFER;
+            }
             operational.SetActive(false, false);
-            return result;
+            return results;
         }
 
         bool ICheckboxControl.GetCheckboxValue()

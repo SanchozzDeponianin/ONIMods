@@ -44,6 +44,8 @@ namespace Smelter
         private const string NAPHTHA = "{NAPHTHA}";
         private const string WOOD = "{WOOD}";
         private const string REFINEDCARBON = "{REFINEDCARBON}";
+        private const string RESIN = "{RESIN}";
+        private const string ISORESIN = "{ISORESIN}";
 
         private const string SMELTER = "{SMELTER}";
         private const string METALREFINERY = "{METALREFINERY}";
@@ -55,43 +57,50 @@ namespace Smelter
             public class RECIPES
             {
                 public static LocString TITLE = $"Enable new recipes";
-            }
 
-            public class KATAIRITE_TO_TUNGSTEN
-            {
-                public static LocString TITLE = $"Recipe {KATAIRITE} to {TUNGSTEN}";
-                public static LocString TOOLTIP = $"Available at {SMELTER}, {METALREFINERY}";
-            }
-            public class PHOSPHORITE_TO_PHOSPHORUS
-            {
-                public static LocString TITLE = $"Recipe {PHOSPHORITE} to {PHOSPHORUS}";
-                public static LocString TOOLTIP = $"Available at {SMELTER}, {GLASSFORGE}";
-            }
-            public class POLYPROPYLENE_TO_NAPHTHA
-            {
-                public static LocString TITLE = $"Recipe {POLYPROPYLENE} to {NAPHTHA}";
-                public static LocString TOOLTIP = $"Available at {SMELTER}";
-            }
-            public class WOOD_TO_REFINEDCARBON
-            {
-                public static LocString TITLE = $"Recipe {WOOD} to {REFINEDCARBON}";
-                public static LocString TOOLTIP = $"Available at {KILN}";
+                public class KATAIRITE_TO_TUNGSTEN
+                {
+                    public static LocString TITLE = $"Recipe {KATAIRITE} to {TUNGSTEN}";
+                    public static LocString TOOLTIP = $"Available at {SMELTER}, {METALREFINERY}";
+                }
+                public class PHOSPHORITE_TO_PHOSPHORUS
+                {
+                    public static LocString TITLE = $"Recipe {PHOSPHORITE} to {PHOSPHORUS}";
+                    public static LocString TOOLTIP = $"Available at {SMELTER}, {GLASSFORGE}";
+                }
+                public class POLYPROPYLENE_TO_NAPHTHA
+                {
+                    public static LocString TITLE = $"Recipe {POLYPROPYLENE} to {NAPHTHA}";
+                    public static LocString TOOLTIP = $"Available at {SMELTER}";
+                }
+
+                public class RESIN_TO_ISORESIN
+                {
+                    public static LocString TITLE = $"Recipe {RESIN} to {ISORESIN}";
+                    public static LocString TOOLTIP = $"Available at {SMELTER}";
+                }
+
+                public class WOOD_TO_REFINEDCARBON
+                {
+                    public static LocString TITLE = $"Recipe {WOOD} to {REFINEDCARBON}";
+                    public static LocString TOOLTIP = $"Available at {KILN}";
+                }
             }
 
             public class FEATURES
             {
                 public static LocString TITLE = $"Enable some features for vanilla buildings";
-            }
 
-            public class DROP_OVERHEATED_COOLANT
-            {
-                public static LocString TITLE = $"{METALREFINERY} will drop the overheated {UI.FormatAsKeyWord("Coolant")}";
-                public static LocString TOOLTIP = $"The overheated {UI.FormatAsKeyWord("Coolant")} is dropped directly into the atmosphere\nThis will help prevent damage to the output Pipe";
-            }
-            public class REUSE_COOLANT
-            {
-                public static LocString TITLE = $"{METALREFINERY} will re-use the waste {UI.FormatAsKeyWord("Coolant")}";
-                public static LocString TOOLTIP = $"This can speed up production and reduce {UI.FormatAsKeyWord("Coolant")} consumption";
+                public class DROP_OVERHEATED_COOLANT
+                {
+                    public static LocString TITLE = $"{METALREFINERY} will drop the overheated {UI.FormatAsKeyWord("Coolant")}";
+                    public static LocString TOOLTIP = $"The overheated {UI.FormatAsKeyWord("Coolant")} is dropped directly into the atmosphere\nThis will help prevent damage to the output Pipe";
+                }
+                public class REUSE_COOLANT
+                {
+                    public static LocString TITLE = $"{METALREFINERY} will re-use the waste {UI.FormatAsKeyWord("Coolant")}";
+                    public static LocString TOOLTIP = $"This can speed up production and reduce {UI.FormatAsKeyWord("Coolant")} consumption";
+                }
             }
         }
 
@@ -100,7 +109,7 @@ namespace Smelter
             BUILDINGS.PREFABS.SMELTER.DESC = global::STRINGS.BUILDINGS.PREFABS.METALREFINERY.DESC;
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
 
-            var elements = new string[] { KATAIRITE, TUNGSTEN, PHOSPHORITE, PHOSPHORUS, POLYPROPYLENE, NAPHTHA, REFINEDCARBON };
+            var elements = new string[] { KATAIRITE, TUNGSTEN, PHOSPHORITE, PHOSPHORUS, POLYPROPYLENE, NAPHTHA, REFINEDCARBON, RESIN, ISORESIN };
             //var buildings = new string[] { SMELTER, METALREFINERY, GLASSFORGE, KILN};
             var dictionary = Utils.PrepareReplacementDictionary(null, elements, "STRINGS.ELEMENTS.{0}.NAME");
             //.PrepareReplacementDictionary(buildings, "STRINGS.BUILDINGS.PREFABS.{0}.NAME");
@@ -110,7 +119,6 @@ namespace Smelter
             dictionary.Add(METALREFINERY, global::STRINGS.BUILDINGS.PREFABS.METALREFINERY.NAME);
             dictionary.Add(GLASSFORGE, global::STRINGS.BUILDINGS.PREFABS.GLASSFORGE.NAME);
             dictionary.Add(KILN, global::STRINGS.BUILDINGS.PREFABS.KILN.NAME);
-
             dictionary.Add(WOOD, ITEMS.INDUSTRIAL_PRODUCTS.WOOD.NAME);
             foreach (var key in dictionary.Keys.ToList())
             {
