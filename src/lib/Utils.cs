@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Database;
 using TUNING;
-using Harmony;
+using HarmonyLib;
 #if USESPLIB
 using PeterHan.PLib.Detours;
 #endif
@@ -46,13 +46,6 @@ namespace SanchozzONIMods.Lib
             }
         }
 
-#if !USESPLIB
-        public static void OnLoad()
-        {
-            Debug.Log($"Mod {modInfo.assemblyName} loaded, version: {modInfo.version}");
-        }
-#endif
-
         // логирование со стактрасом
         public static void LogExcWarn(Exception thrown)
         {
@@ -86,16 +79,14 @@ namespace SanchozzONIMods.Lib
                 Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{category}' category in the building menu.");
                 return;
             }
-
-            var planOrderList = Traverse.Create(BUILDINGS.PLANORDER[index])?.Field("data")?.GetValue<List<string>>();
+            //var planOrderList = Traverse.Create(BUILDINGS.PLANORDER[index])?.Field("data")?.GetValue<List<string>>();
+            var planOrderList = BUILDINGS.PLANORDER[index].data;
             if (planOrderList == null)
             {
                 Debug.LogWarning($"{modInfo.assemblyName}: Could not add '{buildingId}' to the building menu.");
                 return;
             }
-
             int neighborIdx = planOrderList.IndexOf(addAfterBuildingId);
-
             if (neighborIdx != -1)
                 planOrderList.Insert(neighborIdx + 1, buildingId);
             else
@@ -103,7 +94,7 @@ namespace SanchozzONIMods.Lib
         }
 
         // добавляем постройки в технологии
-        // ванилька
+        // старая ванилька
         /* 
         public static void AddBuildingToTechnology(string tech, string buildingId)
         {
@@ -118,22 +109,22 @@ namespace SanchozzONIMods.Lib
             }
         }
         */
-        // длц
-        /*
-        public static void AddBuildingToTechnology(string tech, string buildingId)
+        // новая ванилька и длц
+        public static void AddBuildingToTechnology(string tech, params string[] buildingIds)
         {
             var targetTech = Db.Get().Techs.TryGet(tech);
             if (targetTech != null)
             {
-                targetTech.unlockedItemIDs.Add(buildingId);
+                targetTech.AddUnlockedItemIDs(buildingIds);
             }
             else
             {
                 Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{tech}' tech.");
             }
         }
-        */
+
         // "а теперь тушим оба окурка одновременно" (с)
+        /*
         public static void AddBuildingToTechnology(string tech, string buildingId)
         {
             var tech_grouping = Traverse.Create(typeof(Techs))?.Field("TECH_GROUPING")?.GetValue<Dictionary<string, string[]>>();
@@ -164,7 +155,7 @@ namespace SanchozzONIMods.Lib
                 }
             }
         }
-
+        */
 
         // загружаем строки для локализации
         public static void InitLocalization(Type locstring_tree_root, string filename_prefix = "", bool writeStringsTemplate = false)

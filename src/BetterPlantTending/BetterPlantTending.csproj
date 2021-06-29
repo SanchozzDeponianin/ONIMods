@@ -9,11 +9,15 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BetterPlantTending</RootNamespace>
     <AssemblyName>BetterPlantTending</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Title>Better Plant Tending</Title>
+    <Description></Description>
+    <ModVersion>1.2.0</ModVersion>
     <UsesPLib>true</UsesPLib>
-    <OutputIntoRootOnVANILLA>true</OutputIntoRootOnVANILLA>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\BaseOptions.cs">

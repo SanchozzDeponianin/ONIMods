@@ -1,12 +1,10 @@
 ﻿using Newtonsoft.Json;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
 using PeterHan.PLib.Options;
 
 namespace NoManualDelivery
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ModInfo("No Manual Delivery", null, null, false)]
     [ConfigFile(IndentOutput: true)]
     [RestartRequired]
     internal sealed class NoManualDeliveryOptions : BaseOptions<NoManualDeliveryOptions>

@@ -1,14 +1,17 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using UnityEngine;
 
 namespace TweakedBiologicalCargoBay
 {
-    [HarmonyPatch(typeof(SpecialCargoBayConfig), nameof(SpecialCargoBayConfig.DoPostConfigureComplete))]
-    internal static class SpecialCargoBayConfig_DoPostConfigureComplete
+    internal sealed class TweakedBiologicalCargoBayPatches : KMod.UserMod2
     {
-        private static void Postfix(GameObject go)
+        [HarmonyPatch(typeof(SpecialCargoBayConfig), nameof(SpecialCargoBayConfig.DoPostConfigureComplete))]
+        internal static class SpecialCargoBayConfig_DoPostConfigureComplete
         {
-            go.GetComponent<Storage>().allowItemRemoval = true;
+            private static void Postfix(GameObject go)
+            {
+                go.GetComponent<Storage>().allowItemRemoval = true;
+            }
         }
     }
 }

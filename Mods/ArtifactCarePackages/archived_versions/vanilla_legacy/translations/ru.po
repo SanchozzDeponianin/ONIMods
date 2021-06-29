@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIER0.TITLE
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIER0.TITLE"
+msgid "Cycles before the Tier0 artifact will be available"
+msgstr "Циклов до того, как артефакт Tier0 будет доступен"
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIERNEXT.TITLE
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIERNEXT.TITLE"
+msgid "Cycles before the each next Tier artifact will be available"
+msgstr "Циклы до того, как артефакт каждого следующего Tier будет доступен"
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.TITLE
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.TITLE"
+msgid "Slots of artifacts added to the Drop Table"
+msgstr "Слоты артефактов, добавленные в таблицу дропа"
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.TOOLTIP
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.TOOLTIP"
+msgid "More slots - more chance to get an artifact instead of a resource"
+msgstr "Больше слотов - больше шансов получить артефакт вместо ресурса"
+

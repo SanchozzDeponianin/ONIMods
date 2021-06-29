@@ -1,20 +1,28 @@
 ﻿using System.Collections.Generic;
-using Harmony;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using HarmonyLib;
 using UnityEngine;
-
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.Options;
+using PeterHan.PLib.PatchManager;
 
 namespace Smelter
 {
-    internal static class SmelterPatches
+    internal sealed class SmelterPatches : KMod.UserMod2
     {
-        public static void OnLoad()
+        public override void OnLoad(Harmony harmony)
         {
+            base.OnLoad(harmony);
             PUtil.InitLibrary();
-            PUtil.RegisterPatchClass(typeof(SmelterPatches));
-            POptions.RegisterOptions(typeof(SmelterOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(SmelterPatches));
+            var options = new POptions();
+            if (DlcManager.IsExpansion1Active())
+                options.RegisterOptions(this, typeof(SmelterOptionsExpansion1));
+            else
+                options.RegisterOptions(this, typeof(SmelterOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -37,6 +45,44 @@ namespace Smelter
             private static void Postfix()
             {
                 SmelterConfig.ConfigureRecipes();
+            }
+        }
+
+        // хоть и LiquidCooledFueledRefinery наследуется от LiquidCooledRefinery
+        // но не весь функционал нам нужен. нужно избежать инициализации ненужных штук
+        // поэтому подменяем вызов "base.OnSpawn" на "base.base.OnSpawn"
+        [HarmonyPatch(typeof(LiquidCooledFueledRefinery), "OnSpawn")]
+        internal static class LiquidCooledFueledRefinery_OnSpawn
+        {
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                var instructionsList = instructions.ToList();
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
+
+                var @base = typeof(LiquidCooledRefinery).GetMethodSafe("OnSpawn", false, PPatchTools.AnyArguments);
+                var basebase = typeof(ComplexFabricator).GetMethodSafe("OnSpawn", false, PPatchTools.AnyArguments);
+                bool result = false;
+                if (@base != null && basebase != null)
+                {
+                    for (int i = 0; i < instructionsList.Count(); i++)
+                    {
+                        var instruction = instructionsList[i];
+                        if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && info == @base)
+                        {
+                            instructionsList[i] = new CodeInstruction(OpCodes.Call, basebase);
+                            result = true;
+                            break;
+#if DEBUG
+                            PUtil.LogDebug($"'{methodName}' Transpiler injected");
+#endif
+                        }
+                    }
+                }
+                if (!result)
+                {
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
+                }
+                return instructionsList;
             }
         }
 

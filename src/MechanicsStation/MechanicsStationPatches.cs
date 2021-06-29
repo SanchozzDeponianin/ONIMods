@@ -1,23 +1,25 @@
 ﻿using System.Collections.Generic;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.Options;
+using PeterHan.PLib.PatchManager;
 using static MechanicsStation.MechanicsStationAssets;
 
 namespace MechanicsStation
 {
-    internal static class MechanicsStationPatches
+    internal sealed class MechanicsStationPatches : KMod.UserMod2
     {
-        public static void OnLoad()
+        public override void OnLoad(Harmony harmony)
         {
+            base.OnLoad(harmony);
             PUtil.InitLibrary();
-            PUtil.RegisterPatchClass(typeof(MechanicsStationPatches));
-            POptions.RegisterOptions(typeof(MechanicsStationOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(MechanicsStationPatches));
+            new POptions().RegisterOptions(this, typeof(MechanicsStationOptions));
         }
 
-        [PLibMethod(RunAt.AfterModsLoad)]
+        [PLibMethod(RunAt.BeforeDbInit)]
         private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));
@@ -65,9 +67,7 @@ namespace MechanicsStation
             ResearchCenterConfig.ID,            // слишком читерно
             AdvancedResearchCenterConfig.ID,
             CosmicResearchCenterConfig.ID,
-#if EXPANSION1
             OrbitalResearchCenterConfig.ID,
-#endif
             OilRefineryConfig.ID,               // ограничение по трубе
             "AtomicGarden",                     // новая недоделанная хрень
         };
@@ -185,9 +185,9 @@ namespace MechanicsStation
 
         private static readonly EventSystem.IntraObjectHandler<BuildingAttachPoint> OnUpdateRoomDelegate =
             new EventSystem.IntraObjectHandler<BuildingAttachPoint>((BuildingAttachPoint component, object data)
-                => component.RetriggerOnUpdateRoom(data));
+                => RetriggerOnUpdateRoom(component, data));
 
-        private static void RetriggerOnUpdateRoom(this BuildingAttachPoint buildingAttachPoint, object data)
+        private static void RetriggerOnUpdateRoom(BuildingAttachPoint buildingAttachPoint, object data)
         {
             for (int i = 0; i < buildingAttachPoint.points.Length; i++)
             {

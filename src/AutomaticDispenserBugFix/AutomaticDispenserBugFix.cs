@@ -1,13 +1,16 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 
 namespace AutomaticDispenserBugFix
 {
-    [HarmonyPatch(typeof(ObjectDispenser), "Toggle")]
-    public class AutomaticDispenser_Toggle
+    internal sealed class AutomaticDispenserBugFixPatches : KMod.UserMod2
     {
-        public static void Postfix(ObjectDispenser __instance, ObjectDispenser.Instance ___smi, bool ___switchedOn)
+        [HarmonyPatch(typeof(ObjectDispenser), "Toggle")]
+        internal static class AutomaticDispenser_Toggle
         {
-            ___smi.SetSwitchState(___switchedOn);
+            private static void Postfix(ObjectDispenser.Instance ___smi, bool ___switchedOn)
+            {
+                ___smi.SetSwitchState(___switchedOn);
+            }
         }
     }
 }

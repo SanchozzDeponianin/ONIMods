@@ -1,11 +1,11 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using SanchozzONIMods.Lib;
 
 namespace SandboxMutantPlant
 {
     using static STRINGS.UI.USERMENUACTIONS;
 
-    internal static class SandboxMutantPlantPatches
+    internal sealed class SandboxMutantPlantPatches : KMod.UserMod2
     {
         private static readonly EventSystem.IntraObjectHandler<MutantPlant> OnRefreshUserMenuDelegate = new EventSystem.IntraObjectHandler<MutantPlant>(delegate (MutantPlant component, object data)
         {
@@ -70,28 +70,6 @@ namespace SandboxMutantPlant
                     var binfo = new KIconButtonMenu.ButtonInfo("action_select_research", IDENTIFY_MUTATION.NAME, new System.Action(mutant.IdentifyMutation), Action.NumActions, null, null, null, IDENTIFY_MUTATION.TOOLTIP, true);
                     Game.Instance.userMenu.AddButton(mutant.gameObject, binfo, 1f);
                 }
-            }
-        }
-
-        // применяем случайную мутацию и обновляем кнопки в боковом экране
-        private static void Mutator(this MutantPlant mutant)
-        {
-            if (mutant != null)
-            {
-                mutant.Mutate();
-                mutant.ApplyMutations();
-                PlantSubSpeciesCatalog.Instance.DiscoverSubSpecies(mutant.GetSubSpeciesInfo(), mutant);
-                DetailsScreen.Instance.Trigger((int)GameHashes.UIRefreshData, null);
-            }
-        }
-
-        // исследуем мутацию и обновляем кнопки в боковом экране
-        private static void IdentifyMutation(this MutantPlant mutant)
-        {
-            if (mutant != null)
-            {
-                PlantSubSpeciesCatalog.Instance.IdentifySubSpecies(mutant.SubSpeciesID);
-                DetailsScreen.Instance.Trigger((int)GameHashes.UIRefreshData, null);
             }
         }
     }

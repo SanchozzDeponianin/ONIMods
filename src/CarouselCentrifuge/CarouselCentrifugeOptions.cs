@@ -2,13 +2,11 @@
 using UnityEngine;
 
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
 using PeterHan.PLib.Options;
 
 namespace CarouselCentrifuge
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ModInfo("Carousel", "https://steamcommunity.com/sharedfiles/filedetails/?id=1899088142")]
     [ConfigFile(IndentOutput: true)]
     internal sealed class CarouselCentrifugeOptions : BaseOptions<CarouselCentrifugeOptions>
     {

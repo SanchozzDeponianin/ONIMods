@@ -9,9 +9,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NoManualDelivery</RootNamespace>
     <AssemblyName>NoManualDelivery</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Title>No Manual Delivery</Title>
+    <Description>Adds a "Allow Manual Use" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings.</Description>
+    <ModVersion>1.5.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

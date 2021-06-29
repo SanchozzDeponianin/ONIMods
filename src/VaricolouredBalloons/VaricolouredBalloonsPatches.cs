@@ -3,30 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
-
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
+using PeterHan.PLib.PatchManager;
 
 namespace VaricolouredBalloons
 {
-    internal static class VaricolouredBalloonsPatches
+    internal sealed class VaricolouredBalloonsPatches : KMod.UserMod2
     {
         // доступ к приватному полю
         private static readonly IDetouredField<GetBalloonWorkable, BalloonArtistChore.StatesInstance> BALLOONARTIST = PDetours.DetourField<GetBalloonWorkable, BalloonArtistChore.StatesInstance>("balloonArtist");
 
-        public static void OnLoad()
+        public override void OnLoad(Harmony harmony)
         {
+            base.OnLoad(harmony);
             PUtil.InitLibrary(true);
-            PUtil.RegisterPatchClass(typeof(VaricolouredBalloonsPatches));
-            POptions.RegisterOptions(typeof(VaricolouredBalloonsOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(VaricolouredBalloonsPatches));
+            new POptions().RegisterOptions(this, typeof(VaricolouredBalloonsOptions));
         }
 
-        [PLibMethod(RunAt.AfterModsLoad)]
+        [PLibMethod(RunAt.BeforeDbInit)]
         private static void InitLocalization()
         {
             Utils.InitLocalization(typeof(STRINGS));
@@ -65,7 +65,7 @@ namespace VaricolouredBalloons
                 __instance.balloonStand.Enter((BalloonArtistChore.StatesInstance smi) => smi.GetComponent<VaricolouredBalloonsHelper>()?.RandomizeArtistBalloonSymbolIdx());
                 __instance.balloonStand.idle.Enter((BalloonArtistChore.StatesInstance smi) =>
                 {
-                    VaricolouredBalloonsHelper artist = smi.GetComponent<VaricolouredBalloonsHelper>();
+                    var artist = smi.GetComponent<VaricolouredBalloonsHelper>();
                     if (artist != null)
                     {
                         artist.ApplySymbolOverrideByIdx(artist.ArtistBalloonSymbolIdx);
@@ -97,7 +97,7 @@ namespace VaricolouredBalloons
             // когда "задание 'получить баллон' завершено" - рандомим новый индекс для артиста
             private static void Postfix(Chore chore)
             {
-                GetBalloonWorkable balloonWorkable = chore.target?.GetComponent<GetBalloonWorkable>();
+                var balloonWorkable = chore.target?.GetComponent<GetBalloonWorkable>();
                 if (balloonWorkable != null)
                 {
                     BALLOONARTIST.Get(balloonWorkable)?.GetComponent<VaricolouredBalloonsHelper>()?.RandomizeArtistBalloonSymbolIdx();
@@ -110,11 +110,11 @@ namespace VaricolouredBalloons
         // уничтожаем предыдущий FX-объект баллона если он есть
         private static void OnBeginGetBalloonChore(BalloonStandConfig balloonStandConfig, Chore chore)
         {
-            GetBalloonWorkable balloonWorkable = chore.target?.GetComponent<GetBalloonWorkable>();
+            var balloonWorkable = chore.target?.GetComponent<GetBalloonWorkable>();
             if (balloonWorkable != null)
             {
                 uint idx = BALLOONARTIST.Get(balloonWorkable)?.GetComponent<VaricolouredBalloonsHelper>()?.ArtistBalloonSymbolIdx ?? 0;
-                VaricolouredBalloonsHelper receiver = chore.driver?.GetComponent<VaricolouredBalloonsHelper>();
+                var receiver = chore.driver?.GetComponent<VaricolouredBalloonsHelper>();
                 if (receiver != null)
                 {
                     receiver.ReceiverBalloonSymbolIdx = idx;
@@ -155,13 +155,13 @@ namespace VaricolouredBalloons
         */
         private static IEnumerable<CodeInstruction> TranspilerInjectOnBeginChoreAction(IEnumerable<CodeInstruction> instructions)
         {
-            MethodInfo makenewballoonchore = AccessTools.Method(typeof(BalloonStandConfig), "MakeNewBalloonChore");
-            MethodInfo onbegingetballoonchore = AccessTools.Method(typeof(VaricolouredBalloonsPatches), nameof(VaricolouredBalloonsPatches.OnBeginGetBalloonChore));
-            List<CodeInstruction> instructionsList = instructions.ToList();
+            var makenewballoonchore = AccessTools.Method(typeof(BalloonStandConfig), "MakeNewBalloonChore");
+            var onbegingetballoonchore = AccessTools.Method(typeof(VaricolouredBalloonsPatches), nameof(VaricolouredBalloonsPatches.OnBeginGetBalloonChore));
+            var instructionsList = instructions.ToList();
             bool result = false;
             for (int i = 0; i < instructionsList.Count; i++)
             {
-                CodeInstruction instruction = instructionsList[i];
+                var instruction = instructionsList[i];
                 if (instruction.opcode == OpCodes.Ldftn && (MethodInfo)instruction.operand == makenewballoonchore)
                 {
 #if DEBUG
@@ -196,8 +196,8 @@ namespace VaricolouredBalloons
         private static void ApplySymbolOverrideBalloonFX(BalloonFX.Instance smi, KBatchedAnimController kbac)
         {
             kbac.usingNewSymbolOverrideSystem = true;
-            SymbolOverrideController symbolOverrideController = SymbolOverrideControllerUtil.AddToPrefab(kbac.gameObject);
-            VaricolouredBalloonsHelper receiver = smi.master.GetComponent<VaricolouredBalloonsHelper>();
+            var symbolOverrideController = SymbolOverrideControllerUtil.AddToPrefab(kbac.gameObject);
+            var receiver = smi.master.GetComponent<VaricolouredBalloonsHelper>();
             if (receiver != null)
             {
                 receiver.fx = smi;
@@ -222,12 +222,12 @@ namespace VaricolouredBalloons
         {
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                MethodInfo applysymboloverrideballoonfx = AccessTools.Method(typeof(VaricolouredBalloonsPatches), nameof(VaricolouredBalloonsPatches.ApplySymbolOverrideBalloonFX));
-                List<CodeInstruction> instructionsList = instructions.ToList();
+                var applysymboloverrideballoonfx = AccessTools.Method(typeof(VaricolouredBalloonsPatches), nameof(VaricolouredBalloonsPatches.ApplySymbolOverrideBalloonFX));
+                var instructionsList = instructions.ToList();
                 bool result = false;
                 for (int i = 0; i < instructionsList.Count; i++)
                 {
-                    CodeInstruction instruction = instructionsList[i];
+                    var instruction = instructionsList[i];
                     if (instruction.opcode == OpCodes.Ret)
                     {
 #if DEBUG
@@ -262,7 +262,7 @@ namespace VaricolouredBalloons
         {
             if (VaricolouredBalloonsOptions.Instance.DestroyFXAfterEffectExpired)
             {
-                VaricolouredBalloonsHelper carrier = (eq?.assignee?.GetSoleOwner()?.GetComponent<MinionAssignablesProxy>().target as KMonoBehaviour)?.GetComponent<VaricolouredBalloonsHelper>();
+                var carrier = (eq?.assignee?.GetSoleOwner()?.GetComponent<MinionAssignablesProxy>().target as KMonoBehaviour)?.GetComponent<VaricolouredBalloonsHelper>();
                 if (carrier?.fx != null)
                 {
                     carrier.fx.StopSM("Unequipped");

@@ -9,10 +9,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ButcherStation</RootNamespace>
     <AssemblyName>ButcherStation</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <OutputIntoRootOnVANILLA>true</OutputIntoRootOnVANILLA>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Title>Butcher &amp; Fishing Stations</Title>
+    <Description>Adds a new Stations allows the Ranchers to control the population and butchering too old, surplus, or unwanted Critters.</Description>
+    <ModVersion>1.5.0</ModVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\BaseConfig.cs">

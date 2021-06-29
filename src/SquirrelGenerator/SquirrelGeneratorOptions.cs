@@ -3,13 +3,11 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
 using PeterHan.PLib.Options;
 
 namespace SquirrelGenerator
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ModInfo("Squirrel Wheel", "https://steamcommunity.com/sharedfiles/filedetails/?id=2086704949")]
     [ConfigFile(IndentOutput: true)]
     [RestartRequired]
     internal class SquirrelGeneratorOptions : BaseOptions<SquirrelGeneratorOptions>

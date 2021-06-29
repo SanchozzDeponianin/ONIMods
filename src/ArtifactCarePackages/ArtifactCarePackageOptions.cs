@@ -1,12 +1,10 @@
 ﻿using Newtonsoft.Json;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
 using PeterHan.PLib.Options;
 
 namespace ArtifactCarePackages
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ModInfo("Artifacts in Care Packages")]
     [ConfigFile(IndentOutput: true)]
     internal class ArtifactCarePackageOptions : BaseOptions<ArtifactCarePackageOptions>
     {
@@ -27,18 +25,9 @@ namespace ArtifactCarePackages
 
         public ArtifactCarePackageOptions()
         {
-            if (DlcManager.IsExpansion1Active())
-            {
-                CyclesUntilTier0 = 50;
-                CyclesUntilTierNext = 15;
-                RandomArtifactDropTableSlots = 5;
-            }
-            else
-            {
-                CyclesUntilTier0 = 300;
-                CyclesUntilTierNext = 50;
-                RandomArtifactDropTableSlots = 1;
-            }
+            CyclesUntilTier0 = 150;
+            CyclesUntilTierNext = 25;
+            RandomArtifactDropTableSlots = 5;
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using PeterHan.PLib;
-using PeterHan.PLib.Options;
+﻿using PeterHan.PLib.Options;
 
 namespace SanchozzONIMods.Lib
 {
@@ -21,6 +20,7 @@ namespace SanchozzONIMods.Lib
 
         public static void Reload()
         {
+            // todo: нужно добавить обработку новых возможностей PLib.Options - дочерние типы
             instance = POptions.ReadSettings<Options>() ?? new Options();
             foreach (var property in typeof(Options).GetProperties())
             {

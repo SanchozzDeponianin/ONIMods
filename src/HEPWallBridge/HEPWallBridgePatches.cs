@@ -1,18 +1,20 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
+using PeterHan.PLib.PatchManager;
 
 namespace HEPWallBridge
 {
-    internal static class HEPWallBridgePatches
+    internal sealed class HEPWallBridgePatches : KMod.UserMod2
     {
-        public static void OnLoad()
+        public override void OnLoad(Harmony harmony)
         {
+            base.OnLoad(harmony);
             PUtil.InitLibrary();
-            PUtil.RegisterPatchClass(typeof(HEPWallBridgePatches));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(HEPWallBridgePatches));
         }
 
-        [PLibMethod(RunAt.AfterModsLoad)]
+        [PLibMethod(RunAt.BeforeDbInit)]
         private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));
@@ -23,7 +25,7 @@ namespace HEPWallBridge
         {
             Utils.AddBuildingToPlanScreen("HEP", HighEnergyParticleWallBridgeRedirectorConfig.ID);
             Utils.AddBuildingToTechnology("NuclearResearch", HighEnergyParticleWallBridgeRedirectorConfig.ID);
-            PUtil.CopySoundsToAnim("wallbridge_orb_transporter_kanim", "orb_transporter_kanim");
+            PGameUtils.CopySoundsToAnim("wallbridge_orb_transporter_kanim", "orb_transporter_kanim");
         }
 
         // ой мудакии!

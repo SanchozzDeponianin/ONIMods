@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TUNING;
-using Harmony;
+using HarmonyLib;
 using UnityEngine;
 
 namespace Smelter
@@ -10,6 +10,7 @@ namespace Smelter
     public class SmelterConfig : IBuildingConfig
     {
         public const string ID = "Smelter";
+        private const float OUTPUT_TEMPERATURE = 60 + Constants.CELSIUS2KELVIN;
         private const float LIQUID_COOLED_HEAT_PORTION = 0.8f;
         private static readonly Tag COOLANT_TAG = GameTags.Liquid;
         private const float COOLANT_MASS = 400f;
@@ -18,7 +19,7 @@ namespace Smelter
         private static readonly Tag FUEL_TAG = SimHashes.RefinedCarbon.CreateTag();
         internal const float START_FUEL_MASS = BUILDINGS.FABRICATION_TIME_SECONDS.SHORT * FUEL_CONSUME_RATE;
         private const float CO2_EMIT_RATE = 0.05f;
-        private const float CO2_OUTPUT_TEMPERATURE = 383.15f;
+        private const float CO2_OUTPUT_TEMPERATURE = 120 + Constants.CELSIUS2KELVIN;
 
         private static readonly List<Storage.StoredItemModifier> RefineryStoredItemModifiers = new List<Storage.StoredItemModifier>
         {
@@ -80,6 +81,13 @@ namespace Smelter
             lcfr.buildStorage.SetDefaultStoredItemModifiers(RefineryStoredItemModifiers);
             lcfr.outStorage.SetDefaultStoredItemModifiers(RefineryStoredItemModifiers);
             lcfr.outputOffset = new Vector3(0.8f, 0.5f);
+            lcfr.outputTemperature = OUTPUT_TEMPERATURE;
+            lcfr.heatedTemperature = OUTPUT_TEMPERATURE;
+            // выставляем выходную температуру. ради одного рецепта
+            if (DlcManager.IsExpansion1Active())
+            {
+                lcfr.heatedTemperature = ElementLoader.FindElementByHash(SimHashes.Resin).highTemp;
+            }
 
             var manualDeliveryKG = go.AddOrGet<ManualDeliveryKG>();
             manualDeliveryKG.SetStorage(lcfr.outStorage);
@@ -250,7 +258,7 @@ namespace Smelter
                     ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, id);
                 });
 
-            // добавляем переплавку  пластика
+            // добавляем переплавку пластика
             if (SmelterOptions.Instance.RecipePlasticToNaphtha)
             {
                 var ingredients = new ComplexRecipe.RecipeElement[]
@@ -274,6 +282,63 @@ namespace Smelter
                     fabricators = new List<Tag> { TagManager.Create(ID) }
                 };
                 ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, id);
+            }
+
+            // добавляем варку резины
+            if (DlcManager.IsExpansion1Active() && SmelterOptions.Instance.RecipeResinToIsoresin)
+            {
+                var resin = ElementLoader.FindElementByHash(SimHashes.Resin);
+                var water = resin.highTempTransition.lowTempTransition;
+                var isoresin = resin.highTempTransitionOreID;
+
+                float input = INPUT_KG * 2;
+                float output1 = input * resin.highTempTransitionOreMassConversion;
+                float output2 = input - output1;
+
+                // жидкая резина
+                // побочный продукт вода сохраняется внутри
+                var ingredients = new ComplexRecipe.RecipeElement[]
+                {
+                    new ComplexRecipe.RecipeElement(resin.tag, input)
+                };
+                var results = new ComplexRecipe.RecipeElement[]
+                {
+                    new ComplexRecipe.RecipeElement(isoresin.CreateTag(), output1),
+                    new ComplexRecipe.RecipeElement(water.tag, output2, ComplexRecipe.RecipeElement.TemperatureOperation.Heated, true),
+                };
+                string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID(ID, resin.tag);
+                string id = ComplexRecipeManager.MakeRecipeID(ID, ingredients, results);
+                new ComplexRecipe(id, ingredients, results)
+                {
+                    time = BUILDINGS.FABRICATION_TIME_SECONDS.SHORT,
+                    description = string.Format(
+                        global::STRINGS.BUILDINGS.PREFABS.GLASSFORGE.RECIPE_DESCRIPTION,
+                        ElementLoader.FindElementByHash(isoresin).name,
+                        resin.name),
+                    nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
+                    fabricators = new List<Tag> { TagManager.Create(ID) }
+                };
+                ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, id);
+
+                // и замерзшая резина
+                var resin_solid = resin.lowTempTransition;
+                var ingredients2 = new ComplexRecipe.RecipeElement[]
+                {
+                    new ComplexRecipe.RecipeElement(resin_solid.tag, input)
+                };
+                string obsolete_id2 = ComplexRecipeManager.MakeObsoleteRecipeID(ID, resin_solid.tag);
+                string id2 = ComplexRecipeManager.MakeRecipeID(ID, ingredients2, results);
+                new ComplexRecipe(id2, ingredients2, results)
+                {
+                    time = BUILDINGS.FABRICATION_TIME_SECONDS.SHORT,
+                    description = string.Format(
+                        global::STRINGS.BUILDINGS.PREFABS.GLASSFORGE.RECIPE_DESCRIPTION,
+                        ElementLoader.FindElementByHash(isoresin).name,
+                        resin_solid.name),
+                    nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
+                    fabricators = new List<Tag> { TagManager.Create(ID) }
+                };
+                ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id2, id2);
             }
 
             // добавляем древесный уголь в печку

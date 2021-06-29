@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TITLE
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TITLE"
+msgid "Duplicants can always picking up Food and Medicine."
+msgstr ""
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP"
+msgid "Duplicants will ignore the <style=\"KKeyword\">{ALLOWMANUALBUTTON}</style> checkbox when picking up food and medicine to eat it."
+msgstr ""
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TITLE
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TITLE"
+msgid "{SOLIDTRANSFERARM} can pick up and deliver liquid/gas Bottles and Canisters."
+msgstr ""
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP"
+msgid "Also adds the <style=\"KKeyword\">{ALLOWMANUALBUTTON}</style> checkbox to the Pitcher Pump, Canister Filler, Bottle Emptier and Canister Emptier."
+msgstr ""
+

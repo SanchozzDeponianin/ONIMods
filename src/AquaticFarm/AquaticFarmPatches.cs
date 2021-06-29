@@ -1,9 +1,9 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using SanchozzONIMods.Lib;
 
 namespace AquaticFarm
 {
-    internal static class AquaticFarmPatches
+    internal sealed class AquaticFarmPatches : KMod.UserMod2
     {
         [HarmonyPatch(typeof(Db), nameof(Db.Initialize))]
         internal static class Db_Initialize

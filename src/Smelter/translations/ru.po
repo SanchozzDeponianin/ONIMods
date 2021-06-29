@@ -38,49 +38,68 @@ msgctxt "Smelter.STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.TOOLTIP"
 msgid "This building needs to be emptied of <link=\"HEAT\">too hot</link> <link=\"ELEMENTSLIQUID\">Coolant</link> to resume function"
 msgstr "Эта постройка требует опустошения от <link=\"HEAT\">слишком горячей</link> <link=\"ELEMENTSLIQUID\">жидкости</link>, чтобы продолжить работу"
 
-
-#. Smelter.STRINGS.OPTIONS.DROP_OVERHEATED_COOLANT.TITLE
-msgctxt "Smelter.STRINGS.OPTIONS.DROP_OVERHEATED_COOLANT.TITLE"
+#. Smelter.STRINGS.OPTIONS.FEATURES.DROP_OVERHEATED_COOLANT.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.FEATURES.DROP_OVERHEATED_COOLANT.TITLE"
 msgid "{METALREFINERY} will drop the overheated <style=\"KKeyword\">Coolant</style>"
 msgstr "{METALREFINERY} будет сбрасывать перегретый <style=\"KKeyword\">хладагент</style>"
 
-#. Smelter.STRINGS.OPTIONS.DROP_OVERHEATED_COOLANT.TOOLTIP
-msgctxt "Smelter.STRINGS.OPTIONS.DROP_OVERHEATED_COOLANT.TOOLTIP"
+#. Smelter.STRINGS.OPTIONS.FEATURES.DROP_OVERHEATED_COOLANT.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.FEATURES.DROP_OVERHEATED_COOLANT.TOOLTIP"
 msgid "The overheated <style=\"KKeyword\">Coolant</style> is dropped directly into the atmosphere\nThis will help prevent damage to the output Pipe"
 msgstr "Перегретый <style=\"KKeyword\">хладагент</style> сбрасывается прямо в атмосферу\nЭто поможет предотвратить поломку выходной трубы"
+
+#. Smelter.STRINGS.OPTIONS.FEATURES.REUSE_COOLANT.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.FEATURES.REUSE_COOLANT.TITLE"
+msgid "{METALREFINERY} will re-use the waste <style=\"KKeyword\">Coolant</style>"
+msgstr "{METALREFINERY} будет повторно использовать отработанный <style=\"KKeyword\">хладагент</style>"
+
+#. Smelter.STRINGS.OPTIONS.FEATURES.REUSE_COOLANT.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.FEATURES.REUSE_COOLANT.TOOLTIP"
+msgid "This can speed up production and reduce <style=\"KKeyword\">Coolant</style> consumption"
+msgstr "Это может ускорить производство и снизить расход <style=\"KKeyword\">хладагента</style>"
 
 #. Smelter.STRINGS.OPTIONS.FEATURES.TITLE
 msgctxt "Smelter.STRINGS.OPTIONS.FEATURES.TITLE"
 msgid "Enable some features for vanilla buildings"
 msgstr "Включить некоторые возможности для ванильных построек"
 
-#. Smelter.STRINGS.OPTIONS.KATAIRITE_TO_TUNGSTEN.TITLE
-msgctxt "Smelter.STRINGS.OPTIONS.KATAIRITE_TO_TUNGSTEN.TITLE"
+#. Smelter.STRINGS.OPTIONS.RECIPES.KATAIRITE_TO_TUNGSTEN.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.RECIPES.KATAIRITE_TO_TUNGSTEN.TITLE"
 msgid "Recipe {KATAIRITE} to {TUNGSTEN}"
 msgstr "Рецепт {KATAIRITE} -> {TUNGSTEN}"
 
-#. Smelter.STRINGS.OPTIONS.KATAIRITE_TO_TUNGSTEN.TOOLTIP
-msgctxt "Smelter.STRINGS.OPTIONS.KATAIRITE_TO_TUNGSTEN.TOOLTIP"
+#. Smelter.STRINGS.OPTIONS.RECIPES.KATAIRITE_TO_TUNGSTEN.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.RECIPES.KATAIRITE_TO_TUNGSTEN.TOOLTIP"
 msgid "Available at {SMELTER}, {METALREFINERY}"
 msgstr "Доступно в: {SMELTER}, {METALREFINERY}"
 
-#. Smelter.STRINGS.OPTIONS.PHOSPHORITE_TO_PHOSPHORUS.TITLE
-msgctxt "Smelter.STRINGS.OPTIONS.PHOSPHORITE_TO_PHOSPHORUS.TITLE"
+#. Smelter.STRINGS.OPTIONS.RECIPES.PHOSPHORITE_TO_PHOSPHORUS.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.RECIPES.PHOSPHORITE_TO_PHOSPHORUS.TITLE"
 msgid "Recipe {PHOSPHORITE} to {PHOSPHORUS}"
 msgstr "Рецепт {PHOSPHORITE} -> {PHOSPHORUS}"
 
-#. Smelter.STRINGS.OPTIONS.PHOSPHORITE_TO_PHOSPHORUS.TOOLTIP
-msgctxt "Smelter.STRINGS.OPTIONS.PHOSPHORITE_TO_PHOSPHORUS.TOOLTIP"
+#. Smelter.STRINGS.OPTIONS.RECIPES.PHOSPHORITE_TO_PHOSPHORUS.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.RECIPES.PHOSPHORITE_TO_PHOSPHORUS.TOOLTIP"
 msgid "Available at {SMELTER}, {GLASSFORGE}"
 msgstr "Доступно в: {SMELTER}, {GLASSFORGE}"
 
-#. Smelter.STRINGS.OPTIONS.POLYPROPYLENE_TO_NAPHTHA.TITLE
-msgctxt "Smelter.STRINGS.OPTIONS.POLYPROPYLENE_TO_NAPHTHA.TITLE"
+#. Smelter.STRINGS.OPTIONS.RECIPES.POLYPROPYLENE_TO_NAPHTHA.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.RECIPES.POLYPROPYLENE_TO_NAPHTHA.TITLE"
 msgid "Recipe {POLYPROPYLENE} to {NAPHTHA}"
 msgstr "Рецепт {POLYPROPYLENE} -> {NAPHTHA}"
 
-#. Smelter.STRINGS.OPTIONS.POLYPROPYLENE_TO_NAPHTHA.TOOLTIP
-msgctxt "Smelter.STRINGS.OPTIONS.POLYPROPYLENE_TO_NAPHTHA.TOOLTIP"
+#. Smelter.STRINGS.OPTIONS.RECIPES.POLYPROPYLENE_TO_NAPHTHA.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.RECIPES.POLYPROPYLENE_TO_NAPHTHA.TOOLTIP"
+msgid "Available at {SMELTER}"
+msgstr "Доступно в: {SMELTER}"
+
+#. Smelter.STRINGS.OPTIONS.RECIPES.RESIN_TO_ISORESIN.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.RECIPES.RESIN_TO_ISORESIN.TITLE"
+msgid "Recipe {RESIN} to {ISORESIN}"
+msgstr "Рецепт {RESIN} -> {ISORESIN}"
+
+#. Smelter.STRINGS.OPTIONS.RECIPES.RESIN_TO_ISORESIN.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.RECIPES.RESIN_TO_ISORESIN.TOOLTIP"
 msgid "Available at {SMELTER}"
 msgstr "Доступно в: {SMELTER}"
 
@@ -89,22 +108,13 @@ msgctxt "Smelter.STRINGS.OPTIONS.RECIPES.TITLE"
 msgid "Enable new recipes"
 msgstr "Включить новые рецепты"
 
-#. Smelter.STRINGS.OPTIONS.REUSE_COOLANT.TITLE
-msgctxt "Smelter.STRINGS.OPTIONS.REUSE_COOLANT.TITLE"
-msgid "{METALREFINERY} will re-use the waste <style=\"KKeyword\">Coolant</style>"
-msgstr "{METALREFINERY} будет повторно использовать отработанный <style=\"KKeyword\">хладагент</style>"
-
-#. Smelter.STRINGS.OPTIONS.REUSE_COOLANT.TOOLTIP
-msgctxt "Smelter.STRINGS.OPTIONS.REUSE_COOLANT.TOOLTIP"
-msgid "This can speed up production and reduce <style=\"KKeyword\">Coolant</style> consumption"
-msgstr "Это может ускорить производство и снизить расход <style=\"KKeyword\">хладагента</style>"
-
-#. Smelter.STRINGS.OPTIONS.WOOD_TO_REFINEDCARBON.TITLE
-msgctxt "Smelter.STRINGS.OPTIONS.WOOD_TO_REFINEDCARBON.TITLE"
+#. Smelter.STRINGS.OPTIONS.RECIPES.WOOD_TO_REFINEDCARBON.TITLE
+msgctxt "Smelter.STRINGS.OPTIONS.RECIPES.WOOD_TO_REFINEDCARBON.TITLE"
 msgid "Recipe {WOOD} to {REFINEDCARBON}"
 msgstr "Рецепт {WOOD} -> {REFINEDCARBON}"
 
-#. Smelter.STRINGS.OPTIONS.WOOD_TO_REFINEDCARBON.TOOLTIP
-msgctxt "Smelter.STRINGS.OPTIONS.WOOD_TO_REFINEDCARBON.TOOLTIP"
+#. Smelter.STRINGS.OPTIONS.RECIPES.WOOD_TO_REFINEDCARBON.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.RECIPES.WOOD_TO_REFINEDCARBON.TOOLTIP"
 msgid "Available at {KILN}"
 msgstr "Доступно в: {KILN}"
+

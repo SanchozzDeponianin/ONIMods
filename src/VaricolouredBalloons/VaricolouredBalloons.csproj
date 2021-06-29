@@ -9,11 +9,16 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>VaricolouredBalloons</RootNamespace>
     <AssemblyName>VaricolouredBalloons</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <UsesPLib>true</UsesPLib>
   </PropertyGroup>
+  <PropertyGroup>
+    <Title>Varicoloured Balloons</Title>
+    <Description>Adds more different colors and variations of balloons.</Description>
+    <ModVersion>1.1.0</ModVersion>
+    <UsesPLib>true</UsesPLib>
+  </PropertyGroup>  
   <ItemGroup>
     <Compile Include="..\lib\BaseOptions.cs">
       <Link>BaseOptions.cs</Link>

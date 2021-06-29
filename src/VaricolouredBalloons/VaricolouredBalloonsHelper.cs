@@ -1,9 +1,7 @@
 ﻿using System.Linq;
 using System.Runtime.Serialization;
-
 using KSerialization;
-
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 
 namespace VaricolouredBalloons
 {
@@ -38,7 +36,7 @@ namespace VaricolouredBalloons
         // собираем названия символов в загруженной анимации баллонов
         internal static void InitializeAnims()
         {
-            KAnim.Build.Symbol[] symbols = Assets.GetAnim(NEW_BALLOON_ANIM)?.GetData().build.symbols;
+            var symbols = Assets.GetAnim(NEW_BALLOON_ANIM)?.GetData().build.symbols;
             if (symbols == null)
             {
                 PUtil.LogWarning($"Missing Anim: '{NEW_BALLOON_ANIM}'.");
@@ -94,7 +92,7 @@ namespace VaricolouredBalloons
 
             idx = Clamp(idx);
             string symbolname = BalloonSymbolNames[idx];
-            KAnim.Build.Symbol symbol = Assets.GetAnim(NEW_BALLOON_ANIM)?.GetData().build.GetSymbol(symbolname);
+            var symbol = Assets.GetAnim(NEW_BALLOON_ANIM)?.GetData().build.GetSymbol(symbolname);
             if (symbol != null)
             {
                 symbolOverrideController.AddSymbolOverride(BALLOON_SYMBOL, symbol, OVERRIDE_PRIORITY);
