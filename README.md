@@ -1,5 +1,5 @@
 # Sanchozz's mods for Oxygen Not Included
-Last tested on game versions: Vanilla **460672**, Spaced Out! DLC **464434**
+Last tested on game versions: "legacy" Vanilla **469300**, "mergedown" Vanilla and Spaced Out! DLC **469369**
 
 Steam Workshop: https://steamcommunity.com/profiles/76561198341359629/myworkshopfiles/?appid=457140
 
