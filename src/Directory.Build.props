@@ -30,7 +30,7 @@
     <SupportedContent>VANILLA_ID,EXPANSION1_ID</SupportedContent>
     <APIVersion>2</APIVersion>
     <ModVersion>1.0.0</ModVersion>
-    <DistributeMod Condition=" '$(MSBuildProjectName)' != 'MSBuildTasksHelper' ">true</DistributeMod>
+    <DistributeMod Condition=" '$(ProjectName)' != 'MSBuildTasksHelper' ">true</DistributeMod>
   </PropertyGroup>
 
   <!-- подключаем DLL -->

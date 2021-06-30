@@ -54,7 +54,7 @@
   <UsingTask
     Condition=" '$(DistributeMod)' == 'true' "
     TaskName="SanchozzONIMods.GetKleiAssemblyInfo"
-    AssemblyFile="$(MSBuildProjectDirectory)\..\..\bin\MSBuildTasksHelper.dll" />
+    AssemblyFile="$(ProjectDir)\..\..\bin\MSBuildTasksHelper.dll" />
 
   <Target Name="GetKleiAssemblyInfo" BeforeTargets="PreBuildEvent" Condition=" '$(DistributeMod)' == 'true' ">
     <SanchozzONIMods.GetKleiAssemblyInfo GameFolder="$(GameFolder)" >
@@ -80,7 +80,7 @@
       SupportedContent="$(SupportedContent)"
       MinimumSupportedBuild="$(KleiBuildVersion)"
       Version="$(ModVersion)"
-      APIVersion="$(APIVersion)" 
+      APIVersion="$(APIVersion)"
     />
 
     <ItemGroup>
@@ -95,7 +95,7 @@
   <UsingTask
     Condition=" '$(UsesPLib)' == 'true' "
     TaskName="SanchozzONIMods.GetReallyReferencedAssembliesAtFolder"
-    AssemblyFile="$(MSBuildProjectDirectory)\..\..\bin\MSBuildTasksHelper.dll" />
+    AssemblyFile="$(ProjectDir)\..\..\bin\MSBuildTasksHelper.dll" />
 
   <Target Name="ILRepack" AfterTargets="Build" Condition=" '$(UsesPLib)' == 'true' ">
     <ItemGroup>
@@ -144,17 +144,17 @@
     </PropertyGroup>
 
     <!-- вспомогательный хелпер копируем в бин, чтобы не потерялся при очистке -->
-    <PropertyGroup Condition=" '$(MSBuildProjectName)' == 'MSBuildTasksHelper' ">
-      <InstallFolder>$(MSBuildProjectDirectory)\..\..\bin</InstallFolder>
+    <PropertyGroup Condition=" '$(ProjectName)' == 'MSBuildTasksHelper' ">
+      <InstallFolder>$(ProjectDir)\..\..\bin</InstallFolder>
     </PropertyGroup>
 
     <ItemGroup>
-      <AnimFiles Include="$(MSBuildProjectDirectory)\anim\**\*.*" />
-      <SpritesFiles Include="$(MSBuildProjectDirectory)\sprites\*.*" />
-      <TranslationFiles Include="$(MSBuildProjectDirectory)\translations\*.po" />
-      <TranslationFiles Include="$(MSBuildProjectDirectory)\translations\*.pot" />
-      <WorldGenFiles Include="$(MSBuildProjectDirectory)\worldgen\**\*.*" />
-      <YamlFiles Include="$(MSBuildProjectDirectory)\*.yaml" />
+      <AnimFiles Include="$(ProjectDir)\anim\**\*.*" />
+      <SpritesFiles Include="$(ProjectDir)\sprites\*.*" />
+      <TranslationFiles Include="$(ProjectDir)\translations\*.po" />
+      <TranslationFiles Include="$(ProjectDir)\translations\*.pot" />
+      <WorldGenFiles Include="$(ProjectDir)\worldgen\**\*.*" />
+      <YamlFiles Include="$(ProjectDir)\*.yaml" />
     </ItemGroup>
 
     <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(InstallFolder)\$(TargetFileName)" />
@@ -166,7 +166,7 @@
     <Copy SourceFiles="@(YamlFiles)" DestinationFolder="$(InstallFolder)" />
     <Copy SourceFiles="$(ModInfoFile)" DestinationFolder="$(InstallFolder)" />
     <Copy SourceFiles="$(ModDescriptionFile)" DestinationFolder="$(InstallRootFolder)" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)\Preview.png" DestinationFiles="$(InstallFolder)\preview.png" Condition=" $(CopyPreview) == true " />
+    <Copy SourceFiles="$(ProjectDir)\Preview.png" DestinationFiles="$(InstallFolder)\preview.png" Condition=" $(CopyPreview) == true " />
   </Target>
 
 </Project>
