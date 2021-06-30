@@ -26,7 +26,6 @@
     <Compile Include="AquaticFarm.cs" />
     <Compile Include="AquaticFarmConfig.cs" />
     <Compile Include="AquaticFarmPatches.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="STRINGS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

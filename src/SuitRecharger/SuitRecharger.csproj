@@ -25,7 +25,6 @@
     <Compile Include="SuitRecharger.cs" />
     <Compile Include="SuitRechargerPatches.cs" />
     <Compile Include="SuitRechargerConfig.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

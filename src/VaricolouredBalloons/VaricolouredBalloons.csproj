@@ -26,7 +26,6 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="STRINGS.cs" />
     <Compile Include="VaricolouredBalloonsHelper.cs" />
     <Compile Include="VaricolouredBalloonsOptions.cs" />

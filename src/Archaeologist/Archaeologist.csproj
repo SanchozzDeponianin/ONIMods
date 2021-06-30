@@ -25,7 +25,6 @@
       <Link>Utils.cs</Link>
     </Compile>
     <Compile Include="ArchaeologistPatches.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="STRINGS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -27,7 +27,6 @@
       <Link>Utils.cs</Link>
     </Compile>
     <Compile Include="SquirrelGeneratorOptions.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SquirrelGenerator.cs" />
     <Compile Include="SquirrelGeneratorConfig.cs" />
     <Compile Include="SquirrelGeneratorPatches.cs" />

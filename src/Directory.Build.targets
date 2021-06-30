@@ -6,13 +6,13 @@
       <ReferenceCopyLocalPaths Remove="$(GameFolder)\*" />
     </ItemGroup>
   </Target>
-  
+
   <Target Name="SetPlatform" BeforeTargets="CoreCompile">
     <PropertyGroup>
       <PlatformTarget>AnyCPU</PlatformTarget>
     </PropertyGroup>
   </Target>
-  
+
   <!-- определяем константы для компилятора -->
   <Target Name="DefineConstants" BeforeTargets="CoreCompile">
     <PropertyGroup Condition=" '$(UsesPLib)' == 'true' ">
@@ -24,9 +24,10 @@
   <!-- обновляем сведения о сборке -->
   <Target Name="AssemblyInfo" BeforeTargets="CoreCompile" Outputs="UpdatedAssemblyInfoFiles">
     <ItemGroup>
-      <AssemblyInfoFiles Include="Properties\AssemblyInfo.cs"/>
+      <AssemblyInfoFiles Include="$(ProjectDir)\Properties\AssemblyInfo.cs"/>
     </ItemGroup>
-
+    <MakeDir Directories="%(AssemblyInfoFiles.RelativeDir)" Condition = "!Exists('%(AssemblyInfoFiles.RelativeDir)')" />
+    <Touch Files="%(AssemblyInfoFiles.RelativeDir)\.gitkeep" ForceTouch="true" />
     <Attrib Files="%(AssemblyInfoFiles.FullPath)" Normal="true" />
     <AssemblyInfo
         CodeLanguage="CS"
@@ -43,11 +44,10 @@
         ComVisible="false" >
       <Output TaskParameter="OutputFile" ItemName="UpdatedAssemblyInfoFiles"/>
     </AssemblyInfo>
-    <!-- 
+
     <ItemGroup>
       <Compile Include="%(UpdatedAssemblyInfoFiles.FullPath)" />
-    </ItemGroup> 
-    -->
+    </ItemGroup>
   </Target>
 
   <!-- вытаскиваем информацию о версии и ветке из файлов игры. для записи ямлов и вычисления конечного пути -->
@@ -69,7 +69,7 @@
       <ModInfoFile>$(IntermediateOutputPath)\mod_info.yaml</ModInfoFile>
       <ModDescriptionFile>$(IntermediateOutputPath)\mod.yaml</ModDescriptionFile>
     </PropertyGroup>
-    
+
     <GenerateMetadataFiles
       OutputPath="$(IntermediateOutputPath)"
 
@@ -80,10 +80,15 @@
       SupportedContent="$(SupportedContent)"
       MinimumSupportedBuild="$(KleiBuildVersion)"
       Version="$(ModVersion)"
-      APIVersion="$(APIVersion)"
+      APIVersion="$(APIVersion)" 
     />
+
+    <ItemGroup>
+      <FileWrites Include="$(ModInfoFile)" />
+      <FileWrites Include="$(ModDescriptionFile)" />
+    </ItemGroup>
   </Target>
-  
+
   <!-- перепаковка вместе с PLib -->
   <!-- так как теперь PLib имеет модульную архитектуру, сделана детекция и перепаковка только нужных PLib*.dll-->
   <!-- немного грубовато, но сойдёт -->
@@ -93,17 +98,13 @@
     AssemblyFile="$(MSBuildProjectDirectory)\..\..\bin\MSBuildTasksHelper.dll" />
 
   <Target Name="ILRepack" AfterTargets="Build" Condition=" '$(UsesPLib)' == 'true' ">
-    <PropertyGroup>
-      <MergedAssembly>$(TargetDir)Merged\$(TargetFileName)</MergedAssembly>
-    </PropertyGroup>
-      
     <ItemGroup>
       <InputAssemblies Include="$(TargetPath)" />
-      <!-- <InputAssemblies Include="$(PLibFolder)\PLib.dll" Condition=" '$(UsesPLib)' == 'true'" /> -->     
+      <!-- <InputAssemblies Include="$(PLibFolder)\PLib.dll" Condition=" '$(UsesPLib)' == 'true'" /> -->
     </ItemGroup>
 
     <SanchozzONIMods.GetReallyReferencedAssembliesAtFolder
-      AssemblyName="$(TargetPath)"
+      AssemblyName="$(IntermediateOutputPath)\$(TargetFileName)"
       ReferencedAssembliesFolder="$(PLibFolder)" >
       <Output TaskParameter="ReallyReferencedAssemblies" ItemName="InputAssemblies"/>
     </SanchozzONIMods.GetReallyReferencedAssembliesAtFolder>
@@ -111,7 +112,7 @@
     <ILRepack
         TargetPlatformVersion="v4"
         TargetKind="SameAsPrimaryAssembly"
-        OutputFile="$(MergedAssembly)"
+        OutputFile="$(TargetPath)"
         InputAssemblies="@(InputAssemblies)"
         LibraryPath="$(GameFolder)"
         Internalize="true"
@@ -156,9 +157,8 @@
       <YamlFiles Include="$(MSBuildProjectDirectory)\*.yaml" />
     </ItemGroup>
 
-    <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(InstallFolder)\$(TargetFileName)" Condition=" '$(UsesPLib)' != 'true' " />
-    <Copy SourceFiles="$(MergedAssembly)" DestinationFiles="$(InstallFolder)\$(TargetFileName)" Condition=" '$(UsesPLib)' == 'true' " />
-    
+    <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(InstallFolder)\$(TargetFileName)" />
+
     <Copy SourceFiles="@(AnimFiles)" DestinationFiles="@(AnimFiles->'$(InstallFolder)\anim\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(SpritesFiles)" DestinationFolder="$(InstallFolder)\sprites" />
     <Copy SourceFiles="@(TranslationFiles)" DestinationFolder="$(InstallFolder)\translations" />

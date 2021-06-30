@@ -36,7 +36,6 @@
     <Compile Include="HeartAttackMonitor.cs" />
     <Compile Include="HeartAttackSickness.cs" />
     <Compile Include="MelancholyMonitor.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Skeleton.cs" />
     <Compile Include="SkeletonConfig.cs" />
     <Compile Include="STRINGS.cs" />

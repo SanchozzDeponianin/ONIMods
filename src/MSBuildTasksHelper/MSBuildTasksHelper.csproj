@@ -22,7 +22,6 @@
   <ItemGroup>
     <Compile Include="GetReallyReferencedAssembliesAtFolder.cs" />
     <Compile Include="GetKleiAssemblyInfo.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
