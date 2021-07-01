@@ -40,9 +40,15 @@ namespace ButcherStation
 
         // хаки для того чтобы отобразить заголовок и начинку бокового окна в правильном порядке
         // на длц переопределяем GetSideScreenSortOrder
+        // ёбаный холодец. какого хрена крысиного этот патч сдесь крашится на линухе, но если его вынести в отдельный мелкий мод, то не крашится.
         [HarmonyPatch(typeof(SideScreenContent), nameof(SideScreenContent.GetSideScreenSortOrder))]
         internal static class SideScreenContent_GetSideScreenSortOrder
         {
+            private static bool Prepare()
+            {
+                return Environment.OSVersion.Platform.Equals(PlatformID.Win32NT);
+            }
+
             private static void Postfix(SideScreenContent __instance, ref int __result)
             {
                 switch (__instance)
