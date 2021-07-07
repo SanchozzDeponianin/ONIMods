@@ -1,0 +1,55 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. ReBuildableAETN.STRINGS.ITEMS.MASSIVE_HEATSINK_CORE.DESC
+msgctxt "ReBuildableAETN.STRINGS.ITEMS.MASSIVE_HEATSINK_CORE.DESC"
+msgid "A mysterious thingy, presumably made of refined <link=\"UNOBTANIUM\">Neutronium</link>. Very cold to the touch.\n\nIt is a necessary component for rebuilding the {MASSIVEHEATSINK}"
+msgstr "Таинственная штука, предположительно сделанная из чистого <link=\"UNOBTANIUM\">нейтрония</link>. Очень холодная на ощупь.\n\nЭто необходимый компонент, чтобы построить {MASSIVEHEATSINK}"
+
+#. ReBuildableAETN.STRINGS.ITEMS.MASSIVE_HEATSINK_CORE.NAME
+msgctxt "ReBuildableAETN.STRINGS.ITEMS.MASSIVE_HEATSINK_CORE.NAME"
+msgid "Neutronium Core"
+msgstr "Нейтрониевое Ядро"
+
+#. ReBuildableAETN.STRINGS.MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.NAME
+msgctxt "ReBuildableAETN.STRINGS.MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.NAME"
+msgid ""
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.TOOLTIP
+msgctxt "ReBuildableAETN.STRINGS.MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.TOOLTIP"
+msgid "Now this Natural Feature can be deconstructed to obtain {NEUTRONIUM_CORE}."
+msgstr "Теперь этот естественный объект можно деконструировать, чтобы получить {NEUTRONIUM_CORE}."
+
+#. ReBuildableAETN.STRINGS.OPTIONS.ADD_LOGIC_PORT.TITLE
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.ADD_LOGIC_PORT.TITLE"
+msgid "Add Logic Port to the {MASSIVEHEATSINK}"
+msgstr "Добавить логический порт в {MASSIVEHEATSINK}"
+
+#. ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.ENABLED.TITLE
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.ENABLED.TITLE"
+msgid "Enable"
+msgstr "Включено"
+
+#. ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.MIN_CYCLE.TITLE
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.MIN_CYCLE.TITLE"
+msgid "Cycles before the {NEUTRONIUM_CORE} will be available"
+msgstr "Циклы до того, как {NEUTRONIUM_CORE} будет доступно"
+
+#. ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.REQUIRE_DISCOVERED.TITLE
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.REQUIRE_DISCOVERED.TITLE"
+msgid "{NEUTRONIUM_CORE} must be discovered"
+msgstr "{NEUTRONIUM_CORE} должно быть обнаружено"
+
+#. ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.REQUIRE_DISCOVERED.TOOLTIP
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.REQUIRE_DISCOVERED.TOOLTIP"
+msgid "First you have to obtain the {NEUTRONIUM_CORE} in a different way"
+msgstr "Сначала вы должны получить {NEUTRONIUM_CORE} другим способом"
+
+#. ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.TITLE
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.TITLE"
+msgid "Receiving a {NEUTRONIUM_CORE} from a Care Packages"
+msgstr "Получить {NEUTRONIUM_CORE} из Посылки"
+

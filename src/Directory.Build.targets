@@ -27,7 +27,7 @@
       <AssemblyInfoFiles Include="$(ProjectDir)\Properties\AssemblyInfo.cs"/>
     </ItemGroup>
     <MakeDir Directories="%(AssemblyInfoFiles.RelativeDir)" Condition = "!Exists('%(AssemblyInfoFiles.RelativeDir)')" />
-    <Touch Files="%(AssemblyInfoFiles.RelativeDir)\.gitkeep" ForceTouch="true" />
+    <Touch Files="%(AssemblyInfoFiles.RelativeDir).gitkeep" AlwaysCreate="true" />
     <Attrib Files="%(AssemblyInfoFiles.FullPath)" Normal="true" />
     <AssemblyInfo
         CodeLanguage="CS"
