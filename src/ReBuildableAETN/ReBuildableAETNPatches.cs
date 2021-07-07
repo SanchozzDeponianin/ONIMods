@@ -116,7 +116,7 @@ namespace ReBuildableAETN
                         || DiscoveredResources.Instance.IsDiscovered(tag));
             }
             
-            private static void Postfix(CarePackageInfo[] ___carePackages)
+            private static void Postfix(ref CarePackageInfo[] ___carePackages)
             {
                 var core = new CarePackageInfo(ID, 1, () => Condition(ID));
                 ___carePackages = ___carePackages.AddItem(core).ToArray();
