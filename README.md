@@ -4,7 +4,7 @@ Last tested on game versions: "legacy" Vanilla **469300**, "mergedown" Vanilla a
 Steam Workshop: https://steamcommunity.com/profiles/76561198341359629/myworkshopfiles/?appid=457140
 
 # Local Downloads
-Steam users: Before trying a local download or reporting an issue, use [PeterHan's Mod Updater](https://steamcommunity.com/sharedfiles/filedetails/?id=2018291283)  \(recommended\) or [Ony's Mod Manager](https://steamcommunity.com/sharedfiles/filedetails/?id=1843965353) to see if the mod is out of date.
+Steam users: Before trying a local download or reporting an issue, use [PeterHan's Mod Updater](https://steamcommunity.com/sharedfiles/filedetails/?id=2018291283)  to see if the mod is out of date.
 
 Steam sometimes serves outdated mod versions, and Oxygen Not Included is also available on the Epic Games Store. Local copies of these mods are available in the [Releases](https://github.com/SanchozzDeponianin/ONIMods/releases) section, or you can just press `"Code" -> "Download ZIP"`. These mods should be installed into the `Local` folder, creating it if it does not already exist. Mods should remain in their own subfolder.
 
@@ -37,6 +37,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Farmer's Touch on more Plants](https://steamcommunity.com/sharedfiles/filedetails/?id=1933433002) | Allows Farmers can use Micronutrient Fertilizer and give the Farmer's Touch effect on Oxyfern, Wheezewort and Arbor Tree. | Yes | planned |
 | [No Manual Delivery](https://steamcommunity.com/sharedfiles/filedetails/?id=2047308624) | Adds a "Allow Manual Use" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings. | Yes | Yes |
 | [[Visual] Old Liquid Reservoir](https://steamcommunity.com/sharedfiles/filedetails/?id=1904543022) | Returns the old visual art of the Liquid Reservoir from older "early access" versions of the game. | Yes | Yes |
+| [Rebuildable AETN](https://steamcommunity.com/sharedfiles/filedetails/?id=2539984678) | Allows to disassemble and build AETN in another place | Yes | Yes |
 | [Relic Hunter](https://steamcommunity.com/sharedfiles/filedetails/?id=1927259233) | Unlocks the Relic Hunter trait that exists in vanilla but is not used. A duplicant with this trait almost always finds Artifacts when traveling to other planets. | Yes | No |
 | [Sandbox: Mutant Plants](https://steamcommunity.com/sharedfiles/filedetails/?id=2493249462) | Allows to quickly receive mutant Seeds and Plants in the Sandbox mode | No | Yes |
 | [Tweaked Biological Cargo Bay](https://steamcommunity.com/sharedfiles/filedetails/?id=1891479671) | Allows Duplicants independently transport animals directly from the Biological Cargo Bay to the Critter Drop-Off, without performing any unnecessary intermediate actions. | Yes | No |
