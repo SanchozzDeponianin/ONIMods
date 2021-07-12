@@ -68,6 +68,8 @@ namespace ReBuildableAETN
                 deconstructable.requiredSkillPerk = Db.Get().SkillPerks.CanDemolish.Id;
                 deconstructable.allowDeconstruction = false;
                 go.AddOrGet<MassiveHeatSinkRebuildable>();
+                if (ReBuildableAETNOptions.Instance.AddLogicPort)
+                    go.AddOrGet<LogicOperationalController>();
             }
         }
 
