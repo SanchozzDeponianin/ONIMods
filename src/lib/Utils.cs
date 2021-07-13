@@ -206,7 +206,18 @@ namespace SanchozzONIMods.Lib
             }
             // дополнительно создаем ключи. обычно и без этого работает, но не всегда.
             // нужно для опций.
-            LocString.CreateLocStringKeys(locstring_tree_root, locstring_tree_root.Namespace + ".");
+            //LocString.CreateLocStringKeys(locstring_tree_root, locstring_tree_root.Namespace + ".");
+
+            // дополнительно создаем ключи специально для опций.
+            // ключи должны получиться в формате 
+            // "STRINGS.{Namespace}.OPTIONS.{Name}.XXX"
+            // где ХХХ = NAME TOOLTIP или CATEGORY соотвественно
+            // todo: теперь надо все моды причесать в соответсвии
+            var locstring_tree_options = locstring_tree_root.GetNestedType("OPTIONS");
+            if (locstring_tree_options != null)
+            {
+                LocString.CreateLocStringKeys(locstring_tree_options, $"STRINGS.{locstring_tree_options.Namespace.ToUpperInvariant()}.");
+            }
         }
 
         // замена текста в загруженной локализации
