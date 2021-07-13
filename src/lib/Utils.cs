@@ -79,7 +79,6 @@ namespace SanchozzONIMods.Lib
                 Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{category}' category in the building menu.");
                 return;
             }
-            //var planOrderList = Traverse.Create(BUILDINGS.PLANORDER[index])?.Field("data")?.GetValue<List<string>>();
             var planOrderList = BUILDINGS.PLANORDER[index].data;
             if (planOrderList == null)
             {
@@ -94,21 +93,6 @@ namespace SanchozzONIMods.Lib
         }
 
         // добавляем постройки в технологии
-        // старая ванилька
-        /* 
-        public static void AddBuildingToTechnology(string tech, string buildingId)
-        {
-            if (Database.Techs.TECH_GROUPING.ContainsKey(tech))
-            {
-                List<string> techList = new List<string>(Database.Techs.TECH_GROUPING[tech]) { buildingId };
-                Database.Techs.TECH_GROUPING[tech] = techList.ToArray();
-            }
-            else
-            {
-                Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{tech}' tech in TECH_GROUPING.");
-            }
-        }
-        */
         // новая ванилька и длц
         public static void AddBuildingToTechnology(string tech, params string[] buildingIds)
         {
@@ -123,47 +107,13 @@ namespace SanchozzONIMods.Lib
             }
         }
 
-        // "а теперь тушим оба окурка одновременно" (с)
-        /*
-        public static void AddBuildingToTechnology(string tech, string buildingId)
-        {
-            var tech_grouping = Traverse.Create(typeof(Techs))?.Field("TECH_GROUPING")?.GetValue<Dictionary<string, string[]>>();
-            if (tech_grouping != null)
-            {
-                if (tech_grouping.ContainsKey(tech))
-                {
-                    List<string> techList = new List<string>(tech_grouping[tech]) { buildingId };
-                    tech_grouping[tech] = techList.ToArray();
-                }
-                else
-                {
-                    Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{tech}' tech in TECH_GROUPING.");
-                }
-            }
-            else
-            {
-                var targetTech = Db.Get().Techs.TryGet(tech);
-                if (targetTech != null)
-                {
-                    //targetTech.unlockedItemIDs.Add(buildingId);
-                    // todo: можно упростить через AddUnlockedItemIDs
-                    Traverse.Create(targetTech)?.Field("unlockedItemIDs")?.GetValue<List<string>>()?.Add(buildingId);
-                }
-                else
-                {
-                    Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{tech}' tech.");
-                }
-            }
-        }
-        */
-
         // загружаем строки для локализации
-        public static void InitLocalization(Type locstring_tree_root, string filename_prefix = "", bool writeStringsTemplate = false)
+        public static void InitLocalization(Type locstring_tree_root, bool writeStringsTemplate = false)
         {
             // регистрируемся
             Localization.RegisterForTranslation(locstring_tree_root);
 
-            if (writeStringsTemplate)  // для записи шаблона !!!!
+            if (writeStringsTemplate)  // для записи шаблона
             {
                 try
                 {
@@ -176,15 +126,15 @@ namespace SanchozzONIMods.Lib
                 }
             }
 
+            // перезагружаем строки
             Localization.Locale locale = Localization.GetLocale();
             if (locale != null)
             {
                 try
                 {
-                    string langFile = Path.Combine(modInfo.langDirectory, filename_prefix + locale.Code + ".po");
+                    string langFile = Path.Combine(modInfo.langDirectory, locale.Code + ".po");
                     if (File.Exists(langFile))
                     {
-                        // перезагружаем строки
 #if DEBUG
                         Debug.Log($"{modInfo.assemblyName} try load LangFile: {langFile}");
 #endif
@@ -280,7 +230,7 @@ namespace SanchozzONIMods.Lib
                 {
                     var locString = (LocString)fieldInfo.GetValue(null);
                     string text = locString.text;
-                    foreach(var replacement in replacementDictionary)
+                    foreach (var replacement in replacementDictionary)
                     {
                         text = text.Replace(replacement.Key, replacement.Value);
                     }
