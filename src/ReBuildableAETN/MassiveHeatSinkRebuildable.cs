@@ -98,6 +98,7 @@ namespace ReBuildableAETN
             {
                 var result = GameUtil.KInstantiate(prefab, Grid.CellToPosCBC(cell, Grid.SceneLayer.Ore), Grid.SceneLayer.Ore);
                 result.SetActive(true);
+                result.GetComponent<SpaceArtifact>().RemoveCharm();
                 var initial_velocity = new Vector2(UnityEngine.Random.Range(-1f, 1f) * INITIAL_VELOCITY_RANGE.x, INITIAL_VELOCITY_RANGE.y);
                 if (GameComps.Fallers.Has(result))
                     GameComps.Fallers.Remove(result);
