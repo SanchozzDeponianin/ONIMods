@@ -9,6 +9,8 @@ namespace ReBuildableAETN
     {
         private const string MASSIVEHEATSINK = "{MASSIVEHEATSINK}";
         private const string NEUTRONIUM_CORE = "{NEUTRONIUM_CORE}";
+        private const string ICYDWARF = "{ICYDWARF}";
+        private const string ICEGIANT = "{ICEGIANT}";
 
         public class ITEMS
         {
@@ -37,32 +39,64 @@ namespace ReBuildableAETN
             }
         }
 
+        public class UI
+        {
+            public class SPACEARTIFACTS
+            {
+                public class ARTIFACTTIERS
+                {
+                    public static LocString TIER_CORE = "Something Very Cold";
+                }
+            }
+        }
+
         public class OPTIONS
         {
-            public class ADD_LOGIC_PORT
+            public class ADDLOGICPORT
             {
-                public static LocString TITLE = $"Add Logic Port to the {MASSIVEHEATSINK}";
+                public static LocString NAME = $"Add Logic Port to the {MASSIVEHEATSINK}";
+                //public static LocString TOOLTIP = "";
+                //public static LocString CATEGORY = "";
             }
 
-            public class CARE_PACKAGES
+            public class CAREPACKAGE
             {
-                public class ENABLED
-                {
-                    public static LocString TITLE = "Enable";
-                }
+                public static LocString CATEGORY = $"Receiving a {NEUTRONIUM_CORE} from a Care Packages";
+            }
 
-                public class MIN_CYCLE
-                {
-                    public static LocString TITLE = $"Cycles before the {NEUTRONIUM_CORE} will be available";
-                }
+            public class ENABLED
+            {
+                public static LocString NAME = "Enable";
+                //public static LocString TOOLTIP = "";
+            }
 
-                public class REQUIRE_DISCOVERED
-                {
-                    public static LocString TITLE = $"{NEUTRONIUM_CORE} must be discovered";
-                    public static LocString TOOLTIP = $"First you have to obtain the {NEUTRONIUM_CORE} in a different way";
-                }
+            public class MINCYCLE
+            {
+                public static LocString NAME = $"Cycles before the {NEUTRONIUM_CORE} will be available";
+                //public static LocString TOOLTIP = "";
+            }
 
-                public static LocString TITLE = $"Receiving a {NEUTRONIUM_CORE} from a Care Packages";
+            public class REQUIREDISCOVERED
+            {
+                public static LocString NAME = $"{NEUTRONIUM_CORE} must be discovered";
+                public static LocString TOOLTIP = $"First you have to obtain the {NEUTRONIUM_CORE} in a different way";
+            }
+
+            public class VANILLAPLANET
+            {
+                public static LocString CATEGORY = $"Receiving a {NEUTRONIUM_CORE} from a Space Planetoids";
+            }
+
+            public class ICYDWARFCHANCE
+            {
+                public static LocString NAME = $"Chance of receiving from the {ICYDWARF}";
+                //public static LocString TOOLTIP = "";
+            }
+
+            public class ICEGIANTCHANCE
+            {
+                public static LocString NAME = $"Chance of receiving from the {ICEGIANT}";
+                //public static LocString TOOLTIP = "";
             }
         }
 
@@ -72,7 +106,9 @@ namespace ReBuildableAETN
             var dictionary = new Dictionary<string, string>()
             {
                 { MASSIVEHEATSINK, PREFABS.MASSIVEHEATSINK.NAME },
-                { NEUTRONIUM_CORE, FormatAsKeyWord(ITEMS.MASSIVE_HEATSINK_CORE.NAME) }
+                { NEUTRONIUM_CORE, FormatAsKeyWord(ITEMS.MASSIVE_HEATSINK_CORE.NAME) },
+                { ICYDWARF, FormatAsKeyWord(SPACEDESTINATIONS.DWARFPLANETS.ICYDWARF.NAME) },
+                { ICEGIANT, FormatAsKeyWord(SPACEDESTINATIONS.GIANTS.ICEGIANT.NAME) }
             };
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
             LocString.CreateLocStringKeys(typeof(MISC));

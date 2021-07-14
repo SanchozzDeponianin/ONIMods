@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Database;
 using TUNING;
 using UnityEngine;
 using HarmonyLib;
@@ -22,7 +23,10 @@ namespace ReBuildableAETN
             base.OnLoad(harmony);
             PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(GetType());
-            new POptions().RegisterOptions(this, typeof(ReBuildableAETNOptions));
+            if (DlcManager.IsExpansion1Active())
+                new POptions().RegisterOptions(this, typeof(ReBuildableAETNSpaceOutOptions));
+            else
+                new POptions().RegisterOptions(this, typeof(ReBuildableAETNVanillaOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -37,10 +41,35 @@ namespace ReBuildableAETN
             Utils.AddBuildingToPlanScreen("Utilities", MassiveHeatSinkConfig.ID);
             Utils.AddBuildingToTechnology("Catalytics", MassiveHeatSinkConfig.ID);
             GameTags.MaterialBuildingElements.Add(ID);
+            // добавляем ядра -выдры- в космос
+            var chances = ReBuildableAETNOptions.Instance.VanillaPlanet;
+            if (DlcManager.IsPureVanilla() && chances.Enabled)
+            {
+                var sdp = Db.Get().SpaceDestinationTypes;
+                CloneArtifactDropRateTable(sdp.IcyDwarf, TIER_CORE, chances.IcyDwarfChance / 100f);
+                CloneArtifactDropRateTable(sdp.IceGiant, TIER_CORE, chances.IceGiantChance / 100f);
+            }
+        }
+
+        private static void CloneArtifactDropRateTable(SpaceDestinationType destination, ArtifactTier tier, float weight_percent)
+        {
+            var result = new ArtifactDropRate();
+            float weight = destination.artifactDropTable.totalWeight * weight_percent;
+            foreach (var rate in destination.artifactDropTable.rates)
+            {
+                if (rate.first == DECOR.SPACEARTIFACT.TIER_NONE)
+                    result.AddItem(rate.first, rate.second - weight);
+                else
+                    result.AddItem(rate.first, rate.second);
+            }
+            result.AddItem(tier, weight);
+            destination.artifactDropTable = result;
         }
 
         // todo: если возможно - добавлять его в теху и мюню только после изучения первого дикого аетна
         // todo: дополнительные способы получения ядер
+        // todo: проверить и сделать - на длц, чтобы нельзя было строить из замурованной версии.
+        // todo: проверить на длц - все места которые теоритически могут вызвать краш после отключения мода. найти обходные пути
 
         [HarmonyPatch(typeof(MassiveHeatSinkConfig), nameof(MassiveHeatSinkConfig.CreateBuildingDef))]
         internal static class MassiveHeatSinkConfig_CreateBuildingDef
@@ -114,10 +143,10 @@ namespace ReBuildableAETN
             private static bool Condition(Tag tag)
             {
                 return (GameClock.Instance.GetCycle() >= ReBuildableAETNOptions.Instance.CarePackage.MinCycle)
-                    && (!ReBuildableAETNOptions.Instance.CarePackage.RequireDiscovered 
+                    && (!ReBuildableAETNOptions.Instance.CarePackage.RequireDiscovered
                         || DiscoveredResources.Instance.IsDiscovered(tag));
             }
-            
+
             private static void Postfix(ref CarePackageInfo[] ___carePackages)
             {
                 var core = new CarePackageInfo(ID, 1, () => Condition(ID));

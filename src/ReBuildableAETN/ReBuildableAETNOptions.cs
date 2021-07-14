@@ -13,25 +13,57 @@ namespace ReBuildableAETN
         internal class CarePackages
         {
             [JsonProperty]
-            [Option("ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.ENABLED.TITLE")]
+            [Option]
             public bool Enabled { get; set; } = true;
 
             [JsonProperty]
-            [Option("ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.MIN_CYCLE.TITLE")]
+            [Option]
             [Limit(0, 500)]
             public int MinCycle { get; set; } = 100;
 
             [JsonProperty]
-            [Option("ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.REQUIRE_DISCOVERED.TITLE", "ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.REQUIRE_DISCOVERED.TOOLTIP")]
+            [Option]
             public bool RequireDiscovered { get; set; } = true;
         }
 
+        [JsonObject(MemberSerialization.OptIn)]
+        internal class VanillaPlanets
+        {
+            [JsonProperty]
+            [Option]
+            public bool Enabled { get; set; } = true;
+
+            [JsonProperty]
+            [Option]
+            [Limit(0, 40)]
+            public int IcyDwarfChance { get; set; } = 10;
+
+            [JsonProperty]
+            [Option]
+            [Limit(0, 40)]
+            public int IceGiantChance { get; set; } = 30;
+        }
+
         [JsonProperty]
-        [Option("ReBuildableAETN.STRINGS.OPTIONS.ADD_LOGIC_PORT.TITLE")]
+        [Option]
         public bool AddLogicPort { get; set; } = true;
 
         [JsonProperty]
-        [Option("xxxxx", null, "ReBuildableAETN.STRINGS.OPTIONS.CARE_PACKAGES.TITLE")]
+        [Option]
         public CarePackages CarePackage { get; set; } = new CarePackages();
+
+        [JsonProperty]
+        public virtual VanillaPlanets VanillaPlanet { get; set; } = new VanillaPlanets();
+    }
+
+    internal class ReBuildableAETNVanillaOptions : ReBuildableAETNOptions
+    {
+        [Option]
+        public override VanillaPlanets VanillaPlanet { get => base.VanillaPlanet; set => base.VanillaPlanet = value; }
+    }
+
+    internal class ReBuildableAETNSpaceOutOptions : ReBuildableAETNOptions
+    {
+
     }
 }
