@@ -20,48 +20,71 @@ namespace SanchozzONIMods.Lib
 
         public static void Reload()
         {
-            // todo: нужно добавить обработку новых возможностей PLib.Options - дочерние типы
             instance = POptions.ReadSettings<Options>() ?? new Options();
-            foreach (var property in typeof(Options).GetProperties())
+            ClampAndRound(instance);
+        }
+
+        private static void ClampAndRound(object options)
+        {
+            if (options != null)
             {
-                // клампинг в соответствии с лимитами
-                foreach (var attribute in property.GetCustomAttributes(typeof(LimitAttribute), false))
+                var optionsType = options.GetType();
+                if (optionsType.IsClass)
                 {
-                    if (attribute != null && attribute is LimitAttribute limit)
+                    foreach (var property in optionsType.GetProperties())
                     {
-                        switch (property.GetValue(instance, null))
+                        // клампинг в соответствии с лимитами
+                        foreach (var attribute in property.GetCustomAttributes(typeof(LimitAttribute), false))
                         {
-                            case int value:
-                                property.SetValue(instance, limit.ClampToRange(value), null);
-                                break;
-                            case float value:
-                                property.SetValue(instance, limit.ClampToRange(value), null);
-                                break;
-                            case double value:
-                                property.SetValue(instance, (double)limit.ClampToRange((float)value), null);
-                                break;
+                            if (attribute != null && attribute is LimitAttribute limit)
+                            {
+                                switch (property.GetValue(options, null))
+                                {
+                                    case int value:
+                                        property.SetValue(options, limit.ClampToRange(value), null);
+                                        break;
+                                    case float value:
+                                        property.SetValue(options, limit.ClampToRange(value), null);
+                                        break;
+                                    case double value:
+                                        property.SetValue(options, (double)limit.ClampToRange((float)value), null);
+                                        break;
+                                }
+                            }
                         }
-                    }
-                }
-                // округление в соответствии с форматами
-                foreach (var attribute in property.GetCustomAttributes(typeof(OptionAttribute), false))
-                {
-                    if (attribute != null && attribute is OptionAttribute option && !option.Format.IsNullOrWhiteSpace())
-                    {
-                        switch (property.GetValue(instance, null))
+                        // округление в соответствии с форматами
+                        foreach (var attribute in property.GetCustomAttributes(typeof(OptionAttribute), false))
                         {
-                            case int value:
-                                if (int.TryParse(value.ToString(option.Format), out value))
-                                    property.SetValue(instance, value, null);
-                                break;
-                            case float value:
-                                if (float.TryParse(value.ToString(option.Format), out value))
-                                    property.SetValue(instance, value, null);
-                                break;
-                            case double value:
-                                if (double.TryParse(value.ToString(option.Format), out value))
-                                    property.SetValue(instance, value, null);
-                                break;
+                            if (attribute != null && attribute is OptionAttribute oa && !oa.Format.IsNullOrWhiteSpace())
+                            {
+                                switch (property.GetValue(options, null))
+                                {
+                                    case int value:
+                                        if (int.TryParse(value.ToString(oa.Format), out value))
+                                            property.SetValue(options, value, null);
+                                        break;
+                                    case float value:
+                                        if (float.TryParse(value.ToString(oa.Format), out value))
+                                            property.SetValue(options, value, null);
+                                        break;
+                                    case double value:
+                                        if (double.TryParse(value.ToString(oa.Format), out value))
+                                            property.SetValue(options, value, null);
+                                        break;
+                                }
+                            }
+                        }
+                        // обработка дочерних типов
+                        {
+                            var value = property.GetValue(options, null);
+                            if (value != null)
+                            {
+                                var valueType = value.GetType();
+                                if (valueType.IsClass && valueType.IsNested && valueType.DeclaringType == optionsType)
+                                {
+                                    ClampAndRound(value);
+                                }
+                            }
                         }
                     }
                 }
