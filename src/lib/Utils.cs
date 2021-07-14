@@ -166,7 +166,38 @@ namespace SanchozzONIMods.Lib
             var locstring_tree_options = locstring_tree_root.GetNestedType("OPTIONS");
             if (locstring_tree_options != null)
             {
-                LocString.CreateLocStringKeys(locstring_tree_options, $"STRINGS.{locstring_tree_options.Namespace.ToUpperInvariant()}.");
+                string path = $"STRINGS.{locstring_tree_options.Namespace.ToUpperInvariant()}.";
+                LocString.CreateLocStringKeys(locstring_tree_options, path);
+                CreateEmptyLocStringKeys(locstring_tree_options, path);
+            }
+        }
+
+        // создание "фейковых" пустых ключей для опций, если настоящий не существует
+        private static readonly string[] OptionsKeyNames = new string[] { "NAME", "TOOLTIP", "CATEGORY" };
+        private static void CreateEmptyLocStringKeys(Type type, string parent_path = "STRINGS.", int depth = 0)
+        {
+            string path = (parent_path ?? string.Empty) + type.Name + ".";
+            if (depth > 0)
+            {
+                int x = 0;
+                foreach (string name in OptionsKeyNames)
+                {
+                    string key = path + name;
+                    if (!Strings.TryGet(key, out _))
+                    {
+                        Strings.Add(key, string.Empty);
+                        x++;
+                    }
+                }
+                if (x >= OptionsKeyNames.Length)
+                {
+                    Debug.LogWarning($"{modInfo.assemblyName}: No LocStrings ({string.Join(", ", OptionsKeyNames)}) provided for Options '{type.FullName}'");
+                }
+            }
+            var nestedTypes = type.GetNestedTypes(LocString.data_member_fields);
+            foreach (var nestedType in nestedTypes)
+            {
+                CreateEmptyLocStringKeys(nestedType, path, depth + 1);
             }
         }
 
