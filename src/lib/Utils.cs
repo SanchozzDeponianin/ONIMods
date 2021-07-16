@@ -127,12 +127,14 @@ namespace SanchozzONIMods.Lib
             }
 
             // перезагружаем строки
-            Localization.Locale locale = Localization.GetLocale();
-            if (locale != null)
+            var localeCode = Localization.GetLocale()?.Code;
+            if (string.IsNullOrEmpty(localeCode))
+                localeCode = Localization.GetCurrentLanguageCode();
+            if (!string.IsNullOrEmpty(localeCode))
             {
                 try
                 {
-                    string langFile = Path.Combine(modInfo.langDirectory, locale.Code + ".po");
+                    string langFile = Path.Combine(modInfo.langDirectory, localeCode + ".po");
                     if (File.Exists(langFile))
                     {
 #if DEBUG
