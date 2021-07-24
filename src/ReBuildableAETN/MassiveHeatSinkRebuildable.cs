@@ -3,6 +3,7 @@ using System.Linq;
 using KSerialization;
 using TUNING;
 using UnityEngine;
+using HarmonyLib;
 using static STRINGS.UI.UISIDESCREENS.STUDYABLE_SIDE_SCREEN;
 
 namespace ReBuildableAETN
@@ -89,20 +90,18 @@ namespace ReBuildableAETN
         private static readonly Vector2 INITIAL_VELOCITY_RANGE = new Vector2(0.5f, 4f);
         private void OnDeconstructComplete(object data)
         {
-            var prefab = Assets.GetPrefab(MassiveHeatSinkCoreConfig.tag);
             var extents = building.GetExtents();
             var cells = new int[] {
-                Grid.XYToCell(extents.x, extents.y),
-                Grid.XYToCell(extents.x + extents.width - 1, extents.y) };
+                Grid.XYToCell(extents.x, extents.y + 1),
+                Grid.XYToCell(extents.x + extents.width - 1, extents.y + 1) };
             foreach (var cell in cells)
             {
-                var result = GameUtil.KInstantiate(prefab, Grid.CellToPosCBC(cell, Grid.SceneLayer.Ore), Grid.SceneLayer.Ore);
-                result.SetActive(true);
-                result.GetComponent<SpaceArtifact>().RemoveCharm();
+                var core = MassiveHeatSinkCoreSpawner.SpawnCore(cell);
+                Traverse.Create(core.GetComponent<SpaceArtifact>()).Field<bool>("loadCharmed").Value = false;
                 var initial_velocity = new Vector2(UnityEngine.Random.Range(-1f, 1f) * INITIAL_VELOCITY_RANGE.x, INITIAL_VELOCITY_RANGE.y);
-                if (GameComps.Fallers.Has(result))
-                    GameComps.Fallers.Remove(result);
-                GameComps.Fallers.Add(result, initial_velocity);
+                if (GameComps.Fallers.Has(core))
+                    GameComps.Fallers.Remove(core);
+                GameComps.Fallers.Add(core, initial_velocity);
             }
         }
 

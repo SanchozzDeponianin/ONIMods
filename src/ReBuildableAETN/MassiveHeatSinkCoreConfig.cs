@@ -34,7 +34,7 @@ namespace ReBuildableAETN
                 additionalTags: new List<Tag> {
                     GameTags.IndustrialIngredient,
                     GameTags.PedestalDisplayable,
-                    GameTags.Artifact
+                    GameTags.Artifact,
                 });
 
             // это частично спокировано из ArtifactConfig.CreateArtifact, надо поглядывать если что то поменяют
@@ -42,7 +42,7 @@ namespace ReBuildableAETN
             occupyArea.OccupiedCellsOffsets = EntityTemplates.GenerateOffsets(1, 1);
             var decorProvider = go.AddOrGet<DecorProvider>();
             decorProvider.SetValues(TIER_CORE.decorValues);
-            decorProvider.overrideName = go.name;
+            decorProvider.overrideName = STRINGS.ITEMS.MASSIVE_HEATSINK_CORE.NAME;
             var spaceArtifact = go.AddOrGet<SpaceArtifact>();
             spaceArtifact.SetUIAnim("ui_crystal");
             spaceArtifact.SetArtifactTier(TIER_CORE);
@@ -54,8 +54,8 @@ namespace ReBuildableAETN
             pe.Mass = MASS;
             pe.Temperature = TEMPERATURE;
 
-            // todo: временно не добавляем в список артифактов на длц
-            if (!DlcManager.IsExpansion1Active())
+            // добавляем в список артифактов только в ваниле, воизбежание непредвиденных последствий на длц
+            if (DlcManager.IsPureVanilla())
                 ArtifactConfig.artifactItems.Add(go.name);
             return go;
         }

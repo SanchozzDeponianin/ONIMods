@@ -27,7 +27,21 @@ namespace ReBuildableAETN
         }
 
         [JsonObject(MemberSerialization.OptIn)]
-        internal class VanillaPlanets
+        internal class GravitasPOIChances
+        {
+            [JsonProperty]
+            [Option]
+            [Limit(0, 100)]
+            public int RarePOIChance { get; set; } = 100;
+
+            [JsonProperty]
+            [Option]
+            [Limit(0, 40)]
+            public int LockerPOIChance { get; set; } = 10;
+        }
+
+        [JsonObject(MemberSerialization.OptIn)]
+        internal class VanillaPlanetChances
         {
             [JsonProperty]
             [Option]
@@ -36,12 +50,25 @@ namespace ReBuildableAETN
             [JsonProperty]
             [Option]
             [Limit(0, 40)]
-            public int IcyDwarfChance { get; set; } = 10;
+            public int IcyDwarfChance { get; set; } = 15;
 
             [JsonProperty]
             [Option]
             [Limit(0, 40)]
-            public int IceGiantChance { get; set; } = 30;
+            public int IceGiantChance { get; set; } = 35;
+        }
+
+        [JsonObject(MemberSerialization.OptIn)]
+        internal class SpaceOutPOIChances
+        {
+            [JsonProperty]
+            [Option]
+            public bool Enabled { get; set; } = true;
+
+            [JsonProperty]
+            [Option]
+            [Limit(0, 30)]
+            public int SpacePOIChance { get; set; } = 15;
         }
 
         [JsonProperty]
@@ -53,17 +80,25 @@ namespace ReBuildableAETN
         public CarePackages CarePackage { get; set; } = new CarePackages();
 
         [JsonProperty]
-        public virtual VanillaPlanets VanillaPlanet { get; set; } = new VanillaPlanets();
+        [Option]
+        public GravitasPOIChances GravitasPOIChance { get; set; } = new GravitasPOIChances();
+
+        [JsonProperty]
+        public virtual VanillaPlanetChances VanillaPlanetChance { get; set; } = new VanillaPlanetChances();
+
+        [JsonProperty]
+        public virtual SpaceOutPOIChances SpaceOutPOIChance { get; set; } = new SpaceOutPOIChances();
     }
 
     internal class ReBuildableAETNVanillaOptions : ReBuildableAETNOptions
     {
         [Option]
-        public override VanillaPlanets VanillaPlanet { get => base.VanillaPlanet; set => base.VanillaPlanet = value; }
+        public override VanillaPlanetChances VanillaPlanetChance { get => base.VanillaPlanetChance; set => base.VanillaPlanetChance = value; }
     }
 
     internal class ReBuildableAETNSpaceOutOptions : ReBuildableAETNOptions
     {
-
+        [Option]
+        public override SpaceOutPOIChances SpaceOutPOIChance { get => base.SpaceOutPOIChance; set => base.SpaceOutPOIChance = value; }
     }
 }

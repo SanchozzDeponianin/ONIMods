@@ -11,6 +11,10 @@ namespace ReBuildableAETN
         private const string NEUTRONIUM_CORE = "{NEUTRONIUM_CORE}";
         private const string ICYDWARF = "{ICYDWARF}";
         private const string ICEGIANT = "{ICEGIANT}";
+        private const string DIRECTOR_DESK = "{DIRECTOR_DESK}";
+        private const string SATELLITE3 = "{SATELLITE3}";
+        private const string SETLOCKER = "{SETLOCKER}";
+        private const string VENDINGMACHINE = "{VENDINGMACHINE}";
 
         public class ITEMS
         {
@@ -55,25 +59,21 @@ namespace ReBuildableAETN
             public class ADDLOGICPORT
             {
                 public static LocString NAME = $"Add Logic Port to the {MASSIVEHEATSINK}";
-                //public static LocString TOOLTIP = "";
-                //public static LocString CATEGORY = "";
             }
 
             public class CAREPACKAGE
             {
-                public static LocString CATEGORY = $"Receiving a {NEUTRONIUM_CORE} from a Care Packages";
+                public static LocString CATEGORY = $"Obtaining a {NEUTRONIUM_CORE} from a Care Packages";
             }
 
             public class ENABLED
             {
                 public static LocString NAME = "Enable";
-                //public static LocString TOOLTIP = "";
             }
 
             public class MINCYCLE
             {
                 public static LocString NAME = $"Cycles before the {NEUTRONIUM_CORE} will be available";
-                //public static LocString TOOLTIP = "";
             }
 
             public class REQUIREDISCOVERED
@@ -82,21 +82,45 @@ namespace ReBuildableAETN
                 public static LocString TOOLTIP = $"First you have to obtain the {NEUTRONIUM_CORE} in a different way";
             }
 
-            public class VANILLAPLANET
+            public class GRAVITASPOICHANCE
             {
-                public static LocString CATEGORY = $"Receiving a {NEUTRONIUM_CORE} from a Space Planetoids";
+                public static LocString CATEGORY = $"Obtaining a {NEUTRONIUM_CORE} when rummage some objects";
+            }
+
+            public class RAREPOICHANCE
+            {
+                public static LocString NAME = $"A chance to obtain from the {DIRECTOR_DESK} and the {SATELLITE3}";
+            }
+
+            public class LOCKERPOICHANCE
+            {
+                public static LocString NAME = $"A chance to obtain from the {SETLOCKER} and the {VENDINGMACHINE}";
+            }
+
+            public class VANILLAPLANETCHANCE
+            {
+                public static LocString CATEGORY = $"Obtaining a {NEUTRONIUM_CORE} from a Space Planetoids";
             }
 
             public class ICYDWARFCHANCE
             {
-                public static LocString NAME = $"Chance of receiving from the {ICYDWARF}";
-                //public static LocString TOOLTIP = "";
+                public static LocString NAME = $"A chance to obtain from the {ICYDWARF}";
             }
 
             public class ICEGIANTCHANCE
             {
-                public static LocString NAME = $"Chance of receiving from the {ICEGIANT}";
-                //public static LocString TOOLTIP = "";
+                public static LocString NAME = $"A chance to obtain from the {ICEGIANT}";
+            }
+
+            public class SPACEOUTPOICHANCE
+            {
+                public static LocString CATEGORY = $"Obtaining a {NEUTRONIUM_CORE} from a Space POIs";
+            }
+
+            public class SPACEPOICHANCE
+            {
+                public static LocString NAME = "A chance to obtain from a Space POIs";
+                public static LocString TOOLTIP = "The new chance value takes effect on further visits";
             }
         }
 
@@ -108,7 +132,11 @@ namespace ReBuildableAETN
                 { MASSIVEHEATSINK, PREFABS.MASSIVEHEATSINK.NAME },
                 { NEUTRONIUM_CORE, FormatAsKeyWord(ITEMS.MASSIVE_HEATSINK_CORE.NAME) },
                 { ICYDWARF, FormatAsKeyWord(SPACEDESTINATIONS.DWARFPLANETS.ICYDWARF.NAME) },
-                { ICEGIANT, FormatAsKeyWord(SPACEDESTINATIONS.GIANTS.ICEGIANT.NAME) }
+                { ICEGIANT, FormatAsKeyWord(SPACEDESTINATIONS.GIANTS.ICEGIANT.NAME) },
+                { DIRECTOR_DESK, FormatAsKeyWord(PREFABS.PROPFACILITYDESK.NAME) },
+                { SATELLITE3, FormatAsKeyWord(PREFABS.PROPSURFACESATELLITE3.NAME) },
+                { SETLOCKER, FormatAsKeyWord(PREFABS.SETLOCKER.NAME) },
+                { VENDINGMACHINE, FormatAsKeyWord(PREFABS.VENDINGMACHINE.NAME) }
             };
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
             LocString.CreateLocStringKeys(typeof(MISC));

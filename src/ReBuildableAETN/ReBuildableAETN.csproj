@@ -26,6 +26,7 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="MassiveHeatSinkCoreSpawner.cs" />
     <Compile Include="ReBuildableAETNOptions.cs" />
     <Compile Include="MassiveHeatSinkRebuildable.cs" />
     <Compile Include="MassiveHeatSinkCoreConfig.cs" />
