@@ -185,11 +185,20 @@ namespace SanchozzONIMods.Lib
                 foreach (string name in OptionsKeyNames)
                 {
                     string key = path + name;
-                    if (!Strings.TryGet(key, out _))
+                    if (!Strings.TryGet(key, out var entry))
                     {
                         Strings.Add(key, string.Empty);
+#if DEBUG
+                        Debug.Log($"{key} = \"{string.Empty}\"");
+#endif
                         x++;
                     }
+#if DEBUG
+                    else
+                    {
+                        Debug.Log($"{key} = \"{entry.String}\"");
+                    }
+#endif
                 }
                 if (x >= OptionsKeyNames.Length)
                 {

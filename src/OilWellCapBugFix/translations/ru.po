@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. OilWellCapBugFix.STRINGS.OPTIONS.ALLOWDEPRESSURIZEWHENOUTOFWATER.NAME
+msgctxt "OilWellCapBugFix.STRINGS.OPTIONS.ALLOWDEPRESSURIZEWHENOUTOFWATER.NAME"
+msgid "Allow depressurization when {OILWELLCAP} is out of Water"
+msgstr "Разрешить сброс давления, если {OILWELLCAP} без воды"
+
+#. OilWellCapBugFix.STRINGS.OPTIONS.ALLOWDEPRESSURIZEWHENOUTOFWATER.TOOLTIP
+msgctxt "OilWellCapBugFix.STRINGS.OPTIONS.ALLOWDEPRESSURIZEWHENOUTOFWATER.TOOLTIP"
+msgid "If enabled, Duplicants can depressurize {OILWELLCAP} if it is out of Water\nBut {OILWELLCAP} will never show \"{EMPTYPIPE}\" status"
+msgstr "Если включено, дупликанты могут сбросить давление, если {OILWELLCAP} без воды\nНо {OILWELLCAP} никогда не будет показывать статус \"{EMPTYPIPE}\""
+
