@@ -10,7 +10,7 @@ namespace CarouselCentrifuge
     {
         public const string specificEffectName = "RideonCarousel";
         public const string trackingEffectName = "RecentlyRideonCarousel";
-      
+
         private static StatusItem vomitStatusItem;
         private static float vomitChancePercent = 5f;
         private static readonly int basePriority = RELAXATION.PRIORITY.TIER5;
@@ -44,12 +44,12 @@ namespace CarouselCentrifuge
             workLayer = Grid.SceneLayer.BuildingFront;
             showProgressBar = true;
             resetProgressOnStop = true;
-            synchronizeAnims = false;
+            synchronizeAnims = true;
             SetWorkTime(TUNING.BUILDINGS.WORK_TIME_SECONDS.MEDIUM_WORK_TIME);
             if (vomitStatusItem == null)
             {
                 vomitStatusItem = new StatusItem("CarouselVomiting", STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NAME, STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.TOOLTIP, string.Empty, StatusItem.IconType.Info, NotificationType.BadMinor, false, OverlayModes.None.ID);
-                
+
             }
             vomitChancePercent = CarouselCentrifugeOptions.Instance.DizzinessChancePercent;
         }
