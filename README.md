@@ -38,6 +38,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 |  **Name**  |  **Description**  |  **Vanilla**  |  **Spaced Out! DLC**  |
 | :--------: | :---------------: | :-----------: | :-------------------: |
 | [Artifacts in Care Packages](https://steamcommunity.com/sharedfiles/filedetails/?id=2455735197) | Allows to get Artifacts in Care Packages | Yes | Yes
+| [Eat every day](https://steamcommunity.com/sharedfiles/filedetails/?id=2573532147) | It forces duplicants to eat every day, even at the "no sweat" difficulty level, which guarantees a stable morale bonus. | Yes | Yes |
 | [Farmer's Touch on more Plants](https://steamcommunity.com/sharedfiles/filedetails/?id=1933433002) | Allows Farmers can use Micronutrient Fertilizer and give the Farmer's Touch effect on Oxyfern, Wheezewort and Arbor Tree. | Yes | planned |
 | [No Manual Delivery](https://steamcommunity.com/sharedfiles/filedetails/?id=2047308624) | Adds a "Allow Manual Use" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings. | Yes | Yes |
 | [Oil Well BugFix](https://steamcommunity.com/sharedfiles/filedetails/?id=2558650241) | Fixes a bug, when sometimes the Duplicants get stuck trying to depressurize the Oil Well if it is turned off by automation or out of water or does not work for another reason. | Yes | Yes |
