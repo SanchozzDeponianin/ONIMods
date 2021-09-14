@@ -48,23 +48,23 @@ msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.TOOL
 msgid "This Duplicant has unceremoniously hurled as the result of a Dizziness\n------------------\nDuplicant-related \"spills\" can be cleaned up using the <style=\"KKeyword\">Mop Tool</style> <b><color=#F44A4A>[M]</b></color>"
 msgstr ""
 
-#. CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCE.TITLE
-msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCE.TITLE"
+#. CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCEPERCENT.NAME
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCEPERCENT.NAME"
 msgid "Chance of <style=\"KKeyword\">Unforeseen consequences</style>"
 msgstr ""
 
-#. CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCE.TOOLTIP
-msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCE.TOOLTIP"
+#. CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCEPERCENT.TOOLTIP
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCEPERCENT.TOOLTIP"
 msgid "Set to <style=\"produced\">0</style> to disable <style=\"KKeyword\">Unforeseen consequences</style>"
 msgstr ""
 
-#. CarouselCentrifuge.STRINGS.OPTIONS.EFFECTDURATION.TITLE
-msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.EFFECTDURATION.TITLE"
+#. CarouselCentrifuge.STRINGS.OPTIONS.SPECIFICEFFECTDURATION.NAME
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.SPECIFICEFFECTDURATION.NAME"
 msgid "Duration of the <style=\"KKeyword\">Ride on a Carousel</style> effect"
 msgstr ""
 
-#. CarouselCentrifuge.STRINGS.OPTIONS.MORALEBONUS.TITLE
-msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.MORALEBONUS.TITLE"
+#. CarouselCentrifuge.STRINGS.OPTIONS.MORALEBONUS.NAME
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.MORALEBONUS.NAME"
 msgid "<style=\"KKeyword\">{Morale}</style> bonus"
 msgstr ""
 

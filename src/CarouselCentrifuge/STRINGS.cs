@@ -62,18 +62,18 @@ namespace CarouselCentrifuge
 
         public class OPTIONS
         {
-            public class DIZZINESSCHANCE
+            public class DIZZINESSCHANCEPERCENT
             {
-                public static LocString TITLE = $"Chance of {UI.FormatAsKeyWord("Unforeseen consequences")}";
+                public static LocString NAME = $"Chance of {UI.FormatAsKeyWord("Unforeseen consequences")}";
                 public static LocString TOOLTIP = $"Set to {UI.FormatAsPositiveRate("0")} to disable {UI.FormatAsKeyWord("Unforeseen consequences")}";
             }
             public class MORALEBONUS
             {
-                public static LocString TITLE = $"{UI.FormatAsKeyWord(MORALE)} bonus";
+                public static LocString NAME = $"{UI.FormatAsKeyWord(MORALE)} bonus";
             }
-            public class EFFECTDURATION
+            public class SPECIFICEFFECTDURATION
             {
-                public static LocString TITLE = $"Duration of the {UI.FormatAsKeyWord("Ride on a Carousel")} effect";
+                public static LocString NAME = $"Duration of the {UI.FormatAsKeyWord("Ride on a Carousel")} effect";
             }
         }
 
