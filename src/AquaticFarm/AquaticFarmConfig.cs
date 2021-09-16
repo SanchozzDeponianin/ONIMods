@@ -34,7 +34,6 @@ namespace AquaticFarm
             buildingDef.SceneLayer = Grid.SceneLayer.TileMain;
             buildingDef.ConstructionOffsetFilter = BuildingDef.ConstructionOffsetFilter_OneDown;
             buildingDef.PermittedRotations = PermittedRotations.FlipV;
-            buildingDef.isSolidTile = true;
             buildingDef.DragBuild = true;
             return buildingDef;
         }

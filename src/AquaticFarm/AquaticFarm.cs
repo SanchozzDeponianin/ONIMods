@@ -1,6 +1,6 @@
 ﻿using System;
-using HarmonyLib;
 using UnityEngine;
+using PeterHan.PLib.Detours;
 
 namespace AquaticFarm
 {
@@ -11,17 +11,20 @@ namespace AquaticFarm
         private PlantablePlot plantablePlot;
 #pragma warning restore CS0649
 
+        private static readonly Action<SimComponent> SimUnregister = typeof(SimComponent).Detour<Action<SimComponent>>("SimUnregister");
+        private static readonly Action<SimComponent> SimRegister = typeof(SimComponent).Detour<Action<SimComponent>>("SimRegister");
+
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            Subscribe((int)GameHashes.OccupantChanged, new Action<object>(OnOccupantChanged));
+            Subscribe((int)GameHashes.OccupantChanged, OnOccupantChanged);
             OnOccupantChanged(plantablePlot.Occupant);
         }
 
         protected override void OnCleanUp()
         {
             base.OnCleanUp();
-            Unsubscribe((int)GameHashes.OccupantChanged, new Action<object>(OnOccupantChanged));
+            Unsubscribe((int)GameHashes.OccupantChanged, OnOccupantChanged);
         }
 
         private void OnOccupantChanged(object data)
@@ -46,10 +49,12 @@ namespace AquaticFarm
                             {
                                 if (element.tag != consumeInfo.tag)
                                 {
-                                    var traverse = Traverse.Create(elementConsumer);
-                                    traverse.Method("SimUnregister").GetValue();
+                                    //var traverse = Traverse.Create(elementConsumer);
+                                    //traverse.Method("SimUnregister").GetValue();
+                                    SimUnregister.Invoke(elementConsumer);
                                     elementConsumer.elementToConsume = ElementLoader.GetElementID(consumeInfo.tag);
-                                    traverse.Method("SimRegister").GetValue();
+                                    //traverse.Method("SimRegister").GetValue();
+                                    SimRegister.Invoke(elementConsumer);
                                 }
                                 elementConsumer.consumptionRate = consumeInfo.massConsumptionRate * 1.5f;
                                 elementConsumer.EnableConsumption(true);

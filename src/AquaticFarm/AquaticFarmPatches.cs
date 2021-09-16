@@ -1,28 +1,31 @@
 ﻿using HarmonyLib;
 using SanchozzONIMods.Lib;
+using PeterHan.PLib.Core;
+using PeterHan.PLib.PatchManager;
 
 namespace AquaticFarm
 {
     internal sealed class AquaticFarmPatches : KMod.UserMod2
     {
-        [HarmonyPatch(typeof(Db), nameof(Db.Initialize))]
-        internal static class Db_Initialize
+        public override void OnLoad(Harmony harmony)
         {
-            private static void Postfix()
-            {
-                Utils.AddBuildingToPlanScreen("Food", AquaticFarmConfig.ID, FarmTileConfig.ID);
-                Utils.AddBuildingToTechnology("FineDining", AquaticFarmConfig.ID);
-            }
+            base.OnLoad(harmony);
+            PUtil.InitLibrary();
+            new PPatchManager(harmony).RegisterPatchClass(typeof(AquaticFarmPatches));
         }
 
-        [HarmonyPatch(typeof(Localization), nameof(Localization.Initialize))]
-        internal static class Localization_Initialize
+        [PLibMethod(RunAt.BeforeDbInit)]
+        private static void Localize()
         {
-            private static void Postfix()
-            {
-                Utils.InitLocalization(typeof(STRINGS));
-                LocString.CreateLocStringKeys(typeof(STRINGS.BUILDINGS));
-            }
+            Utils.InitLocalization(typeof(STRINGS));
+            LocString.CreateLocStringKeys(typeof(STRINGS.BUILDINGS));
+        }
+
+        [PLibMethod(RunAt.AfterDbInit)]
+        private static void AddBuilding()
+        {
+            Utils.AddBuildingToPlanScreen("Food", AquaticFarmConfig.ID, FarmTileConfig.ID);
+            Utils.AddBuildingToTechnology("FineDining", AquaticFarmConfig.ID);
         }
     }
 }
