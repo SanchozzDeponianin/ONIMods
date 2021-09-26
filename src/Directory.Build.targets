@@ -3,7 +3,7 @@
 
   <Target Name="ClearGameFolderCopyLocal" AfterTargets="ResolveAssemblyReferences">
     <ItemGroup>
-      <ReferenceCopyLocalPaths Remove="$(GameFolder)\*" />
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" />
     </ItemGroup>
   </Target>
 
@@ -11,6 +11,13 @@
     <PropertyGroup>
       <PlatformTarget>AnyCPU</PlatformTarget>
     </PropertyGroup>
+  </Target>
+
+  <Target Name="CheckDependencies" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>First you need to compile the 'MSBuildTasksHelper' project.</ErrorText>
+    </PropertyGroup>
+    <Error Condition=" '$(DistributeMod)' == 'true' And !Exists('$(MSBuildTasksHelperDLL)') " Text="$(ErrorText)" />
   </Target>
 
   <!-- определяем константы для компилятора -->
@@ -22,9 +29,9 @@
   </Target>
 
   <!-- обновляем сведения о сборке -->
-  <Target Name="AssemblyInfo" BeforeTargets="CoreCompile" Outputs="UpdatedAssemblyInfoFiles">
+  <Target Name="AssemblyInfo" BeforeTargets="PreBuildEvent" Outputs="UpdatedAssemblyInfoFiles">
     <ItemGroup>
-      <AssemblyInfoFiles Include="$(ProjectDir)\Properties\AssemblyInfo.cs"/>
+      <AssemblyInfoFiles Include="$(ProjectDir)/Properties/AssemblyInfo.cs"/>
     </ItemGroup>
     <MakeDir Directories="%(AssemblyInfoFiles.RelativeDir)" Condition = "!Exists('%(AssemblyInfoFiles.RelativeDir)')" />
     <Touch Files="%(AssemblyInfoFiles.RelativeDir).gitkeep" AlwaysCreate="true" />
@@ -44,7 +51,6 @@
         ComVisible="false" >
       <Output TaskParameter="OutputFile" ItemName="UpdatedAssemblyInfoFiles"/>
     </AssemblyInfo>
-
     <ItemGroup>
       <Compile Include="%(UpdatedAssemblyInfoFiles.FullPath)" />
     </ItemGroup>
@@ -54,20 +60,20 @@
   <UsingTask
     Condition=" '$(DistributeMod)' == 'true' "
     TaskName="SanchozzONIMods.GetKleiAssemblyInfo"
-    AssemblyFile="$(ProjectDir)\..\..\bin\MSBuildTasksHelper.dll" />
+    AssemblyFile="$(MSBuildTasksHelperDLL)" />
 
-  <Target Name="GetKleiAssemblyInfo" BeforeTargets="PreBuildEvent" Condition=" '$(DistributeMod)' == 'true' ">
+  <Target Name="GetKleiAssemblyInfo" BeforeTargets="PreBuildEvent" AfterTargets="AssemblyInfo" Condition=" '$(DistributeMod)' == 'true' ">
     <SanchozzONIMods.GetKleiAssemblyInfo GameFolder="$(GameFolder)" >
-      <Output TaskParameter="KleiBuildVersion" PropertyName="KleiBuildVersion"/>
-      <Output TaskParameter="KleiBuildBranch" PropertyName="KleiBuildBranch"/>
+      <Output TaskParameter="KleiBuildVersion" PropertyName="KleiBuildVersion" />
+      <Output TaskParameter="KleiBuildBranch" PropertyName="KleiBuildBranch" />
     </SanchozzONIMods.GetKleiAssemblyInfo>
   </Target>
 
   <!-- создание ямлов файлов  -->
   <Target Name="WriteYamlFiles" BeforeTargets="PreBuildEvent"  AfterTargets="GetKleiAssemblyInfo" Condition=" '$(DistributeMod)' == 'true' ">
     <PropertyGroup>
-      <ModInfoFile>$(IntermediateOutputPath)\mod_info.yaml</ModInfoFile>
-      <ModDescriptionFile>$(IntermediateOutputPath)\mod.yaml</ModDescriptionFile>
+      <ModInfoFile>$(IntermediateOutputPath)/mod_info.yaml</ModInfoFile>
+      <ModDescriptionFile>$(IntermediateOutputPath)/mod.yaml</ModDescriptionFile>
     </PropertyGroup>
 
     <GenerateMetadataFiles
@@ -95,18 +101,17 @@
   <UsingTask
     Condition=" '$(UsesPLib)' == 'true' "
     TaskName="SanchozzONIMods.GetReallyReferencedAssembliesAtFolder"
-    AssemblyFile="$(ProjectDir)\..\..\bin\MSBuildTasksHelper.dll" />
+    AssemblyFile="$(MSBuildTasksHelperDLL)" />
 
   <Target Name="ILRepack" AfterTargets="Build" Condition=" '$(UsesPLib)' == 'true' ">
     <ItemGroup>
       <InputAssemblies Include="$(TargetPath)" />
-      <!-- <InputAssemblies Include="$(PLibFolder)\PLib.dll" Condition=" '$(UsesPLib)' == 'true'" /> -->
     </ItemGroup>
 
     <SanchozzONIMods.GetReallyReferencedAssembliesAtFolder
-      AssemblyName="$(IntermediateOutputPath)\$(TargetFileName)"
+      AssemblyName="$(IntermediateOutputPath)/$(TargetFileName)"
       ReferencedAssembliesFolder="$(PLibFolder)" >
-      <Output TaskParameter="ReallyReferencedAssemblies" ItemName="InputAssemblies"/>
+      <Output TaskParameter="ReallyReferencedAssemblies" ItemName="InputAssemblies" />
     </SanchozzONIMods.GetReallyReferencedAssembliesAtFolder>
 
     <ILRepack
@@ -122,51 +127,47 @@
   <!-- копируем все потроха в целевую папку -->
   <Target Name="CopyArtifactsToInstallFolder" AfterTargets="ILRepack" >
 
-    <!-- todo: сдесь нужно настроить правильный путь в зависимости от конфигурации и платформы -->
+    <!-- правильный путь в зависимости от конфигурации и платформы -->
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <InstallRootFolder>$(ModOutputFolderDebug)\$(ProjectName)</InstallRootFolder>
+      <InstallRootFolder>$(ModOutputFolderDebug)/$(ProjectName)</InstallRootFolder>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <InstallRootFolder>$(ModOutputFolderRelease)\$(ProjectName)</InstallRootFolder>
+      <InstallRootFolder>$(ModOutputFolderRelease)/$(ProjectName)</InstallRootFolder>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(Platform)' != 'Vanilla' ">
+    <PropertyGroup Condition=" '$(KleiBuildBranch)' == 'release' ">
       <InstallFolder>$(InstallRootFolder)</InstallFolder>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(KleiBuildBranch)' != 'release' ">
-      <InstallFolder>$(InstallRootFolder)\archived_versions\$(KleiBuildBranch)</InstallFolder>
-    </PropertyGroup>
-
-    <PropertyGroup Condition=" '$(Platform)' == 'Vanilla' ">
-      <InstallFolder>$(InstallRootFolder)\archived_versions\vanilla_legacy</InstallFolder>
+      <InstallFolder>$(InstallRootFolder)/archived_versions/$(KleiBuildBranch)</InstallFolder>
     </PropertyGroup>
 
     <!-- вспомогательный хелпер копируем в бин, чтобы не потерялся при очистке -->
     <PropertyGroup Condition=" '$(ProjectName)' == 'MSBuildTasksHelper' ">
-      <InstallFolder>$(ProjectDir)\..\..\bin</InstallFolder>
+      <InstallFolder>$(ProjectDir)/../../bin</InstallFolder>
     </PropertyGroup>
 
     <ItemGroup>
-      <AnimFiles Include="$(ProjectDir)\anim\**\*.*" />
-      <SpritesFiles Include="$(ProjectDir)\sprites\*.*" />
-      <TranslationFiles Include="$(ProjectDir)\translations\*.po" />
-      <TranslationFiles Include="$(ProjectDir)\translations\*.pot" />
-      <WorldGenFiles Include="$(ProjectDir)\worldgen\**\*.*" />
-      <YamlFiles Include="$(ProjectDir)\*.yaml" />
+      <AnimFiles Include="$(ProjectDir)/anim\**/*.*" />
+      <SpritesFiles Include="$(ProjectDir)/sprites/*.*" />
+      <TranslationFiles Include="$(ProjectDir)/translations/*.po" />
+      <TranslationFiles Include="$(ProjectDir)/translations/*.pot" />
+      <WorldGenFiles Include="$(ProjectDir)/worldgen/**/*.*" />
+      <YamlFiles Include="$(ProjectDir)/*.yaml" />
     </ItemGroup>
 
-    <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(InstallFolder)\$(TargetFileName)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(InstallFolder)/$(TargetFileName)" />
 
-    <Copy SourceFiles="@(AnimFiles)" DestinationFiles="@(AnimFiles->'$(InstallFolder)\anim\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(SpritesFiles)" DestinationFolder="$(InstallFolder)\sprites" />
-    <Copy SourceFiles="@(TranslationFiles)" DestinationFolder="$(InstallFolder)\translations" />
-    <Copy SourceFiles="@(WorldGenFiles)" DestinationFiles="@(WorldGenFiles->'$(InstallFolder)\worldgen\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(AnimFiles)" DestinationFiles="@(AnimFiles->'$(InstallFolder)/anim/%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SpritesFiles)" DestinationFolder="$(InstallFolder)/sprites" />
+    <Copy SourceFiles="@(TranslationFiles)" DestinationFolder="$(InstallFolder)/translations" />
+    <Copy SourceFiles="@(WorldGenFiles)" DestinationFiles="@(WorldGenFiles->'$(InstallFolder)/worldgen/%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(YamlFiles)" DestinationFolder="$(InstallFolder)" />
     <Copy SourceFiles="$(ModInfoFile)" DestinationFolder="$(InstallFolder)" />
     <Copy SourceFiles="$(ModDescriptionFile)" DestinationFolder="$(InstallRootFolder)" />
-    <Copy SourceFiles="$(ProjectDir)\Preview.png" DestinationFiles="$(InstallFolder)\preview.png" Condition=" $(CopyPreview) == true " />
+    <Copy SourceFiles="$(ProjectDir)/Preview.png" DestinationFiles="$(InstallFolder)/preview.png" Condition=" $(CopyPreview) == true " />
   </Target>
 
 </Project>
