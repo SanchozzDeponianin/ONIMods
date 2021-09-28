@@ -68,29 +68,28 @@ namespace SquirrelGenerator
         public override void InitializeStates(out BaseState default_state)
         {
             RunInWheelEffect = new Effect(
-                id: "RunInWheel", 
-                name: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, 
-                description: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.TOOLTIP, 
-                duration: 0, 
-                show_in_ui: true, 
-                trigger_floating_text: false, 
+                id: "RunInWheel",
+                name: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME,
+                description: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.TOOLTIP,
+                duration: 0,
+                show_in_ui: true,
+                trigger_floating_text: false,
                 is_bad: false);
             RunInWheelEffect.Add(new AttributeModifier(
-                attribute_id: Db.Get().CritterAttributes.Metabolism.Id, 
-                value: SquirrelGeneratorOptions.Instance.MetabolismBonus, 
-                description: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, 
-                is_multiplier: false, 
-                uiOnly: false, 
+                attribute_id: Db.Get().CritterAttributes.Metabolism.Id,
+                value: SquirrelGeneratorOptions.Instance.MetabolismBonus,
+                description: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME,
+                is_multiplier: false,
+                uiOnly: false,
                 is_readonly: true));
             RunInWheelEffect.Add(new AttributeModifier(
-                attribute_id: Db.Get().CritterAttributes.Happiness.Id, 
-                value: SquirrelGeneratorOptions.Instance.HappinessBonus, 
-                description: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME, 
-                is_multiplier: false, 
-                uiOnly: false, 
+                attribute_id: Db.Get().CritterAttributes.Happiness.Id,
+                value: SquirrelGeneratorOptions.Instance.HappinessBonus,
+                description: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME,
+                is_multiplier: false,
+                uiOnly: false,
                 is_readonly: true));
 
-            //serializable = true;
             default_state = moving;
 
             root.Enter(delegate (Instance smi)
@@ -165,7 +164,7 @@ namespace SquirrelGenerator
 
         private static bool ReserveWheel(Instance smi)
         {
-            GameObject go = smi.GetSMI<WheelRunningMonitor.Instance>()?.targetWheel;
+            var go = smi.GetSMI<WheelRunningMonitor.StatesInstance>()?.TargetWheel;
             if (go != null && !go.HasTag(GameTags.Creatures.ReservedByCreature))
             {
                 var squirrelGenerator = go.GetComponent<SquirrelGenerator>();
@@ -182,7 +181,7 @@ namespace SquirrelGenerator
 
         private static void UnreserveWheel(Instance smi)
         {
-            GameObject go = smi.sm.target.Get(smi);
+            var go = smi.sm.target.Get(smi);
             if (go != null)
             {
                 go.RemoveTag(GameTags.Creatures.ReservedByCreature);

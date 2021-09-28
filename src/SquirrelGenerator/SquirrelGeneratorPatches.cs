@@ -45,9 +45,7 @@ namespace SquirrelGenerator
             {
                 if (!is_baby)
                 {
-                    var def = __result.AddOrGetDef<WheelRunningMonitor.Def>();
-                    def.searchMinInterval = SquirrelGeneratorOptions.Instance.SearchMinInterval;
-                    def.searchMaxInterval = SquirrelGeneratorOptions.Instance.SearchMaxInterval;
+                    __result.AddOrGet<WheelRunningMonitor>();
                 }
             }
 

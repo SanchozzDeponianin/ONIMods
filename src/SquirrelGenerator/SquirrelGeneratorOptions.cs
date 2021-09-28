@@ -1,7 +1,6 @@
 ﻿using TUNING;
 using Newtonsoft.Json;
 using UnityEngine;
-
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Options;
 
@@ -12,53 +11,42 @@ namespace SquirrelGenerator
     [RestartRequired]
     internal class SquirrelGeneratorOptions : BaseOptions<SquirrelGeneratorOptions>
     {
-        [JsonIgnore]
-        private int generatorwattagerating = 250;
         [JsonProperty]
-        [Option("SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGE.TITLE", "SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGE.TOOLTIP")]
+        [Option]
         [Limit(50, 500)]
-        public int GeneratorWattageRating { get => generatorwattagerating; set => generatorwattagerating = Mathf.Clamp(value, 50, 500); }
+        public int GeneratorWattageRating { get; set; } = 250;
 
-        [JsonIgnore]
-        private int selfheatwatts = (int)(BUILDINGS.SELF_HEAT_KILOWATTS.TIER2 * Constants.KW2DTU_S);
         [JsonProperty]
-        [Option("SquirrelGenerator.STRINGS.OPTIONS.SELFHEAT.TITLE", "SquirrelGenerator.STRINGS.OPTIONS.SELFHEAT.TOOLTIP", Format = "F0")]
+        [Option]
         [Limit(BUILDINGS.SELF_HEAT_KILOWATTS.TIER1 * Constants.KW2DTU_S, BUILDINGS.SELF_HEAT_KILOWATTS.TIER3 * Constants.KW2DTU_S)]
-        public int SelfHeatWatts { get => selfheatwatts; set => selfheatwatts = Mathf.Clamp(value, (int)(BUILDINGS.SELF_HEAT_KILOWATTS.TIER1 * Constants.KW2DTU_S), (int)(BUILDINGS.SELF_HEAT_KILOWATTS.TIER3 * Constants.KW2DTU_S)); }
+        public int SelfHeatWatts { get; set; } = (int)(BUILDINGS.SELF_HEAT_KILOWATTS.TIER2 * Constants.KW2DTU_S);
 
-        [JsonIgnore]
-        private int happinessbonus = WheelRunningStates.HAPPINESS_BONUS;
         [JsonProperty]
-        [Option("SquirrelGenerator.STRINGS.OPTIONS.HAPPINESSBONUS.TITLE", "SquirrelGenerator.STRINGS.OPTIONS.HAPPINESSBONUS.TOOLTIP")]
+        [Option]
         [Limit(0, 5)]
-        public int HappinessBonus { get => happinessbonus; set => happinessbonus = Mathf.Clamp(value, 0, 5); }
+        public int HappinessBonus { get; set; } = WheelRunningStates.HAPPINESS_BONUS;
 
-        [JsonIgnore]
-        private int metabolismbonus = WheelRunningStates.METABOLISM_BONUS;
         [JsonProperty]
-        [Option("SquirrelGenerator.STRINGS.OPTIONS.METABOLISMBONUS.TITLE", "SquirrelGenerator.STRINGS.OPTIONS.METABOLISMBONUS.TOOLTIP")]
+        [Option]
         [Limit(25, 500)]
-        public int MetabolismBonus { get => metabolismbonus; set => metabolismbonus = Mathf.Clamp(value, 25, 500); }
+        public int MetabolismBonus { get; set; } = WheelRunningStates.METABOLISM_BONUS;
 
-        [JsonIgnore]
-        private int searchwheelradius = WheelRunningMonitor.SEARCHWHEELRADIUS;
         [JsonProperty]
-        [Option("SquirrelGenerator.STRINGS.OPTIONS.SEARCHWHEELRADIUS.TITLE", "SquirrelGenerator.STRINGS.OPTIONS.SEARCHWHEELRADIUS.TOOLTIP")]
+        [Option]
         [Limit(10, 50)]
-        public int SearchWheelRadius { get => searchwheelradius; set => searchwheelradius = Mathf.Clamp(value, 10, 50); }
+        public int SearchWheelRadius { get; set; } = WheelRunningMonitor.SEARCH_WHEEL_RADIUS;
+
+        [JsonProperty]
+        [Option]
+        [Limit(10, 600)]
+        public int SearchMinInterval { get; set; } = WheelRunningMonitor.SEARCH_MIN_INTERVAL;
 
         [JsonIgnore]
-        private int searchmininterval = WheelRunningMonitor.SEARCHMININTERVAL;
-        [JsonProperty]
-        [Option("SquirrelGenerator.STRINGS.OPTIONS.SEARCHMININTERVAL.TITLE", "SquirrelGenerator.STRINGS.OPTIONS.SEARCHMININTERVAL.TOOLTIP")]
-        [Limit(10, 600)]
-        public int SearchMinInterval { get => searchmininterval; set => searchmininterval = Mathf.Clamp(value, 10, 600); }
+        private int searchmaxinterval = WheelRunningMonitor.SEARCH_MAX_INTERVAL;
 
-        [JsonIgnore]
-        private int searchmaxinterval = WheelRunningMonitor.SEARCHMAXINTERVAL;
         [JsonProperty]
-        [Option("SquirrelGenerator.STRINGS.OPTIONS.SEARCHMAXINTERVAL.TITLE", "SquirrelGenerator.STRINGS.OPTIONS.SEARCHMININTERVAL.TOOLTIP")]
+        [Option]
         [Limit(10, 600)]
-        public int SearchMaxInterval { get => searchmaxinterval; set => searchmaxinterval = Mathf.Clamp(value, searchmininterval, 600); }
+        public int SearchMaxInterval { get => searchmaxinterval; set => searchmaxinterval = Mathf.Max(value, SearchMinInterval); }
     }
 }

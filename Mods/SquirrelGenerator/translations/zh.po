@@ -38,18 +38,18 @@ msgctxt "SquirrelGenerator.STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL
 msgid "This creature has discovered an entertaining mechanical thing and is very interested"
 msgstr "这只小动物发现了一个有趣的机械玩具，并且非常感兴趣"
 
-#. SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGE.TITLE
-msgctxt "SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGE.TITLE"
+#. SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGERATING.NAME
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGERATING.NAME"
 msgid "Wattage"
 msgstr "功率"
 
-#. SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGE.TOOLTIP
-msgctxt "SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGE.TOOLTIP"
+#. SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGERATING.TOOLTIP
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGERATING.TOOLTIP"
 msgid "Maximum <style=\"KKeyword\">Wattage</style>,{WATT} of Squirrel Wheel"
 msgstr "最大<style=\"KKeyword\">功率</style>,{WATT}的松鼠轮"
 
-#. SquirrelGenerator.STRINGS.OPTIONS.HAPPINESSBONUS.TITLE
-msgctxt "SquirrelGenerator.STRINGS.OPTIONS.HAPPINESSBONUS.TITLE"
+#. SquirrelGenerator.STRINGS.OPTIONS.HAPPINESSBONUS.NAME
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.HAPPINESSBONUS.NAME"
 msgid "Happiness Bonus"
 msgstr "幸福奖励"
 
@@ -58,8 +58,8 @@ msgctxt "SquirrelGenerator.STRINGS.OPTIONS.HAPPINESSBONUS.TOOLTIP"
 msgid "<style=\"KKeyword\">Happiness</style> Bonus value when the {Squirrel} running in the Wheel"
 msgstr "<style=\"KKeyword\">快乐</style>是{Squirrel}在快乐轮里运动时的奖励"
 
-#. SquirrelGenerator.STRINGS.OPTIONS.METABOLISMBONUS.TITLE
-msgctxt "SquirrelGenerator.STRINGS.OPTIONS.METABOLISMBONUS.TITLE"
+#. SquirrelGenerator.STRINGS.OPTIONS.METABOLISMBONUS.NAME
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.METABOLISMBONUS.NAME"
 msgid "Metabolism Bonus"
 msgstr "代谢奖励"
 
@@ -68,13 +68,13 @@ msgctxt "SquirrelGenerator.STRINGS.OPTIONS.METABOLISMBONUS.TOOLTIP"
 msgid "<style=\"KKeyword\">Metabolism</style> Bonus value when the {Squirrel} running in the Wheel"
 msgstr "<style=\"KKeyword\">代谢</style>是{Squirrel}在快乐轮里运动时的奖励"
 
-#. SquirrelGenerator.STRINGS.OPTIONS.SEARCHMAXINTERVAL.TITLE
-msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SEARCHMAXINTERVAL.TITLE"
+#. SquirrelGenerator.STRINGS.OPTIONS.SEARCHMAXINTERVAL.NAME
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SEARCHMAXINTERVAL.NAME"
 msgid "Search Max Interval"
 msgstr "搜索最大间隔"
 
-#. SquirrelGenerator.STRINGS.OPTIONS.SEARCHMININTERVAL.TITLE
-msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SEARCHMININTERVAL.TITLE"
+#. SquirrelGenerator.STRINGS.OPTIONS.SEARCHMININTERVAL.NAME
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SEARCHMININTERVAL.NAME"
 msgid "Search Min Interval"
 msgstr "搜索最小间隔"
 
@@ -83,8 +83,8 @@ msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SEARCHMININTERVAL.TOOLTIP"
 msgid "Time in seconds until next Wheel search is random value between <style=\"KKeyword\">Search Min Interval</style> and <style=\"KKeyword\">Search Max Interval</style>"
 msgstr "距离下一次快乐轮搜索的时间(秒)是<style=\"KKeyword\">搜索最小间隔</style>到<style=\"KKeyword\">搜索最大间隔</style>之间的随机值。"
 
-#. SquirrelGenerator.STRINGS.OPTIONS.SEARCHWHEELRADIUS.TITLE
-msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SEARCHWHEELRADIUS.TITLE"
+#. SquirrelGenerator.STRINGS.OPTIONS.SEARCHWHEELRADIUS.NAME
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SEARCHWHEELRADIUS.NAME"
 msgid "Search Radius"
 msgstr "搜索半径"
 
@@ -93,12 +93,12 @@ msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SEARCHWHEELRADIUS.TOOLTIP"
 msgid "Radius in cells in which the {Squirrel} is looking for a Wheel"
 msgstr "在视图单元格中，{Squirrel}寻找一个快乐轮的半径"
 
-#. SquirrelGenerator.STRINGS.OPTIONS.SELFHEAT.TITLE
-msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SELFHEAT.TITLE"
+#. SquirrelGenerator.STRINGS.OPTIONS.SELFHEATWATTS.NAME
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SELFHEATWATTS.NAME"
 msgid "Heat Production"
 msgstr "产热"
 
-#. SquirrelGenerator.STRINGS.OPTIONS.SELFHEAT.TOOLTIP
-msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SELFHEAT.TOOLTIP"
+#. SquirrelGenerator.STRINGS.OPTIONS.SELFHEATWATTS.TOOLTIP
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SELFHEATWATTS.TOOLTIP"
 msgid "<style=\"KKeyword\">Heat</style> Production,{DTU_S} of Squirrel Wheel"
 msgstr "树鼠快乐轮的<style=\"KKeyword\">产热量</style>为{DTU_S}"

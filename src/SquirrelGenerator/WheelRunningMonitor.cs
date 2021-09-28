@@ -1,92 +1,108 @@
 ﻿using UnityEngine;
 using Klei.AI;
+using KSerialization;
 
 namespace SquirrelGenerator
 {
-    public class WheelRunningMonitor : GameStateMachine<WheelRunningMonitor, WheelRunningMonitor.Instance, IStateMachineTarget, WheelRunningMonitor.Def>
+    [SerializationConfig(MemberSerialization.OptIn)]
+    public class WheelRunningMonitor : StateMachineComponent<WheelRunningMonitor.StatesInstance>, ISaveLoadable
     {
-        public const int SEARCHWHEELRADIUS = 15;
-        public const int SEARCHMININTERVAL = 15;
-        public const int SEARCHMAXINTERVAL = 60;
+        public const int SEARCH_WHEEL_RADIUS = 25;
+        public const int SEARCH_MIN_INTERVAL = 15;
+        public const int SEARCH_MAX_INTERVAL = 60;
+        private const int SEARCH_RESUME_INTERVAL = 1;
+        private const int MAX_NAVIGATE_DISTANCE = 200;
 
-        public class Def : BaseDef
+        public class StatesInstance : GameStateMachine<States, StatesInstance, WheelRunningMonitor>.GameInstance
         {
-            public float searchMinInterval = SEARCHMININTERVAL;
-            public float searchMaxInterval = SEARCHMAXINTERVAL;
-        }
+            private float nextSearchTime;
+            public GameObject TargetWheel { get; private set; }
 
-        public new class Instance : GameInstance
-        {
-            public float nextSearchTime;
-            public GameObject targetWheel;
-
-            public Instance(IStateMachineTarget master, Def def) : base(master, def)
+            public StatesInstance(WheelRunningMonitor master) : base(master)
             {
-                RefreshSearchTime();
+                if (master.shouldResumeRun)
+                    nextSearchTime = Time.time + SEARCH_RESUME_INTERVAL;
+                else
+                    RefreshSearchTime();
             }
 
             public void RefreshSearchTime()
             {
-                nextSearchTime = Time.time + Mathf.Lerp(def.searchMinInterval, def.searchMaxInterval, Random.value);
+                nextSearchTime = Time.time + Mathf.Lerp(SquirrelGeneratorOptions.Instance.SearchMinInterval, SquirrelGeneratorOptions.Instance.SearchMaxInterval, Random.value);
             }
 
             public bool ShouldRunInWheel()
             {
-                if (targetWheel == null)
+                if (TargetWheel == null)
                 {
                     if (Time.time < nextSearchTime)
-                    {
                         return false;
-                    }
                     RefreshSearchTime();
-                    if (!HasTag(GameTags.Creatures.Hungry) && gameObject.GetComponent<Effects>().HasEffect("Happy"))
-                    {
+                    if (!HasTag(GameTags.Creatures.Hungry) && master.effects.HasEffect("Happy"))
                         FindWheel();
-                    }
                 }
-                return targetWheel != null;
+                return TargetWheel != null;
             }
 
             private void FindWheel()
             {
-                targetWheel = null;
+                TargetWheel = null;
                 var pooledList = ListPool<ScenePartitionerEntry, GameScenePartitioner>.Allocate();
-                var pooledList2 = ListPool<GameObject, WheelRunningMonitor>.Allocate();
-
-                var extents = new Extents(Grid.PosToCell(master.transform.GetPosition()), SEARCHWHEELRADIUS);
+                var extents = new Extents(Grid.PosToCell(master.transform.GetPosition()), SquirrelGeneratorOptions.Instance.SearchWheelRadius);
                 GameScenePartitioner.Instance.GatherEntries(extents, GameScenePartitioner.Instance.completeBuildings, pooledList);
 
+                int mincost = MAX_NAVIGATE_DISTANCE;
                 foreach (ScenePartitionerEntry item in pooledList)
                 {
                     var squirrelGenerator = (item.obj as KMonoBehaviour).GetComponent<SquirrelGenerator>();
                     if (squirrelGenerator != null && squirrelGenerator.IsOperational
-                        && !squirrelGenerator.HasTag(GameTags.Creatures.ReservedByCreature)
-                        && GetComponent<Navigator>().CanReach(Grid.PosToCell(squirrelGenerator)))
+                        && !squirrelGenerator.HasTag(GameTags.Creatures.ReservedByCreature))
                     {
-                        pooledList2.Add(squirrelGenerator.gameObject);
+                        int cost = master.navigator.GetNavigationCost(Grid.PosToCell(squirrelGenerator));
+                        if (cost != -1 && cost < mincost)
+                        {
+                            mincost = cost;
+                            TargetWheel = squirrelGenerator.gameObject;
+                        }
                     }
                 }
-                if (pooledList2.Count > 0)
-                {
-                    int index = Random.Range(0, pooledList2.Count);
-                    targetWheel = pooledList2[index];
-                }
+
                 pooledList.Recycle();
-                pooledList2.Recycle();
+                master.shouldResumeRun = TargetWheel != null;
             }
 
             public void OnRunningComplete()
             {
-                targetWheel = null;
+                TargetWheel = null;
+                master.shouldResumeRun = false;
                 RefreshSearchTime();
             }
         }
 
-        public override void InitializeStates(out BaseState default_state)
+        public class States : GameStateMachine<States, StatesInstance, WheelRunningMonitor>
         {
-            //serializable = true;
-            default_state = root;
-            root.ToggleBehaviour(WheelRunningStates.WantsToWheelRunning, (Instance smi) => smi.ShouldRunInWheel(), (Instance smi) => smi.OnRunningComplete());
+            public override void InitializeStates(out BaseState default_state)
+            {
+                default_state = root;
+                root.ToggleBehaviour(WheelRunningStates.WantsToWheelRunning, smi => smi.ShouldRunInWheel(), smi => smi.OnRunningComplete());
+            }
+        }
+
+#pragma warning disable CS0649
+        [MyCmpGet]
+        Effects effects;
+
+        [MyCmpGet]
+        Navigator navigator;
+#pragma warning restore CS0649
+
+        [Serialize]
+        private bool shouldResumeRun;
+
+        protected override void OnSpawn()
+        {
+            base.OnSpawn();
+            smi.StartSM();
         }
     }
 }
