@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-
-using Harmony;
-using UnityEngine;
-
+﻿using HarmonyLib;
 using SanchozzONIMods.Lib;
 /*
 using PeterHan.PLib;
@@ -14,7 +6,7 @@ using PeterHan.PLib.Options;
 */
 namespace SuitRecharger
 {
-    internal static class SuitRechargerPatches
+    internal sealed class SuitRechargerPatches : KMod.UserMod2
     {
         [HarmonyPatch(typeof(Db), nameof(Db.Initialize))]
         internal static class Db_Initialize
