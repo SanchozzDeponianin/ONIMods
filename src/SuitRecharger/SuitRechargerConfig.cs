@@ -9,12 +9,9 @@ namespace SuitRecharger
     // todo: может быть - ручную доставку в баллонах
     // todo: добавить статуситемы
     // todo: текстовка
-    // todo: создать анимацию станции
-    // todo: создать анимацию дупеля
 
     // todo: обнаружена лажа:
     // * при зеркальной постройке керосин не заливается из трубы - косяк у клеев. можно просто поменяться с кислородом
-    // * странное выделение кликом, не попадает по анимации.
 
     public class SuitRechargerConfig : IBuildingConfig
     {
@@ -29,8 +26,8 @@ namespace SuitRecharger
             var def = BuildingTemplates.CreateBuildingDef(
                 id: ID,
                 width: 2,
-                height: 3,
-                anim: "oxygen_mask_station_kanim",
+                height: 4,
+                anim: "suitrecharger_kanim",
                 hitpoints: BUILDINGS.HITPOINTS.TIER1,
                 construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER2,
                 construction_mass: BUILDINGS.CONSTRUCTION_MASS_KG.TIER3,
@@ -62,8 +59,26 @@ namespace SuitRecharger
             storage.capacityKg = O2_CAPACITY + FUEL_CAPACITY;
 
             var recharger = go.AddOrGet<SuitRecharger>();
-            recharger.workTime = BUILDINGS.WORK_TIME_SECONDS.VERYSHORT_WORK_TIME;
+            recharger.workLayer = Grid.SceneLayer.BuildingFront;
             recharger.portInfo = secondaryInputPort;
+            var kanim = Assets.GetAnim("anim_interacts_suitrecharger_kanim");
+            recharger.overrideAnims = new KAnimFile[] { kanim };
+            // привязываемся к длительности анимации
+            /*
+            working_pre = 4.033333
+            working_loop = 2
+            working_pst = 4.333333
+            */
+            var kanim_data = kanim.GetData();
+            for (int i = 0; i < kanim_data.animCount; i++)
+            {
+                var anim = kanim_data.GetAnim(i);
+                if (anim.name == "working_pre")
+                    SuitRecharger.warmupTime = anim.numFrames / anim.frameRate;
+                if (anim.name == "working_loop")
+                    SuitRecharger.сhargeTime = 2 * anim.numFrames / anim.frameRate;
+            }
+
             //Prioritizable.AddRef(go);
         }
 

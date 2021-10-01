@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using STRINGS;
 
 namespace SuitRecharger
@@ -28,6 +27,9 @@ namespace SuitRecharger
         };
 
         // todo: возможно стоит разделить на несколько прекондиций для лучшего текста.
+        // todo: возможно стоит проверять остаток массы для конкретного костюма, а не требовать возможность полной заправки
+        // todo: возможно эти прекондиции неоптимальны по быстродействию. нужно обдумать
+
         // проверка что костюму требуется заправка.
         // скопировано из SuitLocker.ReturnSuitWorkable
         // отключена проверка уровня заряда свинцовых костюмов
@@ -101,7 +103,10 @@ namespace SuitRecharger
             }
         };
 
+        public static float сhargeTime = 1f;
         private static float batteryChargeTime = 60f;
+        public static float warmupTime;
+        private float elapsedTime;
 
 #pragma warning disable CS0649
         [MyCmpReq]
@@ -171,8 +176,8 @@ namespace SuitRecharger
             base.OnPrefabInit();
             resetProgressOnStop = true;
             showProgressBar = false;
+            SetWorkTime(float.PositiveInfinity);
             workerStatusItem = null;
-            overrideAnims = new KAnimFile[] { Assets.GetAnim("anim_interacts_suitrecharger_kanim") };
             synchronizeAnims = true;
         }
 
@@ -200,8 +205,8 @@ namespace SuitRecharger
             flowNetworkItem = new FlowUtilityNetwork.NetworkItem(portInfo.conduitType, Endpoint.Sink, secondaryInputCell, gameObject);
             Conduit.GetNetworkManager(portInfo.conduitType).AddToNetworks(secondaryInputCell, flowNetworkItem, true);
             // создаём метеры
-            oxygenMeter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_oxygen_target", "meter_oxygen", Meter.Offset.Infront, Grid.SceneLayer.BuildingFront, new string[] { "meter_oxygen_target" });
-            fuelMeter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_resources_target", "meter_resources", Meter.Offset.Behind, Grid.SceneLayer.BuildingBack, new string[] { "meter_resources_target" });
+            oxygenMeter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target", "meter", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[] { "meter_target" });
+            fuelMeter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target_fuel", "meter_fuel", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[] { "meter_target_fuel" });
             Subscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
             Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
             OnStorageChange();
@@ -219,23 +224,26 @@ namespace SuitRecharger
 
         private void OnStorageChange(object data = null)
         {
-            var oxygen = GetOxygen();
-            if (oxygen != null)
-                OxygenAvailable = oxygen.GetComponent<PrimaryElement>().Mass;
+            var primaryElement = ((GameObject)data)?.GetComponent<PrimaryElement>();
+            if (primaryElement != null)
+            {
+                if (primaryElement.ElementID == SimHashes.Oxygen)
+                    OxygenAvailable = primaryElement.Mass;
+                if (primaryElement.ElementID == SimHashes.Petroleum)
+                    FuelAvailable = primaryElement.Mass;
+            }
             else
-                OxygenAvailable = 0;
-            var fuel = GetFuel();
-            if (fuel != null)
-                FuelAvailable = fuel.GetComponent<PrimaryElement>().Mass;
-            else
-                FuelAvailable = 0;
+            {
+                OxygenAvailable = GetOxygen()?.GetComponent<PrimaryElement>()?.Mass ?? 0;
+                FuelAvailable = GetFuel()?.GetComponent<PrimaryElement>()?.Mass ?? 0;
+            }
             RefreshMeter();
         }
 
         private void RefreshMeter()
         {
-            oxygenMeter.SetPositionPercent(Math.Min(OxygenAvailable / SuitRechargerConfig.O2_CAPACITY, 1f));
-            fuelMeter.SetPositionPercent(Math.Min(FuelAvailable / SuitRechargerConfig.FUEL_CAPACITY, 1f));
+            oxygenMeter.SetPositionPercent(Mathf.Clamp01(OxygenAvailable / SuitRechargerConfig.O2_CAPACITY));
+            fuelMeter.SetPositionPercent(Mathf.Clamp01(FuelAvailable / SuitRechargerConfig.FUEL_CAPACITY));
         }
 
         private GameObject GetOxygen()
@@ -258,6 +266,7 @@ namespace SuitRecharger
                 leadSuitTank = suit.GetComponent<LeadSuitTank>();
             }
             operational.SetActive(true, false);
+            elapsedTime = 0;
         }
 
         protected override void OnStopWork(Worker worker)
@@ -290,6 +299,9 @@ namespace SuitRecharger
 
         protected override bool OnWorkTick(Worker worker, float dt)
         {
+            elapsedTime += dt;
+            if (elapsedTime <= warmupTime)
+                return false;
             bool oxygen_charged = ChargeSuit(dt);
             bool fuel_charged = FuelSuit(dt);
             FillBattery(dt);
@@ -308,7 +320,7 @@ namespace SuitRecharger
                 var oxygen = GetOxygen();
                 if (oxygen != null)
                 {
-                    float amount_to_refill = suitTank.capacity * dt / workTime;
+                    float amount_to_refill = suitTank.capacity * dt / сhargeTime;
                     amount_to_refill = Mathf.Min(amount_to_refill, suitTank.capacity - suitTank.GetTankAmount());
                     amount_to_refill = Mathf.Min(amount_to_refill, oxygen.GetComponent<PrimaryElement>().Mass);
                     if (amount_to_refill > 0f)
@@ -329,7 +341,7 @@ namespace SuitRecharger
                 if (fuel != null)
                 {
                     var fuel_pe = fuel.GetComponent<PrimaryElement>();
-                    float amount_to_refill = JetSuitTank.FUEL_CAPACITY * dt / workTime;
+                    float amount_to_refill = JetSuitTank.FUEL_CAPACITY * dt / сhargeTime;
                     amount_to_refill = Mathf.Min(amount_to_refill, JetSuitTank.FUEL_CAPACITY - jetSuitTank.amount);
                     amount_to_refill = Mathf.Min(amount_to_refill, fuel_pe.Mass);
                     if (amount_to_refill > 0f)
