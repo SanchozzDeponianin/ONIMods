@@ -1,35 +1,33 @@
 ﻿using HarmonyLib;
 using SanchozzONIMods.Lib;
-/*
-using PeterHan.PLib;
-using PeterHan.PLib.Options;
-*/
+using PeterHan.PLib.Core;
+using PeterHan.PLib.PatchManager;
+
 namespace SuitRecharger
 {
     internal sealed class SuitRechargerPatches : KMod.UserMod2
     {
-        [HarmonyPatch(typeof(Db), nameof(Db.Initialize))]
-        internal static class Db_Initialize
+        public override void OnLoad(Harmony harmony)
         {
-            private static void Postfix()
-            {
-                Utils.AddBuildingToPlanScreen("Equipment", SuitRechargerConfig.ID, SuitFabricatorConfig.ID);
-                var tech = DlcManager.IsExpansion1Active() ? "PortableGasses" : "Suits";
-                Utils.AddBuildingToTechnology(tech, SuitRechargerConfig.ID);
-            }
+            base.OnLoad(harmony);
+            PUtil.InitLibrary();
+            new PPatchManager(harmony).RegisterPatchClass(typeof(SuitRechargerPatches));
         }
-
         /*
-        [HarmonyPatch(typeof(Localization), nameof(Localization.Initialize))]
-        internal static class Localization_Initialize
+        [PLibMethod(RunAt.BeforeDbInit)]
+        private static void Localize()
         {
-            private static void Postfix()
-            {
-                Utils.InitLocalization(typeof(STRINGS));
-                LocString.CreateLocStringKeys(typeof(STRINGS.BUILDINGS));
-            }
+            Utils.InitLocalization(typeof(STRINGS));
+            LocString.CreateLocStringKeys(typeof(STRINGS.BUILDINGS));
+        }*/
+
+        [PLibMethod(RunAt.AfterDbInit)]
+        private static void AddBuilding()
+        {
+            Utils.AddBuildingToPlanScreen("Equipment", SuitRechargerConfig.ID, SuitFabricatorConfig.ID);
+            Utils.AddBuildingToTechnology("ImprovedGasPiping", SuitRechargerConfig.ID);
+            PGameUtils.CopySoundsToAnim("suitrecharger_kanim", "suit_maker_kanim");
         }
-        */
 
         // при наполнении пустого костюма - восстанавливаем дыхательный компонент в нормальное состояние
         // чтобы дупель не задохнулся на ровном месте

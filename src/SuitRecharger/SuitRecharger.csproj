@@ -17,6 +17,7 @@
     <Title>Suit Recharger</Title>
     <Description>not ready yet</Description>
     <ModVersion>0.0.0</ModVersion>
+    <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\Utils.cs">
