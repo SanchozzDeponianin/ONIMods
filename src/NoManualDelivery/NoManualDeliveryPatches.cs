@@ -81,6 +81,8 @@ namespace NoManualDelivery
             "BigBeautifulStorage",
             // Trashcans    https://steamcommunity.com/sharedfiles/filedetails/?id=2037089892
             "SolidTrashcan",
+            // Insulated Farm Tiles https://steamcommunity.com/sharedfiles/filedetails/?id=1850356486
+            "InsulatedFarmTile", "InsulatedHydroponicFarm",
         };
 
         private static List<string> BuildingToMakeAutomatableWithTransferArmPickupGasLiquid = new List<string>()
