@@ -10,6 +10,7 @@ namespace LargeTelescope
     {
         public override void OnLoad(Harmony harmony)
         {
+            LargeTelescopeOptions.Reload();
             base.OnLoad(harmony);
             PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(typeof(LargeTelescopePatches));
@@ -25,16 +26,27 @@ namespace LargeTelescope
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuilding()
         {
-            // todo: уточнить техи и мюню
-            Utils.AddBuildingToPlanScreen("Furniture", ClusterLargeTelescopeConfig.ID, EspressoMachineConfig.ID);
-            Utils.AddBuildingToTechnology("SpaceProgram", ClusterLargeTelescopeConfig.ID);
+            Utils.AddBuildingToPlanScreen("Rocketry", ClusterLargeTelescopeConfig.ID, ClusterTelescopeConfig.ID);
+            Utils.AddBuildingToTechnology("CrashPlan", ClusterLargeTelescopeConfig.ID);
         }
 
-        [PLibMethod(RunAt.OnStartGame)]
-        private static void OnStartGame()
+        [HarmonyPatch(typeof(ClusterTelescope.ClusterTelescopeWorkable), "OnWorkableEvent")]
+        private static class ClusterTelescope_ClusterTelescopeWorkable_OnWorkableEvent
         {
-            // todo: а нужно ли ?
-            LargeTelescopeOptions.Reload();
+            private static bool Prepare() => LargeTelescopeOptions.Instance.FixNoConsumePowerBug;
+
+            private static void Postfix(ClusterTelescope.ClusterTelescopeWorkable __instance, Workable.WorkableEvent ev)
+            {
+                switch (ev)
+                {
+                    case Workable.WorkableEvent.WorkStarted:
+                        __instance.GetComponent<Operational>()?.SetActive(true);
+                        break;
+                    case Workable.WorkableEvent.WorkStopped:
+                        __instance.GetComponent<Operational>()?.SetActive(false);
+                        break;
+                }
+            }
         }
     }
 }

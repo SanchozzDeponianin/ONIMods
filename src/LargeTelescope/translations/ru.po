@@ -1,0 +1,45 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.DESC
+msgctxt "LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.DESC"
+msgid "A Large Telescope allows you to study the depths of space faster and further."
+msgstr "Большой телескоп позволяет изучать глубины космоса быстрее и дальше."
+
+#. LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.EFFECT
+msgctxt "LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.EFFECT"
+msgid "\n\nCan be connected to a <link=\"GASCONDUIT\">Gas Pipe</link> to provide assigned Duplicant with <link=\"OXYGEN\">Oxygen</link>."
+msgstr "\n\nМожет быть подключен к <link=\"GASCONDUIT\">газовой трубе</link> для обеспечения назначенного дубликанта <link=\"OXYGEN\">кислородом</link>."
+
+#. LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.NAME
+msgctxt "LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.NAME"
+msgid "<link=\"CLUSTERLARGETELESCOPE\">Large Telescope</link>"
+msgstr "Большой телескоп"
+
+#. LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.NAME"
+msgid "Scan Radius, hex"
+msgstr "Радиус сканирования, хексы"
+
+#. LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.TOOLTIP
+msgctxt "LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.TOOLTIP"
+msgid "A small Telescope has a radius = 3, whatever these numbers mean"
+msgstr "Малый телескоп имеет радиус = 3, что бы эти цифры не значили"
+
+#. LargeTelescope.STRINGS.OPTIONS.EFFICIENCYMULTIPLIER.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.EFFICIENCYMULTIPLIER.NAME"
+msgid "Workspeed modifier, +X%"
+msgstr "Модификатор скорости работы, +Х%"
+
+#. LargeTelescope.STRINGS.OPTIONS.FIXNOCONSUMEPOWERBUG.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.FIXNOCONSUMEPOWERBUG.NAME"
+msgid "Fix the Bug"
+msgstr "Исправить ошибку"
+
+#. LargeTelescope.STRINGS.OPTIONS.FIXNOCONSUMEPOWERBUG.TOOLTIP
+msgctxt "LargeTelescope.STRINGS.OPTIONS.FIXNOCONSUMEPOWERBUG.TOOLTIP"
+msgid "that Telescopes don't actually consume Power"
+msgstr "что телескопы на самом деле не потребляют энергию"
+

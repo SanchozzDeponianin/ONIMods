@@ -12,34 +12,33 @@ namespace LargeTelescope
                 public class CLUSTERLARGETELESCOPE
                 {
                     public static LocString NAME = UI.FormatAsLink("Large Telescope", "CLUSTERLARGETELESCOPE");
-                    public static LocString DESC = "";
-                    public static LocString EFFECT = $"A {UI.FormatAsLink("Large Telescope", "CLUSTERLARGETELESCOPE")} allows you to look further into space.\n\n";
+                    public static LocString DESC = "A Large Telescope allows you to study the depths of space faster and further.";
+                    public static LocString EFFECT = $"\n\nCan be connected to a {UI.FormatAsLink("Gas Pipe", "GASCONDUIT")} to provide assigned Duplicant with {UI.FormatAsLink("Oxygen", "OXYGEN")}.";
                 }
             }
         }
 
         public class OPTIONS
         {
-            /*
-            public class MORALEBONUS
+            public class ANALYZECLUSTERRADIUS
             {
-                public static LocString NAME = $"{UI.FormatAsKeyWord(MORALE)} bonus";
+                public static LocString NAME = "Scan Radius, hex";
+                public static LocString TOOLTIP = "A small Telescope has a radius = 3, whatever these numbers mean";
             }
-            public class SPECIFICEFFECTDURATION
+            public class EFFICIENCYMULTIPLIER
             {
-                public static LocString NAME = $"Duration of the {UI.FormatAsKeyWord("Stargazing")} effect";
+                public static LocString NAME = "Workspeed modifier, +X%";
             }
-            public class STRESSDELTA
+            public class FIXNOCONSUMEPOWERBUG
             {
-                public static LocString NAME = "Stress recovery during use, % per day";
+                public static LocString NAME = "Fix the Bug";
+                public static LocString TOOLTIP = "that Telescopes don't actually consume Power";
             }
-            */
         }
 
         internal static void DoReplacement()
         {
-            BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.DESC = CLUSTERTELESCOPE.DESC;
-            BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.EFFECT += CLUSTERTELESCOPE.EFFECT;
+            BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.EFFECT = CLUSTERTELESCOPE.EFFECT + BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.EFFECT;
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
         }
     }

@@ -27,6 +27,7 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="ClusterLargeTelescopeWorkable.cs" />
     <Compile Include="TelescopeGasProvider.cs" />
     <Compile Include="ClusterLargeTelescopeConfig.cs" />
     <Compile Include="STRINGS.cs" />
