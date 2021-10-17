@@ -6,6 +6,7 @@ namespace LargeTelescope
     public class ClusterLargeTelescopeConfig : IBuildingConfig
     {
         public const string ID = "ClusterLargeTelescope";
+        public const float OXYGEN_CAPACITY = 10f;
 
         public override string[] GetDlcIds()
         {
@@ -42,7 +43,7 @@ namespace LargeTelescope
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
-            // todo: размеры хранилищь уточнить и прописать
+            go.AddOrGet<KPrefabID>().AddTag(GameTags.NotRocketInteriorBuilding);
             go.AddOrGet<BuildingComplete>().isManuallyOperated = true;
             Prioritizable.AddRef(go);
             go.AddOrGet<ClusterLargeTelescopeWorkable>().efficiencyMultiplier = 1f + (LargeTelescopeOptions.Instance.EfficiencyMultiplier / 100f);
@@ -57,10 +58,9 @@ namespace LargeTelescope
             conduitConsumer.consumptionRate = ConduitFlow.MAX_GAS_MASS;
             conduitConsumer.capacityTag = GameTags.Oxygen;
             conduitConsumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
-            conduitConsumer.capacityKG = 10f;
+            conduitConsumer.capacityKG = OXYGEN_CAPACITY;
             conduitConsumer.forceAlwaysSatisfied = true;
-            go.AddOrGet<TelescopeGasProvider>();
-            go.AddOrGetDef<PoweredController.Def>();
+            go.AddOrGetDef<PoweredActiveController.Def>();
         }
 
         public override void DoPostConfigureComplete(GameObject go)

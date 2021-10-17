@@ -25,7 +25,7 @@ msgstr ""
 
 #. LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.TOOLTIP
 msgctxt "LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.TOOLTIP"
-msgid "A small Telescope has a radius = 3, whatever these numbers mean"
+msgid "A small Telescope has a radius = 3"
 msgstr ""
 
 #. LargeTelescope.STRINGS.OPTIONS.EFFICIENCYMULTIPLIER.NAME

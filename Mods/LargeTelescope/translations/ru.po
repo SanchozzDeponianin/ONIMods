@@ -16,7 +16,7 @@ msgstr "\n\nМожет быть подключен к <link=\"GASCONDUIT\">га�
 #. LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.NAME
 msgctxt "LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.NAME"
 msgid "<link=\"CLUSTERLARGETELESCOPE\">Large Telescope</link>"
-msgstr "Большой телескоп"
+msgstr "<link=\"CLUSTERLARGETELESCOPE\">Большой телескоп</link>"
 
 #. LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.NAME
 msgctxt "LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.NAME"
@@ -25,8 +25,8 @@ msgstr "Радиус сканирования, хексы"
 
 #. LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.TOOLTIP
 msgctxt "LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.TOOLTIP"
-msgid "A small Telescope has a radius = 3, whatever these numbers mean"
-msgstr "Малый телескоп имеет радиус = 3, что бы эти цифры не значили"
+msgid "A small Telescope has a radius = 3"
+msgstr "Малый телескоп имеет радиус = 3"
 
 #. LargeTelescope.STRINGS.OPTIONS.EFFICIENCYMULTIPLIER.NAME
 msgctxt "LargeTelescope.STRINGS.OPTIONS.EFFICIENCYMULTIPLIER.NAME"

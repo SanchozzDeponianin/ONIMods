@@ -23,7 +23,7 @@ namespace LargeTelescope
             public class ANALYZECLUSTERRADIUS
             {
                 public static LocString NAME = "Scan Radius, hex";
-                public static LocString TOOLTIP = "A small Telescope has a radius = 3, whatever these numbers mean";
+                public static LocString TOOLTIP = "A small Telescope has a radius = 3";
             }
             public class EFFICIENCYMULTIPLIER
             {
