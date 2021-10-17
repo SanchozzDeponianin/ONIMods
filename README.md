@@ -29,6 +29,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Aquatic Farm](https://steamcommunity.com/sharedfiles/filedetails/?id=1910961538) | Adds a new Aquatic Farm tile that can absorbs Liquids from the world for irrigation. Does not require Liquid Piping. | Yes | Yes |
 | [Butcher & Fishing Stations](https://steamcommunity.com/sharedfiles/filedetails/?id=1907824546) | Adds a new Stations allows the Ranchers to control the population and butchering too old, surplus, or unwanted Critters. | Yes | Yes |
 | [Carousel](https://steamcommunity.com/sharedfiles/filedetails/?id=1899088142) | Adds a new recreation building. Funny dizzy entertainment. Sometimes too dizzy... | Yes | Yes |
+| [Large Telescope](https://steamcommunity.com/sharedfiles/filedetails/?id=2630438094) | Returns the Telescope from base game to the DLC as Large Telescope with increased scan radius and speed. | No | Yes |
 | [Mechanics Station](https://steamcommunity.com/sharedfiles/filedetails/?id=1938117526) | Adds a new Mechanics Station, with which engineers could improve the performance of various buildings. | Yes | Yes |
 | [Smelter](https://steamcommunity.com/sharedfiles/filedetails/?id=2350553957) | Adds a new Smelter building designed to smelt metals in the early game, and a few new recipes. | Yes | Yes |
 | [Squirrel Wheel](https://steamcommunity.com/sharedfiles/filedetails/?id=2086704949) | Adds a new Squirrel Wheel building that your Pips can use to running, and you will get a small profit of bonus electricity power. | Yes | Yes |
