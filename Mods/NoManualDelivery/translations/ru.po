@@ -3,8 +3,8 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
-#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TITLE
-msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TITLE"
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME"
 msgid "Duplicants can always picking up Food and Medicine."
 msgstr "Дупликанты всегда могут брать еду и лекарства."
 
@@ -13,8 +13,8 @@ msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP"
 msgid "Duplicants will ignore the <style=\"KKeyword\">{ALLOWMANUALBUTTON}</style> checkbox when picking up food and medicine to eat it."
 msgstr "Дупликанты будут игнорировать чекбокс <style=\"KKeyword\">{ALLOWMANUALBUTTON}</style> \nкогда подбирают еду и лекарства, чтобы съесть их."
 
-#. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TITLE
-msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TITLE"
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME"
 msgid "{SOLIDTRANSFERARM} can pick up and deliver liquid/gas Bottles and Canisters."
 msgstr "{SOLIDTRANSFERARM} может подбирать и доставлять \nжидкостные/газовые бутылки и канистры."
 
