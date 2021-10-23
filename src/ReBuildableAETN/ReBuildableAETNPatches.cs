@@ -95,6 +95,7 @@ namespace ReBuildableAETN
                 go.AddOrGet<MassiveHeatSinkRebuildable>();
                 if (ReBuildableAETNOptions.Instance.AddLogicPort)
                     go.AddOrGet<LogicOperationalController>();
+                go.UpdateComponentRequirement<Demolishable>(false);
             }
         }
 
