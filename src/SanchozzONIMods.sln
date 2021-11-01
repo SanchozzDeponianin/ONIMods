@@ -60,8 +60,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OilWellCapBugFix", "OilWell
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EatEveryDay", "EatEveryDay\EatEveryDay.csproj", "{D2F24263-EDE5-4FE4-BF79-AE6AA84ED46C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualPlanetarium", "VirtualPlanetarium\VirtualPlanetarium.csproj", "{836AEA62-2BDA-4DD8-8297-D32AE080229A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LargeTelescope", "LargeTelescope\LargeTelescope.csproj", "{04FB6DB1-8A5D-4540-B0B1-4809523DA53A}"
 EndProject
 Global
@@ -145,10 +143,6 @@ Global
 		{D2F24263-EDE5-4FE4-BF79-AE6AA84ED46C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2F24263-EDE5-4FE4-BF79-AE6AA84ED46C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2F24263-EDE5-4FE4-BF79-AE6AA84ED46C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{836AEA62-2BDA-4DD8-8297-D32AE080229A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{836AEA62-2BDA-4DD8-8297-D32AE080229A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{836AEA62-2BDA-4DD8-8297-D32AE080229A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{836AEA62-2BDA-4DD8-8297-D32AE080229A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{04FB6DB1-8A5D-4540-B0B1-4809523DA53A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{04FB6DB1-8A5D-4540-B0B1-4809523DA53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04FB6DB1-8A5D-4540-B0B1-4809523DA53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
