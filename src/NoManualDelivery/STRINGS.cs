@@ -13,7 +13,7 @@ namespace NoManualDelivery
         {
             public class ALLOWALWAYSPICKUPEDIBLE
             {
-                public static LocString TITLE = "Duplicants can always picking up Food and Medicine.";
+                public static LocString NAME = "Duplicants can always picking up Food and Medicine.";
                 public static LocString TOOLTIP = string.Concat(new string[]
                 {
                     "Duplicants will ignore the ",
@@ -24,7 +24,7 @@ namespace NoManualDelivery
 
             public class ALLOWTRANSFERARMPICKUPGASLIQUID
             {
-                public static LocString TITLE = SOLIDTRANSFERARM + " can pick up and deliver liquid/gas Bottles and Canisters.";
+                public static LocString NAME = SOLIDTRANSFERARM + " can pick up and deliver liquid/gas Bottles and Canisters.";
                 public static LocString TOOLTIP = string.Concat(new string[]
                 {
                     "Also adds the ",

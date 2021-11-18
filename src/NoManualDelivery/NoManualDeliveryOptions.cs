@@ -10,17 +10,11 @@ namespace NoManualDelivery
     internal sealed class NoManualDeliveryOptions : BaseOptions<NoManualDeliveryOptions>
     {
         [JsonProperty]
-        [Option("NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TITLE", "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP")]
-        public bool AllowAlwaysPickupEdible { get; set; }
+        [Option]
+        public bool AllowAlwaysPickupEdible { get; set; } = true;
 
         [JsonProperty]
-        [Option("NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TITLE", "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP")]
-        public bool AllowTransferArmPickupGasLiquid { get; set; }
-
-        public NoManualDeliveryOptions()
-        {
-            AllowAlwaysPickupEdible = true;
-            AllowTransferArmPickupGasLiquid = false;
-        }
+        [Option]
+        public bool AllowTransferArmPickupGasLiquid { get; set; } = false;
     }
 }
