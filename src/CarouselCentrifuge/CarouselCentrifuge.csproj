@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Carousel</Title>
     <Description>Adds a new recreation building. Funny dizzy entertainment. Sometimes too dizzy...</Description>
-    <ModVersion>1.3.1</ModVersion>
+    <ModVersion>1.3.2</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
