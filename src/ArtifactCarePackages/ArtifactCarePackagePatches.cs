@@ -76,7 +76,7 @@ namespace ArtifactCarePackages
                             instructionsList.Insert(i, new CodeInstruction(OpCodes.Call, inject));
                             result = true;
 #if DEBUG
-                            Debug.Log($"'{methodName}' Transpiler injected");
+                            PUtil.LogDebug($"'{methodName}' Transpiler injected");
 #endif
                             break;
                         }
@@ -84,7 +84,7 @@ namespace ArtifactCarePackages
                 }
                 if (!result)
                 {
-                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
                 }
                 return instructionsList;
             }
@@ -154,6 +154,60 @@ namespace ArtifactCarePackages
                         {
                             instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldloc_0));
                             instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, tryMakeTerrestrialArtifact));
+                            result = true;
+                            break;
+#if DEBUG
+                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
+#endif
+                        }
+                    }
+                }
+                if (!result)
+                {
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
+                }
+                return instructionsList;
+            }
+        }
+
+        // в длц - поправляем анимацию посылки чтобы было "замуровано"
+        [HarmonyPatch(typeof(CarePackage), "SetAnimToInfo")]
+        internal static class CarePackage_SetAnimToInfo
+        {
+            private static bool Prepare() => DlcManager.IsExpansion1Active();
+
+            private static string GetProperAnim(KBatchedAnimController kbac)
+            {
+                string result = kbac.initialAnim;
+                if (kbac.HasTag(GameTags.Artifact))
+                {
+                    result = result.Replace("idle_", "entombed_");
+                }
+                return result;
+            }
+
+            /*
+            --- KBatchedAnimController4.initialAnim = KBatchedAnimController2.initialAnim;
+            +++ KBatchedAnimController4.initialAnim = GetProperAnim(KBatchedAnimController2);
+            */
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                var instructionsList = instructions.ToList();
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
+
+                var initialAnim = typeof(KAnimControllerBase).GetFieldSafe(nameof(KAnimControllerBase.initialAnim), false);
+                var getProperAnim = typeof(CarePackage_SetAnimToInfo).GetMethodSafe(nameof(GetProperAnim), true, PPatchTools.AnyArguments);
+
+                bool result = false;
+                if (initialAnim != null && getProperAnim != null)
+                {
+
+                    for (int i = 0; i < instructionsList.Count; i++)
+                    {
+                        var instruction = instructionsList[i];
+                        if (instruction.opcode == OpCodes.Ldfld && (instruction.operand is FieldInfo info) && info == initialAnim)
+                        {
+                            instructionsList[i] = new CodeInstruction(OpCodes.Call, getProperAnim);
                             result = true;
                             break;
 #if DEBUG
