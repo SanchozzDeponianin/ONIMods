@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Artifacts in Care Packages</Title>
     <Description>Allows to get Artifacts in Care Packages</Description>
-    <ModVersion>1.1.0</ModVersion>
+    <ModVersion>1.1.1</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

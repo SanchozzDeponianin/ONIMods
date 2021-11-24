@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using STRINGS;
 using HarmonyLib;
+using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.Options;
@@ -18,7 +19,7 @@ namespace ArtifactCarePackages
             base.OnLoad(harmony);
             PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(typeof(ArtifactCarePackagePatches));
-            new POptions().RegisterOptions(this, typeof(ArtifactCarePackageOptions));           
+            new POptions().RegisterOptions(this, typeof(ArtifactCarePackageOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -103,6 +104,69 @@ namespace ArtifactCarePackages
                     __result = string.Concat(__result, "\n",
                         string.Format(UI.BUILDINGEFFECTS.DECORPROVIDED, "", decorString, a.decorValues.radius));
                 }
+            }
+        }
+
+        // в длц - часть полученных артифактов помечаем как "наземные артифакты"
+        // по эмпирической формуле, в зависимости - сколько еще нужно для ачивки
+        [HarmonyPatch(typeof(CarePackage), "SpawnContents")]
+        internal static class CarePackage_SpawnContents
+        {
+            private const int REQUIRED_ARTIFACT_COUNT = 10;
+            private const float GAP = 0.0001f;
+            private static bool Prepare() => DlcManager.IsExpansion1Active();
+
+            private static void TryMakeTerrestrialArtifact(GameObject go)
+            {
+                if (go.HasTag(GameTags.Artifact))
+                {
+                    int needTerrestrialArtifact = Mathf.Max(0, REQUIRED_ARTIFACT_COUNT - ArtifactSelector.Instance.AnalyzedArtifactCount);
+                    int needSpaceArtifact = Mathf.Max(0, REQUIRED_ARTIFACT_COUNT - ArtifactSelector.Instance.AnalyzedSpaceArtifactCount);
+                    float chanceTerrestrialArtifact = (needTerrestrialArtifact + GAP) / (needTerrestrialArtifact + needSpaceArtifact + 2 * GAP);
+                    if (Random.value < chanceTerrestrialArtifact)
+                    {
+                        go.GetComponent<KPrefabID>().AddTag(GameTags.TerrestrialArtifact, true);
+                    }
+                }
+            }
+
+            /*
+                gameObject.SetActive(true);
+            +++ TryMakeTerrestrialArtifact(gameObject);
+            */
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                var instructionsList = instructions.ToList();
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
+
+                var setActive = typeof(GameObject).GetMethodSafe(nameof(GameObject.SetActive), false, PPatchTools.AnyArguments);
+                var tryMakeTerrestrialArtifact = typeof(CarePackage_SpawnContents).GetMethodSafe(nameof(CarePackage_SpawnContents.TryMakeTerrestrialArtifact), true, PPatchTools.AnyArguments);
+
+                bool result = false;
+                if (setActive != null && tryMakeTerrestrialArtifact != null)
+                {
+
+                    for (int i = 0; i < instructionsList.Count; i++)
+                    {
+                        var instruction = instructionsList[i];
+                        if ((instruction.opcode == OpCodes.Call || instruction.opcode == OpCodes.Callvirt)
+                            && (instruction.operand is MethodInfo info) && info == setActive)
+                        {
+                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldloc_0));
+                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, tryMakeTerrestrialArtifact));
+                            result = true;
+                            break;
+#if DEBUG
+                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
+#endif
+                        }
+                    }
+                }
+                if (!result)
+                {
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
+                }
+                return instructionsList;
             }
         }
     }

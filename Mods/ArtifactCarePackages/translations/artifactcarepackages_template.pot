@@ -3,18 +3,18 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
-#. ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIER0.TITLE
-msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIER0.TITLE"
+#. ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIER0.NAME
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIER0.NAME"
 msgid "Cycles before the Tier0 artifact will be available"
 msgstr ""
 
-#. ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIERNEXT.TITLE
-msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIERNEXT.TITLE"
+#. ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIERNEXT.NAME
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIERNEXT.NAME"
 msgid "Cycles before the each next Tier artifact will be available"
 msgstr ""
 
-#. ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.TITLE
-msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.TITLE"
+#. ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.NAME
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.NAME"
 msgid "Slots of artifacts added to the Drop Table"
 msgstr ""
 

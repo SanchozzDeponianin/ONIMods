@@ -9,25 +9,16 @@ namespace ArtifactCarePackages
     internal class ArtifactCarePackageOptions : BaseOptions<ArtifactCarePackageOptions>
     {
         [JsonProperty]
-        [Option("ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIER0.TITLE")]
+        [Option]
         [Limit(1, 500)]
-        public int CyclesUntilTier0 { get; set; }
+        public int CyclesUntilTier0 { get; set; } = 150;
         [JsonProperty]
-        [Option("ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIERNEXT.TITLE")]
+        [Option]
         [Limit(1, 200)]
-        public int CyclesUntilTierNext { get; set; }
+        public int CyclesUntilTierNext { get; set; } = 25;
         [JsonProperty]
-        [Option(
-            "ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.TITLE",
-            "ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.TOOLTIP")]
+        [Option]
         [Limit(1, 30)]
-        public int RandomArtifactDropTableSlots { get; set; }
-
-        public ArtifactCarePackageOptions()
-        {
-            CyclesUntilTier0 = 150;
-            CyclesUntilTierNext = 25;
-            RandomArtifactDropTableSlots = 5;
-        }
+        public int RandomArtifactDropTableSlots { get; set; } = 5;
     }
 }
