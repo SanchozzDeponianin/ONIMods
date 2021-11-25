@@ -20,5 +20,8 @@ namespace ArtifactCarePackages
         [Option]
         [Limit(1, 30)]
         public int RandomArtifactDropTableSlots { get; set; } = 5;
+        [JsonProperty]
+        [Option]
+        public bool DynamicProbability { get; set; } = true;
     }
 }

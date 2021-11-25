@@ -17,6 +17,11 @@
                 public static LocString NAME = "Slots of artifacts added to the Drop Table";
                 public static LocString TOOLTIP = "More slots - more chance to get an artifact instead of a resource";
             }
+            public class DYNAMICPROBABILITY
+            {
+                public static LocString NAME = "Dynamic probability of obtaining an artifact";
+                public static LocString TOOLTIP = "If enabled, the more artifacts of a certain type you have, the less chance you have of getting another one\nIf disabled, the chances of getting artifacts of any type are the same";
+            }
         }
     }
 }
