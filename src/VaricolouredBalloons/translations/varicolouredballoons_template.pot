@@ -3,8 +3,8 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
-#. VaricolouredBalloons.STRINGS.OPTIONS.DESTROYFXAFTEREFFECTEXPIRED.TITLE
-msgctxt "VaricolouredBalloons.STRINGS.OPTIONS.DESTROYFXAFTEREFFECTEXPIRED.TITLE"
+#. VaricolouredBalloons.STRINGS.OPTIONS.DESTROYFXAFTEREFFECTEXPIRED.NAME
+msgctxt "VaricolouredBalloons.STRINGS.OPTIONS.DESTROYFXAFTEREFFECTEXPIRED.NAME"
 msgid "Destroy the Balloon when <style=\"KKeyword\">{HASBALLOON}</style> effect has ends."
 msgstr ""
 

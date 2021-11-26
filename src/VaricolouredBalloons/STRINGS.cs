@@ -11,7 +11,7 @@ namespace VaricolouredBalloons
         {
             public class DESTROYFXAFTEREFFECTEXPIRED
             {
-                public static LocString TITLE = string.Concat(new string[]
+                public static LocString NAME = string.Concat(new string[]
                 {
                     "Destroy the Balloon when ",
                     UI.FormatAsKeyWord(HASBALLOON),
@@ -32,7 +32,7 @@ namespace VaricolouredBalloons
         internal static void DoReplacement()
         {
             OPTIONS.DESTROYFXAFTEREFFECTEXPIRED.TOOLTIP.ReplaceText(HASBALLOON, DUPLICANTS.MODIFIERS.HASBALLOON.NAME);
-            OPTIONS.DESTROYFXAFTEREFFECTEXPIRED.TITLE.ReplaceText(HASBALLOON, DUPLICANTS.MODIFIERS.HASBALLOON.NAME);
+            OPTIONS.DESTROYFXAFTEREFFECTEXPIRED.NAME.ReplaceText(HASBALLOON, DUPLICANTS.MODIFIERS.HASBALLOON.NAME);
         }
     }
 }

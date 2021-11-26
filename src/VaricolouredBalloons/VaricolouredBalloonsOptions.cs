@@ -9,12 +9,7 @@ namespace VaricolouredBalloons
     internal sealed class VaricolouredBalloonsOptions : BaseOptions<VaricolouredBalloonsOptions>
     {
         [JsonProperty]
-        [Option("VaricolouredBalloons.STRINGS.OPTIONS.DESTROYFXAFTEREFFECTEXPIRED.TITLE", "VaricolouredBalloons.STRINGS.OPTIONS.DESTROYFXAFTEREFFECTEXPIRED.TOOLTIP")]
-        public bool DestroyFXAfterEffectExpired { get; set; }
-
-        public VaricolouredBalloonsOptions()
-        {
-            DestroyFXAfterEffectExpired = false;
-        }
+        [Option]
+        public bool DestroyFXAfterEffectExpired { get; set; } = false;
     }
 }
