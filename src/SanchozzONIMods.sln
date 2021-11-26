@@ -62,6 +62,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EatEveryDay", "EatEveryDay\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LargeTelescope", "LargeTelescope\LargeTelescope.csproj", "{04FB6DB1-8A5D-4540-B0B1-4809523DA53A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhereMyLoot", "WhereMyLoot\WhereMyLoot.csproj", "{D6DF0AF3-27D7-4745-A30F-21F3FB707D4C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +149,10 @@ Global
 		{04FB6DB1-8A5D-4540-B0B1-4809523DA53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04FB6DB1-8A5D-4540-B0B1-4809523DA53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04FB6DB1-8A5D-4540-B0B1-4809523DA53A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6DF0AF3-27D7-4745-A30F-21F3FB707D4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6DF0AF3-27D7-4745-A30F-21F3FB707D4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6DF0AF3-27D7-4745-A30F-21F3FB707D4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6DF0AF3-27D7-4745-A30F-21F3FB707D4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
