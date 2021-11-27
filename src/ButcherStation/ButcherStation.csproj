@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Butcher &amp; Fishing Stations</Title>
     <Description>Adds a new Stations allows the Ranchers to control the population and butchering too old, surplus, or unwanted Critters.</Description>
-    <ModVersion>1.5.1</ModVersion>
+    <ModVersion>1.5.2</ModVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\BaseConfig.cs">

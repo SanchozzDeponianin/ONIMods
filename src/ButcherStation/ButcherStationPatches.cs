@@ -24,7 +24,14 @@ namespace ButcherStation
                 Utils.AddBuildingToTechnology("AnimalControl", ButcherStationConfig.ID, FishingStationConfig.ID);
 
                 var formatter = new ToPercentAttributeFormatter(1f, GameUtil.TimeSlice.None);
-                RanchingEffectExtraMeat = __instance.AttributeConverters.Create("RanchingEffectExtraMeat", "Ranching Effect Extra Meat", STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMODIFIER, Db.Get().Attributes.Ranching, Config.Get().EXTRAMEATPERRANCHINGATTRIBUTE, 0f, formatter);
+                RanchingEffectExtraMeat = __instance.AttributeConverters.Create(
+                    id: "RanchingEffectExtraMeat", 
+                    name: "Ranching Effect Extra Meat", 
+                    description: STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMODIFIER, 
+                    attribute: Db.Get().Attributes.Ranching, multiplier: Config.Get().EXTRAMEATPERRANCHINGATTRIBUTE, 
+                    base_value: 0f, 
+                    formatter: formatter, 
+                    available_dlcs: DlcManager.AVAILABLE_ALL_VERSIONS);
             }
         }
 
