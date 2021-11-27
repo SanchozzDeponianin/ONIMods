@@ -1,5 +1,5 @@
 # Sanchozz's mods for Oxygen Not Included
-Last tested on game versions: Vanilla and Spaced Out! DLC **471618**
+Last tested on game versions: Vanilla and Spaced Out! DLC **486708**
 
 Limited support for Public Testing branches. Do not wait for a quick release of fixes if something breaks.
 
