@@ -109,12 +109,13 @@ namespace WhereMyLoot
                 {
                     instructionsList = PPatchTools.ReplaceMethodCall(instructionsList, StartScreen, InstantiateScreen).ToList();
                     var label = IL.DefineLabel();
-                    var br = new CodeInstruction(OpCodes.Br_S, label);
                     for (int i = 0; i < instructionsList.Count; i++)
                     {
-                        if (instructionsList[i].opcode == OpCodes.Ret)
+                        var instruction = instructionsList[i];
+                        if (instruction.opcode == OpCodes.Ret)
                         {
-                            instructionsList[i] = br;
+                            instruction.opcode = OpCodes.Br_S;
+                            instruction.operand = label;
                         }
                     }
                     var end = new CodeInstruction(OpCodes.Nop);
