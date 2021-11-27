@@ -23,8 +23,8 @@ msgctxt "MechanicsStation.STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP"
 msgid "A skilled Duplicant has jerry rigged this <style=\"KKeyword\">Building</style> to temporarily run faster"
 msgstr ""
 
-#. MechanicsStation.STRINGS.OPTIONS.CRAFTING_SPEED_MODIFIER.TITLE
-msgctxt "MechanicsStation.STRINGS.OPTIONS.CRAFTING_SPEED_MODIFIER.TITLE"
+#. MechanicsStation.STRINGS.OPTIONS.CRAFTING_SPEED_MODIFIER.NAME
+msgctxt "MechanicsStation.STRINGS.OPTIONS.CRAFTING_SPEED_MODIFIER.NAME"
 msgid "<style=\"KKeyword\">Fabrication Speed</style> +X% value"
 msgstr ""
 
@@ -33,23 +33,23 @@ msgctxt "MechanicsStation.STRINGS.OPTIONS.CRAFTING_SPEED_MODIFIER.TOOLTIP"
 msgid "Increases work speed of duplicant-operated buildings"
 msgstr ""
 
-#. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION.TITLE
-msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION.TITLE"
+#. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION.NAME
+msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION.NAME"
 msgid "The <style=\"KKeyword\">{MACHINE_TINKER}</style> effect duration, cycles"
 msgstr ""
 
-#. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION_PER_SKILL.TITLE
-msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION_PER_SKILL.TITLE"
+#. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION_PER_SKILL.NAME
+msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION_PER_SKILL.NAME"
 msgid "The <style=\"KKeyword\">{MACHINE_TINKER}</style> effect +X% duration per <style=\"KKeyword\">{MACHINERY}</style> attribute level"
 msgstr ""
 
-#. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKERABLE_WORKTIME.TITLE
-msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKERABLE_WORKTIME.TITLE"
+#. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKERABLE_WORKTIME.NAME
+msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKERABLE_WORKTIME.NAME"
 msgid "The time required to tune up buildings, seconds"
 msgstr ""
 
-#. MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.TITLE
-msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.TITLE"
+#. MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.NAME
+msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.NAME"
 msgid "<style=\"KKeyword\">{MACHINERY_SPEED}</style> +X% value"
 msgstr ""
 

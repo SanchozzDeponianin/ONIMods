@@ -129,7 +129,8 @@ namespace MechanicsStation
                 attribute: db.Attributes.Machinery,
                 multiplier: MACHINE_TINKER_EFFECT_DURATION_PER_SKILL,
                 base_value: 0,
-                formatter: new ToPercentAttributeFormatter(1f, GameUtil.TimeSlice.None));
+                formatter: new ToPercentAttributeFormatter(1f, GameUtil.TimeSlice.None),
+                available_dlcs: DlcManager.AVAILABLE_ALL_VERSIONS);
         }
 
         internal static void LoadOptions()
