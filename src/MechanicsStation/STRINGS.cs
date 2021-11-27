@@ -61,25 +61,25 @@ namespace MechanicsStation
         {
             public class MACHINERY_SPEED_MODIFIER
             {
-                public static LocString TITLE = $"{UI.FormatAsKeyWord(MACHINERY_SPEED)} +X% value";
+                public static LocString NAME = $"{UI.FormatAsKeyWord(MACHINERY_SPEED)} +X% value";
                 public static LocString TOOLTIP = "Increases work speed of autonomously working buildings";
             }
             public class CRAFTING_SPEED_MODIFIER
             {
-                public static LocString TITLE = $"{UI.FormatAsKeyWord("Fabrication Speed")} +X% value";
+                public static LocString NAME = $"{UI.FormatAsKeyWord("Fabrication Speed")} +X% value";
                 public static LocString TOOLTIP = "Increases work speed of duplicant-operated buildings";
             }
             public class MACHINE_TINKER_EFFECT_DURATION
             {
-                public static LocString TITLE = $"The {UI.FormatAsKeyWord(MACHINE_TINKER)} effect duration, cycles";
+                public static LocString NAME = $"The {UI.FormatAsKeyWord(MACHINE_TINKER)} effect duration, cycles";
             }
             public class MACHINE_TINKER_EFFECT_DURATION_PER_SKILL
             {
-                public static LocString TITLE = $"The {UI.FormatAsKeyWord(MACHINE_TINKER)} effect +X% duration per {UI.FormatAsKeyWord(MACHINERY)} attribute level";
+                public static LocString NAME = $"The {UI.FormatAsKeyWord(MACHINE_TINKER)} effect +X% duration per {UI.FormatAsKeyWord(MACHINERY)} attribute level";
             }
             public class MACHINE_TINKERABLE_WORKTIME
             {
-                public static LocString TITLE = "The time required to tune up buildings, seconds";
+                public static LocString NAME = "The time required to tune up buildings, seconds";
             }
         }
 

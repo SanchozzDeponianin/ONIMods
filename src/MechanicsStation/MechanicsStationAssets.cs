@@ -135,10 +135,10 @@ namespace MechanicsStation
         internal static void LoadOptions()
         {
             MechanicsStationOptions.Reload();
-            MachinerySpeedModifier.SetValue(MechanicsStationOptions.Instance.MachinerySpeedModifier / 100);
-            CraftingSpeedModifier.SetValue(MechanicsStationOptions.Instance.CraftingSpeedModifier / 100);
-            MachineTinkerEffect.duration = MechanicsStationOptions.Instance.MachineTinkerEffectDuration * Constants.SECONDS_PER_CYCLE;
-            MachineTinkerEffectDuration.multiplier = MechanicsStationOptions.Instance.MachineTinkerEffectDurationPerSkill / 100;
+            MachinerySpeedModifier.SetValue(MechanicsStationOptions.Instance.machinery_speed_modifier / 100);
+            CraftingSpeedModifier.SetValue(MechanicsStationOptions.Instance.crafting_speed_modifier / 100);
+            MachineTinkerEffect.duration = MechanicsStationOptions.Instance.machine_tinker_effect_duration * Constants.SECONDS_PER_CYCLE;
+            MachineTinkerEffectDuration.multiplier = MechanicsStationOptions.Instance.machine_tinker_effect_duration_per_skill / 100;
         }
 
         // сделать постройку улучшаемой
@@ -152,7 +152,7 @@ namespace MechanicsStation
             tinkerable.SetWorkTime(MACHINE_TINKERABLE_WORKTIME);
             tinkerable.choreTypeTinker = Db.Get().ChoreTypes.MachineTinker.IdHash;
             tinkerable.choreTypeFetch = Db.Get().ChoreTypes.MachineFetch.IdHash;
-            // увеличение времени эффекта в длц
+            // увеличение времени эффекта
             tinkerable.effectAttributeId = Db.Get().Attributes.Machinery.Id;
             tinkerable.effectMultiplier = MACHINE_TINKER_EFFECT_DURATION_PER_SKILL;
 
@@ -163,9 +163,9 @@ namespace MechanicsStation
                 var _tinkerable = prefab.GetComponent<Tinkerable>();
                 if (_tinkerable != null)
                 {
-                    _tinkerable.workTime = MechanicsStationOptions.Instance.MachineTinkerableWorkTime;
+                    _tinkerable.workTime = MechanicsStationOptions.Instance.machine_tinkerable_worktime;
                     _tinkerable.WorkTimeRemaining = Mathf.Min(_tinkerable.WorkTimeRemaining, _tinkerable.workTime);
-                    _tinkerable.effectMultiplier = MechanicsStationOptions.Instance.MachineTinkerEffectDurationPerSkill / 100;
+                    _tinkerable.effectMultiplier = MechanicsStationOptions.Instance.machine_tinker_effect_duration_per_skill / 100;
                 }
             };
             // если "Rooms Expanded" найден, добавляем в кухонные постройки компонент для работы в нескольких комнатах.

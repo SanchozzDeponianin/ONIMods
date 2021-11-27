@@ -67,15 +67,19 @@ namespace MechanicsStation
             ResearchCenterConfig.ID,            // слишком читерно
             AdvancedResearchCenterConfig.ID,
             CosmicResearchCenterConfig.ID,
-            OrbitalResearchCenterConfig.ID,
+            DLC1CosmicResearchCenterConfig.ID,
             OilRefineryConfig.ID,               // ограничение по трубе
-            "AtomicGarden",                     // новая недоделанная хрень
+            AirFilterConfig.ID,                 // бесполезно и бессмысленно
+            AtmoicGardenConfig.ID,              // вообще недоделанная хрень
+            RadiationLightConfig.ID,            // бесполезно. todo: в будующем сделать повышение радиации
         };
 
         private static List<string> BuildingWithComplexFabricatorWorkableStopList = new List<string>()
         {
             GenericFabricatorConfig.ID,         // странная старая хрень
             EggCrackerConfig.ID,                // было бы нелепо ;-D
+            OrbitalResearchCenterConfig.ID,     // слишком читерно
+            AdvancedApothecaryConfig.ID,        // новая так и недоделанная хрень
         };
 
         [HarmonyPatch(typeof(Assets), nameof(Assets.AddBuildingDef))]
@@ -96,7 +100,7 @@ namespace MechanicsStation
                         {
                             go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject prefab)
                             {
-                                float multiplier = BASE_SPEED_VALUE + (MechanicsStationOptions.Instance.MachinerySpeedModifier / 100);
+                                float multiplier = BASE_SPEED_VALUE + (MechanicsStationOptions.Instance.machinery_speed_modifier / 100);
                                 var elementConsumer = prefab.GetComponent<PassiveElementConsumer>();
                                 if (elementConsumer != null)
                                 {
