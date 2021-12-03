@@ -47,6 +47,7 @@ namespace ReBuildableAETN
             spaceArtifact.SetUIAnim("ui_crystal");
             spaceArtifact.SetArtifactTier(TIER_CORE);
             spaceArtifact.uniqueAnimNameFragment = "idle_crystal";
+            spaceArtifact.artifactType = ArtifactType.Any;
             go.AddOrGet<KSelectable>();
             go.GetComponent<KBatchedAnimController>().initialMode = KAnim.PlayMode.Loop;
 
@@ -56,7 +57,7 @@ namespace ReBuildableAETN
 
             // добавляем в список артифактов только в ваниле, воизбежание непредвиденных последствий на длц
             if (DlcManager.IsPureVanilla())
-                ArtifactConfig.artifactItems.Add(go.name);
+                ArtifactConfig.artifactItems[ArtifactType.Any].Add(go.name);
             return go;
         }
 
