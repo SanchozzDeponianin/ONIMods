@@ -118,15 +118,28 @@ namespace ArtifactCarePackages
 
             private static void TryMakeTerrestrialArtifact(GameObject go)
             {
-                if (go.HasTag(GameTags.Artifact))
+                var artifact = go.GetComponent<SpaceArtifact>();
+                if (artifact != null)
                 {
-                    int needTerrestrialArtifact = Mathf.Max(0, REQUIRED_ARTIFACT_COUNT - ArtifactSelector.Instance.AnalyzedArtifactCount);
-                    int needSpaceArtifact = Mathf.Max(0, REQUIRED_ARTIFACT_COUNT - ArtifactSelector.Instance.AnalyzedSpaceArtifactCount);
-                    float chanceTerrestrialArtifact = (needTerrestrialArtifact + GAP) / (needTerrestrialArtifact + needSpaceArtifact + 2 * GAP);
-                    if (Random.value < chanceTerrestrialArtifact)
+                    bool isTerrestrial;
+                    switch (artifact.artifactType)
                     {
-                        go.GetComponent<KPrefabID>().AddTag(GameTags.TerrestrialArtifact, true);
+                        case ArtifactType.Space:
+                            isTerrestrial = false;
+                            break;
+                        case ArtifactType.Terrestrial:
+                            isTerrestrial = true;
+                            break;
+                        case ArtifactType.Any:
+                        default:
+                            int needTerrestrialArtifact = Mathf.Max(0, REQUIRED_ARTIFACT_COUNT - ArtifactSelector.Instance.AnalyzedArtifactCount);
+                            int needSpaceArtifact = Mathf.Max(0, REQUIRED_ARTIFACT_COUNT - ArtifactSelector.Instance.AnalyzedSpaceArtifactCount);
+                            float chanceTerrestrialArtifact = (needTerrestrialArtifact + GAP) / (needTerrestrialArtifact + needSpaceArtifact + 2 * GAP);
+                            isTerrestrial = Random.value < chanceTerrestrialArtifact;
+                            break;
                     }
+                    if (isTerrestrial)
+                        go.GetComponent<KPrefabID>().AddTag(GameTags.TerrestrialArtifact, true);
                 }
             }
 

@@ -1,0 +1,35 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIER0.NAME
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIER0.NAME"
+msgid "Cycles before the Tier0 artifact will be available"
+msgstr ""
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIERNEXT.NAME
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIERNEXT.NAME"
+msgid "Cycles before the each next Tier artifact will be available"
+msgstr ""
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.DYNAMICPROBABILITY.NAME
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.DYNAMICPROBABILITY.NAME"
+msgid "Dynamic probability of obtaining an artifact"
+msgstr ""
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.DYNAMICPROBABILITY.TOOLTIP
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.DYNAMICPROBABILITY.TOOLTIP"
+msgid "If enabled, the more artifacts of a certain type you have, the less chance you have of getting another one\nIf disabled, the chances of getting artifacts of any type are the same"
+msgstr ""
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.NAME
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.NAME"
+msgid "Slots of artifacts added to the Drop Table"
+msgstr ""
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.TOOLTIP
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.TOOLTIP"
+msgid "More slots - more chance to get an artifact instead of a resource"
+msgstr ""
+

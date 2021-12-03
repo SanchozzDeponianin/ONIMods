@@ -20,7 +20,10 @@ namespace ArtifactCarePackages
             int a = ArtifactCarePackageOptions.Instance.CyclesUntilTier0;
             int b = ArtifactCarePackageOptions.Instance.CyclesUntilTierNext;
             DropTableSlots = ArtifactCarePackageOptions.Instance.RandomArtifactDropTableSlots;
-            var artifactItems = ArtifactConfig.artifactItems.Distinct();
+            var artifactItems = new List<string>();
+            foreach (var artifactType in ArtifactConfig.artifactItems.Keys)
+                artifactItems.AddRange(ArtifactConfig.artifactItems[artifactType]);
+            artifactItems = artifactItems.Distinct().ToList();
             foreach (string artifactID in artifactItems)
             {
                 var artifactTier = Assets.GetPrefab(artifactID.ToTag()).GetComponent<SpaceArtifact>().GetArtifactTier();
