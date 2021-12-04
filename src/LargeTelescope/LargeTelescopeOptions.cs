@@ -11,16 +11,28 @@ namespace LargeTelescope
     {
         [JsonProperty]
         [Option]
-        [Limit(4, 10)]
-        public int AnalyzeClusterRadius { get; set; } = 6;
+        [Limit(4, 8)]
+        public int analyze_cluster_radius { get; set; } = 5;
 
         [JsonProperty]
         [Option(Format = "F0")]
         [Limit(0, 200)]
-        public float EfficiencyMultiplier { get; set; } = 50;
+        public float efficiency_multiplier { get; set; } = 50;
 
         [JsonProperty]
         [Option]
-        public bool FixNoConsumePowerBug { get; set; } = true;
+        public bool add_glass { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool not_require_gas_pipe { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool prohibit_inside_rocket { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool fix_no_consume_power_bug { get; set; } = true;
     }
 }

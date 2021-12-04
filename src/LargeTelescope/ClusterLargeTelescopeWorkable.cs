@@ -1,37 +1,32 @@
-﻿using Klei;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace LargeTelescope
 {
-    public class ClusterLargeTelescopeWorkable : ClusterTelescope.ClusterTelescopeWorkable, OxygenBreather.IGasProvider, IGameObjectEffectDescriptor
+    public class ClusterLargeTelescopeWorkable : ClusterTelescope.ClusterTelescopeWorkable, IGameObjectEffectDescriptor
     {
 #pragma warning disable CS0649
+        [MySmiReq]
+        private ClusterTelescope.Instance _telescope;
+
         [MyCmpReq]
-        private Storage storage;
+        private Storage _storage;
 #pragma warning restore CS0649
 
         [SerializeField]
         public float efficiencyMultiplier = 1.5f;
         private bool isEmpty;
-        private OxygenBreather.IGasProvider workerGasProvider;
+        private bool dirty;
 
         private static readonly EventSystem.IntraObjectHandler<ClusterLargeTelescopeWorkable> OnStorageChangeDelegate =
-            new EventSystem.IntraObjectHandler<ClusterLargeTelescopeWorkable>((component, data) => component.OnStorageChange());
-
-        protected override void OnPrefabInit()
-        {
-            base.OnPrefabInit();
-            overrideAnims = new KAnimFile[] { Assets.GetAnim("anim_interacts_telescope_kanim") };
-            workLayer = Grid.SceneLayer.BuildingFront;
-        }
+            new EventSystem.IntraObjectHandler<ClusterLargeTelescopeWorkable>((component, data) => component.CheckStorageIsEmpty());
 
         protected override void OnSpawn()
         {
             base.OnSpawn();
             Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
-            OnStorageChange();
+            CheckStorageIsEmpty();
+            dirty = false;
         }
-
         protected override void OnCleanUp()
         {
             Unsubscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
@@ -43,87 +38,76 @@ namespace LargeTelescope
             return efficiencyMultiplier * base.GetEfficiencyMultiplier(worker);
         }
 
-        private void OnStorageChange()
+        internal void CheckStorageIsEmpty()
         {
-            var mass = storage.GetMassAvailable(GameTags.Oxygen);
-            if (isEmpty && mass > TUNING.DUPLICANTSTATS.BASESTATS.OXYGEN_USED_PER_SECOND)
-                isEmpty = false;
-            else if (!isEmpty && mass <= 0f)
-                isEmpty = true;
+            var mass = _storage.GetMassAvailable(SimHashes.Oxygen);
+            bool empty = isEmpty;
+            if (empty && mass > TUNING.DUPLICANTSTATS.BASESTATS.OXYGEN_USED_PER_SECOND)
+                empty = false;
+            else if (!empty && mass <= 0f)
+                empty = true;
+            if (isEmpty != empty)
+            {
+                isEmpty = empty;
+                dirty = true;
+            }
         }
 
         protected override void OnStartWork(Worker worker)
         {
-            base.OnStartWork(worker);
-            if (worker != null)
+            if (_telescope.def.providesOxygen && !isEmpty)
             {
-                if (!isEmpty)
-                {
-                    SetGasProvider(worker);
-                }
-                worker.AddTag(GameTags.Shaded);
+                dirty = false;
+                OverrideGasProvider(worker);
             }
+            base.OnStartWork(worker);
         }
 
         protected override bool OnWorkTick(Worker worker, float dt)
         {
-            if (worker != null)
+            if (dirty)
             {
-                if (isEmpty)
-                    ClearGasProvider(worker);
-                else
-                    SetGasProvider(worker);
+                dirty = false;
+                if (_telescope.def.providesOxygen)
+                {
+                    if (isEmpty)
+                        RestoreGasProvider(worker);
+                    else
+                        OverrideGasProvider(worker);
+                }
             }
             return base.OnWorkTick(worker, dt);
         }
 
         protected override void OnStopWork(Worker worker)
         {
-            if (worker != null)
-            {
-                ClearGasProvider(worker);
-                worker.RemoveTag(GameTags.Shaded);
-            }
+            if (_telescope.def.providesOxygen)
+                RestoreGasProvider(worker);
             base.OnStopWork(worker);
         }
 
-        private void SetGasProvider(Worker worker)
+        // заменяем и восстанавливаем GasProvider. 
+        // сделано не как у клеев, чтобы исправить эксплоит и баг со снятием костюма.
+        private void OverrideGasProvider(Worker worker)
         {
-            if (workerGasProvider == null)
+            worker?.GetComponent<OxygenBreather>()?.SetGasProvider(this);
+        }
+
+        private void RestoreGasProvider(Worker worker)
+        {
+            if (worker != null)
             {
                 var breather = worker.GetComponent<OxygenBreather>();
-                workerGasProvider = breather.GetGasProvider();
-                breather.SetGasProvider(this);
+                if (breather != null && ReferenceEquals(this, breather.GetGasProvider()))
+                {
+                    var suitTank = worker.GetComponent<MinionIdentity>()?.GetEquipment()?
+                        .GetSlot(Db.Get().AssignableSlots.Suit)?.assignable?.GetComponent<SuitTank>();
+                    if (suitTank != null && !suitTank.IsEmpty())
+                        breather.SetGasProvider(suitTank);
+                    else
+                        breather.SetGasProvider(new GasBreatherFromWorldProvider());
+                }
             }
         }
-
-        private void ClearGasProvider(Worker worker)
-        {
-            if (workerGasProvider != null)
-            {
-                var breather = worker.GetComponent<OxygenBreather>();
-                breather.SetGasProvider(workerGasProvider);
-                workerGasProvider = null;
-            }
-        }
-
-        public bool ConsumeGas(OxygenBreather oxygen_breather, float amount)
-        {
-            if (storage.items.Count <= 0)
-                return false;
-            storage.ConsumeAndGetDisease(GameTags.Oxygen, amount, out float amount_consumed, out SimUtil.DiseaseInfo _, out float _);
-            bool result = amount_consumed > 0f;
-            if (result)
-            {
-                Game.Instance.accumulators.Accumulate(oxygen_breather.O2Accumulator, amount_consumed);
-                ReportManager.Instance.ReportValue(ReportManager.ReportType.OxygenCreated, 0f - amount_consumed, oxygen_breather.GetProperName(), null);
-            }
-            return result;
-        }
-
-        public void OnClearOxygenBreather(OxygenBreather oxygen_breather) { }
-        public void OnSetOxygenBreather(OxygenBreather oxygen_breather) { }
-        public bool ShouldEmitCO2() => false;
-        public bool ShouldStoreCO2() => false;
     }
 }

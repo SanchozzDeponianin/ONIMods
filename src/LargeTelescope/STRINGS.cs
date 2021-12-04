@@ -20,16 +20,16 @@ namespace LargeTelescope
 
         public class OPTIONS
         {
-            public class ANALYZECLUSTERRADIUS
+            public class ANALYZE_CLUSTER_RADIUS
             {
                 public static LocString NAME = "Scan Radius, hex";
                 public static LocString TOOLTIP = "A small Telescope has a radius = 3";
             }
-            public class EFFICIENCYMULTIPLIER
+            public class EFFICIENCY_MULTIPLIER
             {
                 public static LocString NAME = "Workspeed modifier, +X%";
             }
-            public class FIXNOCONSUMEPOWERBUG
+            public class FIX_NO_CONSUME_POWER_BUG
             {
                 public static LocString NAME = "Fix the Bug";
                 public static LocString TOOLTIP = "that Telescopes don't actually consume Power";

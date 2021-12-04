@@ -38,6 +38,7 @@ namespace LargeTelescope
             buildingDef.ViewMode = OverlayModes.Power.ID;
             buildingDef.AudioCategory = "Metal";
             buildingDef.AudioSize = "large";
+            buildingDef.Deprecated = true;
             return buildingDef;
         }
 
@@ -46,10 +47,13 @@ namespace LargeTelescope
             go.AddOrGet<KPrefabID>().AddTag(GameTags.NotRocketInteriorBuilding);
             go.AddOrGet<BuildingComplete>().isManuallyOperated = true;
             Prioritizable.AddRef(go);
-            go.AddOrGet<ClusterLargeTelescopeWorkable>().efficiencyMultiplier = 1f + (LargeTelescopeOptions.Instance.EfficiencyMultiplier / 100f);
+            go.AddOrGetDef<PoweredController.Def>();
+            go.AddOrGet<ClusterLargeTelescopeWorkable>().efficiencyMultiplier = 1f + (LargeTelescopeOptions.Instance.efficiency_multiplier / 100f);
             var def = go.AddOrGetDef<ClusterTelescope.Def>();
-            def.clearScanCellRadius = 5;
-            def.analyzeClusterRadius = LargeTelescopeOptions.Instance.AnalyzeClusterRadius;
+            def.clearScanCellRadius = 6;
+            def.analyzeClusterRadius = LargeTelescopeOptions.Instance.analyze_cluster_radius;
+            def.workableOverrideAnims = new KAnimFile[] { Assets.GetAnim("anim_interacts_telescope_kanim") };
+            def.providesOxygen = true;
             var storage = go.AddOrGet<Storage>();
             storage.capacityKg = 1000f;
             storage.showInUI = true;
@@ -60,12 +64,12 @@ namespace LargeTelescope
             conduitConsumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
             conduitConsumer.capacityKG = OXYGEN_CAPACITY;
             conduitConsumer.forceAlwaysSatisfied = true;
-            go.AddOrGetDef<PoweredActiveController.Def>();
         }
 
         public override void DoPostConfigureComplete(GameObject go)
         {
-            go.GetComponent<RequireInputs>().SetRequirements(true, false);
+            if (LargeTelescopeOptions.Instance.not_require_gas_pipe)
+                go.GetComponent<RequireInputs>().SetRequirements(true, false);
         }
     }
 }

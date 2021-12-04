@@ -14,9 +14,9 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup>
-    <Title>Large Telescope</Title>
-    <Description>Returns the Telescope from base game to the DLC as Large Telescope with increased scan radius.</Description>
-    <ModVersion>1.0.0</ModVersion>
+    <Title>Enclosed Telescope Tune-Up</Title>
+    <Description>Tuning of a Enclosed Telescope: increased the radius and scanning speed, adjusted requirements, some improvements and bug fixes.</Description>
+    <ModVersion>2.0.0</ModVersion>
     <SupportedContent>EXPANSION1_ID</SupportedContent>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
