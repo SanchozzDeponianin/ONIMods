@@ -18,28 +18,38 @@ msgctxt "LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.NAME"
 msgid "<link=\"CLUSTERLARGETELESCOPE\">Large Telescope</link>"
 msgstr "<link=\"CLUSTERLARGETELESCOPE\">Большой телескоп</link>"
 
-#. LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.NAME
-msgctxt "LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.NAME"
+#. LargeTelescope.STRINGS.OPTIONS.ADD_GLASS.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.ADD_GLASS.NAME"
+msgid "Add Glass to the {ENCLOSED_TELESCOPE}`s construction cost"
+msgstr "Добавить Стекло к стоимости постройки '{ENCLOSED_TELESCOPE}'"
+
+#. LargeTelescope.STRINGS.OPTIONS.ANALYZE_CLUSTER_RADIUS.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.ANALYZE_CLUSTER_RADIUS.NAME"
 msgid "Scan Radius, hex"
 msgstr "Радиус сканирования, хексы"
 
-#. LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.TOOLTIP
-msgctxt "LargeTelescope.STRINGS.OPTIONS.ANALYZECLUSTERRADIUS.TOOLTIP"
-msgid "A small Telescope has a radius = 3"
-msgstr "Малый телескоп имеет радиус = 3"
+#. LargeTelescope.STRINGS.OPTIONS.ANALYZE_CLUSTER_RADIUS.TOOLTIP
+msgctxt "LargeTelescope.STRINGS.OPTIONS.ANALYZE_CLUSTER_RADIUS.TOOLTIP"
+msgid "Unmodded radius = 4, a small Telescope has a radius = 3"
+msgstr "Немодифицированый радиус = 4\nМалый телескоп имеет радиус = 3"
 
-#. LargeTelescope.STRINGS.OPTIONS.EFFICIENCYMULTIPLIER.NAME
-msgctxt "LargeTelescope.STRINGS.OPTIONS.EFFICIENCYMULTIPLIER.NAME"
-msgid "Workspeed modifier, +X%"
-msgstr "Модификатор скорости работы, +Х%"
+#. LargeTelescope.STRINGS.OPTIONS.EFFICIENCY_MULTIPLIER.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.EFFICIENCY_MULTIPLIER.NAME"
+msgid "Scan Workspeed modifier, +X%"
+msgstr "Модификатор скорости сканирования, +Х%"
 
-#. LargeTelescope.STRINGS.OPTIONS.FIXNOCONSUMEPOWERBUG.NAME
-msgctxt "LargeTelescope.STRINGS.OPTIONS.FIXNOCONSUMEPOWERBUG.NAME"
-msgid "Fix the Bug"
-msgstr "Исправить ошибку"
+#. LargeTelescope.STRINGS.OPTIONS.FIX_NO_CONSUME_POWER_BUG.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.FIX_NO_CONSUME_POWER_BUG.NAME"
+msgid "Fix a bug where telescopes don't actually consume Power"
+msgstr "Исправить ошибку, из-за которой телескопы не потребляют энергию"
 
-#. LargeTelescope.STRINGS.OPTIONS.FIXNOCONSUMEPOWERBUG.TOOLTIP
-msgctxt "LargeTelescope.STRINGS.OPTIONS.FIXNOCONSUMEPOWERBUG.TOOLTIP"
-msgid "that Telescopes don't actually consume Power"
-msgstr "что телескопы на самом деле не потребляют энергию"
+#. LargeTelescope.STRINGS.OPTIONS.NOT_REQUIRE_GAS_PIPE.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.NOT_REQUIRE_GAS_PIPE.NAME"
+msgid "Make the Gas Pipe connection requirement optional instead of mandatory"
+msgstr "Сделать подключение к газовой трубе необязательным"
+
+#. LargeTelescope.STRINGS.OPTIONS.PROHIBIT_INSIDE_ROCKET.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.PROHIBIT_INSIDE_ROCKET.NAME"
+msgid "Prohibit the construction of the {ENCLOSED_TELESCOPE} inside a Rocket"
+msgstr "Запретить строить {ENCLOSED_TELESCOPE} внутри Ракеты"
 
