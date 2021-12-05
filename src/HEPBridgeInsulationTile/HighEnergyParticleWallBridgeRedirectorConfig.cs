@@ -3,11 +3,11 @@ using TUNING;
 using UnityEngine;
 using static STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEREDIRECTOR;
 
-namespace HEPWallBridge
+namespace HEPBridgeInsulationTile
 {
-    public class HighEnergyParticleWallBridgeRedirectorConfig : IBuildingConfig
+    public class HEPBridgeInsulationTileConfig : IBuildingConfig
     {
-        public const string ID = "HighEnergyParticleWallBridgeRedirector";
+        public const string ID = "HighEnergyParticleWallBridgeRedirector"; // legacy
 
         public override BuildingDef CreateBuildingDef()
         {
