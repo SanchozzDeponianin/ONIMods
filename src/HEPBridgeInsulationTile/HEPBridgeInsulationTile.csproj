@@ -24,8 +24,8 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
-    <Compile Include="HEPWallBridgePatches.cs" />
-    <Compile Include="HighEnergyParticleWallBridgeRedirectorConfig.cs" />
+    <Compile Include="HEPBridgeInsulationTilePatches.cs" />
+    <Compile Include="HEPBridgeInsulationTileConfig.cs" />
     <Compile Include="STRINGS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
