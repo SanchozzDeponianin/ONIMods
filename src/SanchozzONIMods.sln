@@ -46,7 +46,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smelter", "Smelter\Smelter.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSBuildTasksHelper", "MSBuildTasksHelper\MSBuildTasksHelper.csproj", "{6B568584-6E83-486A-A278-E58271DCD8DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HEPWallBridge", "HEPWallBridge\HEPWallBridge.csproj", "{18F0CD86-A2D9-4E41-9509-95A6685F241C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HEPBridgeInsulationTile", "HEPBridgeInsulationTile\HEPBridgeInsulationTile.csproj", "{18F0CD86-A2D9-4E41-9509-95A6685F241C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArtifactCarePackages", "ArtifactCarePackages\ArtifactCarePackages.csproj", "{20E68470-1CAA-413F-B69B-551D68D721FF}"
 EndProject
