@@ -52,7 +52,6 @@ namespace HEPBridgeInsulationTile
         {
             BuildingConfigManager.Instance.IgnoreDefaultKComponent(typeof(RequiresFoundation), prefab_tag);
             Prioritizable.AddRef(go);
-            GeneratedBuildings.MakeBuildingAlwaysOperational(go);
             go.AddOrGet<BuildingHP>().destroyOnDamaged = true;
             go.AddOrGet<Insulator>();
             go.AddOrGet<TileTemperature>();
@@ -60,8 +59,8 @@ namespace HEPBridgeInsulationTile
             storage.autoStore = true;
             storage.showInUI = false;
             storage.capacity = HighEnergyParticleConfig.MAX_PAYLOAD + 1f;
-            var redirector = go.AddOrGet<HighEnergyParticleRedirector>();
-            redirector.directorDelay = HighEnergyParticleRedirectorConfig.TRAVEL_DELAY;
+            go.AddOrGet<HighEnergyParticleRedirector>().directorDelay = HighEnergyParticleRedirectorConfig.TRAVEL_DELAY;
+            go.AddOrGet<CopyBuildingSettings>().copyGroupTag = HighEnergyParticleRedirectorConfig.ID;
         }
 
         public override void DoPostConfigurePreview(BuildingDef def, GameObject go)

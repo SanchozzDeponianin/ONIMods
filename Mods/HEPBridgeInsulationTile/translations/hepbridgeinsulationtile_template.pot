@@ -16,7 +16,7 @@ msgstr ""
 #. HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.NAME
 msgctxt "HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.NAME"
 msgid "<link=\"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR\">Insulated {HEPBRIDGETILE_NAME}</link>"
-msgstr "<link=\"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR\">Теплоизолированная {HEPBRIDGETILE_NAME}</link>"
+msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.ADVANCEDNUCLEARRESEARCH.NAME
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.ADVANCEDNUCLEARRESEARCH.NAME"
@@ -36,7 +36,7 @@ msgstr ""
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.NAME
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.NAME"
 msgid "<style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style> require Research"
-msgstr "<style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style> требует исследование"
+msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.TOOLTIP
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.TOOLTIP"
@@ -46,10 +46,10 @@ msgstr ""
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.NAME
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.NAME"
 msgid "<style=\"KKeyword\">Insulated {HEPBRIDGETILE_NAME}</style> require Research"
-msgstr "<style=\"KKeyword\">Теплоизолированная {HEPBRIDGETILE_NAME}</style> требует исследование"
+msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.TOOLTIP
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.TOOLTIP"
 msgid "The Options UI the is imperfect.\nIn-game, <style=\"KKeyword\">Insulated {HEPBRIDGETILE_NAME}</style> \nwill require Research equal to or higher \nthan <style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style>."
-msgstr "Интерфейс настройки неидеален.\nВ игре, <style=\"KKeyword\">Теплоизолированная {HEPBRIDGETILE_NAME}</style> \nбудет требовать исследование, равное или выше \nчем <style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style>."
+msgstr ""
 

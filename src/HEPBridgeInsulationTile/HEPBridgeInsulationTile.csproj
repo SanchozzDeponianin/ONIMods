@@ -14,16 +14,20 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup>
-    <Title>Through-Wall Radbolt Reflector</Title>
-    <Description>Adds a new Through-Wall Radbolt Reflector building that receives and redirects Radbolts from Radbolt Generators, through wall and floor tiles without leaking gas or liquid.</Description>
+    <Title>Insulated Radbolt Joint Plate</Title>
+    <Description>Adds a Insulated variant of Radbolt Joint Plate</Description>
     <ModVersion>2.0.0</ModVersion>
     <SupportedContent>EXPANSION1_ID</SupportedContent>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\lib\BaseOptions.cs">
+      <Link>BaseOptions.cs</Link>
+    </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="HEPBridgeInsulationTileOptions.cs" />
     <Compile Include="HEPBridgeInsulationTilePatches.cs" />
     <Compile Include="HEPBridgeInsulationTileConfig.cs" />
     <Compile Include="STRINGS.cs" />
