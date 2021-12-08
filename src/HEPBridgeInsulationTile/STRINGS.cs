@@ -20,7 +20,6 @@ namespace HEPBridgeInsulationTile
                 }
             }
         }
-
         public class OPTIONS
         {
             public class RESEARCH_KLEI
@@ -58,9 +57,9 @@ namespace HEPBridgeInsulationTile
             if (i >= 0)
                 effect += INSULATIONTILE.EFFECT.text.Substring(i);
             BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.EFFECT.ReplaceText(effect);
-            OPTIONS.NUCLEARREFINEMENT.NAME.ReplaceText(NUCLEARREFINEMENT.NAME);
-            OPTIONS.NUCLEARSTORAGE.NAME.ReplaceText(NUCLEARSTORAGE.NAME);
-            OPTIONS.ADVANCEDNUCLEARRESEARCH.NAME.ReplaceText(ADVANCEDNUCLEARRESEARCH.NAME);
+            OPTIONS.NUCLEARREFINEMENT.NAME.ReplaceText(UI.StripLinkFormatting(NUCLEARREFINEMENT.NAME));
+            OPTIONS.NUCLEARSTORAGE.NAME.ReplaceText(UI.StripLinkFormatting(NUCLEARSTORAGE.NAME));
+            OPTIONS.ADVANCEDNUCLEARRESEARCH.NAME.ReplaceText(UI.StripLinkFormatting(ADVANCEDNUCLEARRESEARCH.NAME));
             OPTIONS.RESEARCH_KLEI.TOOLTIP.ReplaceText(OPTIONS.RESEARCH_MOD.TOOLTIP);
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
         }
