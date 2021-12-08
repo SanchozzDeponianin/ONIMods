@@ -44,6 +44,10 @@ namespace HEPBridgeInsulationTile
             {
                 public static LocString NAME = "";
             }
+            public class USE_OLD_ANIM
+            {
+                public static LocString NAME = "Use animation from early version of the mod";
+            }
         }
 
         internal static void DoReplacement()

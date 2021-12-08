@@ -53,3 +53,7 @@ msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.TOOLTIP"
 msgid "The Options UI the is imperfect.\nIn-game, <style=\"KKeyword\">Insulated {HEPBRIDGETILE_NAME}</style> \nwill require Research equal to or higher \nthan <style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style>."
 msgstr "Интерфейс настройки неидеален.\nВ игре, <style=\"KKeyword\">Теплоизолированная {HEPBRIDGETILE_NAME}</style> \nбудет требовать исследование, равное или выше \nчем <style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style>."
 
+#. HEPBridgeInsulationTile.STRINGS.OPTIONS.USE_OLD_ANIM.NAME
+msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.USE_OLD_ANIM.NAME"
+msgid "Use animation from early version of the mod"
+msgstr "Использовать анимацию от ранней версии мода"

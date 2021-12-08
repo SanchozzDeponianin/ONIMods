@@ -44,5 +44,9 @@ namespace HEPBridgeInsulationTile
             get => _research_mod;
             set => _research_mod = (value < _research_klei) ? _research_klei : value;
         }
+
+        [JsonProperty]
+        [Option]
+        public bool use_old_anim { get; set; } = false;
     }
 }
