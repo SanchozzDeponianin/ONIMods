@@ -17,7 +17,7 @@ namespace HEPBridgeInsulationTile
                 id: ID,
                 width: 3,
                 height: 1,
-                anim: "wallbridge_orb_transporter_kanim",
+                anim: "radbolt_joint_plate_insulated_kanim",
                 hitpoints: BUILDINGS.HITPOINTS.TIER1,
                 construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER2,
                 construction_mass: new float[] { BUILDINGS.CONSTRUCTION_MASS_KG.TIER4[0], BUILDINGS.CONSTRUCTION_MASS_KG.TIER2[0] },
