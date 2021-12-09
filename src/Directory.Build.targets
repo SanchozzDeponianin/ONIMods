@@ -25,7 +25,6 @@
     <PropertyGroup Condition=" '$(UsesPLib)' == 'true' ">
       <DefineConstants>$(DefineConstants);USESPLIB</DefineConstants>
     </PropertyGroup>
-    <!-- todo: тут должны были быть константы для ваниллы/длц-->
   </Target>
 
   <!-- обновляем сведения о сборке -->

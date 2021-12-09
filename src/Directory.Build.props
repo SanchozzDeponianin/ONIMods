@@ -2,9 +2,15 @@
 <Project>
   <Import Condition=" !Exists('Directory.Build.props.user') " Project="Directory.Build.props.default" />
   <Import Condition=" Exists('Directory.Build.props.user') " Project="Directory.Build.props.user" />
-  
+
+  <!-- затычки. а то без них студия сума сходит и самодеятельностью занимается -->
+  <PropertyGroup Condition=" '$(Debug)|$(Platform)' == 'Debug|MainlineSteam' " />
+  <PropertyGroup Condition=" '$(Debug)|$(Platform)' == 'Debug|StableBackup' " />
+  <PropertyGroup Condition=" '$(Release)|$(Platform)' == 'Debug|MainlineSteam' " />
+  <PropertyGroup Condition=" '$(Release)|$(Platform)' == 'Debug|StableBackup' " />
+
   <!-- конфигурации -->
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -13,7 +19,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -24,14 +30,23 @@
 
   <!-- основные свойства -->
   <PropertyGroup>
-    <!-- сдесь был выбор пути где лежат соответсвующие файлы игры -->
-    <GameFolder>$(GameFolderSpacedOut)</GameFolder>
     <SupportedContent>VANILLA_ID,EXPANSION1_ID</SupportedContent>
     <APIVersion>2</APIVersion>
     <ModVersion>1.0.0</ModVersion>
     <DistributeMod Condition=" '$(MSBuildProjectName)' != 'MSBuildTasksHelper' ">true</DistributeMod>
     <DistributeMod Condition=" '$(MSBuildProjectName)' == 'MSBuildTasksHelper' ">false</DistributeMod>
     <MSBuildTasksHelperDLL>$(MSBuildProjectDirectory)/../../bin/MSBuildTasksHelper.dll</MSBuildTasksHelperDLL>
+  </PropertyGroup>
+
+  <!-- выбор пути где лежат соответсвующие файлы игры -->
+  <PropertyGroup Condition=" '$(Platform)' == 'MainlineSteam' ">
+    <GameFolder>$(GameFolderSteam)</GameFolder>
+    <DefineConstants>$(DefineConstants);MAINLINE_STEAM</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Platform)' != 'MainlineSteam' ">
+    <GameFolder>$(GameFolderBackup)</GameFolder>
+    <DefineConstants>$(DefineConstants);STABLE_BACKUP</DefineConstants>
   </PropertyGroup>
 
   <!-- подключаем DLL: -->
