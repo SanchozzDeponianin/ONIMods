@@ -44,10 +44,6 @@ namespace LargeTelescope
             {
                 public static LocString NAME = $"Prohibit the construction of the {ENCLOSED_TELESCOPE} inside a Rocket";
             }
-            public class FIX_NO_CONSUME_POWER_BUG
-            {
-                public static LocString NAME = "Fix a bug where telescopes don't actually consume Power";
-            }
         }
 
         internal static void DoReplacement()

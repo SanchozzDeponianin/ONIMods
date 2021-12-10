@@ -30,9 +30,5 @@ namespace LargeTelescope
         [JsonProperty]
         [Option]
         public bool prohibit_inside_rocket { get; set; } = true;
-
-        [JsonProperty]
-        [Option]
-        public bool fix_no_consume_power_bug { get; set; } = true;
     }
 }

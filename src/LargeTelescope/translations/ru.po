@@ -38,11 +38,6 @@ msgctxt "LargeTelescope.STRINGS.OPTIONS.EFFICIENCY_MULTIPLIER.NAME"
 msgid "Scan Workspeed modifier, +X%"
 msgstr "Модификатор скорости сканирования, +Х%"
 
-#. LargeTelescope.STRINGS.OPTIONS.FIX_NO_CONSUME_POWER_BUG.NAME
-msgctxt "LargeTelescope.STRINGS.OPTIONS.FIX_NO_CONSUME_POWER_BUG.NAME"
-msgid "Fix a bug where telescopes don't actually consume Power"
-msgstr "Исправить ошибку, из-за которой телескопы не потребляют энергию"
-
 #. LargeTelescope.STRINGS.OPTIONS.NOT_REQUIRE_GAS_PIPE.NAME
 msgctxt "LargeTelescope.STRINGS.OPTIONS.NOT_REQUIRE_GAS_PIPE.NAME"
 msgid "Make the Gas Pipe connection requirement optional instead of mandatory"

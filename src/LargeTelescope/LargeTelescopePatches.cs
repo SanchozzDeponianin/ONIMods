@@ -124,25 +124,5 @@ namespace LargeTelescope
                 return instructions;
             }
         }
-
-        // исправление бага с непотребством искричества
-        [HarmonyPatch(typeof(ClusterTelescope.ClusterTelescopeWorkable), "OnWorkableEvent")]
-        private static class ClusterTelescope_ClusterTelescopeWorkable_OnWorkableEvent_Electro
-        {
-            private static bool Prepare() => LargeTelescopeOptions.Instance.fix_no_consume_power_bug;
-
-            private static void Postfix(ClusterTelescope.ClusterTelescopeWorkable __instance, Workable.WorkableEvent ev)
-            {
-                switch (ev)
-                {
-                    case Workable.WorkableEvent.WorkStarted:
-                        __instance.GetComponent<Operational>()?.SetActive(true);
-                        break;
-                    case Workable.WorkableEvent.WorkStopped:
-                        __instance.GetComponent<Operational>()?.SetActive(false);
-                        break;
-                }
-            }
-        }
     }
 }
