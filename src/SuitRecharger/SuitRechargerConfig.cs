@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TUNING;
+using SanchozzONIMods.Lib;
 
 namespace SuitRecharger
 {
@@ -11,7 +12,8 @@ namespace SuitRecharger
     // todo: текстовка
 
     // todo: обнаружена лажа:
-    // * при зеркальной постройке керосин не заливается из трубы - косяк у клеев. можно просто поменяться с кислородом
+    // при зеркальной постройке керосин не заливается из трубы - косяк у клеев. 
+    // (Solid)Conduit(Consumer|Dispenser) не учитывают вращение постройки вообще.
 
     public class SuitRechargerConfig : IBuildingConfig
     {
@@ -19,7 +21,9 @@ namespace SuitRecharger
         public const float O2_CAPACITY = 200f;
         public const float FUEL_CAPACITY = 100f;
 
-        private ConduitPortInfo secondaryInputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 0));
+        private readonly ConduitPortInfo fuelInputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 2));
+        private readonly ConduitPortInfo liquidWasteOutputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 0));
+        private readonly ConduitPortInfo gasWasteOutputPort = new ConduitPortInfo(ConduitType.Gas, new CellOffset(1, 0));
 
         public override BuildingDef CreateBuildingDef()
         {
@@ -39,8 +43,8 @@ namespace SuitRecharger
             def.RequiresPowerInput = true;
             def.EnergyConsumptionWhenActive = BUILDINGS.ENERGY_CONSUMPTION_WHEN_ACTIVE.TIER3;
             def.InputConduitType = ConduitType.Gas;
-            def.UtilityInputOffset = new CellOffset(0, 1);
-            def.PermittedRotations = PermittedRotations.FlipH;
+            def.UtilityInputOffset = new CellOffset(1, 2);
+            def.PermittedRotations = PermittedRotations.Unrotatable; //FlipH;
             GeneratedBuildings.RegisterWithOverlay(OverlayScreen.SuitIDs, ID);
             return def;
         }
@@ -60,7 +64,9 @@ namespace SuitRecharger
 
             var recharger = go.AddOrGet<SuitRecharger>();
             recharger.workLayer = Grid.SceneLayer.BuildingFront;
-            recharger.portInfo = secondaryInputPort;
+            recharger.fuelPortInfo = fuelInputPort;
+            recharger.liquidWastePortInfo = liquidWasteOutputPort;
+            recharger.gasWastePortInfo = gasWasteOutputPort;
             var kanim = Assets.GetAnim("anim_interacts_suitrecharger_kanim");
             recharger.overrideAnims = new KAnimFile[] { kanim };
             // привязываемся к длительности анимации
@@ -69,33 +75,25 @@ namespace SuitRecharger
             working_loop = 2
             working_pst = 4.333333
             */
-            var kanim_data = kanim.GetData();
-            for (int i = 0; i < kanim_data.animCount; i++)
-            {
-                var anim = kanim_data.GetAnim(i);
-                if (anim.name == "working_pre")
-                    SuitRecharger.warmupTime = anim.numFrames / anim.frameRate;
-                if (anim.name == "working_loop")
-                    SuitRecharger.сhargeTime = 2 * anim.numFrames / anim.frameRate;
-            }
-
+            SuitRecharger.warmupTime = Utils.GetAnimDuration(kanim, "working_pre");
+            SuitRecharger.сhargeTime = 2 * Utils.GetAnimDuration(kanim, "working_loop");
             //Prioritizable.AddRef(go);
         }
 
         private void AttachPort(GameObject go)
         {
-            go.AddComponent<ConduitSecondaryInput>().portInfo = secondaryInputPort;
+            go.AddComponent<ConduitSecondaryInput>().portInfo = fuelInputPort;
+            go.AddComponent<ConduitSecondaryOutput>().portInfo = liquidWasteOutputPort;
+            go.AddComponent<ConduitSecondaryOutput>().portInfo = gasWasteOutputPort;
         }
 
         public override void DoPostConfigurePreview(BuildingDef def, GameObject go)
         {
-            base.DoPostConfigurePreview(def, go);
             AttachPort(go);
         }
 
         public override void DoPostConfigureUnderConstruction(GameObject go)
         {
-            base.DoPostConfigureUnderConstruction(go);
             AttachPort(go);
         }
 

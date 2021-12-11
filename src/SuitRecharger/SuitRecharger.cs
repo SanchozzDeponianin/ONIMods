@@ -3,7 +3,7 @@ using STRINGS;
 
 namespace SuitRecharger
 {
-    public class SuitRecharger : Workable, ISecondaryInput
+    public class SuitRecharger : Workable, ISecondaryInput, ISecondaryOutput
     {
         private static readonly EventSystem.IntraObjectHandler<SuitRecharger> OnOperationalChangedDelegate =
             new EventSystem.IntraObjectHandler<SuitRecharger>(
@@ -109,8 +109,9 @@ namespace SuitRecharger
         private float elapsedTime;
 
 #pragma warning disable CS0649
-        [MyCmpReq]
-        private Building building;
+        // todo: поправить после решения косяка с вращением
+        /*[MyCmpReq]
+        private Building building;*/
 
         [MyCmpReq]
         private Operational operational;
@@ -119,13 +120,27 @@ namespace SuitRecharger
         private Storage storage;
 #pragma warning restore CS0649
 
-        // для керосина
+        // керосин
         [SerializeField]
-        public ConduitPortInfo portInfo;
-        private int secondaryInputCell = -1;
-        private FlowUtilityNetwork.NetworkItem flowNetworkItem;
-        private ConduitConsumer fuel_consumer;
-        private Tag fuel_tag;
+        public ConduitPortInfo fuelPortInfo;
+        private int fuelInputCell = Grid.InvalidCell;
+        private FlowUtilityNetwork.NetworkItem fuelNetworkItem;
+        private ConduitConsumer fuelConsumer;
+        private Tag fuelTag;
+
+        // жидкие отходы
+        [SerializeField]
+        public ConduitPortInfo liquidWastePortInfo;
+        private int liquidWasteOutputCell = Grid.InvalidCell;
+        private FlowUtilityNetwork.NetworkItem liquidWasteNetworkItem;
+        private ConduitDispenser liquidWasteDispenser;
+
+        // газообразные отходы
+        [SerializeField]
+        public ConduitPortInfo gasWastePortInfo;
+        private int gasWasteOutputCell = Grid.InvalidCell;
+        private FlowUtilityNetwork.NetworkItem gasWasteNetworkItem;
+        private ConduitDispenser gasWasteDispenser;
 
         private MeterController oxygenMeter;
         private MeterController fuelMeter;
@@ -137,39 +152,6 @@ namespace SuitRecharger
         private SuitTank suitTank;
         private JetSuitTank jetSuitTank;
         private LeadSuitTank leadSuitTank;
-
-        private void CreateChore()
-        {
-            if (chore == null)
-            {
-                chore = new WorkChore<SuitRecharger>(
-                    chore_type: Db.Get().ChoreTypes.ReturnSuitUrgent,
-                    target: this,
-                    only_when_operational: false,
-                    priority_class: PriorityScreen.PriorityClass.personalNeeds,
-                    priority_class_value: 5,
-                    add_to_daily_report: false);
-                chore.AddPrecondition(IsSuitEquipped, null);
-                chore.AddPrecondition(DoesSuitNeedRecharging, null);
-                chore.AddPrecondition(IsEnoughOxygen, this);
-                chore.AddPrecondition(IsEnoughFuel, this);
-            }
-        }
-
-        private void CancelChore()
-        {
-            if (chore != null)
-            {
-                chore.Cancel("RechargeWorkable.CancelChore");
-                chore = null;
-            }
-        }
-
-        private void UpdateChore()
-        {
-            if (operational.IsOperational) CreateChore();
-            else CancelChore();
-        }
 
         protected override void OnPrefabInit()
         {
@@ -184,29 +166,32 @@ namespace SuitRecharger
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            // вторичный вход для керосина
-            fuel_tag = SimHashes.Petroleum.CreateTag();
-            fuel_consumer = gameObject.AddComponent<ConduitConsumer>();
-            fuel_consumer.conduitType = portInfo.conduitType;
-            fuel_consumer.consumptionRate = ConduitFlow.MAX_LIQUID_MASS;
-            fuel_consumer.capacityTag = fuel_tag;
-            fuel_consumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
-            fuel_consumer.forceAlwaysSatisfied = true;
-            fuel_consumer.capacityKG = SuitRechargerConfig.FUEL_CAPACITY;
-            fuel_consumer.useSecondaryInput = true;
+            // вторичные входы и выходы для керосина и отходов
+            // todo: поправить после решения косяка с вращением
+            fuelTag = SimHashes.Petroleum.CreateTag();
+            fuelInputCell = Grid.OffsetCell(Grid.PosToCell(this), /*building.GetRotatedOffset*/(fuelPortInfo.offset));
+            fuelConsumer = CreateConduitConsumer(ConduitType.Liquid, fuelInputCell, out fuelNetworkItem);
+            fuelConsumer.capacityTag = fuelTag;
+            fuelConsumer.capacityKG = SuitRechargerConfig.FUEL_CAPACITY;
+
+            liquidWasteOutputCell = Grid.OffsetCell(Grid.PosToCell(this), /*building.GetRotatedOffset*/(liquidWastePortInfo.offset));
+            liquidWasteDispenser = CreateConduitDispenser(ConduitType.Liquid, liquidWasteOutputCell, out liquidWasteNetworkItem);
+            liquidWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Petroleum };
+            liquidWasteDispenser.invertElementFilter = true;
+
+            gasWasteOutputCell = Grid.OffsetCell(Grid.PosToCell(this), /*building.GetRotatedOffset*/(gasWastePortInfo.offset));
+            gasWasteDispenser = CreateConduitDispenser(ConduitType.Gas, gasWasteOutputCell, out gasWasteNetworkItem);
+            gasWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Oxygen };
+            gasWasteDispenser.invertElementFilter = true;
             /*
             var requires_inputs = gameObject.AddComponent<RequireInputs>();
             requires_inputs.conduitConsumer = fuel_consumer;
             requires_inputs.SetRequirements(false, true);
             */
-            int cell = Grid.PosToCell(transform.GetPosition());
-            var rotated_offset = building.GetRotatedOffset(portInfo.offset);
-            secondaryInputCell = Grid.OffsetCell(cell, rotated_offset);
-            flowNetworkItem = new FlowUtilityNetwork.NetworkItem(portInfo.conduitType, Endpoint.Sink, secondaryInputCell, gameObject);
-            Conduit.GetNetworkManager(portInfo.conduitType).AddToNetworks(secondaryInputCell, flowNetworkItem, true);
             // создаём метеры
             oxygenMeter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target", "meter", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[] { "meter_target" });
             fuelMeter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target_fuel", "meter_fuel", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[] { "meter_target_fuel" });
+
             Subscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
             Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
             OnStorageChange();
@@ -218,8 +203,38 @@ namespace SuitRecharger
             Unsubscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
             Unsubscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
             CancelChore();
-            Conduit.GetNetworkManager(portInfo.conduitType).RemoveFromNetworks(secondaryInputCell, flowNetworkItem, true);
+            Conduit.GetNetworkManager(fuelPortInfo.conduitType).RemoveFromNetworks(fuelInputCell, fuelNetworkItem, true);
+            Conduit.GetNetworkManager(liquidWastePortInfo.conduitType).RemoveFromNetworks(liquidWasteOutputCell, liquidWasteNetworkItem, true);
+            Conduit.GetNetworkManager(gasWastePortInfo.conduitType).RemoveFromNetworks(gasWasteOutputCell, gasWasteNetworkItem, true);
             base.OnCleanUp();
+        }
+
+        private ConduitConsumer CreateConduitConsumer(ConduitType inputType, int inputCell, out FlowUtilityNetwork.NetworkItem flowNetworkItem)
+        {
+            var consumer = gameObject.AddComponent<ConduitConsumer>();
+            consumer.conduitType = inputType;
+            consumer.useSecondaryInput = true;
+            consumer.consumptionRate = inputType == ConduitType.Gas ? ConduitFlow.MAX_GAS_MASS : ConduitFlow.MAX_LIQUID_MASS;
+            consumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
+            consumer.forceAlwaysSatisfied = true;
+            consumer.storage = storage;
+            var networkManager = Conduit.GetNetworkManager(inputType);
+            flowNetworkItem = new FlowUtilityNetwork.NetworkItem(inputType, Endpoint.Sink, inputCell, gameObject);
+            networkManager.AddToNetworks(inputCell, flowNetworkItem, true);
+            return consumer;
+        }
+
+        private ConduitDispenser CreateConduitDispenser(ConduitType outputType, int outputCell, out FlowUtilityNetwork.NetworkItem flowNetworkItem)
+        {
+            var dispenser = gameObject.AddComponent<ConduitDispenser>();
+            dispenser.conduitType = outputType;
+            dispenser.useSecondaryOutput = true;
+            dispenser.alwaysDispense = true;
+            dispenser.storage = storage;
+            var networkManager = Conduit.GetNetworkManager(outputType);
+            flowNetworkItem = new FlowUtilityNetwork.NetworkItem(outputType, Endpoint.Source, outputCell, gameObject);
+            networkManager.AddToNetworks(outputCell, flowNetworkItem, true);
+            return dispenser;
         }
 
         private void OnStorageChange(object data = null)
@@ -253,7 +268,40 @@ namespace SuitRecharger
 
         private GameObject GetFuel()
         {
-            return storage.FindFirst(fuel_tag);
+            return storage.FindFirst(fuelTag);
+        }
+
+        private void CreateChore()
+        {
+            if (chore == null)
+            {
+                chore = new WorkChore<SuitRecharger>(
+                    chore_type: Db.Get().ChoreTypes.ReturnSuitUrgent,
+                    target: this,
+                    only_when_operational: false,
+                    priority_class: PriorityScreen.PriorityClass.personalNeeds,
+                    priority_class_value: 5,
+                    add_to_daily_report: false);
+                chore.AddPrecondition(IsSuitEquipped, null);
+                chore.AddPrecondition(DoesSuitNeedRecharging, null);
+                chore.AddPrecondition(IsEnoughOxygen, this);
+                chore.AddPrecondition(IsEnoughFuel, this);
+            }
+        }
+
+        private void CancelChore()
+        {
+            if (chore != null)
+            {
+                chore.Cancel("RechargeWorkable.CancelChore");
+                chore = null;
+            }
+        }
+
+        private void UpdateChore()
+        {
+            if (operational.IsOperational) CreateChore();
+            else CancelChore();
         }
 
         protected override void OnStartWork(Worker worker)
@@ -369,15 +417,28 @@ namespace SuitRecharger
 
         bool ISecondaryInput.HasSecondaryConduitType(ConduitType type)
         {
-            return portInfo.conduitType == type;
+            return type == fuelPortInfo.conduitType;
         }
 
         CellOffset ISecondaryInput.GetSecondaryConduitOffset(ConduitType type)
         {
-            if (portInfo.conduitType == type)
-                return portInfo.offset;
-            else
-                return CellOffset.none;
+            if (type == fuelPortInfo.conduitType)
+                return fuelPortInfo.offset;
+            return CellOffset.none;
+        }
+
+        bool ISecondaryOutput.HasSecondaryConduitType(ConduitType type)
+        {
+            return type == liquidWastePortInfo.conduitType || type == gasWastePortInfo.conduitType;
+        }
+
+        CellOffset ISecondaryOutput.GetSecondaryConduitOffset(ConduitType type)
+        {
+            if (type == liquidWastePortInfo.conduitType)
+                return liquidWastePortInfo.offset;
+            if (type == gasWastePortInfo.conduitType)
+                return gasWastePortInfo.offset;
+            return CellOffset.none;
         }
     }
 }
