@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using Database;
 using TUNING;
 using HarmonyLib;
 #if USESPLIB
@@ -105,6 +105,24 @@ namespace SanchozzONIMods.Lib
             {
                 Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{tech}' tech.");
             }
+        }
+
+        // получаем длительность анимации в аним файле. или общую длительность нескольких анимаций
+        public static float GetAnimDuration(KAnimFile kAnimFile, params string[] anims)
+        {
+            if (kAnimFile == null)
+                throw new ArgumentNullException(nameof(kAnimFile));
+            if (anims == null)
+                throw new ArgumentNullException(nameof(anims));
+            var kanim_data = kAnimFile.GetData();
+            float duration = 0;
+            for (int i = 0; i < kanim_data.animCount; i++)
+            {
+                var anim = kanim_data.GetAnim(i);
+                if (anims.Contains(anim.name))
+                    duration += anim.numFrames / anim.frameRate;
+            }
+            return duration;
         }
 
         // загружаем строки для локализации
