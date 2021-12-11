@@ -50,6 +50,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Tweaked Biological Cargo Bay](https://steamcommunity.com/sharedfiles/filedetails/?id=1891479671) | Allows Duplicants independently transport animals directly from the Biological Cargo Bay to the Critter Drop-Off, without performing any unnecessary intermediate actions. | Yes | No |
 | [Varicoloured Balloons](https://steamcommunity.com/sharedfiles/filedetails/?id=2293939893) | Adds more different colors and variations of balloons. | Yes | Yes 
 | [Where's My Loot?](https://steamcommunity.com/sharedfiles/filedetails/?id=2670041100) | Allows you to get the expected loot from objects that have not been inspected but have been demolished. | Yes | Yes |
+| [Worn Suit doesn't drop Canister](https://steamcommunity.com/sharedfiles/filedetails/?id=2679005270) | Discharges Worn Suits when unequipping so they don't drop the Canisters. Oxygen and Kerosene are returned to the Suit Dock for later reuse. | Yes | Yes |
 <!--| []() |  | No | Yes | -->
 
 # Special thanks to
