@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using STRINGS;
 
 namespace SuitRecharger
@@ -8,6 +9,9 @@ namespace SuitRecharger
         private static readonly EventSystem.IntraObjectHandler<SuitRecharger> OnOperationalChangedDelegate =
             new EventSystem.IntraObjectHandler<SuitRecharger>(
                 (SuitRecharger component, object data) => component.UpdateChore());
+
+        private static readonly EventSystem.IntraObjectHandler<SuitRecharger> CheckPipesDelegate =
+            new EventSystem.IntraObjectHandler<SuitRecharger>((SuitRecharger component, object data) => component.CheckPipes(data));
 
         private static readonly EventSystem.IntraObjectHandler<SuitRecharger> OnStorageChangeDelegate =
             new EventSystem.IntraObjectHandler<SuitRecharger>(
@@ -114,6 +118,9 @@ namespace SuitRecharger
         private Building building;*/
 
         [MyCmpReq]
+        private KSelectable selectable;
+
+        [MyCmpReq]
         private Operational operational;
 
         [MyCmpReq]
@@ -134,6 +141,10 @@ namespace SuitRecharger
         private int liquidWasteOutputCell = Grid.InvalidCell;
         private FlowUtilityNetwork.NetworkItem liquidWasteNetworkItem;
         private ConduitDispenser liquidWasteDispenser;
+        private bool liquidWastePipeBlocked;
+        private Guid liquidWastePipeBlockedStatusItemGuid;
+        private static StatusItem liquidWastePipeBlockedStatusItem;
+        private static StatusItem liquidWasteNoPipeConnectedStatusItem;
 
         // газообразные отходы
         [SerializeField]
@@ -141,6 +152,10 @@ namespace SuitRecharger
         private int gasWasteOutputCell = Grid.InvalidCell;
         private FlowUtilityNetwork.NetworkItem gasWasteNetworkItem;
         private ConduitDispenser gasWasteDispenser;
+        private bool gasWastePipeBlocked;
+        private Guid gasWastePipeBlockedStatusItemGuid;
+        private static StatusItem gasWastePipeBlockedStatusItem;
+        private static StatusItem gasWasteNoPipeConnectedStatusItem;
 
         private MeterController oxygenMeter;
         private MeterController fuelMeter;
@@ -153,14 +168,28 @@ namespace SuitRecharger
         private JetSuitTank jetSuitTank;
         private LeadSuitTank leadSuitTank;
 
+        private StatusItem CreateStatusItem(string id)
+        {
+            return new StatusItem(id: id, prefix: "BUILDING", icon: "", icon_type: StatusItem.IconType.Info, notification_type: NotificationType.BadMinor, allow_multiples: false, render_overlay: OverlayModes.None.ID, showWorldIcon: false);
+        }
+
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
             resetProgressOnStop = true;
             showProgressBar = false;
             SetWorkTime(float.PositiveInfinity);
-            workerStatusItem = null;
+            workerStatusItem = null; // todo: а может надо ?
             synchronizeAnims = true;
+
+            if (liquidWasteNoPipeConnectedStatusItem == null)
+                liquidWasteNoPipeConnectedStatusItem = CreateStatusItem("liquidWasteNoPipeConnected");
+            if (liquidWastePipeBlockedStatusItem == null)
+                liquidWastePipeBlockedStatusItem = CreateStatusItem("liquidWastePipeFull");
+            if (gasWasteNoPipeConnectedStatusItem == null)
+                gasWasteNoPipeConnectedStatusItem = CreateStatusItem("gasWasteNoPipeConnected");
+            if (gasWastePipeBlockedStatusItem == null)
+                gasWastePipeBlockedStatusItem = CreateStatusItem("gasWastePipeFull");
         }
 
         protected override void OnSpawn()
@@ -176,12 +205,12 @@ namespace SuitRecharger
 
             liquidWasteOutputCell = Grid.OffsetCell(Grid.PosToCell(this), /*building.GetRotatedOffset*/(liquidWastePortInfo.offset));
             liquidWasteDispenser = CreateConduitDispenser(ConduitType.Liquid, liquidWasteOutputCell, out liquidWasteNetworkItem);
-            liquidWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Petroleum };
+            //liquidWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Petroleum };
             liquidWasteDispenser.invertElementFilter = true;
 
             gasWasteOutputCell = Grid.OffsetCell(Grid.PosToCell(this), /*building.GetRotatedOffset*/(gasWastePortInfo.offset));
             gasWasteDispenser = CreateConduitDispenser(ConduitType.Gas, gasWasteOutputCell, out gasWasteNetworkItem);
-            gasWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Oxygen };
+            //gasWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Oxygen };
             gasWasteDispenser.invertElementFilter = true;
             /*
             var requires_inputs = gameObject.AddComponent<RequireInputs>();
@@ -193,14 +222,20 @@ namespace SuitRecharger
             fuelMeter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target_fuel", "meter_fuel", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[] { "meter_target_fuel" });
 
             Subscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
+            Subscribe((int)GameHashes.ConduitConnectionChanged, CheckPipesDelegate);
             Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
+            Game.Instance.liquidConduitFlow.AddConduitUpdater(OnLiquidConduitUpdate, ConduitFlowPriority.Default);
+            Game.Instance.gasConduitFlow.AddConduitUpdater(OnGasConduitUpdate, ConduitFlowPriority.Default);
             OnStorageChange();
             UpdateChore();
         }
 
         protected override void OnCleanUp()
         {
+            Game.Instance.liquidConduitFlow.RemoveConduitUpdater(OnLiquidConduitUpdate);
+            Game.Instance.gasConduitFlow.RemoveConduitUpdater(OnGasConduitUpdate);
             Unsubscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
+            Unsubscribe((int)GameHashes.ConduitConnectionChanged, CheckPipesDelegate);
             Unsubscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
             CancelChore();
             Conduit.GetNetworkManager(fuelPortInfo.conduitType).RemoveFromNetworks(fuelInputCell, fuelNetworkItem, true);
@@ -235,6 +270,26 @@ namespace SuitRecharger
             flowNetworkItem = new FlowUtilityNetwork.NetworkItem(outputType, Endpoint.Source, outputCell, gameObject);
             networkManager.AddToNetworks(outputCell, flowNetworkItem, true);
             return dispenser;
+        }
+
+        private void OnLiquidConduitUpdate(float dt)
+        {
+            var flow = Game.Instance.liquidConduitFlow;
+            liquidWastePipeBlocked = flow.HasConduit(liquidWasteOutputCell) && flow.GetContents(liquidWasteOutputCell).mass > 0f;
+            liquidWastePipeBlockedStatusItemGuid = selectable.ToggleStatusItem(liquidWastePipeBlockedStatusItem, liquidWastePipeBlockedStatusItemGuid, liquidWastePipeBlocked);
+        }
+
+        private void OnGasConduitUpdate(float dt)
+        {
+            var flow = Game.Instance.gasConduitFlow;
+            gasWastePipeBlocked = flow.HasConduit(gasWasteOutputCell) && flow.GetContents(gasWasteOutputCell).mass > 0f;
+            gasWastePipeBlockedStatusItemGuid = selectable.ToggleStatusItem(gasWastePipeBlockedStatusItem, gasWastePipeBlockedStatusItemGuid, gasWastePipeBlocked);
+        }
+
+        private void CheckPipes(object data)
+        {
+            selectable.ToggleStatusItem(liquidWasteNoPipeConnectedStatusItem, !liquidWasteDispenser.IsConnected);
+            selectable.ToggleStatusItem(gasWasteNoPipeConnectedStatusItem, !gasWasteDispenser.IsConnected);
         }
 
         private void OnStorageChange(object data = null)
