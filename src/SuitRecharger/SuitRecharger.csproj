@@ -23,6 +23,10 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="..\WornSuitDischarge\DurabilityExtensions.cs">
+      <Link>DurabilityExtensions.cs</Link>
+    </Compile>
+    <Compile Include="AlwaysFunctionalConduitDispenser.cs" />
     <Compile Include="SuitRecharger.cs" />
     <Compile Include="SuitRechargerPatches.cs" />
     <Compile Include="SuitRechargerConfig.cs" />

@@ -1,6 +1,8 @@
 ﻿using System;
+using Klei.AI;
 using UnityEngine;
 using STRINGS;
+using WornSuitDischarge;
 
 namespace SuitRecharger
 {
@@ -108,7 +110,6 @@ namespace SuitRecharger
         };
 
         public static float сhargeTime = 1f;
-        private static float batteryChargeTime = 60f;
         public static float warmupTime;
         private float elapsedTime;
 
@@ -179,7 +180,7 @@ namespace SuitRecharger
             resetProgressOnStop = true;
             showProgressBar = false;
             SetWorkTime(float.PositiveInfinity);
-            workerStatusItem = null; // todo: а может надо ?
+            //workerStatusItem = null; // todo: а может надо ?
             synchronizeAnims = true;
 
             if (liquidWasteNoPipeConnectedStatusItem == null)
@@ -205,18 +206,14 @@ namespace SuitRecharger
 
             liquidWasteOutputCell = Grid.OffsetCell(Grid.PosToCell(this), /*building.GetRotatedOffset*/(liquidWastePortInfo.offset));
             liquidWasteDispenser = CreateConduitDispenser(ConduitType.Liquid, liquidWasteOutputCell, out liquidWasteNetworkItem);
-            //liquidWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Petroleum };
+            liquidWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Petroleum };
             liquidWasteDispenser.invertElementFilter = true;
 
             gasWasteOutputCell = Grid.OffsetCell(Grid.PosToCell(this), /*building.GetRotatedOffset*/(gasWastePortInfo.offset));
             gasWasteDispenser = CreateConduitDispenser(ConduitType.Gas, gasWasteOutputCell, out gasWasteNetworkItem);
-            //gasWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Oxygen };
+            gasWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Oxygen };
             gasWasteDispenser.invertElementFilter = true;
-            /*
-            var requires_inputs = gameObject.AddComponent<RequireInputs>();
-            requires_inputs.conduitConsumer = fuel_consumer;
-            requires_inputs.SetRequirements(false, true);
-            */
+
             // создаём метеры
             oxygenMeter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target", "meter", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[] { "meter_target" });
             fuelMeter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target_fuel", "meter_fuel", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[] { "meter_target_fuel" });
@@ -232,12 +229,12 @@ namespace SuitRecharger
 
         protected override void OnCleanUp()
         {
+            CancelChore();
             Game.Instance.liquidConduitFlow.RemoveConduitUpdater(OnLiquidConduitUpdate);
             Game.Instance.gasConduitFlow.RemoveConduitUpdater(OnGasConduitUpdate);
             Unsubscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
             Unsubscribe((int)GameHashes.ConduitConnectionChanged, CheckPipesDelegate);
             Unsubscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
-            CancelChore();
             Conduit.GetNetworkManager(fuelPortInfo.conduitType).RemoveFromNetworks(fuelInputCell, fuelNetworkItem, true);
             Conduit.GetNetworkManager(liquidWastePortInfo.conduitType).RemoveFromNetworks(liquidWasteOutputCell, liquidWasteNetworkItem, true);
             Conduit.GetNetworkManager(gasWastePortInfo.conduitType).RemoveFromNetworks(gasWasteOutputCell, gasWasteNetworkItem, true);
@@ -261,7 +258,7 @@ namespace SuitRecharger
 
         private ConduitDispenser CreateConduitDispenser(ConduitType outputType, int outputCell, out FlowUtilityNetwork.NetworkItem flowNetworkItem)
         {
-            var dispenser = gameObject.AddComponent<ConduitDispenser>();
+            var dispenser = gameObject.AddComponent<AlwaysFunctionalConduitDispenser>();
             dispenser.conduitType = outputType;
             dispenser.useSecondaryOutput = true;
             dispenser.alwaysDispense = true;
@@ -294,19 +291,8 @@ namespace SuitRecharger
 
         private void OnStorageChange(object data = null)
         {
-            var primaryElement = ((GameObject)data)?.GetComponent<PrimaryElement>();
-            if (primaryElement != null)
-            {
-                if (primaryElement.ElementID == SimHashes.Oxygen)
-                    OxygenAvailable = primaryElement.Mass;
-                if (primaryElement.ElementID == SimHashes.Petroleum)
-                    FuelAvailable = primaryElement.Mass;
-            }
-            else
-            {
-                OxygenAvailable = GetOxygen()?.GetComponent<PrimaryElement>()?.Mass ?? 0;
-                FuelAvailable = GetFuel()?.GetComponent<PrimaryElement>()?.Mass ?? 0;
-            }
+            OxygenAvailable = storage.GetMassAvailable(GameTags.Oxygen);
+            FuelAvailable = storage.GetMassAvailable(fuelTag);
             RefreshMeter();
         }
 
@@ -314,16 +300,6 @@ namespace SuitRecharger
         {
             oxygenMeter.SetPositionPercent(Mathf.Clamp01(OxygenAvailable / SuitRechargerConfig.O2_CAPACITY));
             fuelMeter.SetPositionPercent(Mathf.Clamp01(FuelAvailable / SuitRechargerConfig.FUEL_CAPACITY));
-        }
-
-        private GameObject GetOxygen()
-        {
-            return storage.FindFirst(GameTags.Oxygen);
-        }
-
-        private GameObject GetFuel()
-        {
-            return storage.FindFirst(fuelTag);
         }
 
         private void CreateChore()
@@ -396,6 +372,7 @@ namespace SuitRecharger
 
         protected override void OnCompleteWork(Worker worker)
         {
+            CleanAndBreakSuit(worker);
             chore = null;
             UpdateChore();
         }
@@ -403,12 +380,12 @@ namespace SuitRecharger
         protected override bool OnWorkTick(Worker worker, float dt)
         {
             elapsedTime += dt;
-            if (elapsedTime <= warmupTime)
+            if (elapsedTime <= warmupTime) // ничего не заряжаем во время начальной анимации
                 return false;
             bool oxygen_charged = ChargeSuit(dt);
             bool fuel_charged = FuelSuit(dt);
-            FillBattery(dt);
-            return oxygen_charged && fuel_charged;
+            bool battery_charged = FillBattery(dt);
+            return oxygen_charged && fuel_charged && battery_charged;
         }
 
         public override bool InstantlyFinish(Worker worker)
@@ -420,12 +397,12 @@ namespace SuitRecharger
         {
             if (suitTank != null && !suitTank.IsFull())
             {
-                var oxygen = GetOxygen();
+                float amount_to_refill = suitTank.capacity * dt / сhargeTime;
+                var oxygen = storage.FindFirstWithMass(GameTags.Oxygen, amount_to_refill);
                 if (oxygen != null)
                 {
-                    float amount_to_refill = suitTank.capacity * dt / сhargeTime;
                     amount_to_refill = Mathf.Min(amount_to_refill, suitTank.capacity - suitTank.GetTankAmount());
-                    amount_to_refill = Mathf.Min(amount_to_refill, oxygen.GetComponent<PrimaryElement>().Mass);
+                    amount_to_refill = Mathf.Min(amount_to_refill, oxygen.Mass);
                     if (amount_to_refill > 0f)
                     {
                         storage.Transfer(suitTank.storage, suitTank.elementTag, amount_to_refill, false, true);
@@ -440,16 +417,15 @@ namespace SuitRecharger
         {
             if (jetSuitTank != null && !jetSuitTank.IsFull())
             {
-                var fuel = GetFuel();
+                float amount_to_refill = JetSuitTank.FUEL_CAPACITY * dt / сhargeTime;
+                var fuel = storage.FindFirstWithMass(fuelTag, amount_to_refill);
                 if (fuel != null)
                 {
-                    var fuel_pe = fuel.GetComponent<PrimaryElement>();
-                    float amount_to_refill = JetSuitTank.FUEL_CAPACITY * dt / сhargeTime;
                     amount_to_refill = Mathf.Min(amount_to_refill, JetSuitTank.FUEL_CAPACITY - jetSuitTank.amount);
-                    amount_to_refill = Mathf.Min(amount_to_refill, fuel_pe.Mass);
+                    amount_to_refill = Mathf.Min(amount_to_refill, fuel.Mass);
                     if (amount_to_refill > 0f)
                     {
-                        fuel_pe.Mass -= amount_to_refill;
+                        fuel.Mass -= amount_to_refill;
                         jetSuitTank.amount += amount_to_refill;
                         return false;
                     }
@@ -458,16 +434,61 @@ namespace SuitRecharger
             return true;
         }
 
-        // свинцовые костюмы заряжаем не в полную силу, а так чучуть.
-        // todo: обдумать вариант более быстрой зарядки с повышеным расходом искричества
         private bool FillBattery(float dt)
         {
             if (leadSuitTank != null && !leadSuitTank.IsFull())
             {
-                leadSuitTank.batteryCharge += dt / batteryChargeTime;
+                leadSuitTank.batteryCharge += dt / сhargeTime;
                 return false;
             }
             return true;
+        }
+
+        private void CleanAndBreakSuit(Worker worker)
+        {
+            if (suitTank != null)
+            {
+                // очистка ссанины
+                if (!liquidWastePipeBlocked && liquidWasteDispenser.IsConnected)
+                {
+                    var list = ListPool<GameObject, SuitRecharger>.Allocate();
+                    suitTank.storage.Find(GameTags.AnyWater, list);
+                    if (list.Count > 0)
+                    {
+                        foreach (var go in list)
+                            suitTank.storage.Transfer(go, storage, false, true);
+                        var effects = worker?.GetComponent<Effects>();
+                        if (effects != null && effects.HasEffect("SoiledSuit"))
+                            effects.Remove("SoiledSuit");
+                    }
+                    list.Recycle();
+                }
+                // очистка перегара
+                if (!gasWastePipeBlocked && gasWasteDispenser.IsConnected)
+                {
+                    var list = ListPool<GameObject, SuitRecharger>.Allocate();
+                    suitTank.storage.Find(GameTags.Gas, list);
+                    foreach (var go in list)
+                    {
+                        if (!go.HasTag(suitTank.elementTag))
+                            suitTank.storage.Transfer(go, storage, false, true);
+                    }
+                    list.Recycle();
+                }
+                // проверка целостности
+                // если пора ломать, то перекачиваем всё обратно и снимаем
+                var durability = suitTank.GetComponent<Durability>();
+                if (durability != null && durability.IsTrueWornOut(worker?.GetComponent<MinionResume>()))
+                {
+                    suitTank.storage.Transfer(storage, suitTank.elementTag, suitTank.capacity, false, true);
+                    if (jetSuitTank != null)
+                    {
+                        storage.AddLiquid(SimHashes.Petroleum, jetSuitTank.amount, durability.GetComponent<PrimaryElement>().Temperature, byte.MaxValue, 0, false, true);
+                        jetSuitTank.amount = 0f;
+                    }
+                    durability.GetComponent<Assignable>()?.Unassign();
+                }
+            }
         }
 
         bool ISecondaryInput.HasSecondaryConduitType(ConduitType type)

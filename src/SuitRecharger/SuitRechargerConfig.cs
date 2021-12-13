@@ -4,10 +4,7 @@ using SanchozzONIMods.Lib;
 
 namespace SuitRecharger
 {
-    // todo: продумать что делать с износом
-    // todo: продумать что делать с отходами из костюма
     // todo: при деконструкции нужно чтобы кислород выпадал в виде баллона
-    // todo: добавить статуситемы
     // todo: текстовка
 
     // todo: обнаружена лажа:
@@ -40,7 +37,7 @@ namespace SuitRecharger
                 decor: BUILDINGS.DECOR.BONUS.TIER1,
                 noise: NOISE_POLLUTION.NOISY.TIER0);
             def.RequiresPowerInput = true;
-            def.EnergyConsumptionWhenActive = BUILDINGS.ENERGY_CONSUMPTION_WHEN_ACTIVE.TIER3;
+            def.EnergyConsumptionWhenActive = BUILDINGS.ENERGY_CONSUMPTION_WHEN_ACTIVE.TIER5;
             def.InputConduitType = ConduitType.Gas;
             def.UtilityInputOffset = new CellOffset(1, 2);
             def.PermittedRotations = PermittedRotations.Unrotatable; //FlipH;
@@ -60,6 +57,7 @@ namespace SuitRecharger
 
             var storage = go.AddOrGet<Storage>();
             storage.capacityKg = O2_CAPACITY + FUEL_CAPACITY;
+            storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
 
             var recharger = go.AddOrGet<SuitRecharger>();
             recharger.workLayer = Grid.SceneLayer.BuildingFront;
@@ -76,7 +74,7 @@ namespace SuitRecharger
             */
             SuitRecharger.warmupTime = Utils.GetAnimDuration(kanim, "working_pre");
             SuitRecharger.сhargeTime = 2 * Utils.GetAnimDuration(kanim, "working_loop");
-            //Prioritizable.AddRef(go);
+            Prioritizable.AddRef(go);
         }
 
         private void AttachPort(GameObject go)
