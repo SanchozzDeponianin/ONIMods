@@ -1,4 +1,9 @@
-﻿using HarmonyLib;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using UnityEngine;
+using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
@@ -32,11 +37,58 @@ namespace SuitRecharger
         // при наполнении пустого костюма - восстанавливаем дыхательный компонент в нормальное состояние
         // чтобы дупель не задохнулся на ровном месте
         [HarmonyPatch(typeof(SuitSuffocationMonitor), nameof(SuitSuffocationMonitor.InitializeStates))]
-        internal static class SuitSuffocationMonitor_InitializeStates
+        private static class SuitSuffocationMonitor_InitializeStates
         {
             private static void Postfix(SuitSuffocationMonitor __instance)
             {
                 __instance.nooxygen.Transition(__instance.satisfied, smi => !smi.IsTankEmpty(), UpdateRate.SIM_200ms);
+            }
+        }
+
+        // исправляем косяк клеев, что все четыре компонента типа Solid/Conduit/Consumer/Dispenser
+        // неправильно рассчитывают точку подключения трубы при использовании вторичного порта
+        // не учитывая возможное вращение постройки
+        [HarmonyPatch(typeof(ConduitConsumer), "GetInputCell")]
+        private static class ConduitConsumer_GetInputCell
+        {
+            private static bool Prefix(ConduitConsumer __instance, ref int __result, ConduitType inputConduitType, Building ___building)
+            {
+                if (__instance.useSecondaryInput)
+                {
+                    var secondaryInputs = __instance.GetComponents<ISecondaryInput>();
+                    foreach (var secondaryInput in secondaryInputs)
+                    {
+                        if (secondaryInput.HasSecondaryConduitType(inputConduitType))
+                        {
+                            __result = Grid.OffsetCell(___building.NaturalBuildingCell(),
+                                ___building.GetRotatedOffset(secondaryInput.GetSecondaryConduitOffset(inputConduitType)));
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+
+        [HarmonyPatch(typeof(ConduitDispenser), "GetOutputCell")]
+        private static class ConduitDispenser_GetOutputCell
+        {
+            private static bool Prefix(ConduitDispenser __instance, ref int __result, ConduitType outputConduitType, Building ___building)
+            {
+                if (__instance.useSecondaryOutput)
+                {
+                    var secondaryOutputs = __instance.GetComponents<ISecondaryOutput>();
+                    foreach (var secondaryOutput in secondaryOutputs)
+                    {
+                        if (secondaryOutput.HasSecondaryConduitType(outputConduitType))
+                        {
+                            __result = Grid.OffsetCell(___building.NaturalBuildingCell(),
+                                ___building.GetRotatedOffset(secondaryOutput.GetSecondaryConduitOffset(outputConduitType)));
+                            return false;
+                        }
+                    }
+                }
+                return true;
             }
         }
     }

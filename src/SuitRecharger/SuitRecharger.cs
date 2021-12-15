@@ -114,9 +114,8 @@ namespace SuitRecharger
         private float elapsedTime;
 
 #pragma warning disable CS0649
-        // todo: поправить после решения косяка с вращением
-        /*[MyCmpReq]
-        private Building building;*/
+        [MyCmpReq]
+        private Building building;
 
         [MyCmpReq]
         private KSelectable selectable;
@@ -197,19 +196,18 @@ namespace SuitRecharger
         {
             base.OnSpawn();
             // вторичные входы и выходы для керосина и отходов
-            // todo: поправить после решения косяка с вращением
             fuelTag = SimHashes.Petroleum.CreateTag();
-            fuelInputCell = Grid.OffsetCell(Grid.PosToCell(this), /*building.GetRotatedOffset*/(fuelPortInfo.offset));
+            fuelInputCell = GetSecondaryUtilityCell(fuelPortInfo.offset);
             fuelConsumer = CreateConduitConsumer(ConduitType.Liquid, fuelInputCell, out fuelNetworkItem);
             fuelConsumer.capacityTag = fuelTag;
             fuelConsumer.capacityKG = SuitRechargerConfig.FUEL_CAPACITY;
 
-            liquidWasteOutputCell = Grid.OffsetCell(Grid.PosToCell(this), /*building.GetRotatedOffset*/(liquidWastePortInfo.offset));
+            liquidWasteOutputCell = GetSecondaryUtilityCell(liquidWastePortInfo.offset);
             liquidWasteDispenser = CreateConduitDispenser(ConduitType.Liquid, liquidWasteOutputCell, out liquidWasteNetworkItem);
             liquidWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Petroleum };
             liquidWasteDispenser.invertElementFilter = true;
 
-            gasWasteOutputCell = Grid.OffsetCell(Grid.PosToCell(this), /*building.GetRotatedOffset*/(gasWastePortInfo.offset));
+            gasWasteOutputCell = GetSecondaryUtilityCell(gasWastePortInfo.offset);
             gasWasteDispenser = CreateConduitDispenser(ConduitType.Gas, gasWasteOutputCell, out gasWasteNetworkItem);
             gasWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Oxygen };
             gasWasteDispenser.invertElementFilter = true;
@@ -239,6 +237,11 @@ namespace SuitRecharger
             Conduit.GetNetworkManager(liquidWastePortInfo.conduitType).RemoveFromNetworks(liquidWasteOutputCell, liquidWasteNetworkItem, true);
             Conduit.GetNetworkManager(gasWastePortInfo.conduitType).RemoveFromNetworks(gasWasteOutputCell, gasWasteNetworkItem, true);
             base.OnCleanUp();
+        }
+
+        private int GetSecondaryUtilityCell(CellOffset offset)
+        {
+            return Grid.OffsetCell(Grid.PosToCell(this), building.GetRotatedOffset(offset));
         }
 
         private ConduitConsumer CreateConduitConsumer(ConduitType inputType, int inputCell, out FlowUtilityNetwork.NetworkItem flowNetworkItem)
