@@ -4,7 +4,6 @@ using SanchozzONIMods.Lib;
 
 namespace SuitRecharger
 {
-    // todo: при деконструкции нужно чтобы кислород выпадал в виде баллона
     // todo: текстовка
 
     public class SuitRechargerConfig : IBuildingConfig
@@ -54,6 +53,7 @@ namespace SuitRecharger
             var storage = go.AddOrGet<Storage>();
             storage.capacityKg = O2_CAPACITY + FUEL_CAPACITY;
             storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
+            go.AddOrGet<StorageDropper>();
 
             var recharger = go.AddOrGet<SuitRecharger>();
             recharger.workLayer = Grid.SceneLayer.BuildingFront;
@@ -70,7 +70,6 @@ namespace SuitRecharger
             */
             SuitRecharger.warmupTime = Utils.GetAnimDuration(kanim, "working_pre");
             SuitRecharger.сhargeTime = 2 * Utils.GetAnimDuration(kanim, "working_loop");
-
             Prioritizable.AddRef(go);
         }
 
