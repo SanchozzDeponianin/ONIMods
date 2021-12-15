@@ -2,7 +2,7 @@
 using Klei.AI;
 using UnityEngine;
 using STRINGS;
-using WornSuitDischarge;
+using SanchozzONIMods.Lib;
 
 namespace SuitRecharger
 {

@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 
 namespace WornSuitDischarge

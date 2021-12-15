@@ -2,7 +2,7 @@
 using UnityEngine;
 using PeterHan.PLib.Detours;
 
-namespace WornSuitDischarge
+namespace SanchozzONIMods.Lib
 {
     public static class DurabilityExtensions
     {
