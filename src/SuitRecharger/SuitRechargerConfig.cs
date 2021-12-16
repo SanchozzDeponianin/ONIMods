@@ -70,6 +70,8 @@ namespace SuitRecharger
             */
             SuitRecharger.warmupTime = Utils.GetAnimDuration(kanim, "working_pre");
             SuitRecharger.сhargeTime = 2 * Utils.GetAnimDuration(kanim, "working_loop");
+
+            go.AddOrGet<CopyBuildingSettings>();
             Prioritizable.AddRef(go);
         }
 

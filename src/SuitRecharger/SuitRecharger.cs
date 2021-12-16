@@ -1,12 +1,14 @@
 ﻿using System;
 using Klei.AI;
+using Klei.CustomSettings;
+using KSerialization;
 using UnityEngine;
-using STRINGS;
+using TUNING;
 using SanchozzONIMods.Lib;
 
 namespace SuitRecharger
 {
-    public class SuitRecharger : Workable, ISecondaryInput, ISecondaryOutput
+    public class SuitRecharger : Workable, ISecondaryInput, ISecondaryOutput, ISliderControl, ISingleSliderControl
     {
         private static readonly EventSystem.IntraObjectHandler<SuitRecharger> OnOperationalChangedDelegate =
             new EventSystem.IntraObjectHandler<SuitRecharger>(
@@ -19,12 +21,16 @@ namespace SuitRecharger
             new EventSystem.IntraObjectHandler<SuitRecharger>(
                 (SuitRecharger component, object data) => component.OnStorageChange(data));
 
+        private static readonly EventSystem.IntraObjectHandler<SuitRecharger> OnCopySettingsDelegate =
+            new EventSystem.IntraObjectHandler<SuitRecharger>(
+                (SuitRecharger component, object data) => component.OnCopySettings(data));
+
         // проверка что костюм действительно надет
         private static readonly Chore.Precondition IsSuitEquipped = new Chore.Precondition
         {
             id = nameof(IsSuitEquipped),
             // todo: уточнить текстовку
-            description = DUPLICANTS.CHORES.PRECONDITIONS.CAN_DO_RECREATION,
+            description = STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.CAN_DO_RECREATION,
             sortOrder = -1,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
@@ -36,13 +42,34 @@ namespace SuitRecharger
         // todo: возможно стоит проверять остаток массы для конкретного костюма, а не требовать возможность полной заправки
         // todo: возможно эти прекондиции неоптимальны по быстродействию. нужно обдумать
 
+        // проверка костюм имеет достаточную прочность чтобы не сломаться в процессе зарядки
+        private static readonly Chore.Precondition IsSuitHasEnoughDurability = new Chore.Precondition
+        {
+            id = nameof(IsSuitHasEnoughDurability),
+            // todo: уточнить текстовку
+            description = "Suit is not durable enough",
+            fn = delegate (ref Chore.Precondition.Context context, object data)
+            {
+                bool result = true;
+                var recharger = (SuitRecharger)data;
+                if (recharger != null)
+                {
+                    var slot = context.consumerState.equipment?.GetSlot(Db.Get().AssignableSlots.Suit);
+                    var durability = slot?.assignable?.GetComponent<Durability>();
+                    if (durability != null && durability.GetTrueDurability(context.consumerState.resume) < recharger.durabilityThreshold)
+                        result = false;
+                }
+                return result;
+            }
+        };
+
         // проверка что костюму требуется заправка.
         // скопировано из SuitLocker.ReturnSuitWorkable
         // отключена проверка уровня заряда свинцовых костюмов
         private static readonly Chore.Precondition DoesSuitNeedRecharging = new Chore.Precondition
         {
             id = nameof(DoesSuitNeedRecharging),
-            description = DUPLICANTS.CHORES.PRECONDITIONS.DOES_SUIT_NEED_RECHARGING_URGENT,
+            description = STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.DOES_SUIT_NEED_RECHARGING_URGENT,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
                 bool result = false;
@@ -157,6 +184,13 @@ namespace SuitRecharger
         private static StatusItem gasWastePipeBlockedStatusItem;
         private static StatusItem gasWasteNoPipeConnectedStatusItem;
 
+        // порог изношенности костюма, при превышении не заряжать
+        [Serialize]
+        private float durabilityThreshold;
+        static private float defaultDurabilityThreshold;
+        static private float durabilityPerCycleGap = 0.2f;
+        static internal bool durabilityEnabled => defaultDurabilityThreshold > 0f;
+
         private MeterController oxygenMeter;
         private MeterController fuelMeter;
         private WorkChore<SuitRecharger> chore;
@@ -173,6 +207,31 @@ namespace SuitRecharger
             return new StatusItem(id: id, prefix: "BUILDING", icon: "", icon_type: StatusItem.IconType.Info, notification_type: NotificationType.BadMinor, allow_multiples: false, render_overlay: OverlayModes.None.ID, showWorldIcon: false);
         }
 
+        static internal void CheckDifficultySetting()
+        {
+            var currentQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.Durability);
+            float durabilityLossDifficultyMod;
+            switch (currentQualitySetting?.id)
+            {
+                case "Indestructible":
+                    durabilityLossDifficultyMod = EQUIPMENT.SUITS.INDESTRUCTIBLE_DURABILITY_MOD;
+                    break;
+                case "Reinforced":
+                    durabilityLossDifficultyMod = EQUIPMENT.SUITS.REINFORCED_DURABILITY_MOD;
+                    break;
+                case "Flimsy":
+                    durabilityLossDifficultyMod = EQUIPMENT.SUITS.FLIMSY_DURABILITY_MOD;
+                    break;
+                case "Threadbare":
+                    durabilityLossDifficultyMod = EQUIPMENT.SUITS.THREADBARE_DURABILITY_MOD;
+                    break;
+                default:
+                    durabilityLossDifficultyMod = 1f;
+                    break;
+            }
+            defaultDurabilityThreshold = Mathf.Abs(EQUIPMENT.SUITS.OXYGEN_MASK_DECAY * durabilityLossDifficultyMod * durabilityPerCycleGap);
+        }
+
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
@@ -181,6 +240,7 @@ namespace SuitRecharger
             SetWorkTime(float.PositiveInfinity);
             //workerStatusItem = null; // todo: а может надо ?
             synchronizeAnims = true;
+            durabilityThreshold = defaultDurabilityThreshold;
 
             if (liquidWasteNoPipeConnectedStatusItem == null)
                 liquidWasteNoPipeConnectedStatusItem = CreateStatusItem("liquidWasteNoPipeConnected");
@@ -219,6 +279,7 @@ namespace SuitRecharger
             Subscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
             Subscribe((int)GameHashes.ConduitConnectionChanged, CheckPipesDelegate);
             Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
+            Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
             Game.Instance.liquidConduitFlow.AddConduitUpdater(OnLiquidConduitUpdate, ConduitFlowPriority.Default);
             Game.Instance.gasConduitFlow.AddConduitUpdater(OnGasConduitUpdate, ConduitFlowPriority.Default);
             OnStorageChange();
@@ -233,6 +294,7 @@ namespace SuitRecharger
             Unsubscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
             Unsubscribe((int)GameHashes.ConduitConnectionChanged, CheckPipesDelegate);
             Unsubscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
+            Unsubscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
             Conduit.GetNetworkManager(fuelPortInfo.conduitType).RemoveFromNetworks(fuelInputCell, fuelNetworkItem, true);
             Conduit.GetNetworkManager(liquidWastePortInfo.conduitType).RemoveFromNetworks(liquidWasteOutputCell, liquidWasteNetworkItem, true);
             Conduit.GetNetworkManager(gasWastePortInfo.conduitType).RemoveFromNetworks(gasWasteOutputCell, gasWasteNetworkItem, true);
@@ -292,6 +354,13 @@ namespace SuitRecharger
             selectable.ToggleStatusItem(gasWasteNoPipeConnectedStatusItem, !gasWasteDispenser.IsConnected);
         }
 
+        private void OnCopySettings(object data)
+        {
+            var recharger = ((GameObject)data)?.GetComponent<SuitRecharger>();
+            if (recharger != null)
+                durabilityThreshold = recharger.durabilityThreshold;
+        }
+
         private void OnStorageChange(object data = null)
         {
             OxygenAvailable = storage.GetMassAvailable(GameTags.Oxygen);
@@ -312,11 +381,15 @@ namespace SuitRecharger
                 chore = new WorkChore<SuitRecharger>(
                     chore_type: Db.Get().ChoreTypes.ReturnSuitUrgent,
                     target: this,
-                    only_when_operational: false,
+                    ignore_schedule_block: true,
+                    only_when_operational: false, // todo: а это зачем ?
                     priority_class: PriorityScreen.PriorityClass.personalNeeds,
                     priority_class_value: 5,
                     add_to_daily_report: false);
                 chore.AddPrecondition(IsSuitEquipped, null);
+                // todo: временно отключено для тестирования
+                //if (durabilityEnabled)  // не проверять если износ отключен в настройках сложности
+                chore.AddPrecondition(IsSuitHasEnoughDurability, this);
                 chore.AddPrecondition(DoesSuitNeedRecharging, null);
                 chore.AddPrecondition(IsEnoughOxygen, this);
                 chore.AddPrecondition(IsEnoughFuel, this);
@@ -327,7 +400,7 @@ namespace SuitRecharger
         {
             if (chore != null)
             {
-                chore.Cancel("RechargeWorkable.CancelChore");
+                chore.Cancel("SuitRecharger.CancelChore");
                 chore = null;
             }
         }
@@ -519,5 +592,15 @@ namespace SuitRecharger
                 return gasWastePortInfo.offset;
             return CellOffset.none;
         }
+        // todo: уточнить текстовку
+        string ISliderControl.SliderTitleKey => "SliderTitleKey";
+        string ISliderControl.SliderUnits => STRINGS.UI.UNITSUFFIXES.PERCENT;
+        int ISliderControl.SliderDecimalPlaces(int index) => 0;
+        float ISliderControl.GetSliderMin(int index) => 0f;
+        float ISliderControl.GetSliderMax(int index) => 100f;
+        float ISliderControl.GetSliderValue(int index) => durabilityThreshold * 100f;
+        void ISliderControl.SetSliderValue(float percent, int index) => durabilityThreshold = Mathf.RoundToInt(percent) / 100f;
+        string ISliderControl.GetSliderTooltipKey(int index) => string.Empty;
+        string ISliderControl.GetSliderTooltip() => "SliderTooltip";
     }
 }

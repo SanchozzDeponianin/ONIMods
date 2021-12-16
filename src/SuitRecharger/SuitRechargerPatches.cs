@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using UnityEngine;
+﻿using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
@@ -34,6 +30,12 @@ namespace SuitRecharger
             PGameUtils.CopySoundsToAnim("suitrecharger_kanim", "suit_maker_kanim");
         }
 
+        [PLibMethod(RunAt.OnStartGame)]
+        private static void OnStartGame()
+        {
+            SuitRecharger.CheckDifficultySetting();
+        }
+
         // при наполнении пустого костюма - восстанавливаем дыхательный компонент в нормальное состояние
         // чтобы дупель не задохнулся на ровном месте
         [HarmonyPatch(typeof(SuitSuffocationMonitor), nameof(SuitSuffocationMonitor.InitializeStates))]
@@ -44,6 +46,19 @@ namespace SuitRecharger
                 __instance.nooxygen.Transition(__instance.satisfied, smi => !smi.IsTankEmpty(), UpdateRate.SIM_200ms);
             }
         }
+
+        // скрываем боковой экран если износ костюмов отключен в настройке сложности
+        // todo: временно отключено для тестирования
+        /*
+        [HarmonyPatch(typeof(SingleSliderSideScreen), nameof(SingleSliderSideScreen.IsValidForTarget))]
+        private static class SingleSliderSideScreen_IsValidForTarget
+        {
+            private static void Postfix(GameObject target, ref bool __result)
+            {
+                if (__result && target.HasTag(SuitRechargerConfig.ID.ToTag()))
+                    __result = SuitRecharger.durabilityEnabled;
+            }
+        }*/
 
         // исправляем косяк клеев, что все четыре компонента типа Solid/Conduit/Consumer/Dispenser
         // неправильно рассчитывают точку подключения трубы при использовании вторичного порта
