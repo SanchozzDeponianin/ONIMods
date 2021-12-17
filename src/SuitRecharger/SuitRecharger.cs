@@ -238,7 +238,7 @@ namespace SuitRecharger
             resetProgressOnStop = true;
             showProgressBar = false;
             SetWorkTime(float.PositiveInfinity);
-            //workerStatusItem = null; // todo: а может надо ?
+            workerStatusItem = Db.Get().ChoreTypes.Recharge.statusItem;
             synchronizeAnims = true;
             durabilityThreshold = defaultDurabilityThreshold;
 
@@ -379,10 +379,11 @@ namespace SuitRecharger
             if (chore == null)
             {
                 chore = new WorkChore<SuitRecharger>(
-                    chore_type: Db.Get().ChoreTypes.ReturnSuitUrgent,
+                    chore_type: Db.Get().ChoreTypes.Recharge,
                     target: this,
                     ignore_schedule_block: true,
-                    only_when_operational: false, // todo: а это зачем ?
+                    only_when_operational: false,
+                    allow_prioritization: false,
                     priority_class: PriorityScreen.PriorityClass.personalNeeds,
                     priority_class_value: 5,
                     add_to_daily_report: false);

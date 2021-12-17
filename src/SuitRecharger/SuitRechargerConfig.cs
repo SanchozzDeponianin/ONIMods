@@ -11,9 +11,9 @@ namespace SuitRecharger
         public const string ID = "SuitRecharger";
         public const float O2_CAPACITY = 200f;
         public const float FUEL_CAPACITY = 100f;
-        // todo: порты временно изменил для гифки. потом вернуть
-        private readonly ConduitPortInfo fuelInputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(1, 2));//1,2
-        private readonly ConduitPortInfo liquidWasteOutputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(1, 0));//0,0
+
+        private readonly ConduitPortInfo fuelInputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 2));
+        private readonly ConduitPortInfo liquidWasteOutputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 0));
         private readonly ConduitPortInfo gasWasteOutputPort = new ConduitPortInfo(ConduitType.Gas, new CellOffset(1, 0));
 
         public override BuildingDef CreateBuildingDef()
@@ -35,7 +35,7 @@ namespace SuitRecharger
             def.EnergyConsumptionWhenActive = BUILDINGS.ENERGY_CONSUMPTION_WHEN_ACTIVE.TIER5;
             def.InputConduitType = ConduitType.Gas;
             def.UtilityInputOffset = new CellOffset(1, 2);
-            def.PermittedRotations = PermittedRotations.FlipH; // Unrotatable
+            def.PermittedRotations = PermittedRotations.FlipH;
             GeneratedBuildings.RegisterWithOverlay(OverlayScreen.SuitIDs, ID);
             return def;
         }
@@ -72,7 +72,6 @@ namespace SuitRecharger
             SuitRecharger.сhargeTime = 2 * Utils.GetAnimDuration(kanim, "working_loop");
 
             go.AddOrGet<CopyBuildingSettings>();
-            Prioritizable.AddRef(go);
         }
 
         private void AttachPort(GameObject go)
