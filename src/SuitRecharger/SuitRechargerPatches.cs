@@ -13,13 +13,12 @@ namespace SuitRecharger
             PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(typeof(SuitRechargerPatches));
         }
-        /*
+
         [PLibMethod(RunAt.BeforeDbInit)]
         private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));
-            LocString.CreateLocStringKeys(typeof(STRINGS.BUILDINGS));
-        }*/
+        }
 
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()

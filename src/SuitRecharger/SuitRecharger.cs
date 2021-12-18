@@ -5,6 +5,8 @@ using KSerialization;
 using UnityEngine;
 using TUNING;
 using SanchozzONIMods.Lib;
+using static STRINGS.DUPLICANTS.CHORES.PRECONDITIONS;
+using static SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS;
 
 namespace SuitRecharger
 {
@@ -29,8 +31,7 @@ namespace SuitRecharger
         private static readonly Chore.Precondition IsSuitEquipped = new Chore.Precondition
         {
             id = nameof(IsSuitEquipped),
-            // todo: уточнить текстовку
-            description = STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.CAN_DO_RECREATION,
+            description = IS_SUIT_EQUIPPED,
             sortOrder = -1,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
@@ -38,7 +39,6 @@ namespace SuitRecharger
             }
         };
 
-        // todo: возможно стоит разделить на несколько прекондиций для лучшего текста.
         // todo: возможно стоит проверять остаток массы для конкретного костюма, а не требовать возможность полной заправки
         // todo: возможно эти прекондиции неоптимальны по быстродействию. нужно обдумать
 
@@ -46,8 +46,8 @@ namespace SuitRecharger
         private static readonly Chore.Precondition IsSuitHasEnoughDurability = new Chore.Precondition
         {
             id = nameof(IsSuitHasEnoughDurability),
-            // todo: уточнить текстовку
-            description = "Suit is not durable enough",
+            description = IS_SUIT_HAS_ENOUGH_DURABILITY,
+            sortOrder = 5,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
                 bool result = true;
@@ -69,7 +69,8 @@ namespace SuitRecharger
         private static readonly Chore.Precondition DoesSuitNeedRecharging = new Chore.Precondition
         {
             id = nameof(DoesSuitNeedRecharging),
-            description = STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.DOES_SUIT_NEED_RECHARGING_URGENT,
+            description = DOES_SUIT_NEED_RECHARGING_URGENT,
+            sortOrder = 1,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
                 bool result = false;
@@ -94,8 +95,8 @@ namespace SuitRecharger
         private static readonly Chore.Precondition IsEnoughOxygen = new Chore.Precondition
         {
             id = nameof(IsEnoughOxygen),
-            // todo: уточнить текстовку
-            description = "Not Enough Oxygen",
+            description = IS_ENOUGH_OXYGEN,
+            sortOrder = 2,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
                 bool result = true;
@@ -115,8 +116,8 @@ namespace SuitRecharger
         private static readonly Chore.Precondition IsEnoughFuel = new Chore.Precondition
         {
             id = nameof(IsEnoughFuel),
-            // todo: уточнить текстовку
-            description = "Not Enough Fuel",
+            description = IS_ENOUGH_FUEL,
+            sortOrder = 3,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
                 bool result = true;
@@ -161,6 +162,7 @@ namespace SuitRecharger
         private FlowUtilityNetwork.NetworkItem fuelNetworkItem;
         private ConduitConsumer fuelConsumer;
         private Tag fuelTag;
+        private static StatusItem fuelNoPipeConnectedStatusItem;
 
         // жидкие отходы
         [SerializeField]
@@ -202,11 +204,6 @@ namespace SuitRecharger
         private JetSuitTank jetSuitTank;
         private LeadSuitTank leadSuitTank;
 
-        private StatusItem CreateStatusItem(string id)
-        {
-            return new StatusItem(id: id, prefix: "BUILDING", icon: "", icon_type: StatusItem.IconType.Info, notification_type: NotificationType.BadMinor, allow_multiples: false, render_overlay: OverlayModes.None.ID, showWorldIcon: false);
-        }
-
         static internal void CheckDifficultySetting()
         {
             var currentQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.Durability);
@@ -232,6 +229,18 @@ namespace SuitRecharger
             defaultDurabilityThreshold = Mathf.Abs(EQUIPMENT.SUITS.OXYGEN_MASK_DECAY * durabilityLossDifficultyMod * durabilityPerCycleGap);
         }
 
+        private StatusItem CreateStatusItem(string id, string icon = "")
+        {
+            return new StatusItem(id: id,
+                prefix: "BUILDING",
+                icon: icon,
+                icon_type: StatusItem.IconType.Custom,
+                notification_type: NotificationType.BadMinor,
+                allow_multiples: false,
+                render_overlay: OverlayModes.None.ID,
+                showWorldIcon: false);
+        }
+
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
@@ -242,14 +251,19 @@ namespace SuitRecharger
             synchronizeAnims = true;
             durabilityThreshold = defaultDurabilityThreshold;
 
+            if (fuelNoPipeConnectedStatusItem == null)
+            {
+                fuelNoPipeConnectedStatusItem = CreateStatusItem("fuelNoPipeConnected", "status_item_need_supply_in");
+                fuelNoPipeConnectedStatusItem.resolveStringCallback = (string str, object data) => string.Format(str, (string)data);
+            }
             if (liquidWasteNoPipeConnectedStatusItem == null)
-                liquidWasteNoPipeConnectedStatusItem = CreateStatusItem("liquidWasteNoPipeConnected");
+                liquidWasteNoPipeConnectedStatusItem = CreateStatusItem("liquidWasteNoPipeConnected", "status_item_need_supply_out");
             if (liquidWastePipeBlockedStatusItem == null)
-                liquidWastePipeBlockedStatusItem = CreateStatusItem("liquidWastePipeFull");
+                liquidWastePipeBlockedStatusItem = CreateStatusItem("liquidWastePipeFull", "status_item_no_liquid_to_pump");
             if (gasWasteNoPipeConnectedStatusItem == null)
-                gasWasteNoPipeConnectedStatusItem = CreateStatusItem("gasWasteNoPipeConnected");
+                gasWasteNoPipeConnectedStatusItem = CreateStatusItem("gasWasteNoPipeConnected", "status_item_need_supply_out");
             if (gasWastePipeBlockedStatusItem == null)
-                gasWastePipeBlockedStatusItem = CreateStatusItem("gasWastePipeFull");
+                gasWastePipeBlockedStatusItem = CreateStatusItem("gasWastePipeFull", "status_item_no_gas_to_pump");
         }
 
         protected override void OnSpawn()
@@ -350,6 +364,7 @@ namespace SuitRecharger
 
         private void CheckPipes(object data)
         {
+            selectable.ToggleStatusItem(fuelNoPipeConnectedStatusItem, !fuelConsumer.IsConnected, fuelTag.ProperName());
             selectable.ToggleStatusItem(liquidWasteNoPipeConnectedStatusItem, !liquidWasteDispenser.IsConnected);
             selectable.ToggleStatusItem(gasWasteNoPipeConnectedStatusItem, !gasWasteDispenser.IsConnected);
         }
@@ -593,15 +608,14 @@ namespace SuitRecharger
                 return gasWastePortInfo.offset;
             return CellOffset.none;
         }
-        // todo: уточнить текстовку
-        string ISliderControl.SliderTitleKey => "SliderTitleKey";
-        string ISliderControl.SliderUnits => STRINGS.UI.UNITSUFFIXES.PERCENT;
+        string ISliderControl.SliderTitleKey => "STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE";
+        string ISliderControl.SliderUnits => global::STRINGS.UI.UNITSUFFIXES.PERCENT;
         int ISliderControl.SliderDecimalPlaces(int index) => 0;
         float ISliderControl.GetSliderMin(int index) => 0f;
         float ISliderControl.GetSliderMax(int index) => 100f;
         float ISliderControl.GetSliderValue(int index) => durabilityThreshold * 100f;
         void ISliderControl.SetSliderValue(float percent, int index) => durabilityThreshold = Mathf.RoundToInt(percent) / 100f;
         string ISliderControl.GetSliderTooltipKey(int index) => string.Empty;
-        string ISliderControl.GetSliderTooltip() => "SliderTooltip";
+        string ISliderControl.GetSliderTooltip() => string.Format(STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TOOLTIP, durabilityThreshold * 100f);
     }
 }

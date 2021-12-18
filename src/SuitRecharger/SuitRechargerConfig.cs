@@ -4,8 +4,6 @@ using SanchozzONIMods.Lib;
 
 namespace SuitRecharger
 {
-    // todo: текстовка
-
     public class SuitRechargerConfig : IBuildingConfig
     {
         public const string ID = "SuitRecharger";
