@@ -54,20 +54,18 @@ namespace SuitRecharger
             go.AddOrGet<StorageDropper>();
 
             var recharger = go.AddOrGet<SuitRecharger>();
-            recharger.workLayer = Grid.SceneLayer.BuildingFront;
             recharger.fuelPortInfo = fuelInputPort;
             recharger.liquidWastePortInfo = liquidWasteOutputPort;
             recharger.gasWastePortInfo = gasWasteOutputPort;
             var kanim = Assets.GetAnim("anim_interacts_suitrecharger_kanim");
-            recharger.overrideAnims = new KAnimFile[] { kanim };
             // привязываемся к длительности анимации
             /*
             working_pre = 4.033333
             working_loop = 2
             working_pst = 4.333333
             */
-            SuitRecharger.warmupTime = Utils.GetAnimDuration(kanim, "working_pre");
-            SuitRecharger.сhargeTime = 2 * Utils.GetAnimDuration(kanim, "working_loop");
+            SuitRechargerWorkable.warmupTime = Utils.GetAnimDuration(kanim, "working_pre");
+            SuitRechargerWorkable.сhargeTime = 2 * Utils.GetAnimDuration(kanim, "working_loop");
 
             go.AddOrGet<CopyBuildingSettings>();
         }
