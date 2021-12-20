@@ -30,7 +30,7 @@ namespace SuitRecharger
                 decor: BUILDINGS.DECOR.BONUS.TIER1,
                 noise: NOISE_POLLUTION.NOISY.TIER0);
             def.RequiresPowerInput = true;
-            def.EnergyConsumptionWhenActive = BUILDINGS.ENERGY_CONSUMPTION_WHEN_ACTIVE.TIER5;
+            def.EnergyConsumptionWhenActive = BUILDINGS.ENERGY_CONSUMPTION_WHEN_ACTIVE.TIER4;
             def.InputConduitType = ConduitType.Gas;
             def.UtilityInputOffset = new CellOffset(1, 2);
             def.PermittedRotations = PermittedRotations.FlipH;

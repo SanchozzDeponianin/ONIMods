@@ -130,7 +130,7 @@ namespace SuitRecharger
                             if (driver != null)
                             {
                                 var chore = driver.GetCurrentChore();
-                                if (chore != null && (chore.choreType == Db.Get().ChoreTypes.Recharge || chore.choreType == SuitRecharger.RecoverBreathRecharge))
+                                if (chore != null && (chore.choreType == Db.Get().ChoreTypes.Recharge || chore.choreType == SuitRecharger.RecoverBreathRecharge || chore.choreType == Db.Get().ChoreTypes.RecoverBreath))
                                 {
                                     driver.StopChore();
                                 }
@@ -142,8 +142,6 @@ namespace SuitRecharger
         }
 
         // скрываем боковой экран если износ костюмов отключен в настройке сложности
-        // todo: временно отключено для тестирования
-        /*
         [HarmonyPatch(typeof(SingleSliderSideScreen), nameof(SingleSliderSideScreen.IsValidForTarget))]
         private static class SingleSliderSideScreen_IsValidForTarget
         {
@@ -152,7 +150,7 @@ namespace SuitRecharger
                 if (__result && target.HasTag(SuitRechargerConfig.ID.ToTag()))
                     __result = SuitRecharger.durabilityEnabled;
             }
-        }*/
+        }
 
         // исправляем косяк клеев, что все четыре компонента типа Solid/Conduit/Consumer/Dispenser
         // неправильно рассчитывают точку подключения трубы при использовании вторичного порта

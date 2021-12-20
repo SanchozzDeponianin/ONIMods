@@ -36,7 +36,6 @@ namespace SuitRecharger
             }
         };
 
-        // todo: возможно стоит проверять остаток массы для конкретного костюма, а не требовать возможность полной заправки
         // todo: возможно эти прекондиции неоптимальны по быстродействию. нужно обдумать
 
         // проверка костюм имеет достаточную прочность чтобы не сломаться в процессе зарядки
@@ -101,7 +100,7 @@ namespace SuitRecharger
                 if (recharger != null)
                 {
                     var suit_tank = context.consumerState.equipment?.GetSlot(Db.Get().AssignableSlots.Suit)?.assignable?.GetComponent<SuitTank>();
-                    if (suit_tank != null && suit_tank.NeedsRecharging() && recharger.OxygenAvailable < suit_tank.capacity)
+                    if (suit_tank != null && recharger.OxygenAvailable < (suit_tank.capacity - suit_tank.GetTankAmount()))
                         result = false;
                 }
                 return result;
@@ -123,7 +122,7 @@ namespace SuitRecharger
                 {
                     var slot = context.consumerState.equipment?.GetSlot(Db.Get().AssignableSlots.Suit);
                     var jet_suit_tank = slot?.assignable?.GetComponent<JetSuitTank>();
-                    if (jet_suit_tank != null && jet_suit_tank.NeedsRecharging() && recharger.FuelAvailable < JetSuitTank.FUEL_CAPACITY)
+                    if (jet_suit_tank != null && recharger.FuelAvailable < (JetSuitTank.FUEL_CAPACITY - jet_suit_tank.amount))
                     {
                         var suit_tank = slot?.assignable?.GetComponent<SuitTank>();
                         if (suit_tank != null && !suit_tank.NeedsRecharging())
@@ -212,9 +211,8 @@ namespace SuitRecharger
                 smi.activeUseChores.Add(chore);
                 chore.onExit += (exiting_chore) => smi.activeUseChores.Remove(exiting_chore);
                 chore.AddPrecondition(IsSuitEquipped, null);
-                // todo: временно отключено для тестирования
-                //if (durabilityEnabled)  // не проверять если износ отключен в настройках сложности
-                chore.AddPrecondition(IsSuitHasEnoughDurability, smi.master);
+                if (durabilityEnabled)  // не проверять если износ отключен в настройках сложности
+                    chore.AddPrecondition(IsSuitHasEnoughDurability, smi.master);
                 chore.AddPrecondition(DoesSuitNeedRecharging, null);
                 chore.AddPrecondition(IsEnoughOxygen, smi.master);
                 chore.AddPrecondition(IsEnoughFuel, smi.master);
