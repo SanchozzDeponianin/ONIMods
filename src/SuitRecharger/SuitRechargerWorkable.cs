@@ -1,4 +1,5 @@
 ﻿using Klei.AI;
+using STRINGS;
 using UnityEngine;
 using SanchozzONIMods.Lib;
 
@@ -6,8 +7,9 @@ namespace SuitRecharger
 {
     public class SuitRechargerWorkable : Workable
     {
-        public static float сhargeTime = 1f;
-        public static float warmupTime;
+        private static StatusItem SuitRecharging;
+        private static float сhargeTime = 1f;
+        private static float warmupTime;
         private float elapsedTime;
 
 #pragma warning disable CS0649
@@ -31,14 +33,37 @@ namespace SuitRecharger
             resetProgressOnStop = true;
             showProgressBar = false;
             SetWorkTime(float.PositiveInfinity);
-            workerStatusItem = Db.Get().ChoreTypes.Recharge.statusItem;
             workLayer = Grid.SceneLayer.BuildingFront;
-            overrideAnims = new KAnimFile[] { Assets.GetAnim("anim_interacts_suitrecharger_kanim") };
+            var kanim = Assets.GetAnim("anim_interacts_suitrecharger_kanim");
+            overrideAnims = new KAnimFile[] { kanim };
             synchronizeAnims = true;
+            if (SuitRecharging == null)
+            {
+                SuitRecharging = new StatusItem(
+                    id: nameof(SuitRecharging),
+                    name: DUPLICANTS.CHORES.RECHARGE.STATUS,
+                    tooltip: DUPLICANTS.CHORES.RECHARGE.TOOLTIP,
+                    icon: string.Empty,
+                    icon_type: StatusItem.IconType.Info,
+                    notification_type: NotificationType.Neutral,
+                    allow_multiples: false,
+                    render_overlay: OverlayModes.None.ID,
+                    status_overlays: (int)StatusItem.StatusItemOverlays.None);
+                // привязываемся к длительности анимации
+                /*
+                working_pre = 4.033333
+                working_loop = 2
+                working_pst = 4.333333
+                */
+                warmupTime = Utils.GetAnimDuration(kanim, "working_pre");
+                сhargeTime = 2 * Utils.GetAnimDuration(kanim, "working_loop");
+            }
+            workerStatusItem = SuitRecharging;
         }
 
         protected override void OnStartWork(Worker worker)
         {
+            SetWorkTime(float.PositiveInfinity);
             var suit = worker.GetComponent<MinionIdentity>().GetEquipment().GetAssignable(Db.Get().AssignableSlots.Suit);
             if (suit != null)
             {

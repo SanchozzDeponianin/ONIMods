@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using Klei.CustomSettings;
 using KSerialization;
-using UnityEngine;
 using TUNING;
+using UnityEngine;
+using HarmonyLib;
 using SanchozzONIMods.Lib;
-using static STRINGS.DUPLICANTS.CHORES.PRECONDITIONS;
+using static STRINGS.DUPLICANTS.CHORES;
 using static SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS;
 
 namespace SuitRecharger
 {
-    public class SuitRecharger : StateMachineComponent<SuitRecharger.StatesInstance>, ISecondaryInput, ISecondaryOutput, ISliderControl, ISingleSliderControl
+    public class SuitRecharger : StateMachineComponent<SuitRecharger.StatesInstance>, ISaveLoadable, ISecondaryInput, ISecondaryOutput, ISliderControl, ISingleSliderControl
     {
         private static readonly EventSystem.IntraObjectHandler<SuitRecharger> CheckPipesDelegate =
             new EventSystem.IntraObjectHandler<SuitRecharger>((SuitRecharger component, object data) => component.CheckPipes(data));
@@ -65,7 +66,7 @@ namespace SuitRecharger
         private static readonly Chore.Precondition DoesSuitNeedRecharging = new Chore.Precondition
         {
             id = nameof(DoesSuitNeedRecharging),
-            description = DOES_SUIT_NEED_RECHARGING_URGENT,
+            description = PRECONDITIONS.DOES_SUIT_NEED_RECHARGING_URGENT,
             sortOrder = 1,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
@@ -133,6 +134,33 @@ namespace SuitRecharger
             }
         };
 
+        internal static ChoreType RecoverBreathRecharge;
+        internal static void Init()
+        {
+            var db = Db.Get();
+            // воспользуемся неиспользуемой ChoreType, но подкрутим приоритеты
+            var ReturnSuitUrgent = db.ChoreTypes.ReturnSuitUrgent;
+            var Recharge = db.ChoreTypes.Recharge;
+            var RechargeTraverse = Traverse.Create(Recharge);
+            RechargeTraverse.Property<int>(nameof(ChoreType.priority)).Value = ReturnSuitUrgent.priority;
+            RechargeTraverse.Property<int>(nameof(ChoreType.explicitPriority)).Value = ReturnSuitUrgent.explicitPriority;
+            Recharge.interruptPriority = ReturnSuitUrgent.interruptPriority;
+            // собственная ChoreType для суперсрочной подзарядки
+            var RecoverBreath = db.ChoreTypes.RecoverBreath;
+            RecoverBreathRecharge = new ChoreType(
+                id: nameof(RecoverBreathRecharge),
+                parent: db.ChoreTypes,
+                chore_groups: new string[0],
+                urge: RecoverBreath.urge.Id,
+                name: RECOVERBREATH.NAME,
+                status_message: RECOVERBREATH.STATUS,
+                tooltip: RECHARGE.TOOLTIP,
+                interrupt_exclusion: RecoverBreath.interruptExclusion,
+                implicit_priority: RecoverBreath.priority,
+                explicit_priority: RecoverBreath.explicitPriority)
+            { interruptPriority = RecoverBreath.interruptPriority };
+        }
+
         public class StatesInstance : GameStateMachine<States, StatesInstance, SuitRecharger, object>.GameInstance
         {
             public List<Chore> activeUseChores;
@@ -156,20 +184,33 @@ namespace SuitRecharger
                     .EventTransition(GameHashes.OperationalChanged, operational, smi => smi.master.operational.IsOperational);
                 operational
                     .EventTransition(GameHashes.OperationalChanged, notoperational, smi => !smi.master.operational.IsOperational)
-                    .ToggleRecurringChore(CreateUseChore);
+                    .ToggleRecurringChore(CreateNormalChore)
+                    .ToggleRecurringChore(CreateRecoverBreathChore);
             }
 
-            public Chore CreateUseChore(StatesInstance smi)
+            public Chore CreateNormalChore(StatesInstance smi)
+            {
+                return CreateUseChore(smi, Db.Get().ChoreTypes.Recharge, PriorityScreen.PriorityClass.personalNeeds);
+            }
+
+            public Chore CreateRecoverBreathChore(StatesInstance smi)
+            {
+                return CreateUseChore(smi, RecoverBreathRecharge, PriorityScreen.PriorityClass.compulsory);
+            }
+
+            public Chore CreateUseChore(StatesInstance smi, ChoreType choreType, PriorityScreen.PriorityClass priorityClass)
             {
                 var chore = new WorkChore<SuitRechargerWorkable>(
-                        chore_type: Db.Get().ChoreTypes.Recharge,
+                        chore_type: choreType,
                         target: smi.master.workable,
                         ignore_schedule_block: true,
                         only_when_operational: false,
                         allow_prioritization: false,
-                        priority_class: PriorityScreen.PriorityClass.personalNeeds,
-                        priority_class_value: 5,
+                        priority_class: priorityClass,
+                        priority_class_value: Chore.DEFAULT_BASIC_PRIORITY,
                         add_to_daily_report: false);
+                smi.activeUseChores.Add(chore);
+                chore.onExit += (exiting_chore) => smi.activeUseChores.Remove(exiting_chore);
                 chore.AddPrecondition(IsSuitEquipped, null);
                 // todo: временно отключено для тестирования
                 //if (durabilityEnabled)  // не проверять если износ отключен в настройках сложности
@@ -177,6 +218,7 @@ namespace SuitRecharger
                 chore.AddPrecondition(DoesSuitNeedRecharging, null);
                 chore.AddPrecondition(IsEnoughOxygen, smi.master);
                 chore.AddPrecondition(IsEnoughFuel, smi.master);
+                chore.AddPrecondition(ChorePreconditions.instance.IsExclusivelyAvailableWithOtherChores, smi.activeUseChores);
                 return chore;
             }
         }

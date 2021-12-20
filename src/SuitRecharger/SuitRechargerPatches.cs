@@ -1,4 +1,6 @@
-﻿using HarmonyLib;
+﻿using STRINGS;
+using HarmonyLib;
+using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
@@ -26,13 +28,7 @@ namespace SuitRecharger
             Utils.AddBuildingToPlanScreen("Equipment", SuitRechargerConfig.ID, SuitFabricatorConfig.ID);
             Utils.AddBuildingToTechnology("ImprovedGasPiping", SuitRechargerConfig.ID);
             PGameUtils.CopySoundsToAnim("suitrecharger_kanim", "suit_maker_kanim");
-            // воспользуемся неиспользуемой ChoreType, но подкрутим приоритеты
-            var ReturnSuitUrgent = Db.Get().ChoreTypes.ReturnSuitUrgent;
-            var Recharge = Db.Get().ChoreTypes.Recharge;
-            var RechargeTraverse = Traverse.Create(Recharge);
-            RechargeTraverse.Property<int>(nameof(ChoreType.priority)).Value = ReturnSuitUrgent.priority;
-            Recharge.interruptPriority = ReturnSuitUrgent.interruptPriority;
-            RechargeTraverse.Property<int>(nameof(ChoreType.explicitPriority)).Value = ReturnSuitUrgent.explicitPriority;
+            SuitRecharger.Init();
         }
 
         [PLibMethod(RunAt.OnStartGame)]
@@ -52,18 +48,69 @@ namespace SuitRecharger
             }
         }
 
-        // скрываем боковой экран если износ костюмов отключен в настройке сложности
-        // todo: временно отключено для тестирования
-        /*
-        [HarmonyPatch(typeof(SingleSliderSideScreen), nameof(SingleSliderSideScreen.IsValidForTarget))]
-        private static class SingleSliderSideScreen_IsValidForTarget
+        // задача "подышать" не учитывает цену пути до дыхабельной клетки
+        // добавим эту проверку, чтобы задыхающийся дупель мог "подышать" или использовать зарядник 
+        // в зависимости от того что ближе
+        [HarmonyPatch(typeof(BreathMonitor), "CreateRecoverBreathChore")]
+        private static class BreathMonitor_CreateRecoverBreathChore
         {
-            private static void Postfix(GameObject target, ref bool __result)
+            private static readonly Chore.Precondition RecoverBreathUpdateCost = new Chore.Precondition
             {
-                if (__result && target.HasTag(SuitRechargerConfig.ID.ToTag()))
-                    __result = SuitRecharger.durabilityEnabled;
+                id = nameof(RecoverBreathUpdateCost),
+                description = DUPLICANTS.CHORES.PRECONDITIONS.CAN_MOVE_TO,
+                sortOrder = 10,
+                fn = delegate (ref Chore.Precondition.Context context, object data)
+                {
+                    if (context.consumerState.consumer == null)
+                        return false;
+                    var smi = (BreathMonitor.Instance)data;
+                    if (smi == null)
+                        return false;
+                    if (context.consumerState.consumer.GetNavigationCost(smi.GetRecoverCell(), out int num))
+                    {
+                        context.cost += num;
+                        return true;
+                    }
+                    return false;
+                }
+            };
+
+            private static void Postfix(Chore __result, BreathMonitor.Instance smi)
+            {
+                __result.AddPrecondition(RecoverBreathUpdateCost, smi);
             }
-        }*/
+        }
+
+        // задыхающийся дупель после использования зарядника всеравно хочет "подышать"
+        // подменим целевую клетку, чтобы он не бежал далеко, а "отдышался" возле зарядника
+        // todo: теоритически возможен альтернативный вариант, вообще подавить задачу "подышать"
+        [HarmonyPatch(typeof(RecoverBreathChore.StatesInstance), nameof(RecoverBreathChore.StatesInstance.UpdateLocator))]
+        private static class RecoverBreathChore_StatesInstance_UpdateLocator
+        {
+            private static bool Prefix(RecoverBreathChore.StatesInstance __instance)
+            {
+                var prefabID = __instance.Get<KPrefabID>();
+                if (prefabID.HasTag(GameTags.HasSuitTank) && !prefabID.HasTag(GameTags.NoOxygen))
+                {
+                    int num = Grid.PosToCell(__instance.sm.recoverer.Get<Transform>(__instance).GetPosition());
+                    Vector3 position = Grid.CellToPosCBC(num, Grid.SceneLayer.Move);
+                    __instance.sm.locator.Get<Transform>(__instance).SetPosition(position);
+                    return false;
+                }
+                else
+                    return true;
+            }
+        }
+
+        // косметика. если дупель "отдышывается" после зарядника, подавляем исчезновение шлема
+        [HarmonyPatch(typeof(HelmetController), "OnBeginRecoverBreath")]
+        private static class HelmetController_OnBeginRecoverBreath
+        {
+            private static bool Prefix(Navigator ___owner_navigator)
+            {
+                return ___owner_navigator == null || ___owner_navigator.HasTag(GameTags.NoOxygen);
+            }
+        }
 
         // если дупель уже принял задачу зарядить костюм, но снял его по дороге
         // отменяем ему эту задачу
@@ -83,7 +130,7 @@ namespace SuitRecharger
                             if (driver != null)
                             {
                                 var chore = driver.GetCurrentChore();
-                                if (chore != null && chore.choreType == Db.Get().ChoreTypes.Recharge)
+                                if (chore != null && (chore.choreType == Db.Get().ChoreTypes.Recharge || chore.choreType == SuitRecharger.RecoverBreathRecharge))
                                 {
                                     driver.StopChore();
                                 }
@@ -93,6 +140,19 @@ namespace SuitRecharger
                 });
             }
         }
+
+        // скрываем боковой экран если износ костюмов отключен в настройке сложности
+        // todo: временно отключено для тестирования
+        /*
+        [HarmonyPatch(typeof(SingleSliderSideScreen), nameof(SingleSliderSideScreen.IsValidForTarget))]
+        private static class SingleSliderSideScreen_IsValidForTarget
+        {
+            private static void Postfix(GameObject target, ref bool __result)
+            {
+                if (__result && target.HasTag(SuitRechargerConfig.ID.ToTag()))
+                    __result = SuitRecharger.durabilityEnabled;
+            }
+        }*/
 
         // исправляем косяк клеев, что все четыре компонента типа Solid/Conduit/Consumer/Dispenser
         // неправильно рассчитывают точку подключения трубы при использовании вторичного порта
