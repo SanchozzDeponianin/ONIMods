@@ -1,0 +1,51 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Ventulus\n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Application: Oxygen Not IncludedPOT Version: 2.0\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIER0.NAME
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIER0.NAME"
+msgid "Cycles before the Tier0 artifact will be available"
+msgstr "在0阶工艺品出现前至少经过的周期"
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIERNEXT.NAME
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIERNEXT.NAME"
+msgid "Cycles before the each next Tier artifact will be available"
+msgstr "下一阶工艺品出现前要经过的周期"
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.DYNAMICPROBABILITY.NAME
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.DYNAMICPROBABILITY.NAME"
+msgid "Dynamic probability of obtaining an artifact"
+msgstr "获得工艺品的动态概率"
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.DYNAMICPROBABILITY.TOOLTIP
+msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.DYNAMICPROBABILITY.TOOLTIP"
+msgid ""
+"If enabled, the more artifacts of a certain type you have, the less chance "
+"you have of getting another one\n"
+"If disabled, the chances of getting artifacts of any type are the same"
+msgstr ""
+"如果启用，你拥有的某种类型的工艺品越多，你获得另一种工艺品的机会就越少\n"
+"如果禁用，获得任何类型的工艺品的机会都是一样的"
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.NAME
+msgctxt ""
+"ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.NAME"
+msgid "Slots of artifacts added to the Drop Table"
+msgstr "掉落表中添加了工艺品的槽位"
+
+#. ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.TOOLTIP
+msgctxt ""
+"ArtifactCarePackages.STRINGS.OPTIONS.RANDOMARTIFACTDROPTABLESLOTS.TOOLTIP"
+msgid "More slots - more chance to get an artifact instead of a resource"
+msgstr "更多槽位——有更多机会去获得一件工艺品而不是一项资源"

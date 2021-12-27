@@ -1,0 +1,114 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Ventulus\n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Application: Oxygen Not IncludedPOT Version: 2.0\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#. SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.DESC
+msgctxt "SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.DESC"
+msgid ""
+"Suit Recharger allows Duplicants to recharge their Suits and Oxygen Masks "
+"without taking them off."
+msgstr "太空服补给站能让复制人补给他们的太空服和氧气面罩而不用脱下来。"
+
+#. SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.EFFECT
+msgctxt "SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.EFFECT"
+msgid ""
+"Recharges all kinds of <link=\"EQUIPMENT\">Exosuits</link> and <link="
+"\"OXYGENMASK\">Oxygen Masks</link> and refuels them with <link=\"OXYGEN"
+"\">Oxygen</link> and <link=\"PETROLEUM\">Petroleum</link>.\n"
+"\n"
+"Empties suits of <link=\"DIRTYWATER\">Polluted Water</link>.\n"
+"\n"
+"Optionally, it can be connected to <style=\"KKeyword\">Pipes</style> for "
+"waste disposal."
+msgstr ""
+"补给所有种类的<link=\"EQUIPMENT\">太空服</link>和<link=\"OXYGENMASK\">氧气面"
+"罩</link>，使用<link=\"OXYGEN\">氧气</link>和<link=\"PETROLEUM\">石油</link>"
+"补充。\n"
+"\n"
+"清空太空服中的<link=\"DIRTYWATER\">污染水</link>。\n"
+"\n"
+"可以选择连接至<style=\"KKeyword\">管道</style>进行废物处理。"
+
+#. SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.NAME
+msgctxt "SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.NAME"
+msgid "<link=\"SUITRECHARGER\">Suit Recharger</link>"
+msgstr "<link=\"SUITRECHARGER\">太空服补给站</link>"
+
+#. SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ENOUGH_FUEL
+msgctxt "SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ENOUGH_FUEL"
+msgid "{Selected} does not have enough Fuel"
+msgstr "{Selected}没有足够的燃料"
+
+#. SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ENOUGH_OXYGEN
+msgctxt ""
+"SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ENOUGH_OXYGEN"
+msgid "{Selected} does not have enough Oxygen"
+msgstr "{Selected}没有足够的氧气"
+
+#. SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_SUIT_EQUIPPED
+msgctxt ""
+"SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_SUIT_EQUIPPED"
+msgid "Does not have an equipped Suit"
+msgstr "没有一件可装备的太空服"
+
+#. SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_SUIT_HAS_ENOUGH_DURABILITY
+msgctxt ""
+"SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS."
+"IS_SUIT_HAS_ENOUGH_DURABILITY"
+msgid "Suit is not durable enough"
+msgstr "太空服的耐久度不够"
+
+#. SuitRecharger.STRINGS.STATUSITEMS.FUEL_NOPIPE.TOOLTIP
+msgctxt "SuitRecharger.STRINGS.STATUSITEMS.FUEL_NOPIPE.TOOLTIP"
+msgid ""
+"\n"
+"<style=\"KKeyword\">Jet Suits</style> will be charged only with <link="
+"\"OXYGEN\">Oxygen</link>"
+msgstr ""
+"\n"
+"<style=\"KKeyword\">喷气服</style>仅会用<link=\"OXYGEN\">氧气</link>充能"
+
+#. SuitRecharger.STRINGS.STATUSITEMS.GASWASTE_NOPIPE.TOOLTIP
+msgctxt "SuitRecharger.STRINGS.STATUSITEMS.GASWASTE_NOPIPE.TOOLTIP"
+msgid ""
+"\n"
+"When cleaning the <style=\"KKeyword\">Suit</style>, the gaseous waste will "
+"be released into the atmosphere"
+msgstr ""
+"\n"
+"当清理<style=\"KKeyword\">太空服</style>时，废气会被排入大气"
+
+#. SuitRecharger.STRINGS.STATUSITEMS.LIQUIDWASTE_NOPIPE.TOOLTIP
+msgctxt "SuitRecharger.STRINGS.STATUSITEMS.LIQUIDWASTE_NOPIPE.TOOLTIP"
+msgid ""
+"\n"
+"<style=\"KKeyword\">Soiled Suits</style> will not be emptied of liquid waste"
+msgstr ""
+"\n"
+"<style=\"KKeyword\">受污染的太空服</style>不会被清空液体废弃物"
+
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE"
+msgid "Suit Durability Threshold"
+msgstr "太空服耐久度阈值"
+
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TOOLTIP
+msgctxt ""
+"SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TOOLTIP"
+msgid ""
+"Duplicants will not use this Recharger when the <style=\"KKeyword"
+"\">Durability</style> of their Suits falls below <b>{0}%</b>"
+msgstr ""
+"当太空服的<style=\"KKeyword\">耐久度</style>低于<b>{0}%</b>，复制人不会使用"
+"补给站"
