@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
+using PeterHan.PLib.PatchManager;
 
 namespace WornSuitDischarge
 {
@@ -14,6 +15,27 @@ namespace WornSuitDischarge
         {
             base.OnLoad(harmony);
             PUtil.InitLibrary();
+            new PPatchManager(harmony).RegisterPatchClass(typeof(WornSuitDischargePatches));
+        }
+
+        // подкручиваем приоритет, чтобы задача доставки костюмов в доки считалась доставкой жизнеобеспечения.
+        [PLibMethod(RunAt.AfterDbInit)]
+        private static void AfterDbInit()
+        {
+            var LifeSupport = Db.Get().ChoreGroups.LifeSupport;
+            var FetchCritical = Db.Get().ChoreTypes.FetchCritical;
+            var EquipmentFetch = Db.Get().ChoreTypes.EquipmentFetch;
+            var traverse = Traverse.Create(EquipmentFetch);
+            if (!LifeSupport.choreTypes.Contains(EquipmentFetch))
+                LifeSupport.choreTypes.Add(EquipmentFetch);
+            if (!EquipmentFetch.groups.Contains(LifeSupport))
+            {
+                //EquipmentFetch.groups = EquipmentFetch.groups.AddItem(LifeSupport).ToArray();
+                traverse.Property<ChoreGroup[]>(nameof(ChoreType.groups)).Value =
+                    EquipmentFetch.groups.AddItem(LifeSupport).ToArray();
+            }
+            //EquipmentFetch.priority = FetchCritical.priority;
+            traverse.Property<int>(nameof(ChoreType.priority)).Value = FetchCritical.priority;
         }
 
         private static bool ShouldTransfer(Assignable assignable, Equipment equipment)
@@ -33,7 +55,6 @@ namespace WornSuitDischarge
                 {
                     suitStorage.Transfer(lockerStorage, suitTank.elementTag, suitTank.capacity, false, true);
                 }
-                // todo: проверка что тип локера подходит
                 var jetSuitTank = assignable.GetComponent<JetSuitTank>();
                 if (jetSuitTank != null && lockerStorage.HasTag(JetSuitLockerConfig.ID))
                 {
