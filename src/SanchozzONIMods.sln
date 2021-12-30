@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		lib\DurabilityExtensions.cs = lib\DurabilityExtensions.cs
 		lib\EffectsExtensions.cs = lib\EffectsExtensions.cs
 		lib\FXLoopAnim.cs = lib\FXLoopAnim.cs
+		lib\ManualDeliveryKGPatch.cs = lib\ManualDeliveryKGPatch.cs
 		lib\StorageDropper.cs = lib\StorageDropper.cs
 		lib\Utils.cs = lib\Utils.cs
 	EndProjectSection

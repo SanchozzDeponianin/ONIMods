@@ -23,6 +23,12 @@
     <Compile Include="..\lib\DurabilityExtensions.cs">
       <Link>DurabilityExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\lib\ManualDeliveryKGPatch.cs">
+      <Link>ManualDeliveryKGPatch.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\StorageDropper.cs">
+      <Link>StorageDropper.cs</Link>
+    </Compile>
     <Compile Include="WornSuitDischargePatches.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

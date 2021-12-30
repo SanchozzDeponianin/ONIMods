@@ -2,20 +2,29 @@
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using KMod;
+using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
+using SanchozzONIMods.Shared;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
 
 namespace WornSuitDischarge
 {
-    internal sealed class WornSuitDischargePatches : KMod.UserMod2
+    internal sealed class WornSuitDischargePatches : UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             base.OnLoad(harmony);
             PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(typeof(WornSuitDischargePatches));
+        }
+
+        public override void OnAllModsLoaded(Harmony harmony, IReadOnlyList<Mod> mods)
+        {
+            base.OnAllModsLoaded(harmony, mods);
+            ManualDeliveryKGPatch.Patch(harmony);
         }
 
         // подкручиваем приоритет, чтобы задача доставки костюмов в доки считалась доставкой жизнеобеспечения.
@@ -208,5 +217,55 @@ namespace WornSuitDischarge
                 return instructionsList;
             }
         }
+
+        // при деконструкции не выпускать кислород в атмосферу
+        // доставка кислорода и керосина баллонами
+        [HarmonyPatch]
+        private static class XXXSuitLockerConfig_ConfigureBuildingTemplate
+        {
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                const string name = nameof(IBuildingConfig.ConfigureBuildingTemplate);
+                var methods = new List<MethodBase>();
+                methods.Add(typeof(SuitLockerConfig).GetMethod(name));
+                methods.Add(typeof(JetSuitLockerConfig).GetMethod(name));
+                methods.Add(typeof(OxygenMaskLockerConfig).GetMethod(name));
+                if (DlcManager.IsExpansion1Active())
+                    methods.Add(typeof(LeadSuitLockerConfig).GetMethod(name));
+                return methods;
+            }
+
+            private static void Postfix(GameObject go, Tag prefab_tag)
+            {
+                float capacity = go.GetComponent<ConduitConsumer>()?.capacityKG ?? JetSuitLockerConfig.O2_CAPACITY;
+                var storage = go.GetComponent<Storage>();
+                AddManualDeliveryKG(go, GameTags.Oxygen, capacity).SetStorage(storage);
+                if (prefab_tag == JetSuitLockerConfig.ID)
+                    AddManualDeliveryKG(go, SimHashes.Petroleum.CreateTag(), JetSuitLocker.FUEL_CAPACITY).SetStorage(storage);
+                go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject inst)
+                {
+                    var mdkgs = inst.GetComponents<ManualDeliveryKG>();
+                    foreach (ManualDeliveryKG mg in mdkgs)
+                        ManualDeliveryKGPatch.userPaused.Set(mg, true);
+                };
+                go.AddOrGet<CopyBuildingSettings>();
+                go.AddOrGet<StorageDropper>();
+            }
+
+            private static ManualDeliveryKG AddManualDeliveryKG(GameObject go, Tag requestedTag, float capacity)
+            {
+                const float refill = 0.75f;
+                var md = go.AddComponent<ManualDeliveryKG>();
+                md.capacity = capacity;
+                md.refillMass = refill * capacity;
+                md.requestedItemTag = requestedTag;
+                md.choreTypeIDHash = Db.Get().ChoreTypes.MachineFetch.IdHash;
+                md.operationalRequirement = FetchOrder2.OperationalRequirement.Functional;
+                md.allowPause = true;
+                return md;
+            }
+        }
+
+        // todo: копирование настроек самого дока
     }
 }

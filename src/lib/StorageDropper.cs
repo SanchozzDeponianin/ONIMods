@@ -2,16 +2,17 @@
 using UnityEngine;
 using HarmonyLib;
 
-namespace SanchozzONIMods.Lib
+namespace SanchozzONIMods.Shared
 {
     // компонент позволяющий гибко настроить:
     // при уничтожении объекта содержимое хранилища - газ и жидкость
     // оставить в виде бутылок или высвободить в мир
     // принцип работы: отписываем Storage от события OnQueueDestroyObject
     // и сами дергаем его обработчик когда придет время
+    [SkipSaveFileSerialization]
     public class StorageDropper : KMonoBehaviour
     {
-        private static readonly EventSystem.IntraObjectHandler<StorageDropper> OnQueueDestroyObjectDelegate = 
+        private static readonly EventSystem.IntraObjectHandler<StorageDropper> OnQueueDestroyObjectDelegate =
             new EventSystem.IntraObjectHandler<StorageDropper>(
                 (StorageDropper component, object data) => component.OnQueueDestroyObject(data));
 
