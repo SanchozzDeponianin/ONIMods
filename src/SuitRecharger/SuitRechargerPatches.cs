@@ -1,19 +1,28 @@
-﻿using STRINGS;
+﻿using System.Collections.Generic;
+using KMod;
+using STRINGS;
 using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
+using SanchozzONIMods.Shared;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
 
 namespace SuitRecharger
 {
-    internal sealed class SuitRechargerPatches : KMod.UserMod2
+    internal sealed class SuitRechargerPatches : UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             base.OnLoad(harmony);
             PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(typeof(SuitRechargerPatches));
+        }
+
+        public override void OnAllModsLoaded(Harmony harmony, IReadOnlyList<Mod> mods)
+        {
+            base.OnAllModsLoaded(harmony, mods);
+            ManualDeliveryKGPatch.Patch(harmony);
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]

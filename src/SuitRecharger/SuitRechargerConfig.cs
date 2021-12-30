@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using TUNING;
-using SanchozzONIMods.Lib;
+using SanchozzONIMods.Shared;
 
 namespace SuitRecharger
 {
@@ -53,12 +53,34 @@ namespace SuitRecharger
             storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
             go.AddOrGet<StorageDropper>();
 
+            AddManualDeliveryKG(go, GameTags.Oxygen, O2_CAPACITY).SetStorage(storage);
+            AddManualDeliveryKG(go, SimHashes.Petroleum.CreateTag(), FUEL_CAPACITY).SetStorage(storage);
+            go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject inst)
+            {
+                var mdkgs = inst.GetComponents<ManualDeliveryKG>();
+                foreach (ManualDeliveryKG mg in mdkgs)
+                    ManualDeliveryKGPatch.userPaused.Set(mg, true);
+            };
+
             var recharger = go.AddOrGet<SuitRecharger>();
             recharger.fuelPortInfo = fuelInputPort;
             recharger.liquidWastePortInfo = liquidWasteOutputPort;
             recharger.gasWastePortInfo = gasWasteOutputPort;
 
             go.AddOrGet<CopyBuildingSettings>();
+        }
+
+        private ManualDeliveryKG AddManualDeliveryKG(GameObject go, Tag requestedTag, float capacity)
+        {
+            const float refill = 0.75f;
+            var md = go.AddComponent<ManualDeliveryKG>();
+            md.capacity = capacity;
+            md.refillMass = refill * capacity;
+            md.requestedItemTag = requestedTag;
+            md.choreTypeIDHash = Db.Get().ChoreTypes.MachineFetch.IdHash;
+            md.operationalRequirement = FetchOrder2.OperationalRequirement.Functional;
+            md.allowPause = true;
+            return md;
         }
 
         private void AttachPort(GameObject go)

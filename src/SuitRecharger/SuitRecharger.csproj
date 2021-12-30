@@ -16,12 +16,15 @@
   <PropertyGroup>
     <Title>Suit Recharger</Title>
     <Description>Allows Duplicants to recharge their Suits and Oxygen Masks without taking them off.</Description>
-    <ModVersion>1.0.2</ModVersion>
+    <ModVersion>1.1.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\DurabilityExtensions.cs">
       <Link>DurabilityExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\ManualDeliveryKGPatch.cs">
+      <Link>ManualDeliveryKGPatch.cs</Link>
     </Compile>
     <Compile Include="..\lib\StorageDropper.cs">
       <Link>StorageDropper.cs</Link>
