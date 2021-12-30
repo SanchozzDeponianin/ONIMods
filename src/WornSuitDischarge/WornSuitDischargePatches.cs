@@ -266,6 +266,28 @@ namespace WornSuitDischarge
             }
         }
 
-        // todo: копирование настроек самого дока
+        // копирование настроек самого дока
+        // копируется только с настроеного дока на ненастроеный
+        // ожидает доставки или имеет костюм -> запросить доставку
+        // просто пустой -> оставить пустым
+        [HarmonyPatch(typeof(SuitLocker.States), nameof(SuitLocker.States.InitializeStates))]
+        private static class SuitLocker_States_InitializeStates
+        {
+            private static void Postfix(SuitLocker.States __instance)
+            {
+                __instance.empty.notconfigured
+                    .EventHandler(GameHashes.CopySettings, (smi, data) =>
+                    {
+                        var locker = ((GameObject)data)?.GetComponent<SuitLocker>();
+                        if (locker != null && locker.smi.sm.isConfigured.Get(locker.smi))
+                        {
+                            if (locker.smi.sm.isWaitingForSuit.Get(locker.smi) || locker.GetStoredOutfit() != null)
+                                smi.master.ConfigRequestSuit();
+                            else
+                                smi.master.ConfigNoSuit();
+                        }
+                    });
+            }
+        }
     }
 }
