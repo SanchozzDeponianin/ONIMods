@@ -1,5 +1,4 @@
-﻿using STRINGS;
-using HarmonyLib;
+﻿using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
@@ -10,7 +9,6 @@ namespace BuildableGeneShuffler
 {
     internal sealed class BuildableGeneShufflerPatches : KMod.UserMod2
     {
-        // todo: теперь надо всё это причесать и отрезать лишнее !!!
         public override void OnLoad(Harmony harmony)
         {
             base.OnLoad(harmony);
@@ -31,6 +29,7 @@ namespace BuildableGeneShuffler
             // todo: определиться с технологией и местом в мюню // "Equipment", "ResetSkillsStation", "AdvancedResearch"
             Utils.AddBuildingToPlanScreen("Equipment", BuildableGeneShufflerConfig.ID, ResetSkillsStationConfig.ID);
             Utils.AddBuildingToTechnology("AdvancedResearch", BuildableGeneShufflerConfig.ID);
+            PGameUtils.CopySoundsToAnim(BuildableGeneShufflerConfig.anim, "geneshuffler_kanim");
         }
 
         [HarmonyPatch(typeof(GeneShufflerConfig), nameof(GeneShufflerConfig.CreatePrefab))]

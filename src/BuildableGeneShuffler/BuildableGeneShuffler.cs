@@ -1,27 +1,158 @@
 ﻿using System.Collections.Generic;
+using KSerialization;
+using TUNING;
+using UnityEngine;
 
 namespace BuildableGeneShuffler
 {
-    public class BuildableGeneShuffler : KMonoBehaviour
+    [SerializationConfig(MemberSerialization.OptIn)]
+    public class BuildableGeneShuffler : StateMachineComponent<BuildableGeneShuffler.StatesInstance>
     {
-        [MyCmpReq]
-        Building building;
+        public class StatesInstance : GameStateMachine<States, StatesInstance, BuildableGeneShuffler, object>.GameInstance
+        {
+            public StatesInstance(BuildableGeneShuffler smi) : base(smi) { }
+
+            public GameObject GetMorb() => master.storage.FindFirst(GlomConfig.ID);
+
+            public bool HasMorb() => GetMorb() != null;
+
+            public bool HasEnoughBrine() => master.storage.GetMassAvailable(SimHashes.Brine) >= BuildableGeneShufflerConfig.brine_mass;
+
+            public bool IsReady() => HasEnoughBrine() && HasMorb();
+
+            private static Tag[] requiredFetchTags = new Tag[] { GameTags.Creatures.Deliverable };
+            public FetchList2 CreateFetchList()
+            {
+                var fetchList = new FetchList2(master.storage, Db.Get().ChoreTypes.DoctorFetch);
+                fetchList.Add(GlomConfig.ID, requiredFetchTags, null, 1f, FetchOrder2.OperationalRequirement.Functional);
+                return fetchList;
+            }
+
+            public Chore CreateChore()
+            {
+                var workChore = new WorkChore<GeneShufflerPrepare>(
+                    chore_type: Db.Get().ChoreTypes.GeneShuffle,
+                    target: master.workable,
+                    schedule_block: Db.Get().ScheduleBlockTypes.Work,
+                    only_when_operational: true);
+                return workChore;
+            }
+        }
+
+        public class States : GameStateMachine<States, StatesInstance, BuildableGeneShuffler>
+        {
+            public class AwaitingState : State
+            {
+                public State brine;
+                public State morb;
+            }
+            public class PreparingState : State
+            {
+                public State waiting;
+                public State working;
+                public State working_pst;
+            }
+            public AwaitingState awaiting;
+            public PreparingState preparing;
+            public State spawn_geneshuffler;
+
+            public override void InitializeStates(out BaseState default_state)
+            {
+                default_state = awaiting;
+                awaiting
+                    .DefaultState(awaiting.brine)
+                    .EnterTransition(preparing, smi => smi.IsReady())
+                    .EnterTransition(awaiting.morb, smi => smi.HasEnoughBrine());
+                awaiting.brine
+                    .PlayAnim("empty")
+                    .EventTransition(GameHashes.OnStorageChange, awaiting.morb, smi => smi.HasEnoughBrine());
+                awaiting.morb
+                    .PlayAnim("filled")
+                    .ToggleFetch(smi => smi.CreateFetchList(), preparing);
+                preparing
+                    .DefaultState(preparing.waiting)
+                    .EventTransition(GameHashes.OnStorageChange, awaiting, smi => !smi.IsReady())
+                    .ToggleChore(smi => smi.CreateChore(), preparing.working_pst, preparing)
+                    .Enter(smi => smi.GetMorb()?.AddTag(GameTags.Trapped))
+                    .Exit(smi => smi.GetMorb()?.RemoveTag(GameTags.Trapped));
+                preparing.waiting
+                    .PlayAnim("morbed")
+                    .Enter(smi => smi.master.meter.meterController.Queue("dirty", KAnim.PlayMode.Loop))
+                    .WorkableStartTransition(smi => smi.master.workable, preparing.working);
+                preparing.working
+                    .PlayAnim("preparing_pre")
+                    .QueueAnim("preparing_loop", true)
+                    .Enter(smi => smi.master.meter.meterController.Queue("idle_loop", KAnim.PlayMode.Loop))
+                    .WorkableStopTransition(smi => smi.master.workable, preparing.waiting);
+                preparing.working_pst
+                    .QueueAnim("preparing_pst")
+                    .Enter(smi => smi.master.meter.meterController.Queue("death", KAnim.PlayMode.Once))
+                    .EventTransition(GameHashes.AnimQueueComplete, smi => smi.master.meter.gameObject.GetComponent<KPrefabID>(), spawn_geneshuffler);
+                spawn_geneshuffler
+                    .Enter(smi => smi.master.SpawnGeneShuffler());
+            }
+        }
+
+        public class GeneShufflerPrepare : Workable
+        {
+            protected override void OnPrefabInit()
+            {
+                base.OnPrefabInit();
+                overrideAnims = new KAnimFile[] { Assets.GetAnim("anim_interacts_medical_bed_doctor_kanim") };
+                workAnims = new HashedString[] { "working_loop" };
+                faceTargetWhenWorking = true;
+                synchronizeAnims = false;
+                resetProgressOnStop = true;
+                SetWorkTime(60f); // todo: время работы
+                attributeConverter = Db.Get().AttributeConverters.CompoundingSpeed;
+                skillExperienceSkillGroup = Db.Get().SkillGroups.MedicalAid.Id;
+                skillExperienceMultiplier = SKILLS.ALL_DAY_EXPERIENCE;
+                requiredSkillPerk = Db.Get().SkillPerks.CanCompound.Id;
+            }
+
+            public override Vector3 GetFacingTarget() => transform.GetPosition() + Vector3.left;
+            public override bool InstantlyFinish(Worker worker) => false;
+        }
+
+#pragma warning disable CS0649
+        [MyCmpAdd]
+        private GeneShufflerPrepare workable;
 
         [MyCmpReq]
-        Deconstructable deconstructable;
+        private Building building;
 
-        //[MyCmpReq]
-        //Storage storage;
+        [MyCmpReq]
+        private Deconstructable deconstructable;
 
+        [MyCmpReq]
+        private Storage storage;
+#pragma warning restore CS0649
+
+        private MeterController meter;
 
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            SpawnGeneShuffler();
+            meter = new MeterController(GetComponent<KBatchedAnimController>(), "snapto_morb", "meter", Meter.Offset.Behind, Grid.SceneLayer.NoLayer, "snapto_morb");
+            meter.meterController.SwapAnims(new KAnimFile[] { Assets.GetAnim("glom_kanim") });
+            smi.StartSM();
+        }
+
+        protected override void OnCleanUp()
+        {
+            smi.StopSM("");
+            base.OnCleanUp();
         }
 
         private void SpawnGeneShuffler()
         {
+            // sacrifice morb
+            var morb = smi.GetMorb();
+            if (morb != null)
+            {
+                storage.Drop(morb);
+                morb.DeleteObject();
+            }
             // todo: ряд настроечных манипуляций со свеже построеным генечтототам
             var geneShuffler = GameUtil.KInstantiate(Assets.GetPrefab("GeneShuffler"), gameObject.transform.GetPosition(), Grid.SceneLayer.Building);
             geneShuffler.GetComponent<GeneShuffler>().IsConsumed = true;
@@ -36,8 +167,8 @@ namespace BuildableGeneShuffler
                 mass += building.Def.Mass[i];
             }
             // todo: добавить рассол или все куски в хранилищще
-            l.Add(new Tuple<Tag, float>(SimHashes.Brine.CreateTag(), BuildableGeneShufflerConfig.BRINE_MASS));
-            mass += BuildableGeneShufflerConfig.BRINE_MASS;
+            l.Add(new Tuple<Tag, float>(SimHashes.Brine.CreateTag(), BuildableGeneShufflerConfig.brine_mass));
+            mass += BuildableGeneShufflerConfig.brine_mass;
             builded.constructionElements = l.ToArray();
             // todo: скорректировать массу и элемент и микробав
             var geneShufflerPE = geneShuffler.GetComponent<PrimaryElement>();
@@ -45,6 +176,8 @@ namespace BuildableGeneShuffler
             geneShufflerPE.SetElement(MyPE.ElementID);
             geneShufflerPE.Mass = mass;
             geneShuffler.SetActive(true);
+
+            storage.ConsumeAllIgnoringDisease();
             gameObject.DeleteObject();
         }
     }

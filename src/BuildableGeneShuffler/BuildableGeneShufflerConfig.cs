@@ -6,18 +6,22 @@ namespace BuildableGeneShuffler
     public class BuildableGeneShufflerConfig : IBuildingConfig
     {
         public const string ID = "BuildableGeneShuffler";
-        public static float BRINE_MASS = BUILDINGS.CONSTRUCTION_MASS_KG.TIER7[0] - BUILDINGS.CONSTRUCTION_MASS_KG.TIER6[0] - BUILDINGS.CONSTRUCTION_MASS_KG.TIER4[0];
-        // todo: опеределиться с материалами
+        public const string anim = "old_geneshuffler_kanim";
+        private static readonly float total_mass = BUILDINGS.CONSTRUCTION_MASS_KG.TIER7[0];
+        private static readonly float steel_mass = BUILDINGS.CONSTRUCTION_MASS_KG.TIER6[0];
+        private static readonly float glass_mass = BUILDINGS.CONSTRUCTION_MASS_KG.TIER4[0];
+        public static readonly float brine_mass = total_mass - steel_mass - glass_mass;
+
         public override BuildingDef CreateBuildingDef()
         {
             var buildingDef = BuildingTemplates.CreateBuildingDef(
                 id: ID,
                 width: 4,
                 height: 3,
-                anim: "old_geneshuffler_kanim",
+                anim: anim,
                 hitpoints: BUILDINGS.HITPOINTS.TIER2,
                 construction_time: BuildableGeneShufflerOptions.Instance.constructionTime,
-                construction_mass: new float[] { BUILDINGS.CONSTRUCTION_MASS_KG.TIER6[0], BUILDINGS.CONSTRUCTION_MASS_KG.TIER4[0] },
+                construction_mass: new float[] { steel_mass, glass_mass },
                 construction_materials: new string[] { SimHashes.Steel.ToString(), SimHashes.Glass.ToString() },
                 melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER2,
                 build_location_rule: BuildLocationRule.OnFloor,
@@ -25,12 +29,25 @@ namespace BuildableGeneShuffler
                 noise: NOISE_POLLUTION.NOISY.TIER0);
             buildingDef.AudioCategory = "Metal";
             buildingDef.AudioSize = "small";
+            // todo: напихать настроек
             return buildingDef;
         }
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
-            go.AddComponent<BuildableGeneShuffler>();
+            go.AddOrGet<KPrefabID>().AddTag(GameTags.NotRocketInteriorBuilding);
+            var storage = go.AddOrGet<Storage>();
+            storage.SetDefaultStoredItemModifiers(Storage.StandardInsulatedStorage);
+
+            var md = go.AddOrGet<ManualDeliveryKG>();
+            md.capacity = brine_mass;
+            md.refillMass = brine_mass;
+            md.requestedItemTag = SimHashes.Brine.CreateTag();
+            md.choreTypeIDHash = Db.Get().ChoreTypes.DoctorFetch.IdHash;
+            md.operationalRequirement = FetchOrder2.OperationalRequirement.Functional;
+            md.SetStorage(storage);
+
+            go.AddOrGet<BuildableGeneShuffler>();
         }
 
         public override void DoPostConfigureComplete(GameObject go)
