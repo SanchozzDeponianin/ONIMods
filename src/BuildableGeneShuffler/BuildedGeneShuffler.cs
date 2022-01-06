@@ -15,23 +15,18 @@ namespace BuildableGeneShuffler
         public bool isBuilded = false;
 
         [Serialize]
-        public Tuple<Tag, float>[] constructionElements = new Tuple<Tag, float>[0];
+        public float[] constructionMass = new float[0];
+
+        private bool destroyed;
 
         protected override void OnSpawn()
         {
             base.OnSpawn();
-
-            Debug.Log("BuildedGeneShuffler.OnSpawn");
-            Debug.Log("constructionElements:");
-            for (int x = 0; x < constructionElements.Length; x++)
-                Debug.Log($"{constructionElements[x].first.Name} => {constructionElements[x].second}");
-
-
             if (isBuilded)
             {
                 // клеи не предусмотрели при замене анима - ситуацию
                 // наличия контроллера переднего плана и его корректную обработку.
-                // поэтому небольшой хак, перез заменой обнуляем его.
+                // поэтому небольшой хак, перед заменой обнуляем его.
                 // todo: вынести в утилиты, потом, если понадобиться еще гдето.
                 var kbac = GetComponent<KBatchedAnimController>();
                 var layering = kbac.GetLayering();
@@ -52,6 +47,15 @@ namespace BuildableGeneShuffler
                     }
                 }
                 GetComponent<KBatchedAnimController>().SwapAnims(new KAnimFile[] { Assets.GetAnim(BuildableGeneShufflerConfig.anim) });
+            }
+        }
+
+        public void SpawnItemsFromConstruction()
+        {
+            if (isBuilded && !destroyed)
+            {
+                destroyed = true;
+                GetComponent<Deconstructable>()?.SpawnItemsFromConstruction();
             }
         }
     }

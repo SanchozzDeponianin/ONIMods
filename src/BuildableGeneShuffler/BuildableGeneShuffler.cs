@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Klei;
 using KSerialization;
 using TUNING;
 using UnityEngine;
@@ -102,8 +103,8 @@ namespace BuildableGeneShuffler
                 workAnims = new HashedString[] { "working_loop" };
                 faceTargetWhenWorking = true;
                 synchronizeAnims = false;
-                resetProgressOnStop = true;
-                SetWorkTime(60f); // todo: время работы
+                resetProgressOnStop = false;
+                SetWorkTime(BuildableGeneShufflerOptions.Instance.manipulationTime);
                 attributeConverter = Db.Get().AttributeConverters.CompoundingSpeed;
                 skillExperienceSkillGroup = Db.Get().SkillGroups.MedicalAid.Id;
                 skillExperienceMultiplier = SKILLS.ALL_DAY_EXPERIENCE;
@@ -153,31 +154,40 @@ namespace BuildableGeneShuffler
                 storage.Drop(morb);
                 morb.DeleteObject();
             }
-            // todo: ряд настроечных манипуляций со свеже построеным генечтототам
+            // спавним новый калибратор но без заряда
             var geneShuffler = GameUtil.KInstantiate(Assets.GetPrefab("GeneShuffler"), gameObject.transform.GetPosition(), Grid.SceneLayer.Building);
             geneShuffler.GetComponent<GeneShuffler>().IsConsumed = true;
             var builded = geneShuffler.GetComponent<BuildedGeneShuffler>();
             builded.isBuilded = true;
-
-            var l = new List<Tuple<Tag, float>>();
-            float mass = 0f;
-            for (int i = deconstructable.constructionElements.Length; i < deconstructable.constructionElements.Length; i++)
+            // список конструкционных материалов
+            var tag_list = new List<Tag>();
+            var mass_list = new List<float>();
+            for (int i = 0; i < deconstructable.constructionElements.Length; i++)
             {
-                l.Add(new Tuple<Tag, float>(deconstructable.constructionElements[i], building.Def.Mass[i]));
-                mass += building.Def.Mass[i];
+                tag_list.Add(deconstructable.constructionElements[i]);
+                mass_list.Add(building.Def.Mass[i]);
             }
-            // todo: добавить рассол или все куски в хранилищще
-            l.Add(new Tuple<Tag, float>(SimHashes.Brine.CreateTag(), BuildableGeneShufflerConfig.brine_mass));
-            mass += BuildableGeneShufflerConfig.brine_mass;
-            builded.constructionElements = l.ToArray();
-            // todo: скорректировать массу и элемент и микробав
+            // вычисляем конечную температуру и микробов, с учетом самой постройки и хранилищща
             var geneShufflerPE = geneShuffler.GetComponent<PrimaryElement>();
             var MyPE = GetComponent<PrimaryElement>();
             geneShufflerPE.SetElement(MyPE.ElementID);
-            geneShufflerPE.Mass = mass;
-            geneShuffler.SetActive(true);
-
+            geneShufflerPE.AddDisease(MyPE.DiseaseIdx, MyPE.DiseaseCount, "");
+            float mass = MyPE.Mass;
+            float temp = MyPE.Temperature;
+            for (int i = 0; i < storage.Count; i++)
+            {
+                var itemPE = storage.items[i].GetComponent<PrimaryElement>();
+                tag_list.Add(itemPE.Element.tag);
+                mass_list.Add(itemPE.Mass);
+                temp = SimUtil.CalculateFinalTemperature(mass * MyPE.Element.specificHeatCapacity, temp, itemPE.Mass * itemPE.Element.specificHeatCapacity, itemPE.Temperature);
+                mass += itemPE.Mass;
+                geneShufflerPE.AddDisease(itemPE.DiseaseIdx, itemPE.DiseaseCount, "");
+            }
+            geneShufflerPE.Temperature = temp;
+            geneShuffler.GetComponent<Deconstructable>().constructionElements = tag_list.ToArray();
+            builded.constructionMass = mass_list.ToArray();
             storage.ConsumeAllIgnoringDisease();
+            geneShuffler.SetActive(true);
             gameObject.DeleteObject();
         }
     }

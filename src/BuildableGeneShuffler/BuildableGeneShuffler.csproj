@@ -14,8 +14,8 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup>
-    <Title>need a title</Title>
-    <Description>need a Description.</Description>
+    <Title>Buildable Neural Vacillator</Title>
+    <Description>Allows you to build your own Neural Vacillator.</Description>
     <ModVersion>1.0.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>

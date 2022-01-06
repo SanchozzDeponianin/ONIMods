@@ -8,9 +8,9 @@ namespace BuildableGeneShuffler
         public const string ID = "BuildableGeneShuffler";
         public const string anim = "old_geneshuffler_kanim";
         private static readonly float total_mass = BUILDINGS.CONSTRUCTION_MASS_KG.TIER7[0];
-        private static readonly float steel_mass = BUILDINGS.CONSTRUCTION_MASS_KG.TIER6[0];
+        private static readonly float metal_mass = BUILDINGS.CONSTRUCTION_MASS_KG.TIER6[0];
         private static readonly float glass_mass = BUILDINGS.CONSTRUCTION_MASS_KG.TIER4[0];
-        public static readonly float brine_mass = total_mass - steel_mass - glass_mass;
+        public static readonly float brine_mass = total_mass - metal_mass - glass_mass;
 
         public override BuildingDef CreateBuildingDef()
         {
@@ -21,15 +21,18 @@ namespace BuildableGeneShuffler
                 anim: anim,
                 hitpoints: BUILDINGS.HITPOINTS.TIER2,
                 construction_time: BuildableGeneShufflerOptions.Instance.constructionTime,
-                construction_mass: new float[] { steel_mass, glass_mass },
-                construction_materials: new string[] { SimHashes.Steel.ToString(), SimHashes.Glass.ToString() },
+                construction_mass: new float[] { metal_mass, glass_mass },
+                construction_materials: new string[] { MATERIALS.REFINED_METAL, MATERIALS.GLASS },
                 melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER2,
                 build_location_rule: BuildLocationRule.OnFloor,
                 decor: BUILDINGS.DECOR.BONUS.TIER0,
                 noise: NOISE_POLLUTION.NOISY.TIER0);
             buildingDef.AudioCategory = "Metal";
             buildingDef.AudioSize = "small";
-            // todo: напихать настроек
+            buildingDef.Breakable = false;
+            buildingDef.Invincible = true;
+            buildingDef.Overheatable = false;
+            buildingDef.Repairable = false;
             return buildingDef;
         }
 
