@@ -16,17 +16,19 @@
   <PropertyGroup>
     <Title>Mechanics Station</Title>
     <Description>Adds a new Mechanics Station, with which engineers could improve the performance of various buildings.</Description>
-    <ModVersion>1.3.1</ModVersion>
+    <ModVersion>1.3.2</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\BaseOptions.cs">
       <Link>BaseOptions.cs</Link>
     </Compile>
+    <Compile Include="..\lib\MultiRoomTracker.cs">
+      <Link>MultiRoomTracker.cs</Link>
+    </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
-    <Compile Include="MultiRoomTracker.cs" />
     <Compile Include="MechanicsStation.cs" />
     <Compile Include="MechanicsStationAssets.cs" />
     <Compile Include="MechanicsStationOptions.cs" />
