@@ -7,6 +7,9 @@ using HarmonyLib;
 using Klei.AI;
 using UnityEngine;
 using SanchozzONIMods.Lib;
+using PeterHan.PLib.Core;
+using PeterHan.PLib.Options;
+using PeterHan.PLib.PatchManager;
 
 namespace ButcherStation
 {
@@ -14,42 +17,50 @@ namespace ButcherStation
     {
         public static AttributeConverter RanchingEffectExtraMeat;
 
-        [HarmonyPatch(typeof(Db), "Initialize")]
-        internal static class Db_Initialize
+        public override void OnLoad(Harmony harmony)
         {
-            private static void Postfix(Db __instance)
-            {
-                Utils.AddBuildingToPlanScreen("Equipment", FishingStationConfig.ID, "ShearingStation");
-                Utils.AddBuildingToPlanScreen("Equipment", ButcherStationConfig.ID, "ShearingStation");
-                Utils.AddBuildingToTechnology("AnimalControl", ButcherStationConfig.ID, FishingStationConfig.ID);
-
-                var formatter = new ToPercentAttributeFormatter(1f, GameUtil.TimeSlice.None);
-                RanchingEffectExtraMeat = __instance.AttributeConverters.Create(
-                    id: "RanchingEffectExtraMeat", 
-                    name: "Ranching Effect Extra Meat", 
-                    description: STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMODIFIER, 
-                    attribute: Db.Get().Attributes.Ranching, multiplier: Config.Get().EXTRAMEATPERRANCHINGATTRIBUTE, 
-                    base_value: 0f, 
-                    formatter: formatter, 
-                    available_dlcs: DlcManager.AVAILABLE_ALL_VERSIONS);
-            }
+            base.OnLoad(harmony);
+            PUtil.InitLibrary();
+            new PPatchManager(harmony).RegisterPatchClass(typeof(ButcherStationPatches));
+            new POptions().RegisterOptions(this, typeof(ButcherStationOptions));
         }
 
-        [HarmonyPatch(typeof(Localization), "Initialize")]
-        internal static class Localization_Initialize
+        [PLibMethod(RunAt.BeforeDbInit)]
+        private static void Localize()
         {
-            private static void Postfix()
-            {
-                Utils.InitLocalization(typeof(STRINGS));
-                Config.Initialize();
-            }
+            Utils.InitLocalization(typeof(STRINGS));
+        }
+
+        [PLibMethod(RunAt.AfterDbInit)]
+        private static void AddBuildingsAndModifier()
+        {
+            Utils.AddBuildingToPlanScreen("Equipment", FishingStationConfig.ID, ShearingStationConfig.ID);
+            Utils.AddBuildingToPlanScreen("Equipment", ButcherStationConfig.ID, ShearingStationConfig.ID);
+            Utils.AddBuildingToTechnology("AnimalControl", ButcherStationConfig.ID, FishingStationConfig.ID);
+
+            var formatter = new ToPercentAttributeFormatter(1f, GameUtil.TimeSlice.None);
+            RanchingEffectExtraMeat = Db.Get().AttributeConverters.Create(
+                id: "RanchingEffectExtraMeat",
+                name: "Ranching Effect Extra Meat",
+                description: STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMODIFIER,
+                attribute: Db.Get().Attributes.Ranching, 
+                multiplier: ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f,
+                base_value: 0f,
+                formatter: formatter,
+                available_dlcs: DlcManager.AVAILABLE_ALL_VERSIONS);
+        }
+
+        [PLibMethod(RunAt.OnStartGame)]
+        private static void OnStartGame()
+        {
+            RanchingEffectExtraMeat.multiplier = ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
         }
 
         // хаки для того чтобы отобразить заголовок и начинку бокового окна в правильном порядке
         // на длц переопределяем GetSideScreenSortOrder
         // ёбаный холодец. какого хрена крысиного этот патч сдесь крашится на линухе, но если его вынести в отдельный мелкий мод, то не крашится.
         [HarmonyPatch(typeof(SideScreenContent), nameof(SideScreenContent.GetSideScreenSortOrder))]
-        internal static class SideScreenContent_GetSideScreenSortOrder
+        private static class SideScreenContent_GetSideScreenSortOrder
         {
             private static bool Prepare()
             {
@@ -75,7 +86,7 @@ namespace ButcherStation
 
         // добавляем тэги для убиваемых животных и дополнительное мясо
         [HarmonyPatch(typeof(EntityTemplates), nameof(EntityTemplates.ExtendEntityToBasicCreature))]
-        internal static class EntityTemplates_ExtendEntityToBasicCreature
+        private static class EntityTemplates_ExtendEntityToBasicCreature
         {
             private static void Postfix(GameObject __result, string onDeathDropID, int onDeathDropCount)
             {
@@ -100,7 +111,7 @@ namespace ButcherStation
 
         // хак чтобы сделать рыб приручаемыми - чтобы ловились на рыбалке
         [HarmonyPatch(typeof(BasePacuConfig), nameof(BasePacuConfig.CreatePrefab))]
-        internal static class BasePacuConfig_CreatePrefab
+        private static class BasePacuConfig_CreatePrefab
         {
             private static void Postfix(GameObject __result, bool is_baby)
             {
@@ -158,7 +169,7 @@ namespace ButcherStation
         // а не по конечной клетке для приручения жеготного. иначе рыбалка не работает
         // хак, чтобы убивать в первую очередь совсем лишних, затем старых, затем просто лишних.
         [HarmonyPatch(typeof(RanchStation.Instance), nameof(RanchStation.Instance.FindRanchable))]
-        internal static class RanchStation_Instance_FindRanchable
+        private static class RanchStation_Instance_FindRanchable
         {
             private static CavityInfo GetCavityForCell(int cell)
             {
@@ -257,7 +268,7 @@ namespace ButcherStation
 
         // хак, чтобы пропустить телодвижения жеготного после "ухаживания", чтобы сразу помирало
         [HarmonyPatch(typeof(RanchedStates), nameof(RanchedStates.InitializeStates))]
-        internal static class RanchedStates_InitializeStates
+        private static class RanchedStates_InitializeStates
         {
             private static void Postfix(RanchedStates.State ___runaway, RanchedStates.State ___behaviourcomplete)
             {
@@ -269,8 +280,9 @@ namespace ButcherStation
 
         // фикс для правильного подсчета рыбы в точке доставки
         // todo: добавить проверку наличия другого мода для этой же опции
+        // todo: переписать аккуратнее
         [HarmonyPatch(typeof(CreatureDeliveryPoint), "RefreshCreatureCount")]
-        internal static class CreatureDeliveryPoint_RefreshCreatureCount
+        private static class CreatureDeliveryPoint_RefreshCreatureCount
         {
             /*
             --- int cell = Grid.PosToCell(this);
@@ -314,11 +326,11 @@ namespace ButcherStation
         // для замены максимума жеготных
         // todo: добавить проверку наличия другого мода для этой же опции
         [HarmonyPatch(typeof(CreatureDeliveryPoint), "IUserControlledCapacity.get_MaxCapacity")]
-        internal static class CreatureDeliveryPoint_get_MaxCapacity
+        private static class CreatureDeliveryPoint_get_MaxCapacity
         {
             private static bool Prefix(ref float __result)
             {
-                __result = Config.Get().MAXCREATURELIMIT;
+                __result = ButcherStationOptions.Instance.max_creature_limit;
                 return false;
             }
         }

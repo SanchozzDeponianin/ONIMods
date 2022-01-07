@@ -19,7 +19,7 @@ namespace ButcherStation
         public const float EXTRAMEATPERRANCHINGATTRIBUTE = 0.025f;
 
         [Serialize]
-        private int creatureLimit = Config.Get().MAXCREATURELIMIT;
+        private int creatureLimit = ButcherStationOptions.Instance.max_creature_limit;
         private int storedCreatureCount;
         internal List<KPrefabID> Creatures { get; private set; } = new List<KPrefabID>();
         private bool dirty = true;
@@ -160,7 +160,7 @@ namespace ButcherStation
                 {
                     var smi = targetRanchStation.GetSMI<RancherChore.RancherChoreStates.Instance>();
                     var rancher = smi.sm.rancher.Get(smi);
-                    extraMeatSpawner.onDeathDropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * Config.Get().EXTRAMEATPERRANCHINGATTRIBUTE;
+                    extraMeatSpawner.onDeathDropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
                 }
             }
             creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);
@@ -171,7 +171,7 @@ namespace ButcherStation
 
         float IUserControlledCapacity.AmountStored => storedCreatureCount;
         float IUserControlledCapacity.MinCapacity => 0;
-        float IUserControlledCapacity.MaxCapacity => Config.Get().MAXCREATURELIMIT;
+        float IUserControlledCapacity.MaxCapacity => ButcherStationOptions.Instance.max_creature_limit;
         bool IUserControlledCapacity.WholeValues => true;
         LocString IUserControlledCapacity.CapacityUnits => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.UNITS_SUFFIX;
 
