@@ -387,6 +387,26 @@ namespace ButcherStation
             }
         }
 
+        // фикс чтобы станции правильно потребляли искричество
+        // похоже на удаление гланд ректально, но тут по другому будет сложно подлезть
+        // фикс зависшей анимации, когда ранчер уходит например жрать, бросив задание посередине
+        [HarmonyPatch(typeof(RancherChore.RancherChoreStates), nameof(RancherChore.RancherChoreStates.InitializeStates))]
+        private static class RancherChore_RancherChoreStates_InitializeStates
+        {
+            private static void Postfix(GameStateMachine<RancherChore.RancherChoreStates, RancherChore.RancherChoreStates.Instance, IStateMachineTarget, object>.State ___ranchcreature)
+            {
+                ___ranchcreature
+                    .Enter(smi => smi?.ranchStation?.GetComponent<Operational>()?.SetActive(true))
+                    .Exit(smi => smi?.ranchStation?.GetComponent<Operational>()?.SetActive(false))
+                    .Exit(smi =>
+                    {
+                        var kbak = smi?.ranchStation?.GetComponent<KBatchedAnimController>();
+                        if (kbak != null && kbak.PlayMode == KAnim.PlayMode.Loop)
+                            kbak.PlayMode = KAnim.PlayMode.Once;
+                    });
+            }
+        }
+
         // для устранения конфликта с модом "Rooms Expanded" с комнатой "аквариум"
         // детектим, модифицируем комнату "ранчо" чтобы она могла быть обгрейднутна до "аквариума"
         // применяем патч для ранчстанций
