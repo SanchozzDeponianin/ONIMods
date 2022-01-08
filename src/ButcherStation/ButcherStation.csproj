@@ -23,6 +23,9 @@
     <Compile Include="..\lib\BaseOptions.cs">
       <Link>BaseOptions.cs</Link>
     </Compile>
+    <Compile Include="..\lib\MultiRoomTracker.cs">
+      <Link>MultiRoomTracker.cs</Link>
+    </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>

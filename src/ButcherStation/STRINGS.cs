@@ -104,7 +104,7 @@ namespace ButcherStation
 
         internal static void DoReplacement()
         {
-            //LocString.CreateLocStringKeys(typeof(BUILDING));
+            LocString.CreateLocStringKeys(typeof(BUILDING));
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
             //LocString.CreateLocStringKeys(typeof(UI));
             Strings.Add($"STRINGS.MISC.TAGS.{ButcherStation.ButcherableCreature.ToString().ToUpperInvariant()}", MISC.TAGS.BAGABLECREATURE);

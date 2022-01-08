@@ -40,7 +40,9 @@ namespace ButcherStation
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
-            go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.CreatureRelocator, false);
+            var prefabID = go.GetComponent<KPrefabID>();
+            prefabID.AddTag(RoomConstraints.ConstraintTags.CreatureRelocator, false);
+            prefabID.AddTag(RoomConstraints.ConstraintTags.RanchStation, false);
             var storage = go.AddOrGet<Storage>();
             storage.allowItemRemoval = false;
             storage.showDescriptor = false;
@@ -51,7 +53,6 @@ namespace ButcherStation
             butcherStation.creatureEligibleTag = ButcherStation.ButcherableCreature;
             go.AddOrGet<LoopingSounds>();
             go.AddOrGet<BuildingComplete>().isManuallyOperated = true;
-            go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.RanchStation, false);
             var roomTracker = go.AddOrGet<RoomTracker>();
             roomTracker.requiredRoomType = Db.Get().RoomTypes.CreaturePen.Id;
             roomTracker.requirement = RoomTracker.Requirement.Required;
