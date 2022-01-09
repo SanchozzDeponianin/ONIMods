@@ -53,6 +53,7 @@ namespace ButcherStation
             go.AddOrGet<TreeFilterable>();
             var butcherStation = go.AddOrGet<ButcherStation>();
             butcherStation.creatureEligibleTag = ButcherStation.FisherableCreature;
+            butcherStation.allowLeaveAlive = true;
             go.AddOrGet<LoopingSounds>();
             go.AddOrGet<BuildingComplete>().isManuallyOperated = true;
             var roomTracker = go.AddOrGet<RoomTracker>();

@@ -30,34 +30,14 @@ namespace ButcherStation
                 {
                     public static LocString NAME = FormatAsLink("Butcher Station", "BUTCHERSTATION");
                     public static LocString DESC = "Grooming critters make them look nice, feel happy... and more yummy.";
-                    public static LocString EFFECT = string.Concat(new string[]                   
-                    {
-                        "Allows the assigned ",
-                        FormatAsLink("Rancher", "RANCHER"),
-                        " to control the population and butchering too old, surplus, or unwanted ",
-                        FormatAsLink("Critters", "CRITTERS"),
-                        ".\n\nAssigned Duplicants must possess the ",
-                        FormatAsLink("Critter Wrangling", "RANCHER"),
-                        " trait."
-                    });
+                    public static LocString EFFECT = $"Allows the assigned {FormatAsLink("Rancher", "RANCHER")} to control the population and butchering too old, surplus, or unwanted {FormatAsLink("Critters", "CRITTERS")}.\n\nAssigned Duplicants must possess the {FormatAsLink("Critter Wrangling", "RANCHER")} trait.";
                 }
 
                 public class FISHINGSTATION
                 {
                     public static LocString NAME = FormatAsLink("Fishing Station", "FISHINGSTATION");
                     public static LocString DESC = "Fishing Stations allows to safely fishing " + FormatAsLink("Pacu", "PACU") + " and not soak your feet.";
-                    public static LocString EFFECT = string.Concat(new string[]
-                    {
-                        "Allows the assigned ",
-                        FormatAsLink("Rancher", "RANCHER"),
-                        " to control the population and fishing too old, surplus, or unwanted ",
-                        FormatAsLink("Fishes", "PACU"),
-                        ".\n\nAssigned Duplicants must possess the ",
-                        FormatAsLink("Critter Wrangling", "RANCHER"),
-                        " trait.\n\nA ",
-                        FormatAsLink("Liquid", "ELEMENTSLIQUID"),
-                        " depth of 2 to 4 tiles is required to place a fishing hook."
-                    });
+                    public static LocString EFFECT = $"Allows the assigned {FormatAsLink("Rancher", "RANCHER")} to control the population and fishing too old, surplus, or unwanted {FormatAsLink("Fishes", "PACU")}.\n\nAssigned Duplicants must possess the {FormatAsLink("Critter Wrangling", "RANCHER")} trait.\n\nA {FormatAsLink("Liquid", "ELEMENTSLIQUID")} depth of 2 to 4 tiles is required to place a fishing hook.";
                 }
             }
         }
@@ -68,15 +48,7 @@ namespace ButcherStation
             {
                 public class RANCHING
                 {
-                    public static LocString EFFECTEXTRAMEATMODIFIER = string.Concat(new string[]
-                        {
-                        "{0} Extra ",
-                        FormatAsKeyWord("Meat"),
-                        " when working at the ",
-                        FormatAsKeyWord("Butcher"),
-                        " and ",
-                        FormatAsKeyWord("Fishing Stations")
-                        });
+                    public static LocString EFFECTEXTRAMEATMODIFIER = $"{0} Extra {FormatAsKeyWord("Meat")} when working at the {FormatAsKeyWord("Butcher")} and {FormatAsKeyWord("Fishing Stations")}";
                 }
             }
         }
@@ -85,6 +57,7 @@ namespace ButcherStation
         {
             public class UISIDESCREENS
             {
+                // todo: сделать строки для сидескреена
                 public class BUTCHERSTATIONSIDESCREEN
                 {
                     public static LocString TITLE = "Creature Age Threshold";
@@ -98,15 +71,58 @@ namespace ButcherStation
                     });
                     public static LocString TOOLTIP_OUTOF = " out of ";
                     public static LocString TOOLTIP_CYCLES = " cycles";
+
+                    public static LocString FILTER_LABEL = "Creatyres filter:";
+                    public class WRANGLE_UNSELECTED
+                    {
+                        public static LocString NAME = "CB_WRANGLE_UNSELECTED";
+                        public static LocString TOOLTIP = "TOOLTIP";
+                    }
+                    public class WRANGLE_OLD_AGED
+                    {
+                        public static LocString NAME = "CB_WRANGLE_OLD_AGED";
+                        public static LocString TOOLTIP = "TOOLTIP";
+                    }
+                    public class WRANGLE_SURPLUS
+                    {
+                        public static LocString NAME = "CB_WRANGLE_SURPLUS";
+                        public static LocString TOOLTIP = "TOOLTIP";
+                    }
+                    public class LEAVE_ALIVE
+                    {
+                        public static LocString NAME = "CB_LEAVE_ALIVE";
+                        public static LocString TOOLTIP = "TOOLTIP";
+                    }
+
+                    public class AGE_THRESHOLD
+                    {
+                        public static LocString MIN_MAX = "{0}%";
+                        public static LocString PRE = " ";
+                        public static LocString PST = "%";
+                        public static LocString TOOLTIP = "TOOLTIP";
+                    }
+
+                    public class CREATURE_LIMIT
+                    {
+                        public static LocString MIN_MAX = "{0}";
+                        public static LocString PRE = "Max:";
+                        public static LocString PST = "Critters";
+                        public static LocString TOOLTIP = "TOOLTIP";
+                    }
                 }
             }
+        }
+        // todo: сделать строки для опцый
+        public class OPTIONS
+        {
+
         }
 
         internal static void DoReplacement()
         {
             LocString.CreateLocStringKeys(typeof(BUILDING));
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
-            //LocString.CreateLocStringKeys(typeof(UI));
+            LocString.CreateLocStringKeys(typeof(UI));
             Strings.Add($"STRINGS.MISC.TAGS.{ButcherStation.ButcherableCreature.ToString().ToUpperInvariant()}", MISC.TAGS.BAGABLECREATURE);
             Strings.Add($"STRINGS.MISC.TAGS.{ButcherStation.FisherableCreature.ToString().ToUpperInvariant()}", MISC.TAGS.SWIMMINGCREATURE);
         }

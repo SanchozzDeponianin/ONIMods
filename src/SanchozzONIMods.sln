@@ -25,6 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		lib\ManualDeliveryKGPatch.cs = lib\ManualDeliveryKGPatch.cs
 		lib\MultiRoomTracker.cs = lib\MultiRoomTracker.cs
 		lib\StorageDropper.cs = lib\StorageDropper.cs
+		lib\UI.cs = lib\UI.cs
 		lib\Utils.cs = lib\Utils.cs
 	EndProjectSection
 EndProject

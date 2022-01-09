@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Klei.AI;
 using KSerialization;
 using STRINGS;
@@ -8,6 +9,7 @@ using UnityEngine;
 
 namespace ButcherStation
 {
+    [SerializationConfig(MemberSerialization.OptIn)]
     public class ButcherStation : KMonoBehaviour, ISim4000ms, IIntSliderControl, ISliderControl, IUserControlledCapacity, ICheckboxControl
     {
         public static readonly Tag ButcherableCreature = TagManager.Create("ButcherableCreature");
@@ -19,16 +21,35 @@ namespace ButcherStation
         public const float EXTRAMEATPERRANCHINGATTRIBUTE = 0.025f;
 
         [Serialize]
-        private int creatureLimit = ButcherStationOptions.Instance.max_creature_limit;
+        internal int creatureLimit = ButcherStationOptions.Instance.max_creature_limit;
         private int storedCreatureCount;
         internal List<KPrefabID> Creatures { get; private set; } = new List<KPrefabID>();
         private bool dirty = true;
 
         [Serialize]
-        private float ageButchThresold = 0.85f;
+        internal float ageButchThresold = 0.85f;
 
+        [Obsolete]
         [Serialize]
         private bool autoButchSurplus = false;
+
+        [Serialize]
+        internal bool wrangleUnSelected = false;
+
+        [Serialize]
+        internal bool wrangleOldAged = true;
+
+        [Serialize]
+        internal bool wrangleSurplus = false;
+
+        [Serialize]
+        internal bool leaveAlive = false;
+
+        [SerializeField]
+        internal bool allowLeaveAlive = false;
+
+        // todo: если сделать собственный боковой екран, то надо сделать раздельные чекбоксы
+        // убивать лишних невыбранных / старых / лишних по количеству
 
 #pragma warning disable CS0649
         [MyCmpReq]
@@ -54,6 +75,20 @@ namespace ButcherStation
                 };
             }
             GetComponent<KSelectable>().SetStatusItem(Db.Get().StatusItemCategories.Main, capacityStatusItem, this);
+        }
+
+        // подгружаем старый параметр из прошлых версий
+        [OnDeserialized]
+        private void OnDeserialized()
+        {
+#pragma warning disable CS0612
+            if (autoButchSurplus)
+            {
+                wrangleUnSelected = true;
+                wrangleSurplus = true;
+                autoButchSurplus = false;
+            }
+#pragma warning restore CS0612
         }
 
         protected override void OnSpawn()

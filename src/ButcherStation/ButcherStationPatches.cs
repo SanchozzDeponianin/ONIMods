@@ -11,6 +11,7 @@ using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
+using PeterHan.PLib.UI;
 
 namespace ButcherStation
 {
@@ -86,6 +87,16 @@ namespace ButcherStation
                         __result += 10;
                         break;
                 }
+            }
+        }
+
+        // добавление сидескреена
+        [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
+        private static class DetailsScreen_OnPrefabInit
+        {
+            private static void Postfix()
+            {
+                PUIUtils.AddSideScreenContent<ButcherStationSideScreen>();
             }
         }
 
@@ -170,7 +181,6 @@ namespace ButcherStation
             }
         }
 
-        // todo: перепроверить:
         // хак, чтобы ранчо-станции проверяли допустимость комнаты по главной клетке постройки
         // а не по конечной клетке для приручения жеготного. иначе рыбалка не работает
         // хак, чтобы убивать в первую очередь совсем лишних, затем старых, затем просто лишних.
