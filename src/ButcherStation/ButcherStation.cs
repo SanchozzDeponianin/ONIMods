@@ -10,7 +10,7 @@ using UnityEngine;
 namespace ButcherStation
 {
     [SerializationConfig(MemberSerialization.OptIn)]
-    public class ButcherStation : KMonoBehaviour, ISim4000ms, IIntSliderControl, ISliderControl, IUserControlledCapacity, ICheckboxControl
+    public class ButcherStation : KMonoBehaviour, ISim4000ms//, IIntSliderControl, ISliderControl, IUserControlledCapacity, ICheckboxControl
     {
         public static readonly Tag ButcherableCreature = TagManager.Create("ButcherableCreature");
         public static readonly Tag FisherableCreature = TagManager.Create("FisherableCreature");
@@ -24,7 +24,7 @@ namespace ButcherStation
         internal int creatureLimit = ButcherStationOptions.Instance.max_creature_limit;
         private int storedCreatureCount;
         internal List<KPrefabID> Creatures { get; private set; } = new List<KPrefabID>();
-        private bool dirty = true;
+        private bool dirty = true; // todo: при изменении настроек надо бы перерасчет делать
 
         [Serialize]
         internal float ageButchThresold = 0.85f;
@@ -34,16 +34,16 @@ namespace ButcherStation
         private bool autoButchSurplus = false;
 
         [Serialize]
-        internal bool wrangleUnSelected = false;
+        internal bool wrangleUnSelected = false;// ловить лишних не выбранных в фильтре
 
         [Serialize]
-        internal bool wrangleOldAged = true;
+        internal bool wrangleOldAged = true;    // ловить старых
 
         [Serialize]
-        internal bool wrangleSurplus = false;
+        internal bool wrangleSurplus = false;   // ловить лишних избыточных
 
         [Serialize]
-        internal bool leaveAlive = false;
+        internal bool leaveAlive = false;       // оставить живым
 
         [SerializeField]
         internal bool allowLeaveAlive = false;
@@ -67,10 +67,10 @@ namespace ButcherStation
                 {
                     resolveStringCallback = delegate (string str, object data)
                     {
-                        var userControlledCapacity = (IUserControlledCapacity)data;
-                        string stored = Util.FormatWholeNumber(Mathf.Floor(userControlledCapacity.AmountStored));
-                        string capacity = Util.FormatWholeNumber(userControlledCapacity.UserMaxCapacity);
-                        return str.Replace("{Stored}", stored).Replace("{Capacity}", capacity).Replace("{Units}", userControlledCapacity.CapacityUnits);
+                        var butcherStation = (ButcherStation)data;
+                        string stored = Util.FormatWholeNumber(butcherStation.storedCreatureCount);
+                        string capacity = Util.FormatWholeNumber(ButcherStationOptions.Instance.max_creature_limit);
+                        return str.Replace("{Stored}", stored).Replace("{Capacity}", capacity).Replace("{Units}", UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.UNITS_SUFFIX);
                     }
                 };
             }
@@ -113,7 +113,11 @@ namespace ButcherStation
             {
                 creatureLimit = butcherStation.creatureLimit;
                 ageButchThresold = butcherStation.ageButchThresold;
-                autoButchSurplus = butcherStation.autoButchSurplus;
+                wrangleUnSelected = butcherStation.wrangleUnSelected;
+                wrangleOldAged = butcherStation.wrangleOldAged;
+                wrangleSurplus = butcherStation.wrangleSurplus;
+                leaveAlive = allowLeaveAlive && butcherStation.leaveAlive;
+                dirty = true;
             }
         }
 
@@ -172,23 +176,30 @@ namespace ButcherStation
         {
             if (!creature_go.HasTag(creatureEligibleTag) || creature_go.HasTag(GameTags.Creatures.Die) || creature_go.HasTag(GameTags.Dead))
                 return false;
-            bool surplus = !treeFilterable?.ContainsTag(creature_go.GetComponent<KPrefabID>().PrefabTag) ?? false;
-            if (autoButchSurplus && (surplus || storedCreatureCount > creatureLimit))
+            bool unSelected = !treeFilterable?.ContainsTag(creature_go.GetComponent<KPrefabID>().PrefabTag) ?? false;
+            if (unSelected && wrangleUnSelected)
                 return true;
-            var age = Db.Get().Amounts.Age.Lookup(creature_go);
-            if (age != null)
-                return !surplus && ageButchThresold < age.value / age.GetMax();
+            if (!unSelected && wrangleSurplus && storedCreatureCount > creatureLimit)
+                return true;
+            if (wrangleOldAged)
+            {
+                var age = Db.Get().Amounts.Age.Lookup(creature_go);
+                if (age != null)
+                    return !unSelected && ageButchThresold < age.value / age.GetMax();
+            }
             return false;
         }
 
         public static void ButchCreature(GameObject creature_go, bool moveCreatureToButcherStation = false)
         {
+            bool kill = true;
             var targetRanchStation = creature_go.GetSMI<RanchableMonitor.Instance>()?.targetRanchStation;
             if (targetRanchStation != null)
             {
                 if (moveCreatureToButcherStation)
                 {
-                    creature_go.transform.SetPosition(targetRanchStation.transform.GetPosition());
+                    int cell = Grid.PosToCell(targetRanchStation.transform.GetPosition());
+                    creature_go.transform.SetPosition(Grid.CellToPosCCC(cell, Grid.SceneLayer.Ore));
                 }
                 var extraMeatSpawner = creature_go.GetComponent<ExtraMeatSpawner>();
                 if (extraMeatSpawner != null)
@@ -197,10 +208,18 @@ namespace ButcherStation
                     var rancher = smi.sm.rancher.Get(smi);
                     extraMeatSpawner.onDeathDropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
                 }
+                var butcherStation = targetRanchStation.GetComponent<ButcherStation>();
+                if (butcherStation != null && butcherStation.leaveAlive)
+                {
+                    creature_go.GetComponent<Baggable>()?.SetWrangled();
+                    kill = false;
+                }
             }
-            creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);
+            if (kill)
+                creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);
         }
 
+        /*
         // лимит количества жеготных
         float IUserControlledCapacity.UserMaxCapacity { get => creatureLimit; set => creatureLimit = Mathf.RoundToInt(value); }
 
@@ -272,6 +291,6 @@ namespace ButcherStation
         void ICheckboxControl.SetCheckboxValue(bool value)
         {
             autoButchSurplus = value;
-        }
+        }*/
     }
 }

@@ -80,14 +80,14 @@ namespace ButcherStation
             };
             def.getTargetRanchCell = delegate (RanchStation.Instance smi)
             {
-                int num = Grid.InvalidCell;
                 if (!smi.IsNullOrStopped())
                 {
-                    bool water;
-                    num = Grid.CellBelow(Grid.PosToCell(smi.transform.GetPosition()));
-                    num = Grid.OffsetCell(num, 0, -FishingStationGuide.GetDepthAvailable(smi.gameObject, out water));
+                    int cell = Grid.CellBelow(Grid.PosToCell(smi.transform.GetPosition()));
+                    cell = Grid.OffsetCell(cell, 0, -FishingStationGuide.GetDepthAvailable(smi.gameObject, out _));
+                    if (Grid.IsValidCell(cell))
+                        return cell;
                 }
-                return num;
+                return Grid.InvalidCell;
             };
             def.interactLoopCount = 1;
             def.rancherInteractAnim = "anim_interacts_fishingstation_kanim";

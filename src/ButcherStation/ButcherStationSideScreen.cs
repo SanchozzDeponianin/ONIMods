@@ -35,16 +35,22 @@ namespace ButcherStation
                 Spacing = 8,
                 FlexSize = Vector2.right,
             }
+                // ловить лишних не выбранных в фильтре
                 .AddCheckBox(prefix, nameof(wrangle_unselected),
                     b => { if (target != null) target.wrangleUnSelected = b; }, out wrangle_unselected, out _)
+                // ловить старых
                 .AddCheckBox(prefix, nameof(wrangle_old_aged),
                     b => { if (target != null) target.wrangleOldAged = b; }, out wrangle_old_aged, out _)
+                // ползун возраста
                 .AddSliderBox(prefix, nameof(age_threshold), 0f, 100f,
                     f => { if (target != null) target.ageButchThresold = f / 100f; }, out age_threshold)
+                // ловить лишних избыточных
                 .AddCheckBox(prefix, nameof(wrangle_surplus),
                     b => { if (target != null) target.wrangleSurplus = b; }, out wrangle_surplus, out _)
+                // ползун количества
                 .AddSliderBox(prefix, nameof(creature_limit), 0f, ButcherStationOptions.Instance.max_creature_limit,
                     f => { if (target != null) target.creatureLimit = Mathf.RoundToInt(f); }, out creature_limit)
+                // оставить живым
                 .AddCheckBox(prefix, nameof(leave_alive),
                     b => { if (target != null) target.leaveAlive = b; }, out leave_alive, out enable_leave_alive)
                 .AddChild(new PLabel("Bottom")
