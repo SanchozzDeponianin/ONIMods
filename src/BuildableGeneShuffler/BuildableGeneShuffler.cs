@@ -3,6 +3,7 @@ using Klei;
 using KSerialization;
 using TUNING;
 using UnityEngine;
+using PeterHan.PLib.Detours;
 
 namespace BuildableGeneShuffler
 {
@@ -145,6 +146,9 @@ namespace BuildableGeneShuffler
             base.OnCleanUp();
         }
 
+        private static readonly IDetouredField<LoreBearer, bool> BeenClicked =
+                PDetours.DetourFieldLazy<LoreBearer, bool>("BeenClicked");
+
         private void SpawnGeneShuffler()
         {
             // sacrifice morb
@@ -154,9 +158,12 @@ namespace BuildableGeneShuffler
                 storage.Drop(morb);
                 morb.DeleteObject();
             }
-            // спавним новый калибратор но без заряда
+            // спавним новый калибратор но без заряда и без лора
             var geneShuffler = GameUtil.KInstantiate(Assets.GetPrefab("GeneShuffler"), gameObject.transform.GetPosition(), Grid.SceneLayer.Building);
             geneShuffler.GetComponent<GeneShuffler>().IsConsumed = true;
+            var loreBearer = geneShuffler.GetComponent<LoreBearer>();
+            if (loreBearer != null)
+                BeenClicked.Set(loreBearer, true);
             var builded = geneShuffler.GetComponent<BuildedGeneShuffler>();
             builded.isBuilded = true;
             // список конструкционных материалов

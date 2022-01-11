@@ -3,7 +3,6 @@ using static STRINGS.BUILDINGS.PREFABS;
 
 namespace BuildableGeneShuffler
 {
-    // todo: доработать текст
     public class STRINGS
     {
         public class BUILDINGS
@@ -13,7 +12,7 @@ namespace BuildableGeneShuffler
                 public class BUILDABLEGENESHUFFLER
                 {
                     public static LocString NAME = "";
-                    public static LocString DESC = "Маринованные морбячячьи мозги... ммм... вкуснятина!";
+                    public static LocString DESC = "Pickled morb`s brains... mmm... yummy!";
                     public static LocString EFFECT = "";
                 }
             }
@@ -28,7 +27,7 @@ namespace BuildableGeneShuffler
 
             public class MANIPULATIONTIME
             {
-                public static LocString NAME = "Manipulation Time , seconds";
+                public static LocString NAME = "Manipulation Time to prepare a Neural Vacillator for work, seconds";
             }
         }
 
