@@ -17,6 +17,8 @@ namespace ButcherStation
         private Action<bool> enable_leave_alive;
         private Action<float> age_threshold;
         private Action<float> creature_limit;
+
+        // todo: нужно обновление примеров возраста для групп жеготных с разным жизненным циклом
         protected override void OnPrefabInit()
         {
             var margin = new RectOffset(6, 6, 6, 6);

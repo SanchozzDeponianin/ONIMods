@@ -65,6 +65,7 @@ namespace ButcherStation
         // хаки для того чтобы отобразить заголовок и начинку бокового окна в правильном порядке
         // на длц переопределяем GetSideScreenSortOrder
         // ёбаный холодец. какого хрена крысиного этот патч сдесь крашится на линухе, но если его вынести в отдельный мелкий мод, то не крашится.
+        /*
         [HarmonyPatch(typeof(SideScreenContent), nameof(SideScreenContent.GetSideScreenSortOrder))]
         private static class SideScreenContent_GetSideScreenSortOrder
         {
@@ -88,7 +89,7 @@ namespace ButcherStation
                         break;
                 }
             }
-        }
+        }*/
 
         // добавление сидескреена
         [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
@@ -335,14 +336,37 @@ namespace ButcherStation
             private static void Postfix(RanchedStates.State ___runaway, RanchedStates.State ___behaviourcomplete)
             {
                 ___runaway
+                    .TagTransition(GameTags.Creatures.Bagged, ___behaviourcomplete)
                     .TagTransition(GameTags.Creatures.Die, ___behaviourcomplete)
                     .TagTransition(GameTags.Dead, ___behaviourcomplete);
             }
         }
 
+        // чисто косметика - подмена анимации пойманого жеготного - ради отловленной живой рыбы
+        [HarmonyPatch(typeof(BaggedStates), nameof(BaggedStates.InitializeStates))]
+        private static class BaggedStates_InitializeStates
+        {
+            private static GameStateMachine<BaggedStates, BaggedStates.Instance, IStateMachineTarget, BaggedStates.Def>.State PlayAnimStub(GameStateMachine<BaggedStates, BaggedStates.Instance, IStateMachineTarget, BaggedStates.Def>.State @this, string _1, KAnim.PlayMode _2)
+            {
+                return @this;
+            }
+            private static string ChooseBaggedAnim(BaggedStates.Instance smi)
+            {
+                return smi.HasTag(GameTags.SwimmingCreature) ? "flop_loop" : "trussed";
+            }
+            private static void Postfix(BaggedStates __instance)
+            {
+                __instance.bagged.PlayAnim(ChooseBaggedAnim, KAnim.PlayMode.Loop);
+            }
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                var PlayAnim = typeof(GameStateMachine<BaggedStates, BaggedStates.Instance, IStateMachineTarget, BaggedStates.Def>.State).GetMethodSafe("PlayAnim", false, typeof(string), typeof(KAnim.PlayMode));
+                var Stub = typeof(BaggedStates_InitializeStates).GetMethodSafe(nameof(PlayAnimStub), true, PPatchTools.AnyArguments);
+                return PPatchTools.ReplaceMethodCall(instructions, PlayAnim, Stub);
+            }
+        }
+
         // фикс для правильного подсчета рыбы в точке доставки
-        // todo: добавить проверку наличия другого мода для этой же опции
-        // todo: переписать аккуратнее
         [HarmonyPatch(typeof(CreatureDeliveryPoint), "RefreshCreatureCount")]
         private static class CreatureDeliveryPoint_RefreshCreatureCount
         {
@@ -350,17 +374,21 @@ namespace ButcherStation
             --- int cell = Grid.PosToCell(this);
             +++ int cell = Grid.OffsetCell( Grid.PosToCell(this), spawnOffset );
             */
+            private static int CorrectedCell(int cell, CreatureDeliveryPoint cdp)
+            {
+                int corrected = Grid.OffsetCell(cell, cdp.spawnOffset);
+                return Grid.IsValidCell(corrected) ? corrected : cell;
+            }
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
             {
                 var instructionsList = instructions.ToList();
                 string methodName = method.DeclaringType.FullName + "." + method.Name;
 
                 var PosToCell = typeof(Grid).GetMethod(nameof(Grid.PosToCell), new Type[] { typeof(KMonoBehaviour) });
-                var spawnOffset = typeof(CreatureDeliveryPoint).GetField(nameof(CreatureDeliveryPoint.spawnOffset));
-                var OffsetCell = typeof(Grid).GetMethod(nameof(Grid.OffsetCell), new Type[] { typeof(int), typeof(CellOffset) });
+                var x = typeof(CreatureDeliveryPoint_RefreshCreatureCount).GetMethodSafe(nameof(CorrectedCell), true, PPatchTools.AnyArguments);
 
                 bool result = false;
-                if (PosToCell != null && spawnOffset != null && OffsetCell != null)
+                if (PosToCell != null && x != null)
                 {
                     for (int i = 0; i < instructionsList.Count; i++)
                     {
@@ -368,12 +396,12 @@ namespace ButcherStation
                         if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && info == PosToCell)
                         {
                             instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldfld, spawnOffset));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, OffsetCell));
+                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, x));
                             result = true;
 #if DEBUG
                             Debug.Log($"'{methodName}' Transpiler injected");
 #endif
+                            break;
                         }
                     }
                 }
@@ -386,7 +414,6 @@ namespace ButcherStation
         }
 
         // для замены максимума жеготных
-        // todo: добавить проверку наличия другого мода для этой же опции
         [HarmonyPatch(typeof(CreatureDeliveryPoint), "IUserControlledCapacity.get_MaxCapacity")]
         private static class CreatureDeliveryPoint_get_MaxCapacity
         {

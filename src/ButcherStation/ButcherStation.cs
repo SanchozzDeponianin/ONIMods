@@ -24,7 +24,7 @@ namespace ButcherStation
         internal int creatureLimit = ButcherStationOptions.Instance.max_creature_limit;
         private int storedCreatureCount;
         internal List<KPrefabID> Creatures { get; private set; } = new List<KPrefabID>();
-        private bool dirty = true; // todo: при изменении настроек надо бы перерасчет делать
+        private bool dirty = true;
 
         [Serialize]
         internal float ageButchThresold = 0.85f;
@@ -47,9 +47,6 @@ namespace ButcherStation
 
         [SerializeField]
         internal bool allowLeaveAlive = false;
-
-        // todo: если сделать собственный боковой екран, то надо сделать раздельные чекбоксы
-        // убивать лишних невыбранных / старых / лишних по количеству
 
 #pragma warning disable CS0649
         [MyCmpReq]
@@ -117,7 +114,6 @@ namespace ButcherStation
                 wrangleOldAged = butcherStation.wrangleOldAged;
                 wrangleSurplus = butcherStation.wrangleSurplus;
                 leaveAlive = allowLeaveAlive && butcherStation.leaveAlive;
-                dirty = true;
             }
         }
 
@@ -181,11 +177,11 @@ namespace ButcherStation
                 return true;
             if (!unSelected && wrangleSurplus && storedCreatureCount > creatureLimit)
                 return true;
-            if (wrangleOldAged)
+            if (!unSelected && wrangleOldAged)
             {
                 var age = Db.Get().Amounts.Age.Lookup(creature_go);
                 if (age != null)
-                    return !unSelected && ageButchThresold < age.value / age.GetMax();
+                    return ageButchThresold < age.value / age.GetMax();
             }
             return false;
         }
@@ -199,7 +195,7 @@ namespace ButcherStation
                 if (moveCreatureToButcherStation)
                 {
                     int cell = Grid.PosToCell(targetRanchStation.transform.GetPosition());
-                    creature_go.transform.SetPosition(Grid.CellToPosCCC(cell, Grid.SceneLayer.Ore));
+                    creature_go.transform.SetPosition(Grid.CellToPosCCC(cell, Grid.SceneLayer.Creatures));
                 }
                 var extraMeatSpawner = creature_go.GetComponent<ExtraMeatSpawner>();
                 if (extraMeatSpawner != null)

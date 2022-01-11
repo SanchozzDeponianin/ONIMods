@@ -97,12 +97,15 @@ namespace ButcherStation
             def.synchronizeBuilding = true;
             Prioritizable.AddRef(go);
 
+            // todo: пока выключил резервацию тайлов. тк создает неопределенное поведение,
+            // если сделать работу в разных комнатах для совместимости с роом эхпандед
+            // надо подумать
             var buildingDef = go.GetComponent<Building>().Def;
             AddGuide(buildingDef.BuildingPreview, preview: true, occupy_tiles: false);
             AddGuide(buildingDef.BuildingPreview, foundament: true);
-            AddGuide(buildingDef.BuildingUnderConstruction, preview: true, occupy_tiles: true);
+            AddGuide(buildingDef.BuildingUnderConstruction, preview: true, occupy_tiles: false);// occupy_tiles: true
             AddGuide(buildingDef.BuildingUnderConstruction, foundament: true);
-            AddGuide(buildingDef.BuildingComplete, preview: false, occupy_tiles: true);
+            AddGuide(buildingDef.BuildingComplete, preview: false, occupy_tiles: false);// occupy_tiles: true
         }
 
         private static void AddGuide(GameObject go, bool preview = true, bool occupy_tiles = false, bool foundament = false)
