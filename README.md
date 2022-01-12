@@ -27,6 +27,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 |  **Name**  |  **Description**  |  **Vanilla**  |  **Spaced Out! DLC**  |
 | :--------: | :---------------: | :-----------: | :-------------------: |
 | [Aquatic Farm](https://steamcommunity.com/sharedfiles/filedetails/?id=1910961538) | Adds a new Aquatic Farm tile that can absorbs Liquids from the world for irrigation. Does not require Liquid Piping. | Yes | Yes |
+| [Buildable Neural Vacillator](https://steamcommunity.com/sharedfiles/filedetails/?id=2715752713) | Allows you to build your own Neural Vacillator | Yes | Yes |
 | [Butcher & Fishing Stations](https://steamcommunity.com/sharedfiles/filedetails/?id=1907824546) | Adds a new Stations allows the Ranchers to control the population and butchering too old, surplus, or unwanted Critters. | Yes | Yes |
 | [Carousel](https://steamcommunity.com/sharedfiles/filedetails/?id=1899088142) | Adds a new recreation building. Funny dizzy entertainment. Sometimes too dizzy... | Yes | Yes |
 | [Insulated Radbolt Joint Plate](https://steamcommunity.com/sharedfiles/filedetails/?id=2451195132) | Adds a Insulated variant of Radbolt Joint Plate.| No | Yes |
