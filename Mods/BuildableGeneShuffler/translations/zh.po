@@ -1,0 +1,47 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Ventulus\n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Application: Oxygen Not IncludedPOT Version: 2.0\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#. BuildableGeneShuffler.STRINGS.BUILDINGS.PREFABS.BUILDABLEGENESHUFFLER.DESC
+msgctxt ""
+"BuildableGeneShuffler.STRINGS.BUILDINGS.PREFABS.BUILDABLEGENESHUFFLER."
+"DESC"
+msgid "Pickled morb`s brains... mmm... yummy!"
+msgstr "腌制疫病章鱼的大脑……嗯……非常美味！"
+
+#. BuildableGeneShuffler.STRINGS.BUILDINGS.PREFABS.BUILDABLEGENESHUFFLER.EFFECT
+#| msgid ""
+msgctxt ""
+"BuildableGeneShuffler.STRINGS.BUILDINGS.PREFABS.BUILDABLEGENESHUFFLER."
+"EFFECT"
+msgid ""
+msgstr ""
+
+#. BuildableGeneShuffler.STRINGS.BUILDINGS.PREFABS.BUILDABLEGENESHUFFLER.NAME
+#| msgid ""
+msgctxt ""
+"BuildableGeneShuffler.STRINGS.BUILDINGS.PREFABS.BUILDABLEGENESHUFFLER."
+"NAME"
+msgid ""
+msgstr ""
+
+#. BuildableGeneShuffler.STRINGS.OPTIONS.CONSTRUCTIONTIME.NAME
+msgctxt "BuildableGeneShuffler.STRINGS.OPTIONS.CONSTRUCTIONTIME.NAME"
+msgid "Construction Time to build a new Neural Vacillator, seconds"
+msgstr "建造一个新的神经振荡器花费多少秒时间"
+
+#. BuildableGeneShuffler.STRINGS.OPTIONS.MANIPULATIONTIME.NAME
+msgctxt "BuildableGeneShuffler.STRINGS.OPTIONS.MANIPULATIONTIME.NAME"
+msgid "Manipulation Time to prepare a Neural Vacillator for work, seconds"
+msgstr "神经振荡器的准备工作需操作多少秒时间"

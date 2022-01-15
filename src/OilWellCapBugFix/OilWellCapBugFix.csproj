@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Oil Well BugFix</Title>
     <Description>Fixes an bug when Duplicants get stuck trying to depressurize the Oil Well if it is turned off by automation or out of water.</Description>
-    <ModVersion>1.0.0</ModVersion>
+    <ModVersion>1.0.1</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
