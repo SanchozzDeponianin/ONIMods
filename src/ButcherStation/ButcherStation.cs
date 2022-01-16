@@ -10,7 +10,7 @@ using UnityEngine;
 namespace ButcherStation
 {
     [SerializationConfig(MemberSerialization.OptIn)]
-    public class ButcherStation : KMonoBehaviour, ISim4000ms//, IIntSliderControl, ISliderControl, IUserControlledCapacity, ICheckboxControl
+    public class ButcherStation : KMonoBehaviour, ISim4000ms
     {
         public static readonly Tag ButcherableCreature = TagManager.Create("ButcherableCreature");
         public static readonly Tag FisherableCreature = TagManager.Create("FisherableCreature");
@@ -214,79 +214,5 @@ namespace ButcherStation
             if (kill)
                 creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);
         }
-
-        /*
-        // лимит количества жеготных
-        float IUserControlledCapacity.UserMaxCapacity { get => creatureLimit; set => creatureLimit = Mathf.RoundToInt(value); }
-
-        float IUserControlledCapacity.AmountStored => storedCreatureCount;
-        float IUserControlledCapacity.MinCapacity => 0;
-        float IUserControlledCapacity.MaxCapacity => ButcherStationOptions.Instance.max_creature_limit;
-        bool IUserControlledCapacity.WholeValues => true;
-        LocString IUserControlledCapacity.CapacityUnits => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.UNITS_SUFFIX;
-
-        // ползун настройки максимального возраста
-        string ISliderControl.SliderTitleKey => STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TITLE.key.String;
-        string ISliderControl.SliderUnits => UI.UNITSUFFIXES.PERCENT;
-
-        float ISliderControl.GetSliderMax(int index)
-        {
-            return 100f;
-        }
-
-        float ISliderControl.GetSliderMin(int index)
-        {
-            return 0f;
-        }
-
-        string ISliderControl.GetSliderTooltip()
-        {
-            string s = string.Empty;
-            foreach (float max_age in new float[] {
-                TUNING.CREATURES.LIFESPAN.TIER1,
-                TUNING.CREATURES.LIFESPAN.TIER2,
-                TUNING.CREATURES.LIFESPAN.TIER3,
-                TUNING.CREATURES.LIFESPAN.TIER4,
-                    })
-            {
-                s = s + "\n" + (ageButchThresold * max_age).ToString("F1") + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_OUTOF + Math.Floor(max_age) + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_CYCLES;
-            }
-            return string.Format(STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP, ageButchThresold * 100f) + s;
-        }
-
-        string ISliderControl.GetSliderTooltipKey(int index)
-        {
-            return STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP.key.String;
-        }
-
-        float ISliderControl.GetSliderValue(int index)
-        {
-            return ageButchThresold * 100f;
-        }
-
-        void ISliderControl.SetSliderValue(float percent, int index)
-        {
-            ageButchThresold = percent / 100f;
-        }
-
-        int ISliderControl.SliderDecimalPlaces(int index)
-        {
-            return 0;
-        }
-
-        // флажёк "убивать лишних"
-        string ICheckboxControl.CheckboxTitleKey => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.TITLE.key.String;
-        string ICheckboxControl.CheckboxLabel => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.AUTOWRANGLE;
-        string ICheckboxControl.CheckboxTooltip => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.AUTOWRANGLE_TOOLTIP;
-
-        bool ICheckboxControl.GetCheckboxValue()
-        {
-            return autoButchSurplus;
-        }
-
-        void ICheckboxControl.SetCheckboxValue(bool value)
-        {
-            autoButchSurplus = value;
-        }*/
     }
 }

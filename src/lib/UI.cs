@@ -42,7 +42,7 @@ namespace SanchozzONIMods.Lib.UI
             return parent.AddChild(cb);
         }
 
-        public static PPanel AddSliderBox(this PPanel parent, string prefix, string name, float min, float max, Action<float> onValueUpdate, out Action<float> setValue)
+        public static PPanel AddSliderBox(this PPanel parent, string prefix, string name, float min, float max, Action<float> onValueUpdate, out Action<float> setValue, Func<float, string> customTooltip = null)
         {
             float value = 0;
             GameObject text_go = null;
@@ -135,7 +135,20 @@ namespace SanchozzONIMods.Lib.UI
                 ToolTip = Strings.Get(prefix + ".TOOLTIP"),
                 OnDrag = OnSliderChanged,
                 OnValueChanged = OnSliderChanged,
-            }.AddOnRealize(realized => slider_go = realized);
+            }.AddOnRealize(realized =>
+            {
+                slider_go = realized;
+                if (customTooltip != null)
+                {
+                    var ks = slider_go.GetComponent<KSlider>();
+                    var toolTip = slider_go.GetComponent<ToolTip>();
+                    if (ks != null && toolTip != null)
+                    {
+                        toolTip.OnToolTip = () => customTooltip(ks.value);
+                        toolTip.refreshWhileHovering = true;
+                    }
+                }
+            });
 
             var panel_bottom = new PPanel("slider_bottom_" + name)
             {

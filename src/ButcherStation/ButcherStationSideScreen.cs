@@ -2,6 +2,7 @@
 using UnityEngine;
 using SanchozzONIMods.Lib.UI;
 using PeterHan.PLib.UI;
+using static TUNING.CREATURES.LIFESPAN;
 
 namespace ButcherStation
 {
@@ -18,7 +19,17 @@ namespace ButcherStation
         private Action<float> age_threshold;
         private Action<float> creature_limit;
 
-        // todo: нужно обновление примеров возраста для групп жеготных с разным жизненным циклом
+        private readonly float[] lifespans = new float[] { TIER1, TIER2, TIER3, TIER4 };
+        private string GetAgeTooltip(float ageButchThresold)
+        {
+            string s = string.Format(STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP, ageButchThresold);
+            foreach (float max_age in lifespans)
+            {
+                s += string.Format(STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP_LIFESPAN, ageButchThresold * max_age / 100f, max_age);
+            }
+            return s;
+        }
+
         protected override void OnPrefabInit()
         {
             var margin = new RectOffset(6, 6, 6, 6);
@@ -45,7 +56,7 @@ namespace ButcherStation
                     b => { if (target != null) target.wrangleOldAged = b; }, out wrangle_old_aged, out _)
                 // ползун возраста
                 .AddSliderBox(prefix, nameof(age_threshold), 0f, 100f,
-                    f => { if (target != null) target.ageButchThresold = f / 100f; }, out age_threshold)
+                    f => { if (target != null) target.ageButchThresold = f / 100f; }, out age_threshold, GetAgeTooltip)
                 // ловить лишних избыточных
                 .AddCheckBox(prefix, nameof(wrangle_surplus),
                     b => { if (target != null) target.wrangleSurplus = b; }, out wrangle_surplus, out _)
@@ -62,7 +73,7 @@ namespace ButcherStation
                 })
                 .AddTo(gameObject);
             ContentContainer = gameObject;
-            titleKey = prefix + "TITLE";
+            titleKey = "STRINGS.UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.TITLE";
             base.OnPrefabInit();
             UpdateScreen();
         }

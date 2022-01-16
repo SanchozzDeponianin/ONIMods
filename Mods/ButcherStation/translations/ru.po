@@ -30,8 +30,8 @@ msgstr "Уход за животными делает их красивыми, �
 
 #. ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.EFFECT
 msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.EFFECT"
-msgid "Allows the assigned <link=\"RANCHER\">Rancher</link> to control the population and butchering too old, surplus, or unwanted <link=\"CRITTERS\">Critters</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHER\">Critter Wrangling</link> trait."
-msgstr "Позволяет назначенному <link=\"RANCHER\">животноводу</link> контролировать популяцию, и убивать слишком старых, лишних, или нежелательных <link=\"CRITTERS\">животных</link>.\n\nНазначенные Дупликанты должны иметь черту <link=\"RANCHER\">Уход за животными</link>."
+msgid "Allows the assigned <link=\"RANCHER\">Rancher</link> to control the population and butchering too old, surplus, or unwanted <link=\"CRITTERS\">Critters</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHING1\">Critter Ranching</link> skill."
+msgstr "Позволяет назначенному <link=\"RANCHER\">животноводу</link> контролировать популяцию, и убивать слишком старых, лишних, или нежелательных <link=\"CRITTERS\">животных</link>.\n\nНазначенные Дупликанты должны иметь навык <link=\"RANCHING1\">Животноводство</link>."
 
 #. ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.NAME
 msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.NAME"
@@ -45,8 +45,8 @@ msgstr "Станции рыбалки позволяют безопасно ры
 
 #. ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.EFFECT
 msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.EFFECT"
-msgid "Allows the assigned <link=\"RANCHER\">Rancher</link> to control the population and fishing too old, surplus, or unwanted <link=\"PACU\">Fishes</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHER\">Critter Wrangling</link> trait.\n\nA <link=\"ELEMENTSLIQUID\">Liquid</link> depth of 2 to 4 tiles is required to place a fishing hook."
-msgstr "Позволяет назначенному <link=\"RANCHER\">животноводу</link> контролировать популяцию, и вылавливать слишком старых, лишних, или нежелательных <link=\"PACU\">рыб</link>.\n\nНазначенные Дупликанты должны иметь черту <link=\"RANCHER\">Уход за животными</link>.\n\nДля размещения рыболовного крюка требуется глубина <link=\"ELEMENTSLIQUID\">жидкости</link> от 2 до 4 плиток."
+msgid "Allows the assigned <link=\"RANCHER\">Rancher</link> to control the population and fishing too old, surplus, or unwanted <link=\"PACU\">Fishes</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHING1\">Critter Ranching</link> skill.\n\nA <link=\"ELEMENTSLIQUID\">Liquid</link> depth of 2 to 4 tiles is required to place a fishing hook."
+msgstr "Позволяет назначенному <link=\"RANCHER\">животноводу</link> контролировать популяцию, и вылавливать слишком старых, лишних, или нежелательных <link=\"PACU\">рыб</link>.\n\nНазначенные Дупликанты должны иметь навык <link=\"RANCHING1\">Животноводство</link>.\n\nДля размещения рыболовного крюка требуется глубина <link=\"ELEMENTSLIQUID\">жидкости</link> от 2 до 4 плиток."
 
 #. ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.NAME
 msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.NAME"
@@ -58,22 +58,113 @@ msgctxt "ButcherStation.STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMO
 msgid "{0} Extra <style=\"KKeyword\">Meat</style> when working at the <style=\"KKeyword\">Butcher</style> and <style=\"KKeyword\">Fishing Stations</style>"
 msgstr "{0} дополнительное <style=\"KKeyword\">Мясо</style> при работе на <style=\"KKeyword\">Станциях Живодёра</style> и <style=\"KKeyword\">Рыбалки</style>"
 
-#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TITLE
-msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TITLE"
-msgid "Creature Age Threshold"
-msgstr "Предельный возраст животного"
+#. ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.NAME
+msgctxt "ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.NAME"
+msgid "+X% <style=\"KKeyword\">Extra Meat</style> from butchered Critters per each <style=\"KKeyword\">Husbandry</style> attribute level"
+msgstr "+X% <style=\"KKeyword\">дополнительного мяса</style> от забитых животных за каждый уровень атрибута <style=\"KKeyword\">Животноводство</style>"
 
-#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP
-msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP"
-msgid "A Duplicant will automatically wrangle selected <style=\"KKeyword\">Critters</style>, if their <style=\"KKeyword\">Age</style> is older than the specified value <b>{0}%</b>"
-msgstr "Дупликант будет автоматически отлавливать выбранных <style=\"KKeyword\">животных</style>, если их <style=\"KKeyword\">возраст</style> старше указанного значения <b>{0}%</b>"
+#. ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.TOOLTIP
+msgctxt "ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.TOOLTIP"
+msgid "Set to <style=\"KKeyword\">0</style> to disable Extra Meat drop"
+msgstr "Установите в <style=\"KKeyword\">0</style>, чтобы отключить получение дополнительного мяса"
 
-#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_CYCLES
-msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_CYCLES"
-msgid " cycles"
-msgstr " циклов"
+#. ButcherStation.STRINGS.OPTIONS.MAX_CREATURE_LIMIT.NAME
+msgctxt "ButcherStation.STRINGS.OPTIONS.MAX_CREATURE_LIMIT.NAME"
+msgid "<style=\"KKeyword\">Max Critters</style> limit"
+msgstr "Лимит <style=\"KKeyword\">Макс. Существа</style>"
 
-#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_OUTOF
-msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_OUTOF"
-msgid " out of "
-msgstr " из "
+#. ButcherStation.STRINGS.OPTIONS.MAX_CREATURE_LIMIT.TOOLTIP
+msgctxt "ButcherStation.STRINGS.OPTIONS.MAX_CREATURE_LIMIT.TOOLTIP"
+msgid "Affects both <style=\"KKeyword\">Butcher</style> and <style=\"KKeyword\">Fishing Stations</style> as well as <style=\"KKeyword\">Critter Drop-Off</style> and <style=\"KKeyword\">Fish Release</style>"
+msgstr "Влияет на обе <style=\"KKeyword\">Станции Живодёра</style> и <style=\"KKeyword\">Рыбалки</style>, а также на <style=\"KKeyword\">Переместитель существ</style> и <style=\"KKeyword\">Пункт доставки рыбы</style>"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.MIN_MAX
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.MIN_MAX"
+msgid "{0}%"
+msgstr "{0}%"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.PRE
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.PRE"
+msgid " "
+msgstr " "
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.PST
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.PST"
+msgid "%"
+msgstr "%"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP"
+msgid "Critters older than this specified value <b>{0}%</b> will be automatically wrangled"
+msgstr "Существа старше указанного значения <b>{0}%</b> будут автоматически отловлены"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP_LIFESPAN
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP_LIFESPAN"
+msgid "\n{0} out of {1} cycles lifespan"
+msgstr "\n{0} из {1} циклов срока жизни"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.MIN_MAX
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.MIN_MAX"
+msgid "{0}"
+msgstr "{0}"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.PRE
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.PRE"
+msgid "Max: "
+msgstr "Макс: "
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.PST
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.PST"
+msgid " Critters"
+msgstr " Существ"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.TOOLTIP"
+msgid "Critters exceeding this population limit <b>{0}</b> will automatically be wrangled"
+msgstr "Существа, превышающие этот предел популяции <b>{0}</b>, будут автоматически отловлены"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.FILTER_LABEL
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.FILTER_LABEL"
+msgid "Critters filter:"
+msgstr "Фильтр существ:"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.LEAVE_ALIVE.NAME
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.LEAVE_ALIVE.NAME"
+msgid "Leave critters alive"
+msgstr "Оставлять существ живыми"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.LEAVE_ALIVE.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.LEAVE_ALIVE.TOOLTIP"
+msgid "A Duplicant will leave the wrangled critters alive instead of butchering them"
+msgstr "Дупликант оставит отловленных существ живыми вместо того, чтобы зарезать их"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_OLD_AGED.NAME
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_OLD_AGED.NAME"
+msgid "Auto-Wrangle Old Aged"
+msgstr "Автоотлов старых"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_OLD_AGED.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_OLD_AGED.TOOLTIP"
+msgid "A Duplicant will automatically wrangle any critters that are selected in the filter and that their Age are older than the specified value"
+msgstr "Дупликант автоматически будет отлавливать всех существ, выбранных в фильтре, если их возраст превышает указанное значение"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_SURPLUS.NAME
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_SURPLUS.NAME"
+msgid "Auto-Wrangle Surplus"
+msgstr "Автоотлов лишних"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_SURPLUS.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_SURPLUS.TOOLTIP"
+msgid "A Duplicant will automatically wrangle any critters that are selected in the filter if the total number of critters in this stable exceeds the specified population limit"
+msgstr "Дупликант автоматически будет отлавливать всех существ, выбранных в фильтре, если общее количество существ в этом хлеве превысит указанный предел популяции"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_UNSELECTED.NAME
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_UNSELECTED.NAME"
+msgid "Auto-Wrangle Unwanted"
+msgstr "Автоотлов нежелательных"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_UNSELECTED.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_UNSELECTED.TOOLTIP"
+msgid "A Duplicant will automatically wrangle any critters that do not belong in this stable, that are not selected in the filter"
+msgstr "Дупликант автоматически будет отлавливать всех существ, которые не выбраны в фильтре и не должны быть в этом хлеве"
+

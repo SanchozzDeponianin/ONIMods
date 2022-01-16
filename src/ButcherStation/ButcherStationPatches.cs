@@ -62,35 +62,6 @@ namespace ButcherStation
             RanchingEffectExtraMeat.multiplier = ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
         }
 
-        // хаки для того чтобы отобразить заголовок и начинку бокового окна в правильном порядке
-        // на длц переопределяем GetSideScreenSortOrder
-        // ёбаный холодец. какого хрена крысиного этот патч сдесь крашится на линухе, но если его вынести в отдельный мелкий мод, то не крашится.
-        /*
-        [HarmonyPatch(typeof(SideScreenContent), nameof(SideScreenContent.GetSideScreenSortOrder))]
-        private static class SideScreenContent_GetSideScreenSortOrder
-        {
-            private static bool Prepare()
-            {
-                return Environment.OSVersion.Platform.Equals(PlatformID.Win32NT);
-            }
-
-            private static void Postfix(SideScreenContent __instance, ref int __result)
-            {
-                switch (__instance)
-                {
-                    case IntSliderSideScreen _:
-                        __result += 30;
-                        break;
-                    case SingleCheckboxSideScreen _:
-                        __result += 20;
-                        break;
-                    case CapacityControlSideScreen _:
-                        __result += 10;
-                        break;
-                }
-            }
-        }*/
-
         // добавление сидескреена
         [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
         private static class DetailsScreen_OnPrefabInit
@@ -385,10 +356,10 @@ namespace ButcherStation
                 string methodName = method.DeclaringType.FullName + "." + method.Name;
 
                 var PosToCell = typeof(Grid).GetMethod(nameof(Grid.PosToCell), new Type[] { typeof(KMonoBehaviour) });
-                var x = typeof(CreatureDeliveryPoint_RefreshCreatureCount).GetMethodSafe(nameof(CorrectedCell), true, PPatchTools.AnyArguments);
+                var correctedCell = typeof(CreatureDeliveryPoint_RefreshCreatureCount).GetMethodSafe(nameof(CorrectedCell), true, PPatchTools.AnyArguments);
 
                 bool result = false;
-                if (PosToCell != null && x != null)
+                if (PosToCell != null && correctedCell != null)
                 {
                     for (int i = 0; i < instructionsList.Count; i++)
                     {
@@ -396,7 +367,7 @@ namespace ButcherStation
                         if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && info == PosToCell)
                         {
                             instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, x));
+                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, correctedCell));
                             result = true;
 #if DEBUG
                             Debug.Log($"'{methodName}' Transpiler injected");
