@@ -16,17 +16,25 @@
   <PropertyGroup>
     <Title>Butcher &amp; Fishing Stations</Title>
     <Description>Adds a new Stations allows the Ranchers to control the population and butchering too old, surplus, or unwanted Critters.</Description>
-    <ModVersion>1.5.2</ModVersion>
+    <ModVersion>1.6.0</ModVersion>
+    <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\lib\BaseConfig.cs">
-      <Link>BaseConfig.cs</Link>
+    <Compile Include="..\lib\BaseOptions.cs">
+      <Link>BaseOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\MultiRoomTracker.cs">
+      <Link>MultiRoomTracker.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\UI.cs">
+      <Link>UI.cs</Link>
     </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
     <Compile Include="ButcherStation.cs" />
-    <Compile Include="Config.cs" />
+    <Compile Include="ButcherStationOptions.cs" />
+    <Compile Include="ButcherStationSideScreen.cs" />
     <Compile Include="ExtraMeatSpawner.cs" />
     <Compile Include="FishingStationConfig.cs" />
     <Compile Include="ButcherStationConfig.cs" />

@@ -2,17 +2,35 @@
 
 namespace ButcherStation
 {
+    [SkipSaveFileSerialization]
     public class FishingStationGuide : KMonoBehaviour, IRenderEveryTick, ISim1000ms
     {
+        private static readonly EventSystem.IntraObjectHandler<FishingStationGuide> OnOperationalChangedDelegate =
+            new EventSystem.IntraObjectHandler<FishingStationGuide>((component, data) => component.OnOperationalChanged(data));
+
         static readonly int MinDepth = 1;
-        static readonly int MaxDepth = 4;
-        private int previousDepthAvailable = -1;
+        static readonly int MaxDepth = 5;
+        private int previousDepth = -1;
         private bool previousWaterFound = false;
-        public GameObject parent;
+
+        public enum GuideType { Preview, UnderConstruction, Complete }
+        public GuideType type;
+
         public bool occupyTiles = false;
-        public bool isPreview = true;
-        private KBatchedAnimController parentController;
-        private KBatchedAnimController guideController;
+
+        private string lineAnim;
+        private KAnim.PlayMode playMode;
+        private KBatchedAnimController line;
+        private KBatchedAnimController hook;
+
+#pragma warning disable CS0649
+        [MyCmpGet]
+        private KSelectable kSelectable;
+
+        [MyCmpReq]
+        private KBatchedAnimController kbac;
+#pragma warning restore CS0649
+
         private static StatusItem statusItemNoDepth;
         private static StatusItem statusItemNoWater;
 
@@ -32,88 +50,139 @@ namespace ButcherStation
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            parentController = parent.GetComponent<KBatchedAnimController>();
-            guideController = GetComponent<KBatchedAnimController>();
-            RefreshTint();
-            RefreshDepthAvailable();
-        }
-
-        private void RefreshTint()
-        {
-            guideController.TintColour = parentController.TintColour;
-        }
-
-        private void RefreshDepthAvailable()
-        {
-            bool waterFound;
-            int depthAvailable = GetDepthAvailable(parent, out waterFound);
-            if (depthAvailable != previousDepthAvailable || waterFound != previousWaterFound)
+            var kanim = Assets.GetAnim("fishingline_kanim");
+            string snapto = "snapto_pivot";
+            if (type == GuideType.Complete)
             {
-                var kBatchedAnimController = GetComponent<KBatchedAnimController>();
-                if (depthAvailable == 0)
+                Subscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
+                lineAnim = "line";
+                string hookAnim = "hook";
+                playMode = KAnim.PlayMode.Loop;
+                line = AddGuide(kbac, snapto, kanim, lineAnim, true);
+                hook = AddGuide(line, snapto, kanim, hookAnim, true);
+                hook.Play(hookAnim, playMode);
+            }
+            else
+            {
+                lineAnim = "line_place";
+                playMode = KAnim.PlayMode.Once;
+                line = AddGuide(kbac, snapto, kanim, lineAnim, false);
+            }
+            RefreshDepth();
+        }
+
+        protected override void OnCleanUp()
+        {
+            Unsubscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
+            base.OnCleanUp();
+        }
+
+        private void OnOperationalChanged(object data)
+        {
+            if ((bool)data)
+            {
+                kbac.Queue("on_pre");
+                kbac.Queue("on");
+            }
+            else
+            {
+                kbac.Queue("on_pst");
+                kbac.Queue("off");
+            }
+        }
+
+        private KBatchedAnimController AddGuide(KBatchedAnimController parent, string target_symbol, KAnimFile kanim, string animation, bool create_meter)
+        {
+            var go = new GameObject { name = parent.name + "." + animation };
+            go.SetActive(false);
+            go.transform.parent = parent.transform;
+            var position = parent.transform.GetPosition();
+            position.z = parent.transform.GetPosition().z + 0.1f; // Meter.Offset.Behind
+            go.transform.SetPosition(position);
+            var kbak = go.AddOrGet<KBatchedAnimController>();
+            kbak.AnimFiles = new KAnimFile[] { kanim ?? parent.AnimFiles[0] };
+            kbak.initialAnim = animation;
+            kbak.fgLayer = Grid.SceneLayer.NoLayer;
+            kbak.initialMode = KAnim.PlayMode.Paused;
+            kbak.isMovable = true;
+            kbak.visibilityType = KAnimControllerBase.VisibilityType.OffscreenUpdate;
+            kbak.FlipX = parent.FlipX;
+            kbak.FlipY = parent.FlipY;
+            kbak.TintColour = parent.TintColour;
+            kbak.HighlightColour = parent.HighlightColour;
+            if (create_meter)
+            {
+                var tracker = go.AddOrGet<KBatchedAnimTracker>();
+                tracker.symbol = new HashedString(target_symbol);
+                tracker.matchParentOffset = true;
+                _ = new MeterController(parent, kbak, target_symbol) { gameObject = go };
+            }
+            parent.SetSymbolVisiblity(target_symbol, false);
+            go.SetActive(true);
+            return kbak;
+        }
+
+        private void RefreshDepth()
+        {
+            int depth = GetDepthAvailable(gameObject, out bool waterFound);
+            if (depth != previousDepth || waterFound != previousWaterFound)
+            {
+                if (depth <= 0)
                 {
-                    kBatchedAnimController.enabled = false;
+                    line.SetVisiblity(false);
+                    hook?.SetVisiblity(false);
                 }
                 else
                 {
-                    kBatchedAnimController.enabled = true;
-                    kBatchedAnimController.Offset = new Vector3(0, -depthAvailable + 0.35f);
-                    for (int i = 1; i <= MaxDepth; i++)
-                    {
-                        kBatchedAnimController.SetSymbolVisiblity("line" + i.ToString(), i <= depthAvailable);
-                        kBatchedAnimController.SetSymbolVisiblity("lineplace" + i.ToString(), i <= depthAvailable);
-                    }
-                    kBatchedAnimController.sceneLayer = Grid.SceneLayer.BuildingBack;
-                    kBatchedAnimController.Play(kBatchedAnimController.initialAnim , KAnim.PlayMode.Loop, 1f, 0f);
+                    line.SetVisiblity(true);
+                    line.Play(lineAnim + depth, playMode);
+                    hook?.SetVisiblity(true);
                 }
-                if (occupyTiles)
+                if (type != GuideType.Preview)
                 {
-                    OccupyArea(parent, depthAvailable);
-                }
-                if (!isPreview)
-                {
-                    var kSelectable = parent.GetComponent<KSelectable>();
+                    // todo: пока выключил резервацию тайлов. тк создает неопределенное поведение,
+                    // если сделать работу в разных типах комнатах для совместимости с "роом эхпандед"
+                    // надо подумать
+#if false
+                    OccupyArea(depth);
+#endif
                     if (kSelectable != null)
                     {
-                        kSelectable.ToggleStatusItem(statusItemNoDepth, depthAvailable == 0);
-                        kSelectable.ToggleStatusItem(statusItemNoWater, depthAvailable > 0 && !waterFound);
+                        kSelectable.ToggleStatusItem(statusItemNoDepth, depth <= 0);
+                        kSelectable.ToggleStatusItem(statusItemNoWater, depth > 0 && !waterFound);
                     }
                 }
-                previousDepthAvailable = depthAvailable;
+                previousDepth = depth;
                 previousWaterFound = waterFound;
             }
         }
 
         public void RenderEveryTick(float dt)
         {
-            RefreshTint();
-            if (isPreview)
-            {
-                RefreshDepthAvailable();
-            }
+            if (type == GuideType.Preview)
+                RefreshDepth();
         }
 
         public void Sim1000ms(float dt)
         {
-            if (!isPreview)
-            {
-                RefreshDepthAvailable();
-            }
+            if (type != GuideType.Preview)
+                RefreshDepth();
         }
 
-        public static void OccupyArea(GameObject go, int depth_available)
+        private void OccupyArea(int depth)
         {
-            int root_cell = Grid.CellBelow(Grid.PosToCell(go.transform.GetPosition()));
+            int root_cell = Grid.CellBelow(Grid.PosToCell(transform.GetPosition()));
             for (int i = MinDepth; i <= MaxDepth; i++)
             {
                 int cell = Grid.OffsetCell(root_cell, 0, -i);
-                if (i <= depth_available)
+                if (i <= depth)
                 {
-                    Grid.ObjectLayers[1][cell] = go;
+                    Grid.ObjectLayers[(int)ObjectLayer.Building][cell] = gameObject;
                 }
-                else if (Grid.ObjectLayers[1].ContainsKey(cell) && Grid.ObjectLayers[1][cell] == go)
+                else if (Grid.ObjectLayers[(int)ObjectLayer.Building].ContainsKey(cell)
+                    && Grid.ObjectLayers[(int)ObjectLayer.Building][cell] == gameObject)
                 {
-                    Grid.ObjectLayers[1][cell] = null;
+                    Grid.ObjectLayers[(int)ObjectLayer.Building][cell] = null;
                 }
             }
         }
@@ -121,27 +190,28 @@ namespace ButcherStation
         public static int GetDepthAvailable(GameObject go, out bool waterFound)
         {
             int root_cell = Grid.CellBelow(Grid.PosToCell(go));
-            int result = 0;
+            int depth = 0;
+            int depthWithWater = 0;
             waterFound = false;
             for (int i = MinDepth; i <= MaxDepth; i++)
             {
                 int cell = Grid.OffsetCell(root_cell, 0, -i);
-                if (!Grid.IsValidCell(cell) || Grid.Solid[cell] || (Grid.ObjectLayers[1].ContainsKey(cell) && !(Grid.ObjectLayers[1][cell] == null) && !(Grid.ObjectLayers[1][cell] == go)) )
-                {
+                // todo: если не будет резервации тайлов - нужно подумать по поводу занятости места другими постройками
+                if (!Grid.IsValidCell(cell) || Grid.Solid[cell] ||
+                    (Grid.ObjectLayers[(int)ObjectLayer.Building].ContainsKey(cell)
+                    && !(Grid.ObjectLayers[(int)ObjectLayer.Building][cell] == null)
+                    && !(Grid.ObjectLayers[(int)ObjectLayer.Building][cell] == go)))
                     break;
-                }
-                result = i;
-                if (result > MinDepth && Grid.IsSubstantialLiquid(cell))
+                depth = i;
+                if (depth > MinDepth && Grid.IsSubstantialLiquid(cell))
                 {
                     waterFound = true;
-                    break;
+                    depthWithWater = depth;
                 }
             }
-            if (result <= MinDepth)
-            {
-                result = 0;
-            }
-            return result;
+            if (depth <= MinDepth)
+                depth = 0;
+            return waterFound ? depthWithWater : depth;
         }
     }
 }

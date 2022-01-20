@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Klei.AI;
 using KSerialization;
 using STRINGS;
@@ -8,7 +9,8 @@ using UnityEngine;
 
 namespace ButcherStation
 {
-    public class ButcherStation : KMonoBehaviour, ISim4000ms, IIntSliderControl, ISliderControl, IUserControlledCapacity, ICheckboxControl
+    [SerializationConfig(MemberSerialization.OptIn)]
+    public class ButcherStation : KMonoBehaviour, ISim4000ms
     {
         public static readonly Tag ButcherableCreature = TagManager.Create("ButcherableCreature");
         public static readonly Tag FisherableCreature = TagManager.Create("FisherableCreature");
@@ -19,16 +21,32 @@ namespace ButcherStation
         public const float EXTRAMEATPERRANCHINGATTRIBUTE = 0.025f;
 
         [Serialize]
-        private int creatureLimit = Config.Get().MAXCREATURELIMIT;
+        internal int creatureLimit = ButcherStationOptions.Instance.max_creature_limit;
         private int storedCreatureCount;
         internal List<KPrefabID> Creatures { get; private set; } = new List<KPrefabID>();
         private bool dirty = true;
 
         [Serialize]
-        private float ageButchThresold = 0.85f;
+        internal float ageButchThresold = 0.85f;
 
+        [Obsolete]
         [Serialize]
         private bool autoButchSurplus = false;
+
+        [Serialize]
+        internal bool wrangleUnSelected = false;// ловить лишних не выбранных в фильтре
+
+        [Serialize]
+        internal bool wrangleOldAged = true;    // ловить старых
+
+        [Serialize]
+        internal bool wrangleSurplus = false;   // ловить лишних избыточных
+
+        [Serialize]
+        internal bool leaveAlive = false;       // оставить живым
+
+        [SerializeField]
+        internal bool allowLeaveAlive = false;
 
 #pragma warning disable CS0649
         [MyCmpReq]
@@ -46,14 +64,28 @@ namespace ButcherStation
                 {
                     resolveStringCallback = delegate (string str, object data)
                     {
-                        var userControlledCapacity = (IUserControlledCapacity)data;
-                        string stored = Util.FormatWholeNumber(Mathf.Floor(userControlledCapacity.AmountStored));
-                        string capacity = Util.FormatWholeNumber(userControlledCapacity.UserMaxCapacity);
-                        return str.Replace("{Stored}", stored).Replace("{Capacity}", capacity).Replace("{Units}", userControlledCapacity.CapacityUnits);
+                        var butcherStation = (ButcherStation)data;
+                        string stored = Util.FormatWholeNumber(butcherStation.storedCreatureCount);
+                        string capacity = Util.FormatWholeNumber(ButcherStationOptions.Instance.max_creature_limit);
+                        return str.Replace("{Stored}", stored).Replace("{Capacity}", capacity).Replace("{Units}", UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.UNITS_SUFFIX);
                     }
                 };
             }
             GetComponent<KSelectable>().SetStatusItem(Db.Get().StatusItemCategories.Main, capacityStatusItem, this);
+        }
+
+        // подгружаем старый параметр из прошлых версий
+        [OnDeserialized]
+        private void OnDeserialized()
+        {
+#pragma warning disable CS0612
+            if (autoButchSurplus)
+            {
+                wrangleUnSelected = true;
+                wrangleSurplus = true;
+                autoButchSurplus = false;
+            }
+#pragma warning restore CS0612
         }
 
         protected override void OnSpawn()
@@ -78,7 +110,10 @@ namespace ButcherStation
             {
                 creatureLimit = butcherStation.creatureLimit;
                 ageButchThresold = butcherStation.ageButchThresold;
-                autoButchSurplus = butcherStation.autoButchSurplus;
+                wrangleUnSelected = butcherStation.wrangleUnSelected;
+                wrangleOldAged = butcherStation.wrangleOldAged;
+                wrangleSurplus = butcherStation.wrangleSurplus;
+                leaveAlive = allowLeaveAlive && butcherStation.leaveAlive;
             }
         }
 
@@ -137,106 +172,47 @@ namespace ButcherStation
         {
             if (!creature_go.HasTag(creatureEligibleTag) || creature_go.HasTag(GameTags.Creatures.Die) || creature_go.HasTag(GameTags.Dead))
                 return false;
-            bool surplus = !treeFilterable?.ContainsTag(creature_go.GetComponent<KPrefabID>().PrefabTag) ?? false;
-            if (autoButchSurplus && (surplus || storedCreatureCount > creatureLimit))
+            bool unSelected = !treeFilterable?.ContainsTag(creature_go.GetComponent<KPrefabID>().PrefabTag) ?? false;
+            if (unSelected && wrangleUnSelected)
                 return true;
-            var age = Db.Get().Amounts.Age.Lookup(creature_go);
-            if (age != null)
-                return !surplus && ageButchThresold < age.value / age.GetMax();
+            if (!unSelected && wrangleSurplus && storedCreatureCount > creatureLimit)
+                return true;
+            if (!unSelected && wrangleOldAged)
+            {
+                var age = Db.Get().Amounts.Age.Lookup(creature_go);
+                if (age != null)
+                    return ageButchThresold < age.value / age.GetMax();
+            }
             return false;
         }
 
         public static void ButchCreature(GameObject creature_go, bool moveCreatureToButcherStation = false)
         {
+            bool kill = true;
             var targetRanchStation = creature_go.GetSMI<RanchableMonitor.Instance>()?.targetRanchStation;
             if (targetRanchStation != null)
             {
                 if (moveCreatureToButcherStation)
                 {
-                    creature_go.transform.SetPosition(targetRanchStation.transform.GetPosition());
+                    int cell = Grid.PosToCell(targetRanchStation.transform.GetPosition());
+                    creature_go.transform.SetPosition(Grid.CellToPosCCC(cell, Grid.SceneLayer.Creatures));
                 }
                 var extraMeatSpawner = creature_go.GetComponent<ExtraMeatSpawner>();
                 if (extraMeatSpawner != null)
                 {
                     var smi = targetRanchStation.GetSMI<RancherChore.RancherChoreStates.Instance>();
                     var rancher = smi.sm.rancher.Get(smi);
-                    extraMeatSpawner.onDeathDropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * Config.Get().EXTRAMEATPERRANCHINGATTRIBUTE;
+                    extraMeatSpawner.onDeathDropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
+                }
+                var butcherStation = targetRanchStation.GetComponent<ButcherStation>();
+                if (butcherStation != null && butcherStation.leaveAlive)
+                {
+                    creature_go.GetComponent<Baggable>()?.SetWrangled();
+                    kill = false;
                 }
             }
-            creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);
-        }
-
-        // лимит количества жеготных
-        float IUserControlledCapacity.UserMaxCapacity { get => creatureLimit; set => creatureLimit = Mathf.RoundToInt(value); }
-
-        float IUserControlledCapacity.AmountStored => storedCreatureCount;
-        float IUserControlledCapacity.MinCapacity => 0;
-        float IUserControlledCapacity.MaxCapacity => Config.Get().MAXCREATURELIMIT;
-        bool IUserControlledCapacity.WholeValues => true;
-        LocString IUserControlledCapacity.CapacityUnits => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.UNITS_SUFFIX;
-
-        // ползун настройки максимального возраста
-        string ISliderControl.SliderTitleKey => STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TITLE.key.String;
-        string ISliderControl.SliderUnits => UI.UNITSUFFIXES.PERCENT;
-
-        float ISliderControl.GetSliderMax(int index)
-        {
-            return 100f;
-        }
-
-        float ISliderControl.GetSliderMin(int index)
-        {
-            return 0f;
-        }
-
-        string ISliderControl.GetSliderTooltip()
-        {
-            string s = string.Empty;
-            foreach (float max_age in new float[] {
-                TUNING.CREATURES.LIFESPAN.TIER1,
-                TUNING.CREATURES.LIFESPAN.TIER2,
-                TUNING.CREATURES.LIFESPAN.TIER3,
-                TUNING.CREATURES.LIFESPAN.TIER4,
-                    })
-            {
-                s = s + "\n" + (ageButchThresold * max_age).ToString("F1") + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_OUTOF + Math.Floor(max_age) + STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP_CYCLES;
-            }
-            return string.Format(STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP, ageButchThresold * 100f) + s;
-        }
-
-        string ISliderControl.GetSliderTooltipKey(int index)
-        {
-            return STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.TOOLTIP.key.String;
-        }
-
-        float ISliderControl.GetSliderValue(int index)
-        {
-            return ageButchThresold * 100f;
-        }
-
-        void ISliderControl.SetSliderValue(float percent, int index)
-        {
-            ageButchThresold = percent / 100f;
-        }
-
-        int ISliderControl.SliderDecimalPlaces(int index)
-        {
-            return 0;
-        }
-
-        // флажёк "убивать лишних"
-        string ICheckboxControl.CheckboxTitleKey => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.TITLE.key.String;
-        string ICheckboxControl.CheckboxLabel => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.AUTOWRANGLE;
-        string ICheckboxControl.CheckboxTooltip => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.AUTOWRANGLE_TOOLTIP;
-
-        bool ICheckboxControl.GetCheckboxValue()
-        {
-            return autoButchSurplus;
-        }
-
-        void ICheckboxControl.SetCheckboxValue(bool value)
-        {
-            autoButchSurplus = value;
+            if (kill)
+                creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);
         }
     }
 }

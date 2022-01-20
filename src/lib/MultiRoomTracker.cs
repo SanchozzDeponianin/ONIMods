@@ -2,8 +2,9 @@
 using System.Linq;
 using PeterHan.PLib.Detours;
 
-namespace MechanicsStation
+namespace SanchozzONIMods.Shared
 {
+    [SkipSaveFileSerialization]
     public class MultiRoomTracker : KMonoBehaviour
     {
         public string[] possibleRoomTypes;

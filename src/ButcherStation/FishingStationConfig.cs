@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using TUNING;
+using SanchozzONIMods.Shared;
 
 namespace ButcherStation
 {
@@ -41,7 +42,9 @@ namespace ButcherStation
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
-            go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.CreatureRelocator, false);
+            var prefabID = go.GetComponent<KPrefabID>();
+            prefabID.AddTag(RoomConstraints.ConstraintTags.CreatureRelocator, false);
+            prefabID.AddTag(RoomConstraints.ConstraintTags.RanchStation, false);
             var storage = go.AddOrGet<Storage>();
             storage.allowItemRemoval = false;
             storage.showDescriptor = false;
@@ -50,12 +53,30 @@ namespace ButcherStation
             go.AddOrGet<TreeFilterable>();
             var butcherStation = go.AddOrGet<ButcherStation>();
             butcherStation.creatureEligibleTag = ButcherStation.FisherableCreature;
+            butcherStation.allowLeaveAlive = true;
             go.AddOrGet<LoopingSounds>();
             go.AddOrGet<BuildingComplete>().isManuallyOperated = true;
-            go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.RanchStation, false);
+            var kbac = go.AddOrGet<KBatchedAnimController>();
+            kbac.sceneLayer = Grid.SceneLayer.BuildingBack;
+            kbac.fgLayer = Grid.SceneLayer.BuildingFront;
             var roomTracker = go.AddOrGet<RoomTracker>();
             roomTracker.requiredRoomType = Db.Get().RoomTypes.CreaturePen.Id;
             roomTracker.requirement = RoomTracker.Requirement.Required;
+            if (ButcherStationPatches.RoomsExpandedFound)
+            {
+                go.AddOrGet<MultiRoomTracker>().possibleRoomTypes =
+                    new string[] { Db.Get().RoomTypes.CreaturePen.Id, ButcherStationPatches.AquariumRoom.Id };
+            }
+        }
+
+        public override void DoPostConfigurePreview(BuildingDef def, GameObject go)
+        {
+            go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.Preview;
+        }
+
+        public override void DoPostConfigureUnderConstruction(GameObject go)
+        {
+            go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.UnderConstruction;
         }
 
         public override void DoPostConfigureComplete(GameObject go)
@@ -72,14 +93,14 @@ namespace ButcherStation
             };
             def.getTargetRanchCell = delegate (RanchStation.Instance smi)
             {
-                int num = Grid.InvalidCell;
                 if (!smi.IsNullOrStopped())
                 {
-                    bool water;
-                    num = Grid.CellBelow(Grid.PosToCell(smi.transform.GetPosition()));
-                    num = Grid.OffsetCell(num, 0, -FishingStationGuide.GetDepthAvailable(smi.gameObject, out water));
+                    int cell = Grid.CellBelow(Grid.PosToCell(smi.transform.GetPosition()));
+                    cell = Grid.OffsetCell(cell, 0, -FishingStationGuide.GetDepthAvailable(smi.gameObject, out _));
+                    if (Grid.IsValidCell(cell))
+                        return cell;
                 }
-                return num;
+                return Grid.InvalidCell;
             };
             def.interactLoopCount = 1;
             def.rancherInteractAnim = "anim_interacts_fishingstation_kanim";
@@ -88,35 +109,7 @@ namespace ButcherStation
             def.ranchedPstAnim = "trapped_pre";
             def.synchronizeBuilding = true;
             Prioritizable.AddRef(go);
-
-            var buildingDef = go.GetComponent<Building>().Def;
-            AddGuide(buildingDef.BuildingPreview, preview: true, occupy_tiles: false);
-            AddGuide(buildingDef.BuildingPreview, foundament: true);
-            AddGuide(buildingDef.BuildingUnderConstruction, preview: true, occupy_tiles: true);
-            AddGuide(buildingDef.BuildingUnderConstruction, foundament: true);
-            AddGuide(buildingDef.BuildingComplete, preview: false, occupy_tiles: true);
-        }
-
-        private static void AddGuide(GameObject go, bool preview = true, bool occupy_tiles = false, bool foundament = false)
-        {
-            var gameObject = new GameObject();
-            gameObject.transform.parent = go.transform;
-            gameObject.transform.SetLocalPosition(Vector3.zero);
-            var kbatchedAnimController = gameObject.AddComponent<KBatchedAnimController>();
-            kbatchedAnimController.Offset = go.GetComponent<Building>().Def.GetVisualizerOffset();
-            kbatchedAnimController.AnimFiles = new KAnimFile[] { Assets.GetAnim(new HashedString("fishing_line_kanim")) };
-            kbatchedAnimController.initialAnim = preview ? (foundament ? "foundament" : "place") : "hook";
-            kbatchedAnimController.visibilityType = KAnimControllerBase.VisibilityType.OffscreenUpdate;
-            kbatchedAnimController.sceneLayer = Grid.SceneLayer.BuildingBack;
-            kbatchedAnimController.isMovable = true;
-            kbatchedAnimController.PlayMode = preview ? KAnim.PlayMode.Once : KAnim.PlayMode.Loop;
-            if (!foundament)
-            {
-                var fishingStationGuide = gameObject.AddComponent<FishingStationGuide>();
-                fishingStationGuide.parent = go;
-                fishingStationGuide.occupyTiles = occupy_tiles;
-                fishingStationGuide.isPreview = preview;
-            }
+            go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.Complete;
         }
     }
 }

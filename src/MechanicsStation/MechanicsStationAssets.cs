@@ -3,6 +3,7 @@ using Klei.AI;
 using STRINGS;
 using HarmonyLib;
 using UnityEngine;
+using SanchozzONIMods.Shared;
 using PeterHan.PLib.Core;
 
 namespace MechanicsStation
