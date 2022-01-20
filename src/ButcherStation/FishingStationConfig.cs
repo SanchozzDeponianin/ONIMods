@@ -56,6 +56,9 @@ namespace ButcherStation
             butcherStation.allowLeaveAlive = true;
             go.AddOrGet<LoopingSounds>();
             go.AddOrGet<BuildingComplete>().isManuallyOperated = true;
+            var kbac = go.AddOrGet<KBatchedAnimController>();
+            kbac.sceneLayer = Grid.SceneLayer.BuildingBack;
+            kbac.fgLayer = Grid.SceneLayer.BuildingFront;
             var roomTracker = go.AddOrGet<RoomTracker>();
             roomTracker.requiredRoomType = Db.Get().RoomTypes.CreaturePen.Id;
             roomTracker.requirement = RoomTracker.Requirement.Required;
@@ -64,6 +67,16 @@ namespace ButcherStation
                 go.AddOrGet<MultiRoomTracker>().possibleRoomTypes =
                     new string[] { Db.Get().RoomTypes.CreaturePen.Id, ButcherStationPatches.AquariumRoom.Id };
             }
+        }
+
+        public override void DoPostConfigurePreview(BuildingDef def, GameObject go)
+        {
+            go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.Preview;
+        }
+
+        public override void DoPostConfigureUnderConstruction(GameObject go)
+        {
+            go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.UnderConstruction;
         }
 
         public override void DoPostConfigureComplete(GameObject go)
@@ -96,38 +109,7 @@ namespace ButcherStation
             def.ranchedPstAnim = "trapped_pre";
             def.synchronizeBuilding = true;
             Prioritizable.AddRef(go);
-
-            // todo: пока выключил резервацию тайлов. тк создает неопределенное поведение,
-            // если сделать работу в разных комнатах для совместимости с роом эхпандед
-            // надо подумать
-            var buildingDef = go.GetComponent<Building>().Def;
-            AddGuide(buildingDef.BuildingPreview, preview: true, occupy_tiles: false);
-            AddGuide(buildingDef.BuildingPreview, foundament: true);
-            AddGuide(buildingDef.BuildingUnderConstruction, preview: true, occupy_tiles: false);// occupy_tiles: true
-            AddGuide(buildingDef.BuildingUnderConstruction, foundament: true);
-            AddGuide(buildingDef.BuildingComplete, preview: false, occupy_tiles: false);// occupy_tiles: true
-        }
-
-        private static void AddGuide(GameObject go, bool preview = true, bool occupy_tiles = false, bool foundament = false)
-        {
-            var gameObject = new GameObject();
-            gameObject.transform.parent = go.transform;
-            gameObject.transform.SetLocalPosition(Vector3.zero);
-            var kbatchedAnimController = gameObject.AddComponent<KBatchedAnimController>();
-            kbatchedAnimController.Offset = go.GetComponent<Building>().Def.GetVisualizerOffset();
-            kbatchedAnimController.AnimFiles = new KAnimFile[] { Assets.GetAnim(new HashedString("fishing_line_kanim")) };
-            kbatchedAnimController.initialAnim = preview ? (foundament ? "foundament" : "place") : "hook";
-            kbatchedAnimController.visibilityType = KAnimControllerBase.VisibilityType.OffscreenUpdate;
-            kbatchedAnimController.sceneLayer = Grid.SceneLayer.BuildingBack;
-            kbatchedAnimController.isMovable = true;
-            kbatchedAnimController.PlayMode = preview ? KAnim.PlayMode.Once : KAnim.PlayMode.Loop;
-            if (!foundament)
-            {
-                var fishingStationGuide = gameObject.AddComponent<FishingStationGuide>();
-                fishingStationGuide.parent = go;
-                fishingStationGuide.occupyTiles = occupy_tiles;
-                fishingStationGuide.isPreview = preview;
-            }
+            go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.Complete;
         }
     }
 }
