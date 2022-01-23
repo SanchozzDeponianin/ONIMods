@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using Klei.AI;
+using TUNING;
 using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
@@ -15,7 +17,8 @@ namespace VaricolouredBalloons
 {
     internal sealed class VaricolouredBalloonsPatches : KMod.UserMod2
     {
-        // доступ к приватному полю
+        private const string HasBalloon = "HasBalloon";
+
         private static readonly IDetouredField<GetBalloonWorkable, BalloonArtistChore.StatesInstance> BALLOONARTIST = PDetours.DetourField<GetBalloonWorkable, BalloonArtistChore.StatesInstance>("balloonArtist");
 
         public override void OnLoad(Harmony harmony)
@@ -27,14 +30,9 @@ namespace VaricolouredBalloons
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
-        private static void InitLocalization()
+        private static void BeforeDbInit()
         {
             Utils.InitLocalization(typeof(STRINGS));
-        }
-
-        [PLibMethod(RunAt.BeforeDbInit)]
-        private static void InitAnims()
-        {
             VaricolouredBalloonsHelper.InitializeAnims();
         }
 
@@ -53,10 +51,11 @@ namespace VaricolouredBalloons
         private static void OnStartGame()
         {
             VaricolouredBalloonsOptions.Reload();
+            EquippableBalloon_OnSpawn.HasBalloonDuration = Db.Get().effects.Get(HasBalloon).duration;
         }
 
         [HarmonyPatch(typeof(MinionConfig), nameof(MinionConfig.CreatePrefab))]
-        internal static class MinionConfig_CreatePrefab
+        private static class MinionConfig_CreatePrefab
         {
             private static void Postfix(GameObject __result)
             {
@@ -69,7 +68,7 @@ namespace VaricolouredBalloons
         // рандомим индекс символа когда артист начинает раздачу
         // применяем подмену символа анимации в начале каждой итерации
         [HarmonyPatch(typeof(BalloonArtistChore.States), nameof(BalloonArtistChore.States.InitializeStates))]
-        internal static class BalloonArtistChore_States_InitializeStates
+        private static class BalloonArtistChore_States_InitializeStates
         {
             private static void Postfix(BalloonArtistChore.States __instance)
             {
@@ -89,7 +88,7 @@ namespace VaricolouredBalloons
 
         // внедряем перехватчик "задание 'получить баллон' начато"
         [HarmonyPatch(typeof(BalloonStandConfig), nameof(BalloonStandConfig.OnSpawn))]
-        internal static class BalloonStandConfig_OnSpawn
+        private static class BalloonStandConfig_OnSpawn
         {
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
@@ -98,7 +97,7 @@ namespace VaricolouredBalloons
         }
 
         [HarmonyPatch(typeof(BalloonStandConfig), "MakeNewBalloonChore")]
-        internal static class BalloonStandConfig_MakeNewBalloonChore
+        private static class BalloonStandConfig_MakeNewBalloonChore
         {
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
@@ -229,7 +228,7 @@ namespace VaricolouredBalloons
         */
 
         [HarmonyPatch(typeof(BalloonFX.Instance), MethodType.Constructor, new Type[] { typeof(IStateMachineTarget) })]
-        internal static class BalloonFX_Instance_Constructor
+        private static class BalloonFX_Instance_Constructor
         {
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
@@ -281,6 +280,66 @@ namespace VaricolouredBalloons
                 }
             }
             ___fx = null;
+        }
+
+        // исправление второго косяка в базовой игре
+        // фактическое время разэкипировки баллона вдвое меньше длительности эффекта, так что эффект исчезает преждевременно
+        // также при загрузке сейва эффект вешается с полным сроком, и исчезает преждевременно еще быстрее
+        // корректируем длительность эффекта до актуального значения
+        // опционально корректируем время разэкипировки баллона, чтобы соответствовало заявленной длительности эффекта
+        [HarmonyPatch(typeof(EquippableBalloon), "OnSpawn")]
+        private static class EquippableBalloon_OnSpawn
+        {
+            /*
+                base.OnSpawn();
+	        --- smi.transitionTime = GameClock.Instance.GetTime() + TRAITS.JOY_REACTIONS.JOY_REACTION_DURATION;
+            +++ smi.transitionTime = GameClock.Instance.GetTime() + FixJoyReactionDuration(TRAITS.JOY_REACTIONS.JOY_REACTION_DURATION);
+	            smi.StartSM();
+            */
+            public static float HasBalloonDuration;
+            private static float FixJoyReactionDuration(float duration)
+            {
+                return VaricolouredBalloonsOptions.Instance.FixEffectDuration ? HasBalloonDuration : duration;
+            }
+
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                var instructionsList = instructions.ToList();
+
+                var Duration = typeof(TRAITS.JOY_REACTIONS).GetFieldSafe(nameof(TRAITS.JOY_REACTIONS.JOY_REACTION_DURATION), true);
+                var FixDuration = typeof(EquippableBalloon_OnSpawn).GetMethodSafe(nameof(FixJoyReactionDuration), true, PPatchTools.AnyArguments);
+
+                bool result = false;
+                if (Duration != null && FixDuration != null)
+                {
+                    for (int i = 0; i < instructionsList.Count; i++)
+                    {
+                        var instruction = instructionsList[i];
+                        if (instruction.opcode == OpCodes.Ldsfld && instruction.operand is FieldInfo info && info == Duration)
+                        {
+                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, FixDuration));
+#if DEBUG
+                            PUtil.LogDebug("'EquippableBalloon.OnSpawn' Transpiler injected");
+#endif
+                            result = true;
+                            break;
+                        }
+                    }
+                }
+                if (!result)
+                {
+                    PUtil.LogWarning("Could not apply Transpiler to the 'EquippableBalloon.OnSpawn'");
+                }
+                return instructionsList;
+            }
+
+            private static void Postfix(EquippableBalloon __instance)
+            {
+                var effect = (__instance?.GetComponent<Equippable>()?.assignee?.GetSoleOwner()?
+                    .GetComponent<MinionAssignablesProxy>()?.target as KMonoBehaviour)?.GetComponent<Effects>()?.Get(HasBalloon);
+                if (effect != null)
+                    effect.timeRemaining = __instance.smi.transitionTime - GameClock.Instance.GetTime();
+            }
         }
     }
 }

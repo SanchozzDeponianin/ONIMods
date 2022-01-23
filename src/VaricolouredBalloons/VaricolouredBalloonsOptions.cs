@@ -11,5 +11,9 @@ namespace VaricolouredBalloons
         [JsonProperty]
         [Option]
         public bool DestroyFXAfterEffectExpired { get; set; } = false;
+
+        [JsonProperty]
+        [Option]
+        public bool FixEffectDuration { get; set; } = true;
     }
 }
