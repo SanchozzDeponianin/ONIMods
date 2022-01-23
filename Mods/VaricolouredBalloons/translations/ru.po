@@ -20,6 +20,6 @@ msgstr "Скорректировать длительность эффекта {
 
 #. VaricolouredBalloons.STRINGS.OPTIONS.FIXEFFECTDURATION.TOOLTIP
 msgctxt "VaricolouredBalloons.STRINGS.OPTIONS.FIXEFFECTDURATION.TOOLTIP"
-msgid "The Game shows that the {HASBALLOON} effect has a duration of two cycles,\nbut it suddenly disappears after one cycle.\n\nIf enabled, the {HASBALLOON} effect will actually continue for two cycles.\n\nIf disabled, just the mod will make the game show the correct duration of the {HASBALLOON} effect."
+msgid "The Game shows that the {HASBALLOON} effect has a duration of two cycles,\nbut it suddenly disappears after one cycle.\n\nIf enabled, the {HASBALLOON} effect will actually continue for two cycles.\n\nIf disabled, just the mod will make the game show the proper duration of the {HASBALLOON} effect."
 msgstr "Игра показывает, что эффект {HASBALLOON} длится два цикла,\nно он внезапно исчезает через один цикл.\n\nЕсли включено, эффект {HASBALLOON} на самом деле будет длится два цикла.\n\nЕсли выключено, просто мод заставит игру показывать правильную продолжительность эффекта {HASBALLOON}."
 

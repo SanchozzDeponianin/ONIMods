@@ -19,7 +19,7 @@ namespace VaricolouredBalloons
             public class FIXEFFECTDURATION
             {
                 public static LocString NAME = $"Correct the duration of the {HASBALLOON} effect";
-                public static LocString TOOLTIP = $"The Game shows that the {HASBALLOON} effect has a duration of two cycles,\nbut it suddenly disappears after one cycle.\n\nIf enabled, the {HASBALLOON} effect will actually continue for two cycles.\n\nIf disabled, just the mod will make the game show the correct duration of the {HASBALLOON} effect.";
+                public static LocString TOOLTIP = $"The Game shows that the {HASBALLOON} effect has a duration of two cycles,\nbut it suddenly disappears after one cycle.\n\nIf enabled, the {HASBALLOON} effect will actually continue for two cycles.\n\nIf disabled, just the mod will make the game show the proper duration of the {HASBALLOON} effect.";
             }
         }
 
