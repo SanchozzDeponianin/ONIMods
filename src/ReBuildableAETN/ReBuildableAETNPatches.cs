@@ -68,7 +68,7 @@ namespace ReBuildableAETN
 
         // добавляем ядра для постройки аэтна
         [HarmonyPatch(typeof(MassiveHeatSinkConfig), nameof(MassiveHeatSinkConfig.CreateBuildingDef))]
-        internal static class MassiveHeatSinkConfig_CreateBuildingDef
+        private static class MassiveHeatSinkConfig_CreateBuildingDef
         {
             private static void Postfix(ref BuildingDef __result)
             {
@@ -81,7 +81,7 @@ namespace ReBuildableAETN
         }
 
         [HarmonyPatch(typeof(MassiveHeatSinkConfig), nameof(MassiveHeatSinkConfig.DoPostConfigureComplete))]
-        internal static class MassiveHeatSinkConfig_DoPostConfigureComplete
+        private static class MassiveHeatSinkConfig_DoPostConfigureComplete
         {
             private static void Postfix(GameObject go)
             {
@@ -101,7 +101,7 @@ namespace ReBuildableAETN
 
         // скрываем требование навыка пока разрушение не назначено
         [HarmonyPatch(typeof(Deconstructable), "OnSpawn")]
-        internal static class Deconstructable_OnSpawn
+        private static class Deconstructable_OnSpawn
         {
             private static void Prefix(ref bool ___shouldShowSkillPerkStatusItem)
             {
@@ -110,7 +110,7 @@ namespace ReBuildableAETN
         }
 
         [HarmonyPatch]
-        internal static class Deconstructable_Queue_Cancel_Deconstruction
+        private static class Deconstructable_Queue_Cancel_Deconstruction
         {
             private static readonly DetouredMethod<Action<Workable, object>> UpdateStatusItem =
                 typeof(Workable).DetourLazy<Action<Workable, object>>("UpdateStatusItem");
@@ -131,7 +131,7 @@ namespace ReBuildableAETN
         // на длц - чтобы нельзя было строить аетн из замурованной версии едра
         // придется влезть во все постройки и запретить тэг замурованного артифакта
         [HarmonyPatch(typeof(Constructable), "OnSpawn")]
-        internal static class Constructable_OnSpawn
+        private static class Constructable_OnSpawn
         {
             private static bool Prepare()
             {
@@ -167,7 +167,7 @@ namespace ReBuildableAETN
 
         // добавляем ядра в посылку
         [HarmonyPatch(typeof(Immigration), "ConfigureCarePackages")]
-        internal static class Immigration_ConfigureCarePackages
+        private static class Immigration_ConfigureCarePackages
         {
             private static bool Prepare()
             {
@@ -193,7 +193,7 @@ namespace ReBuildableAETN
         // сетлокер и сырая воркабле должны быть добавлены в гамеобъект раньше любой другой воркабле, 
         // иначе хрень получается, поэтому транспилером
         [HarmonyPatch(typeof(PropFacilityDeskConfig), nameof(PropFacilityDeskConfig.CreatePrefab))]
-        internal static class PropFacilityDeskConfig_CreatePrefab
+        private static class PropFacilityDeskConfig_CreatePrefab
         {
             private static Demolishable InjectSetLocker(GameObject go)
             {
@@ -232,7 +232,7 @@ namespace ReBuildableAETN
         }
 
         [HarmonyPatch(typeof(PropFacilityDeskConfig), nameof(PropFacilityDeskConfig.OnPrefabInit))]
-        internal static class PropFacilityDeskConfig_OnPrefabInit
+        private static class PropFacilityDeskConfig_OnPrefabInit
         {
             private static void Postfix(GameObject inst)
             {
@@ -247,10 +247,20 @@ namespace ReBuildableAETN
             }
         }
 
-        // спутник
-        [HarmonyPatch(typeof(PropSurfaceSatellite3Config), nameof(PropSurfaceSatellite3Config.CreatePrefab))]
-        internal static class PropSurfaceSatellite3Config_CreatePrefab
+        // спутники
+        [HarmonyPatch]
+        private static class PropSurfaceSatellite3Config_CreatePrefab
         {
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                return new List<MethodBase>()
+                {
+                    typeof(PropSurfaceSatellite1Config).GetMethodSafe(nameof(PropSurfaceSatellite1Config.CreatePrefab), false),
+                    typeof(PropSurfaceSatellite2Config).GetMethodSafe(nameof(PropSurfaceSatellite2Config.CreatePrefab), false),
+                    typeof(PropSurfaceSatellite3Config).GetMethodSafe(nameof(PropSurfaceSatellite3Config.CreatePrefab), false),
+                };
+            }
+
             private static void Postfix(GameObject __result)
             {
                 __result.AddOrGet<MassiveHeatSinkCoreSpawner>().chance =
@@ -260,7 +270,7 @@ namespace ReBuildableAETN
 
         // шкафчик и торг-о-мат
         [HarmonyPatch]
-        internal static class SetLockerConfig_VendingMachineConfig_CreatePrefab
+        private static class SetLockerConfig_VendingMachineConfig_CreatePrefab
         {
             private static IEnumerable<MethodBase> TargetMethods()
             {
@@ -281,7 +291,7 @@ namespace ReBuildableAETN
         // выборы следующего для сбора артифакта в космических пои.
         // пусть будет условное значение "" означает ядро (некрасиво, но что поделать)
         [HarmonyPatch(typeof(ArtifactPOIStates.Instance), nameof(ArtifactPOIStates.Instance.PickNewArtifactToHarvest))]
-        internal static class ArtifactPOIStates_Instance_PickNewArtifactToHarvest
+        private static class ArtifactPOIStates_Instance_PickNewArtifactToHarvest
         {
             private static bool Prepare()
             {
@@ -312,7 +322,7 @@ namespace ReBuildableAETN
 
         // передача ранее выбранного артифакта
         [HarmonyPatch(typeof(ArtifactPOIStates.Instance), nameof(ArtifactPOIStates.Instance.GetArtifactToHarvest))]
-        internal static class ArtifactPOIStates_Instance_GetArtifactToHarvest
+        private static class ArtifactPOIStates_Instance_GetArtifactToHarvest
         {
             private static bool Prepare()
             {
@@ -338,7 +348,7 @@ namespace ReBuildableAETN
 
         // запись о проанализированном артифакте на станции анализа
         [HarmonyPatch(typeof(ArtifactSelector), nameof(ArtifactSelector.RecordArtifactAnalyzed))]
-        internal static class ArtifactSelector_RecordArtifactAnalyzed
+        private static class ArtifactSelector_RecordArtifactAnalyzed
         {
             private static bool Prefix(string id, ref bool __result)
             {
