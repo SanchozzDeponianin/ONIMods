@@ -27,8 +27,8 @@ namespace NoManualDelivery
             // хак для того чтобы разрешить руке хватать бутылки
             if (NoManualDeliveryOptions.Instance.AllowTransferArmPickupGasLiquid)
             {
-                SolidTransferArm.tagBits = new TagBits(STORAGEFILTERS.NOT_EDIBLE_SOLIDS.Concat(STORAGEFILTERS.FOOD).Concat(STORAGEFILTERS.GASES).Concat(STORAGEFILTERS.LIQUIDS).ToArray());
-
+                SolidTransferArm.tagBits = new TagBits(STORAGEFILTERS.NOT_EDIBLE_SOLIDS.Concat(STORAGEFILTERS.FOOD)
+                    .Concat(STORAGEFILTERS.PAYLOADS).Concat(STORAGEFILTERS.GASES).Concat(STORAGEFILTERS.LIQUIDS).ToArray());
                 BuildingToMakeAutomatable.AddRange(BuildingToMakeAutomatableWithTransferArmPickupGasLiquid);
             }
 
@@ -103,7 +103,7 @@ namespace NoManualDelivery
 
         // добавляем компонент к постройкам
         [HarmonyPatch(typeof(Assets), nameof(Assets.AddBuildingDef))]
-        internal static class Assets_AddBuildingDef
+        private static class Assets_AddBuildingDef
         {
             private static void Prefix(BuildingDef def)
             {
@@ -125,7 +125,7 @@ namespace NoManualDelivery
 
         // хак для того чтобы разрешить дупликам доставку для Tinkerable объектов, типа генераторов
         [HarmonyPatch(typeof(Tinkerable), "UpdateChore")]
-        internal static class Tinkerable_UpdateChore
+        private static class Tinkerable_UpdateChore
         {
             private static readonly IDetouredField<Chore, bool> arePreconditionsDirty = PDetours.DetourField<Chore, bool>("arePreconditionsDirty");
             private static readonly IDetouredField<Chore, List<Chore.PreconditionInstance>> preconditions = PDetours.DetourField<Chore, List<Chore.PreconditionInstance>>("preconditions");
@@ -151,7 +151,7 @@ namespace NoManualDelivery
 
         // хак для того чтобы разрешить дупликам забирать жеготных из инкубатора и всегда хватать еду
         [HarmonyPatch(typeof(Pickupable), nameof(Pickupable.CouldBePickedUpByMinion))]
-        internal static class Pickupable_CouldBePickedUpByMinion
+        private static class Pickupable_CouldBePickedUpByMinion
         {
             private static bool Prefix(Pickupable __instance, GameObject carrier, ref bool __result)
             {
@@ -166,7 +166,7 @@ namespace NoManualDelivery
 
         // хак - дуплы обжирающиеся от стресса, будут игнорировать установленную галку
         [HarmonyPatch(typeof(BingeEatChore.StatesInstance), nameof(BingeEatChore.StatesInstance.FindFood))]
-        internal static class BingeEatChore_StatesInstance_FindFood
+        private static class BingeEatChore_StatesInstance_FindFood
         {
             /*
             if ( блаблабла && 
@@ -210,7 +210,7 @@ namespace NoManualDelivery
 
         // хак для того чтобы не испортить заголовок окна - сместить галку вниз
         [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
-        internal static class DetailsScreen_OnPrefabInit
+        private static class DetailsScreen_OnPrefabInit
         {
             private static void Prefix(List<DetailsScreen.SideScreenRef> ___sideScreens)
             {
@@ -261,7 +261,7 @@ namespace NoManualDelivery
         }
 
         [HarmonyPatch(typeof(SweepBotStation), "OnStorageChanged")]
-        internal static class SweepBotStation_OnStorageChanged
+        private static class SweepBotStation_OnStorageChanged
         {
             private static void Postfix(Storage ___sweepStorage)
             {
@@ -271,7 +271,7 @@ namespace NoManualDelivery
 
         // нужно обновить хранилище при загрузке, и при изменении галки
         [HarmonyPatch(typeof(SweepBotStation), "OnSpawn")]
-        internal static class SweepBotStation_OnSpawn
+        private static class SweepBotStation_OnSpawn
         {
             private static void Postfix(Storage ___sweepStorage)
             {
@@ -280,7 +280,7 @@ namespace NoManualDelivery
         }
 
         [HarmonyPatch(typeof(Automatable), "OnCopySettings")]
-        internal static class Automatable_OnCopySettings
+        private static class Automatable_OnCopySettings
         {
             private static void Postfix(Automatable __instance)
             {
@@ -289,7 +289,7 @@ namespace NoManualDelivery
         }
 
         [HarmonyPatch(typeof(AutomatableSideScreen), "OnAllowManualChanged")]
-        internal static class AutomatableSideScreen_OnAllowManualChanged
+        private static class AutomatableSideScreen_OnAllowManualChanged
         {
             private static void Postfix(Automatable ___targetAutomatable)
             {
