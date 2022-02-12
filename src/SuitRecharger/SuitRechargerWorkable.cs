@@ -21,11 +21,16 @@ namespace SuitRecharger
 
         [MyCmpReq]
         private SuitRecharger recharger;
+
+        [MyCmpReq]
+        private EnergyConsumer energyConsumer;
 #pragma warning restore CS0649
 
         private SuitTank suitTank;
         private JetSuitTank jetSuitTank;
         private LeadSuitTank leadSuitTank;
+        private Durability durability;
+        private SuitRecharger.RepairSuitCost repairCost;
 
         protected override void OnPrefabInit()
         {
@@ -70,13 +75,18 @@ namespace SuitRecharger
                 suitTank = suit.GetComponent<SuitTank>();
                 jetSuitTank = suit.GetComponent<JetSuitTank>();
                 leadSuitTank = suit.GetComponent<LeadSuitTank>();
+                durability = suit.GetComponent<Durability>();
+                durability.ApplyEquippedDurability(worker.GetComponent<MinionResume>());
+                SuitRecharger.repairSuitCost.TryGetValue(suit.PrefabID(), out repairCost);
             }
+            energyConsumer.BaseWattageRating = energyConsumer.WattsNeededWhenActive;
             operational.SetActive(true, false);
             elapsedTime = 0;
         }
 
         protected override void OnStopWork(Worker worker)
         {
+            energyConsumer.BaseWattageRating = energyConsumer.WattsNeededWhenActive;
             operational.SetActive(false, false);
             if (worker != null)
             {
@@ -95,6 +105,7 @@ namespace SuitRecharger
             suitTank = null;
             jetSuitTank = null;
             leadSuitTank = null;
+            durability = null;
         }
 
         protected override void OnCompleteWork(Worker worker)
@@ -110,6 +121,8 @@ namespace SuitRecharger
             bool oxygen_charged = ChargeSuit(dt);
             bool fuel_charged = FuelSuit(dt);
             bool battery_charged = FillBattery(dt);
+            bool repaired = RepairSuit(dt);
+            energyConsumer.BaseWattageRating = energyConsumer.WattsNeededWhenActive + (repaired ? 0f : repairCost.energy / сhargeTime);
             return oxygen_charged && fuel_charged && battery_charged;
         }
 
@@ -165,6 +178,35 @@ namespace SuitRecharger
             {
                 leadSuitTank.batteryCharge += dt / сhargeTime;
                 return false;
+            }
+            return true;
+        }
+
+        private bool RepairSuit(float dt)
+        {
+            if (recharger.EnableRepair && durability != null)
+            {
+                float d = DurabilityExtensions.durability.Get(durability);
+                if (d < 1f)
+                {
+                    float delta = Mathf.Min(dt / сhargeTime, 1f - d);
+                    if (repairCost.material.IsValid)
+                    {
+                        float consume_mass = repairCost.amount * delta;
+                        var material = storage.FindFirstWithMass(repairCost.material, consume_mass);
+                        if (material != null)
+                        {
+                            material.Mass -= consume_mass;
+                            durability.DeltaDurabilityDifficultySettingIndependent(delta);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        durability.DeltaDurabilityDifficultySettingIndependent(delta);
+                        return false;
+                    }
+                }
             }
             return true;
         }

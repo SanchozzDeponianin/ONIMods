@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Suit Recharger</Title>
     <Description>Allows Duplicants to recharge their Suits and Oxygen Masks without taking them off.</Description>
-    <ModVersion>1.1.0</ModVersion>
+    <ModVersion>1.2.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

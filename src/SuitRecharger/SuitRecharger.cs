@@ -24,6 +24,15 @@ namespace SuitRecharger
             new EventSystem.IntraObjectHandler<SuitRecharger>(
                 (SuitRecharger component, object data) => component.OnCopySettings(data));
 
+        // цена полной починки
+        public struct RepairSuitCost
+        {
+            public Tag material;
+            public float amount;
+            public float energy;
+        }
+        public static Dictionary<Tag, RepairSuitCost> repairSuitCost = new Dictionary<Tag, RepairSuitCost>();
+
         // проверка что костюм действительно надет
         private static readonly Chore.Precondition IsSuitEquipped = new Chore.Precondition
         {
@@ -37,7 +46,7 @@ namespace SuitRecharger
         };
 
         // todo: возможно эти прекондиции неоптимальны по быстродействию. нужно обдумать
-
+        // todo: добавить проверку возможности ремонта
         // проверка костюм имеет достаточную прочность чтобы не сломаться в процессе зарядки
         private static readonly Chore.Precondition IsSuitHasEnoughDurability = new Chore.Precondition
         {
@@ -271,12 +280,17 @@ namespace SuitRecharger
         private static StatusItem gasWastePipeBlockedStatusItem;
         private static StatusItem gasWasteNoPipeConnectedStatusItem;
 
-        // порог изношенности костюма, при превышении не заряжать
+        // порог изношенности костюма, при превышении не заряжать, если ремонт не разрешен или невозможен
         [Serialize]
         private float durabilityThreshold;
         static private float defaultDurabilityThreshold;
         static private float durabilityPerCycleGap = 0.2f;
         static internal bool durabilityEnabled => defaultDurabilityThreshold > 0f;
+
+        // todo: дроп волокна при выключении
+        [Serialize]
+        private bool enableRepair = true;
+        public bool EnableRepair { get => enableRepair; set => enableRepair = value; }
 
         private MeterController oxygenMeter;
         private MeterController fuelMeter;
@@ -446,7 +460,10 @@ namespace SuitRecharger
         {
             var recharger = ((GameObject)data)?.GetComponent<SuitRecharger>();
             if (recharger != null)
+            {
                 durabilityThreshold = recharger.durabilityThreshold;
+                EnableRepair = recharger.enableRepair;
+            }
         }
 
         private void OnStorageChange(object data = null)
