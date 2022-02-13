@@ -29,10 +29,14 @@
     <Compile Include="..\lib\StorageDropper.cs">
       <Link>StorageDropper.cs</Link>
     </Compile>
+    <Compile Include="..\lib\UI.cs">
+      <Link>UI.cs</Link>
+    </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
     <Compile Include="AlwaysFunctionalConduitDispenser.cs" />
+    <Compile Include="SuitRechargerSideScreen.cs" />
     <Compile Include="SuitRechargerWorkable.cs" />
     <Compile Include="STRINGS.cs" />
     <Compile Include="SuitRecharger.cs" />

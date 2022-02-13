@@ -10,7 +10,7 @@ msgstr ""
 
 #. SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.EFFECT
 msgctxt "SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.EFFECT"
-msgid "Recharges all kinds of <link=\"EQUIPMENT\">Exosuits</link> and <link=\"OXYGENMASK\">Oxygen Masks</link> and refuels them with <link=\"OXYGEN\">Oxygen</link> and <link=\"PETROLEUM\">Petroleum</link>.\n\nEmpties suits of <link=\"DIRTYWATER\">Polluted Water</link>.\n\nOptionally, it can be connected to <style=\"KKeyword\">Pipes</style> for waste disposal."
+msgid "Recharges all kinds of <link=\"EQUIPMENT\">Exosuits</link> and <link=\"OXYGENMASK\">Oxygen Masks</link> and refuels them with <link=\"OXYGEN\">Oxygen</link> and <link=\"PETROLEUM\">Petroleum</link>.\n\nEmpties suits of <link=\"DIRTYWATER\">Polluted Water</link>.\n\nOptionally, it can be connected to <style=\"KKeyword\">Pipes</style> for waste disposal.\n\nCan repair not completely Worn Suits."
 msgstr ""
 
 #. SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.NAME
@@ -53,13 +53,23 @@ msgctxt "SuitRecharger.STRINGS.STATUSITEMS.LIQUIDWASTE_NOPIPE.TOOLTIP"
 msgid "\n<style=\"KKeyword\">Soiled Suits</style> will not be emptied of liquid waste"
 msgstr ""
 
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.DURABILITY_THRESHOLD.TOOLTIP
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.DURABILITY_THRESHOLD.TOOLTIP"
+msgid "Duplicants will not use this Recharger when the <style=\"KKeyword\">Durability</style> of their Suits falls below <b>{0}%</b>\nand the Repair is disabled or there is not enough material to repair"
+msgstr ""
+
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.ENABLE_REPAIR.NAME
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.ENABLE_REPAIR.NAME"
+msgid "Enable Suits Repair"
+msgstr ""
+
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.ENABLE_REPAIR.TOOLTIP
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.ENABLE_REPAIR.TOOLTIP"
+msgid "Suits Repair restores their <style=\"KKeyword\">Durability</style>, but requires colossal <style=\"KKeyword\">Power</style> and conventional materials for repair"
+msgstr ""
+
 #. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE
 msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE"
 msgid "Suit Durability Threshold"
-msgstr ""
-
-#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TOOLTIP
-msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TOOLTIP"
-msgid "Duplicants will not use this Recharger when the <style=\"KKeyword\">Durability</style> of their Suits falls below <b>{0}%</b>"
 msgstr ""
 

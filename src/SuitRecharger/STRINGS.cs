@@ -13,7 +13,7 @@ namespace SuitRecharger
                 {
                     public static LocString NAME = FormatAsLink("Suit Recharger", "SUITRECHARGER");
                     public static LocString DESC = "Suit Recharger allows Duplicants to recharge their Suits and Oxygen Masks without taking them off.";
-                    public static LocString EFFECT = $"Recharges all kinds of {FormatAsLink("Exosuits", "EQUIPMENT")} and {FormatAsLink("Oxygen Masks", "OXYGENMASK")} and refuels them with {FormatAsLink("Oxygen", "OXYGEN")} and {FormatAsLink("Petroleum", "PETROLEUM")}.\n\nEmpties suits of {FormatAsLink("Polluted Water", "DIRTYWATER")}.\n\nOptionally, it can be connected to {FormatAsKeyWord("Pipes")} for waste disposal.";
+                    public static LocString EFFECT = $"Recharges all kinds of {FormatAsLink("Exosuits", "EQUIPMENT")} and {FormatAsLink("Oxygen Masks", "OXYGENMASK")} and refuels them with {FormatAsLink("Oxygen", "OXYGEN")} and {FormatAsLink("Petroleum", "PETROLEUM")}.\n\nEmpties suits of {FormatAsLink("Polluted Water", "DIRTYWATER")}.\n\nOptionally, it can be connected to {FormatAsKeyWord("Pipes")} for waste disposal.\n\nCan repair not completely Worn Suits.";
                 }
             }
         }
@@ -55,7 +55,20 @@ namespace SuitRecharger
                 public class SUITRECHARGERSIDESCREEN
                 {
                     public static LocString TITLE = "Suit Durability Threshold";
-                    public static LocString TOOLTIP = $"Duplicants will not use this Recharger when the {FormatAsKeyWord("Durability")} of their Suits falls below <b>{{0}}%</b>";
+
+                    public class DURABILITY_THRESHOLD
+                    {
+                        public static LocString MIN_MAX = "{0}%";
+                        public static LocString PRE = " ";
+                        public static LocString PST = "%";
+                        public static LocString TOOLTIP = $"Duplicants will not use this Recharger when the {FormatAsKeyWord("Durability")} of their Suits falls below <b>{{0}}%</b>\nand the Repair is disabled or there is not enough material to repair";
+                    }
+
+                    public class ENABLE_REPAIR
+                    {
+                        public static LocString NAME = "Enable Suits Repair";
+                        public static LocString TOOLTIP = $"Suits Repair restores their {FormatAsKeyWord("Durability")}, but requires colossal {FormatAsKeyWord("Power")} and conventional materials for repair";
+                    }
                 }
             }
         }

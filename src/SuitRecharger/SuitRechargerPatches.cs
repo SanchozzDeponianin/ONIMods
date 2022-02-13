@@ -7,6 +7,7 @@ using SanchozzONIMods.Lib;
 using SanchozzONIMods.Shared;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
+using PeterHan.PLib.UI;
 
 namespace SuitRecharger
 {
@@ -44,6 +45,16 @@ namespace SuitRecharger
         private static void OnStartGame()
         {
             SuitRecharger.CheckDifficultySetting();
+        }
+
+        // добавление сидескреена
+        [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
+        private static class DetailsScreen_OnPrefabInit
+        {
+            private static void Postfix()
+            {
+                PUIUtils.AddSideScreenContent<SuitRechargerSideScreen>();
+            }
         }
 
         // при наполнении пустого костюма - восстанавливаем дыхательный компонент в нормальное состояние
@@ -92,7 +103,6 @@ namespace SuitRecharger
 
         // задыхающийся дупель после использования зарядника всеравно хочет "подышать"
         // подменим целевую клетку, чтобы он не бежал далеко, а "отдышался" возле зарядника
-        // todo: теоритически возможен альтернативный вариант, вообще подавить задачу "подышать"
         [HarmonyPatch(typeof(RecoverBreathChore.StatesInstance), nameof(RecoverBreathChore.StatesInstance.UpdateLocator))]
         private static class RecoverBreathChore_StatesInstance_UpdateLocator
         {
@@ -147,17 +157,6 @@ namespace SuitRecharger
                         }, null, null);
                     }
                 });
-            }
-        }
-
-        // скрываем боковой экран если износ костюмов отключен в настройке сложности
-        [HarmonyPatch(typeof(SingleSliderSideScreen), nameof(SingleSliderSideScreen.IsValidForTarget))]
-        private static class SingleSliderSideScreen_IsValidForTarget
-        {
-            private static void Postfix(GameObject target, ref bool __result)
-            {
-                if (__result && target.HasTag(SuitRechargerConfig.ID.ToTag()))
-                    __result = SuitRecharger.durabilityEnabled;
             }
         }
 

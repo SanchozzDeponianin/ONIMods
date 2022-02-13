@@ -103,9 +103,9 @@ msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE"
 msgid "Suit Durability Threshold"
 msgstr "太空服耐久度阈值"
 
-#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TOOLTIP
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.DURABILITY_THRESHOLD.TOOLTIP
 msgctxt ""
-"SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TOOLTIP"
+"SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.DURABILITY_THRESHOLD.TOOLTIP"
 msgid ""
 "Duplicants will not use this Recharger when the <style=\"KKeyword"
 "\">Durability</style> of their Suits falls below <b>{0}%</b>"

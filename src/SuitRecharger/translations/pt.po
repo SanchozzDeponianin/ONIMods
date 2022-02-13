@@ -58,8 +58,8 @@ msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE"
 msgid "Suit Durability Threshold"
 msgstr "Limiar de durabilidade do traje"
 
-#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TOOLTIP
-msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TOOLTIP"
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.DURABILITY_THRESHOLD.TOOLTIP
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.DURABILITY_THRESHOLD.TOOLTIP"
 msgid "Duplicants will not use this Recharger when the <style=\"KKeyword\">Durability</style> of their Suits falls below <b>{0}%</b>"
 msgstr "Duplicantes não usarão este recarregador quando a <style=\"KKeyword\">Durabilidade</style> de seus trages está abaixo de <b>{0}%</b>"
 

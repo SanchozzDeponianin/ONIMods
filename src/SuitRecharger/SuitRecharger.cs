@@ -11,7 +11,7 @@ using static SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS;
 
 namespace SuitRecharger
 {
-    public class SuitRecharger : StateMachineComponent<SuitRecharger.StatesInstance>, ISaveLoadable, ISecondaryInput, ISecondaryOutput, ISliderControl, ISingleSliderControl
+    public class SuitRecharger : StateMachineComponent<SuitRecharger.StatesInstance>, ISaveLoadable, ISecondaryInput, ISecondaryOutput
     {
         private static readonly EventSystem.IntraObjectHandler<SuitRecharger> CheckPipesDelegate =
             new EventSystem.IntraObjectHandler<SuitRecharger>((SuitRecharger component, object data) => component.CheckPipes(data));
@@ -282,7 +282,7 @@ namespace SuitRecharger
 
         // порог изношенности костюма, при превышении не заряжать, если ремонт не разрешен или невозможен
         [Serialize]
-        private float durabilityThreshold;
+        internal float durabilityThreshold;
         static private float defaultDurabilityThreshold;
         static private float durabilityPerCycleGap = 0.2f;
         static internal bool durabilityEnabled => defaultDurabilityThreshold > 0f;
@@ -504,14 +504,5 @@ namespace SuitRecharger
                 return gasWastePortInfo.offset;
             return CellOffset.none;
         }
-        string ISliderControl.SliderTitleKey => "STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE";
-        string ISliderControl.SliderUnits => global::STRINGS.UI.UNITSUFFIXES.PERCENT;
-        int ISliderControl.SliderDecimalPlaces(int index) => 0;
-        float ISliderControl.GetSliderMin(int index) => 0f;
-        float ISliderControl.GetSliderMax(int index) => 100f;
-        float ISliderControl.GetSliderValue(int index) => durabilityThreshold * 100f;
-        void ISliderControl.SetSliderValue(float percent, int index) => durabilityThreshold = Mathf.RoundToInt(percent) / 100f;
-        string ISliderControl.GetSliderTooltipKey(int index) => string.Empty;
-        string ISliderControl.GetSliderTooltip() => string.Format(STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TOOLTIP, durabilityThreshold * 100f);
     }
 }
