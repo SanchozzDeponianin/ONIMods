@@ -1,11 +1,11 @@
 # Sanchozz's mods for Oxygen Not Included
-Last tested on game versions: Vanilla and Spaced Out! DLC **490405**
+Steam Workshop: https://steamcommunity.com/profiles/76561198341359629/myworkshopfiles/?appid=457140
+
+Last tested on game versions: Vanilla and Spaced Out! DLC **494396**
 
 Limited support for Public Testing branches. Do not wait for a quick release of fixes if something breaks.
 
 Limited support for rolled back Legacy Vanilla (public previous version CS-469300). Previously working mods should theoretically continue to work, but: there are no new mods, no updates, no new features, no fixes.
-
-Steam Workshop: https://steamcommunity.com/profiles/76561198341359629/myworkshopfiles/?appid=457140
 
 # Local Downloads
 Steam users: Before trying a local download or reporting an issue, use [PeterHan's Mod Updater](https://steamcommunity.com/sharedfiles/filedetails/?id=2018291283)  to see if the mod is out of date.
