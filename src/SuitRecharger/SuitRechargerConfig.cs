@@ -59,7 +59,7 @@ namespace SuitRecharger
             go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject inst)
             {
                 var mdkgs = inst.GetComponents<ManualDeliveryKG>();
-                foreach (ManualDeliveryKG mg in mdkgs)
+                foreach (var mg in mdkgs)
                 {
                     if (mg.allowPause)
                         ManualDeliveryKGPatch.userPaused.Set(mg, true);

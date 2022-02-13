@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Klei.CustomSettings;
 using KSerialization;
 using TUNING;
@@ -46,8 +47,7 @@ namespace SuitRecharger
         };
 
         // todo: возможно эти прекондиции неоптимальны по быстродействию. нужно обдумать
-        // todo: добавить проверку возможности ремонта
-        // проверка костюм имеет достаточную прочность чтобы не сломаться в процессе зарядки
+        // проверка возможности ремонта и что костюм имеет достаточную прочность чтобы не сломаться в процессе зарядки
         private static readonly Chore.Precondition IsSuitHasEnoughDurability = new Chore.Precondition
         {
             id = nameof(IsSuitHasEnoughDurability),
@@ -55,16 +55,29 @@ namespace SuitRecharger
             sortOrder = 5,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
-                bool result = true;
                 var recharger = (SuitRecharger)data;
                 if (recharger != null)
                 {
-                    var slot = context.consumerState.equipment?.GetSlot(Db.Get().AssignableSlots.Suit);
-                    var durability = slot?.assignable?.GetComponent<Durability>();
-                    if (durability != null && durability.GetTrueDurability(context.consumerState.resume) < recharger.durabilityThreshold)
-                        result = false;
+                    var equippable = context.consumerState.equipment?.GetSlot(Db.Get().AssignableSlots.Suit)?.assignable as Equippable;
+                    if (equippable != null)
+                    {
+                        var durability = equippable.GetComponent<Durability>();
+                        if (durability != null)
+                        {
+                            float d = durability.GetTrueDurability(context.consumerState.resume);
+                            if (recharger.enableRepair)
+                            {
+                                repairSuitCost.TryGetValue(equippable.def.Id.ToTag(), out var cost);
+                                float need = cost.amount * (1f - d);
+                                recharger.repairMaterialsAvailable.TryGetValue(cost.material, out float available);
+                                if (need <= available)
+                                    return true;
+                            }
+                            return d >= recharger.durabilityThreshold;
+                        }
+                    }
                 }
-                return result;
+                return true;
             }
         };
 
@@ -287,16 +300,17 @@ namespace SuitRecharger
         static private float durabilityPerCycleGap = 0.2f;
         static internal bool durabilityEnabled => defaultDurabilityThreshold > 0f;
 
-        // todo: дроп волокна при выключении
         [Serialize]
-        private bool enableRepair = true;
-        public bool EnableRepair { get => enableRepair; set => enableRepair = value; }
+        private bool enableRepair;
+        public bool EnableRepair { get => enableRepair; set { enableRepair = value; UpdateDeliveryComponents(); } }
 
         private MeterController oxygenMeter;
         private MeterController fuelMeter;
 
         public float OxygenAvailable { get; private set; }
         public float FuelAvailable { get; private set; }
+        private List<Tag> repairMaterials = new List<Tag>();
+        private Dictionary<Tag, float> repairMaterialsAvailable = new Dictionary<Tag, float>();
 
         static internal void CheckDifficultySetting()
         {
@@ -384,7 +398,11 @@ namespace SuitRecharger
             Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
             Game.Instance.liquidConduitFlow.AddConduitUpdater(OnLiquidConduitUpdate, ConduitFlowPriority.Default);
             Game.Instance.gasConduitFlow.AddConduitUpdater(OnGasConduitUpdate, ConduitFlowPriority.Default);
+
+            repairSuitCost.Values.Select(cost => cost.material).Distinct()
+                .Do(tag => { repairMaterials.Add(tag); repairMaterialsAvailable[tag] = 0f; });
             OnStorageChange();
+            UpdateDeliveryComponents();
             smi.StartSM();
         }
 
@@ -470,6 +488,8 @@ namespace SuitRecharger
         {
             OxygenAvailable = storage.GetMassAvailable(GameTags.Oxygen);
             FuelAvailable = storage.GetMassAvailable(fuelTag);
+            foreach (var tag in repairMaterials)
+                repairMaterialsAvailable[tag] = storage.GetMassAvailable(tag);
             RefreshMeter();
         }
 
@@ -477,6 +497,21 @@ namespace SuitRecharger
         {
             oxygenMeter.SetPositionPercent(Mathf.Clamp01(OxygenAvailable / SuitRechargerConfig.O2_CAPACITY));
             fuelMeter.SetPositionPercent(Mathf.Clamp01(FuelAvailable / SuitRechargerConfig.FUEL_CAPACITY));
+        }
+
+        private void UpdateDeliveryComponents()
+        {
+            var mdkgs = GetComponents<ManualDeliveryKG>();
+            foreach (var mg in mdkgs)
+            {
+                if (!mg.allowPause)
+                    mg.Pause(!enableRepair, "repair disable");
+                if (!enableRepair)
+                {
+                    foreach (var tag in repairMaterials)
+                        storage.Drop(tag);
+                }
+            }
         }
 
         bool ISecondaryInput.HasSecondaryConduitType(ConduitType type)

@@ -52,8 +52,8 @@ namespace SuitRecharger
                 durability_threshold?.Invoke(target.durabilityThreshold * 100f);
             }
         }
-        // todo: вернуть после тестирования
-        public override bool IsValidForTarget(GameObject target) => /*SuitRecharger.durabilityEnabled &&*/ target.GetComponent<SuitRecharger>() != null;
+
+        public override bool IsValidForTarget(GameObject target) => SuitRecharger.durabilityEnabled && target.GetComponent<SuitRecharger>() != null;
 
         public override void SetTarget(GameObject target)
         {
