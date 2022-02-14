@@ -295,7 +295,9 @@ namespace SuitRecharger
 
         // порог изношенности костюма, при превышении не заряжать, если ремонт не разрешен или невозможен
         [Serialize]
-        internal float durabilityThreshold;
+        private float durabilityThreshold;
+        public float DurabilityThreshold { get => durabilityThreshold; set => durabilityThreshold = Mathf.Clamp01(value); }
+
         static private float defaultDurabilityThreshold;
         static private float durabilityPerCycleGap = 0.2f;
         static internal bool durabilityEnabled => defaultDurabilityThreshold > 0f;
@@ -352,7 +354,7 @@ namespace SuitRecharger
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
-            durabilityThreshold = defaultDurabilityThreshold;
+            DurabilityThreshold = defaultDurabilityThreshold;
 
             if (fuelNoPipeConnectedStatusItem == null)
             {
@@ -479,7 +481,7 @@ namespace SuitRecharger
             var recharger = ((GameObject)data)?.GetComponent<SuitRecharger>();
             if (recharger != null)
             {
-                durabilityThreshold = recharger.durabilityThreshold;
+                DurabilityThreshold = recharger.durabilityThreshold;
                 EnableRepair = recharger.enableRepair;
             }
         }

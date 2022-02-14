@@ -33,7 +33,7 @@ namespace SuitRecharger
             }
                 // ползун прочности
                 .AddSliderBox(prefix, nameof(durability_threshold), 0f, 100f,
-                    f => { if (target != null) target.durabilityThreshold = f / 100f; }, out durability_threshold)
+                    f => { if (target != null) target.DurabilityThreshold = f / 100f; }, out durability_threshold)
 
                 // включить ремонт
                 .AddCheckBox(prefix, nameof(enable_repair),
@@ -49,7 +49,7 @@ namespace SuitRecharger
             if (target != null)
             {
                 enable_repair?.Invoke(target.EnableRepair);
-                durability_threshold?.Invoke(target.durabilityThreshold * 100f);
+                durability_threshold?.Invoke(target.DurabilityThreshold * 100f);
             }
         }
 
