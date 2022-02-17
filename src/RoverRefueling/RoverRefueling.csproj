@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{816BC299-3C70-4E4E-8A2F-F6CE598ADB6E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RoverRefueling</RootNamespace>
+    <AssemblyName>RoverRefueling</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Title>Rover Refueling</Title>
+    <Description>Allows you to charge the Rover's battery with chemical fuel</Description>
+    <ModVersion>1.0.0</ModVersion>
+    <UsesPLib>true</UsesPLib>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\lib\Utils.cs">
+      <Link>Utils.cs</Link>
+    </Compile>
+    <Compile Include="WhirlPoolFxEffectConfig.cs" />
+    <Compile Include="RoverRefuelingWorkable.cs" />
+    <Compile Include="RoverRefuelingStation.cs" />
+    <Compile Include="RoverRefuelingStationConfig.cs" />
+    <Compile Include="RoverRefuelingPatches.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

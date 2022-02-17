@@ -73,6 +73,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WornSuitDischarge", "WornSu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildableGeneShuffler", "BuildableGeneShuffler\BuildableGeneShuffler.csproj", "{19EF2AF6-C054-4642-9405-0B3AD822F769}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoverRefueling", "RoverRefueling\RoverRefueling.csproj", "{816BC299-3C70-4E4E-8A2F-F6CE598ADB6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MainlineSteam = Debug|MainlineSteam
@@ -305,6 +307,14 @@ Global
 		{19EF2AF6-C054-4642-9405-0B3AD822F769}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{19EF2AF6-C054-4642-9405-0B3AD822F769}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{19EF2AF6-C054-4642-9405-0B3AD822F769}.Release|StableBackup.Build.0 = Release|StableBackup
+		{816BC299-3C70-4E4E-8A2F-F6CE598ADB6E}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
+		{816BC299-3C70-4E4E-8A2F-F6CE598ADB6E}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
+		{816BC299-3C70-4E4E-8A2F-F6CE598ADB6E}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
+		{816BC299-3C70-4E4E-8A2F-F6CE598ADB6E}.Debug|StableBackup.Build.0 = Debug|StableBackup
+		{816BC299-3C70-4E4E-8A2F-F6CE598ADB6E}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
+		{816BC299-3C70-4E4E-8A2F-F6CE598ADB6E}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
+		{816BC299-3C70-4E4E-8A2F-F6CE598ADB6E}.Release|StableBackup.ActiveCfg = Release|StableBackup
+		{816BC299-3C70-4E4E-8A2F-F6CE598ADB6E}.Release|StableBackup.Build.0 = Release|StableBackup
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
