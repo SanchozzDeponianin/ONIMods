@@ -12,7 +12,7 @@ namespace RoverRefueling
         private Storage storage;
 #pragma warning restore CS0649
 
-        private AmountInstance battery;
+        internal AmountInstance battery;
         private PrimaryElement primaryElement;
 
         protected override void OnPrefabInit()
@@ -23,9 +23,10 @@ namespace RoverRefueling
             SetWorkTime(float.PositiveInfinity);
             synchronizeAnims = false;
             lightEfficiencyBonus = false;
+            faceTargetWhenWorking = true;
             multitoolContext = "fetchliquid";
             multitoolHitEffectTag = WhirlPoolFxEffectConfig.ID;
-            SetOffsetTable(OffsetGroups.InvertedStandardTable);
+            SetOffsetTable(OffsetGroups.InvertedWideTable);
             storage.gunTargetOffset = new Vector2(0.5f, 0.3f);
         }
 
@@ -57,9 +58,7 @@ namespace RoverRefueling
             return consumed < need;
         }
 
-        public override Vector3 GetTargetPoint()
-        {
-            return storage.GetTargetPoint();
-        }
+        public override Vector3 GetTargetPoint() => storage.GetTargetPoint();
+        public override Vector3 GetFacingTarget() => storage.GetTargetPoint();
     }
 }

@@ -1,32 +1,107 @@
-﻿namespace RoverRefueling
+﻿using UnityEngine;
+
+namespace RoverRefueling
 {
     public class RoverRefuelingStation : StateMachineComponent<RoverRefuelingStation.StatesInstance>
     {
+        private static readonly EventSystem.IntraObjectHandler<RoverRefuelingStation> CheckPipeDelegate =
+            new EventSystem.IntraObjectHandler<RoverRefuelingStation>((component, data) => component.CheckPipe());
+
+        private static readonly EventSystem.IntraObjectHandler<RoverRefuelingStation> OnStorageChangeDelegate =
+            new EventSystem.IntraObjectHandler<RoverRefuelingStation>((component, data) => component.RefreshMeter());
+
+        private static readonly Chore.Precondition RoverNeedRefueling = new Chore.Precondition
+        {
+            id = nameof(RoverNeedRefueling),
+            description = "not a robot",// todo: text
+            sortOrder = -1,
+            fn = delegate (ref Chore.Precondition.Context context, object data)
+            {
+                return context.consumerState.prefabid.HasTag(RoverRefuelingPatches.RoverNeedRefueling);
+            }
+        };
+
         public class StatesInstance : GameStateMachine<States, StatesInstance, RoverRefuelingStation, object>.GameInstance
         {
             public StatesInstance(RoverRefuelingStation master) : base(master) { }
+
+            public bool IsReady()
+            {
+                return master.operational.IsOperational && master.storage.GetMassAvailable(GameTags.CombustibleLiquid) >= RoverRefuelingStationConfig.MINIMUM_MASS;
+            }
         }
 
+        // выглядит страшно. чтобы задействовать эту старую неиспользованную анимацию, и при этом выглядело прилично.
         public class States : GameStateMachine<States, StatesInstance, RoverRefuelingStation>
         {
+            public class OffStates : State
+            {
+                public State interrupt;
+                public State closing;
+                public State idle;
+            }
+            public class IdleStates : State
+            {
+                public State opening;
+                public State idle;
+            }
+            public class WorkingStates : State
+            {
+                public State loop;
+                public State pst;
+            }
+            public class OnStates : State
+            {
+                public IdleStates waiting;
+                public WorkingStates working;
+            }
+
 #pragma warning disable CS0649
-            State operational;
-            State notoperational;
+            OffStates off;
+            OnStates on;
 #pragma warning restore CS0649
 
-            // todo: труба сбрасывает оператиональ. зделать общий компонент с зарядником
-            // todo: проверка наличия топлива для заправки
             // todo: пошаманить с анимацией, заменить маску на горловину топливного бака
-            // todo: оформить статысы, чтобы была норм анимация
 
             public override void InitializeStates(out BaseState default_state)
             {
-                default_state = operational;
-                notoperational
-                    .EventTransition(GameHashes.OperationalChanged, operational, smi => smi.master.operational.IsOperational);
-                operational
-                    .EventTransition(GameHashes.OperationalChanged, notoperational, smi => !smi.master.operational.IsOperational)
+                default_state = root;
+                root
+                    .EnterTransition(off.idle, smi => !smi.IsReady())
+                    .EnterTransition(on.waiting.idle, smi => smi.IsReady());
+                off
+                    .EventTransition(GameHashes.OperationalChanged, on.waiting.opening, smi => smi.IsReady())
+                    .EventTransition(GameHashes.OnStorageChange, on.waiting.opening, smi => smi.IsReady());
+                off.interrupt
+                    .QueueAnim("closing_charging_loop")
+                    .QueueAnim("closed_charging_pst")
+                    .OnAnimQueueComplete(off.idle);
+                off.closing
+                    .QueueAnim("closing_not_charging_loop")
+                    .OnAnimQueueComplete(off.idle);
+                off.idle
+                    .PlayAnim("off");
+                on
                     .ToggleRecurringChore(CreateChore);
+                on.waiting
+                    .EnterTransition(off.closing, smi => !smi.IsReady())
+                    .EventTransition(GameHashes.OperationalChanged, off.closing, smi => !smi.master.operational.IsOperational)
+                    .WorkableStartTransition(smi => smi.master.workable, on.working.loop);
+                on.waiting.opening
+                    .QueueAnim("opening_not_charging_loop")
+                    .OnAnimQueueComplete(on.waiting.idle);
+                on.waiting.idle
+                    .PlayAnim("on");
+                on.working
+                    .DoNothing();
+                on.working.loop
+                    .QueueAnim("open_charging_pre")
+                    .QueueAnim("open_charging_loop", true)
+                    .EventTransition(GameHashes.OperationalChanged, off.interrupt, smi => !smi.master.operational.IsOperational)
+                    .WorkableStopTransition(smi => smi.master.workable, on.working.pst);
+                on.working.pst
+                    .QueueAnim("open_charging_pst")
+                    .OnAnimQueueComplete(on.waiting);
             }
 
             private Chore CreateChore(StatesInstance smi)
@@ -40,7 +115,7 @@
                         priority_class: PriorityScreen.PriorityClass.personalNeeds,
                         priority_class_value: Chore.DEFAULT_BASIC_PRIORITY,
                         add_to_daily_report: false);
-                chore.AddPrecondition(ChorePreconditions.instance.HasTag, ScoutRoverConfig.ID.ToTag());
+                chore.AddPrecondition(RoverNeedRefueling);
                 return chore;
             }
         }
@@ -50,16 +125,51 @@
         private Operational operational;
 
         [MyCmpReq]
+        private ManualDeliveryKG manualDelivery;
+
+        [MyCmpReq]
         private Storage storage;
+
+        [MyCmpReq]
+        private ConduitConsumer consumer;
 
         [MyCmpAdd]
         private RoverRefuelingWorkable workable;
 #pragma warning restore CS0649
 
+        private MeterController fuel_meter;
+        private MeterController progress_meter;
+
         protected override void OnSpawn()
         {
             base.OnSpawn();
+            Subscribe((int)GameHashes.ConduitConnectionChanged, CheckPipeDelegate);
+            Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
             smi.StartSM();
+            fuel_meter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_oxygen_target", "meter_oxygen", Meter.Offset.Infront, Grid.SceneLayer.BuildingFront, new string[] { "meter_oxygen_target" });
+            progress_meter = new MeterController(base.GetComponent<KBatchedAnimController>(), "meter_resources_target", "meter_resources", Meter.Offset.Behind, Grid.SceneLayer.BuildingBack, new string[] { "meter_resources_target" });
+            RefreshMeter();
+        }
+
+        protected override void OnCleanUp()
+        {
+            Unsubscribe((int)GameHashes.ConduitConnectionChanged, CheckPipeDelegate);
+            Unsubscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
+            base.OnCleanUp();
+        }
+
+        private void CheckPipe()
+        {
+            manualDelivery.Pause(consumer.IsConnected, "pipe connected");
+        }
+
+        private void RefreshMeter()
+        {
+            fuel_meter.SetPositionPercent(Mathf.Clamp01(storage.GetMassAvailable(GameTags.CombustibleLiquid) / RoverRefuelingStationConfig.CAPACITY));
+            if (workable.battery != null)
+                progress_meter.SetPositionPercent(Mathf.Clamp01(1f - workable.battery.value / workable.battery.GetMax()));
+            else
+                progress_meter.SetPositionPercent(0f);
         }
     }
 }

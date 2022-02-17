@@ -10,7 +10,8 @@ namespace RoverRefueling
         public const float CHARGE_TIME = 0.1f * Constants.SECONDS_PER_CYCLE;
         public const float CHARGE_MASS = 100f;
         public const float MINIMUM_MASS = 0.1f * CHARGE_MASS;
-        public const float CAPACITY = 2 * CHARGE_MASS;
+        public const int NUM_USES = 3;
+        public const float CAPACITY = NUM_USES * CHARGE_MASS;
 
         public override string[] GetDlcIds() => DlcManager.AVAILABLE_EXPANSION1_ONLY;
         public override BuildingDef CreateBuildingDef()
@@ -22,7 +23,7 @@ namespace RoverRefueling
                 anim: "oxygen_mask_station_kanim",
                 hitpoints: BUILDINGS.HITPOINTS.TIER1,
                 construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER2,
-                construction_mass: BUILDINGS.CONSTRUCTION_MASS_KG.TIER2,
+                construction_mass: BUILDINGS.CONSTRUCTION_MASS_KG.TIER3,
                 construction_materials: MATERIALS.RAW_METALS,
                 melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER1,
                 build_location_rule: BuildLocationRule.OnFloor,
@@ -38,19 +39,20 @@ namespace RoverRefueling
             return def;
         }
 
-        public override void DoPostConfigureComplete(GameObject go)
+        public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
             go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.IndustrialMachinery, false);
             var storage = BuildingTemplates.CreateDefaultStorage(go, false);
             storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
-            Prioritizable.AddRef(go); // todo: ?
+            Prioritizable.AddRef(go);
             var md = go.AddComponent<ManualDeliveryKG>();
             md.SetStorage(storage);
             md.requestedItemTag = GameTags.CombustibleLiquid;
             md.capacity = CAPACITY;
             md.refillMass = CHARGE_MASS;
-            md.choreTypeIDHash = Db.Get().ChoreTypes.MachineFetch.IdHash;
-            ConduitConsumer consumer = go.AddOrGet<ConduitConsumer>();
+            md.choreTypeIDHash = Db.Get().ChoreTypes.Fetch.IdHash;
+            md.Pause(true, "");
+            var consumer = go.AddOrGet<ConduitConsumer>();
             consumer.conduitType = ConduitType.Liquid;
             consumer.consumptionRate = ConduitFlow.MAX_LIQUID_MASS;
             consumer.capacityKG = CAPACITY;
@@ -58,6 +60,18 @@ namespace RoverRefueling
             consumer.forceAlwaysSatisfied = true;
             consumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
             go.AddOrGet<RoverRefuelingStation>();
+        }
+
+        public override void DoPostConfigureUnderConstruction(GameObject go)
+        {
+            go.GetComponent<KPrefabID>().prefabSpawnFn += (inst) =>
+                inst.GetComponent<Constructable>().requireMinionToWork = false;
+        }
+
+        public override void DoPostConfigureComplete(GameObject go)
+        {
+            go.GetComponent<RequireInputs>().SetRequirements(false, false);
+            go.AddOrGet<LogicOperationalController>();
         }
     }
 }
