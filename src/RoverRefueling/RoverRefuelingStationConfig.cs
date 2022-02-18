@@ -41,7 +41,9 @@ namespace RoverRefueling
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
-            go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.IndustrialMachinery, false);
+            var prefabID = go.GetComponent<KPrefabID>();
+            prefabID.AddTag(RoomConstraints.ConstraintTags.IndustrialMachinery);
+            prefabID.AddTag(GameTags.NotRocketInteriorBuilding);
             var storage = BuildingTemplates.CreateDefaultStorage(go, false);
             storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
             Prioritizable.AddRef(go);
@@ -72,6 +74,8 @@ namespace RoverRefueling
         {
             go.GetComponent<RequireInputs>().SetRequirements(false, false);
             go.AddOrGet<LogicOperationalController>();
+            SymbolOverrideControllerUtil.AddToPrefab(go);
+            go.AddOrGet<SymbolOverrideController>().ApplySymbolOverridesByAffix(Assets.GetAnim("beer_for_robots_kanim"), "beer_");
         }
     }
 }

@@ -26,8 +26,15 @@ namespace RoverRefueling
             faceTargetWhenWorking = true;
             multitoolContext = "fetchliquid";
             multitoolHitEffectTag = WhirlPoolFxEffectConfig.ID;
-            SetOffsetTable(OffsetGroups.InvertedWideTable);
-            storage.gunTargetOffset = new Vector2(0.5f, 0.3f);
+            storage.gunTargetOffset = new Vector2(0.6f, 0.5f);
+        }
+
+        protected override void OnSpawn()
+        {
+            base.OnSpawn();
+            // красявости. так как "рабочая точка" смещена, то и позицию для использования тоже смещаем, с учетом переворота постройки
+            var offset = GetComponent<Rotatable>().GetRotatedCellOffset(new CellOffset(1, 0));
+            SetOffsetTable(OffsetGroups.BuildReachabilityTable(new CellOffset[] { offset }, OffsetGroups.InvertedStandardTable, null));
         }
 
         protected override void OnStartWork(Worker worker)

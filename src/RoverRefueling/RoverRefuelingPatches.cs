@@ -29,7 +29,7 @@ namespace RoverRefueling
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()
         {
-            Utils.AddBuildingToPlanScreen("Equipment", RoverRefuelingStationConfig.ID);
+            Utils.AddBuildingToPlanScreen("Utilities", RoverRefuelingStationConfig.ID);
             Utils.AddBuildingToTechnology("ArtificialFriends", RoverRefuelingStationConfig.ID);
 
             // todo: причесать
