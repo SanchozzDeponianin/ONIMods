@@ -32,6 +32,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Carousel](https://steamcommunity.com/sharedfiles/filedetails/?id=1899088142) | Adds a new recreation building. Funny dizzy entertainment. Sometimes too dizzy... | Yes | Yes |
 | [Insulated Radbolt Joint Plate](https://steamcommunity.com/sharedfiles/filedetails/?id=2451195132) | Adds a Insulated variant of Radbolt Joint Plate.| No | Yes |
 | [Mechanics Station](https://steamcommunity.com/sharedfiles/filedetails/?id=1938117526) | Adds a new Mechanics Station, with which engineers could improve the performance of various buildings. | Yes | Yes |
+| [Rover's Recharger](https://steamcommunity.com/sharedfiles/filedetails/?id=2761462871) | Allows the Rover to charge its chemical battery with chemical fuel. | No | Yes |
 | [Smelter](https://steamcommunity.com/sharedfiles/filedetails/?id=2350553957) | Adds a new Smelter building designed to smelt metals in the early game, and a few new recipes. | Yes | Yes |
 | [Squirrel Wheel](https://steamcommunity.com/sharedfiles/filedetails/?id=2086704949) | Adds a new Squirrel Wheel building that your Pips can use to running, and you will get a small profit of bonus electricity power. | Yes | Yes |
 | [Suit Recharger](https://steamcommunity.com/sharedfiles/filedetails/?id=2688074001) | Allows Duplicants to recharge all kinds of their Suits and Oxygen Masks without taking them off. | Yes | Yes |
