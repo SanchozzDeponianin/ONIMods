@@ -13,7 +13,7 @@ namespace RoverRefueling
         private static readonly Chore.Precondition RoverNeedRefueling = new Chore.Precondition
         {
             id = nameof(RoverNeedRefueling),
-            description = "not a robot",// todo: text
+            description = STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.ROVER_NEED_REFUELING,
             sortOrder = -1,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
@@ -23,11 +23,15 @@ namespace RoverRefueling
 
         public class StatesInstance : GameStateMachine<States, StatesInstance, RoverRefuelingStation, object>.GameInstance
         {
-            public StatesInstance(RoverRefuelingStation master) : base(master) { }
+            private float minimum_fuel_mass;
+            public StatesInstance(RoverRefuelingStation master) : base(master)
+            {
+                minimum_fuel_mass = 0.1f * RoverRefuelingOptions.Instance.fuel_mass_per_charge;
+            }
 
             public bool IsReady()
             {
-                return master.operational.IsOperational && master.storage.GetMassAvailable(GameTags.CombustibleLiquid) >= RoverRefuelingStationConfig.MINIMUM_MASS;
+                return master.operational.IsOperational && master.storage.GetMassAvailable(RoverRefuelingStationConfig.fuelTag) >= minimum_fuel_mass;
             }
         }
 
@@ -99,7 +103,7 @@ namespace RoverRefueling
                     .WorkableStopTransition(smi => smi.master.workable, on.working.pst);
                 on.working.pst
                     .QueueAnim("open_charging_pst")
-                    .OnAnimQueueComplete(on.waiting);
+                    .OnAnimQueueComplete(on.waiting.idle);
             }
 
             private Chore CreateChore(StatesInstance smi)
@@ -163,7 +167,7 @@ namespace RoverRefueling
 
         private void RefreshMeter()
         {
-            fuel_meter.SetPositionPercent(Mathf.Clamp01(storage.GetMassAvailable(GameTags.CombustibleLiquid) / RoverRefuelingStationConfig.CAPACITY));
+            fuel_meter.SetPositionPercent(Mathf.Clamp01(storage.GetMassAvailable(RoverRefuelingStationConfig.fuelTag) / storage.capacityKg));
             if (workable.battery != null)
                 progress_meter.SetPositionPercent(Mathf.Clamp01(1f - workable.battery.value / workable.battery.GetMax()));
             else

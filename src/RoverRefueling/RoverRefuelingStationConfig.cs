@@ -6,13 +6,8 @@ namespace RoverRefueling
     public class RoverRefuelingStationConfig : IBuildingConfig
     {
         public const string ID = "RoverRefuelingStation";
-        // todo: определиться с рейтами
-        public const float CHARGE_TIME = 0.1f * Constants.SECONDS_PER_CYCLE;
-        public const float CHARGE_MASS = 100f;
-        public const float MINIMUM_MASS = 0.1f * CHARGE_MASS;
-        public const int NUM_USES = 3;
-        public const float CAPACITY = NUM_USES * CHARGE_MASS;
-
+        private const int NUM_USES = 3;
+        public static Tag fuelTag = GameTags.CombustibleLiquid;
         public override string[] GetDlcIds() => DlcManager.AVAILABLE_EXPANSION1_ONLY;
         public override BuildingDef CreateBuildingDef()
         {
@@ -41,24 +36,27 @@ namespace RoverRefueling
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
+            float mass_per_charge = RoverRefuelingOptions.Instance.fuel_mass_per_charge;
+            float capacity = NUM_USES * mass_per_charge;
             var prefabID = go.GetComponent<KPrefabID>();
             prefabID.AddTag(RoomConstraints.ConstraintTags.IndustrialMachinery);
             prefabID.AddTag(GameTags.NotRocketInteriorBuilding);
             var storage = BuildingTemplates.CreateDefaultStorage(go, false);
+            storage.capacityKg = capacity;
             storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
             Prioritizable.AddRef(go);
             var md = go.AddComponent<ManualDeliveryKG>();
             md.SetStorage(storage);
-            md.requestedItemTag = GameTags.CombustibleLiquid;
-            md.capacity = CAPACITY;
-            md.refillMass = CHARGE_MASS;
+            md.requestedItemTag = fuelTag;
+            md.capacity = capacity;
+            md.refillMass = mass_per_charge;
             md.choreTypeIDHash = Db.Get().ChoreTypes.Fetch.IdHash;
             md.Pause(true, "");
             var consumer = go.AddOrGet<ConduitConsumer>();
             consumer.conduitType = ConduitType.Liquid;
             consumer.consumptionRate = ConduitFlow.MAX_LIQUID_MASS;
-            consumer.capacityKG = CAPACITY;
-            consumer.capacityTag = GameTags.CombustibleLiquid;
+            consumer.capacityKG = capacity;
+            consumer.capacityTag = fuelTag;
             consumer.forceAlwaysSatisfied = true;
             consumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
             go.AddOrGet<RoverRefuelingStation>();

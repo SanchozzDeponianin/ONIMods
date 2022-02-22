@@ -1,17 +1,17 @@
 ﻿using Klei.AI;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RoverRefueling
 {
-    public class RoverRefuelingWorkable : Workable
+    public class RoverRefuelingWorkable : Workable, IGameObjectEffectDescriptor
     {
-        private const float CONSUME_RATE = RoverRefuelingStationConfig.CHARGE_MASS / RoverRefuelingStationConfig.CHARGE_TIME;
-
 #pragma warning disable CS0649
         [MyCmpReq]
         private Storage storage;
 #pragma warning restore CS0649
 
+        private float fuelConsumeRate;
         internal AmountInstance battery;
         private PrimaryElement primaryElement;
 
@@ -27,6 +27,7 @@ namespace RoverRefueling
             multitoolContext = "fetchliquid";
             multitoolHitEffectTag = WhirlPoolFxEffectConfig.ID;
             storage.gunTargetOffset = new Vector2(0.6f, 0.5f);
+            fuelConsumeRate = RoverRefuelingOptions.Instance.fuel_mass_per_charge / RoverRefuelingOptions.Instance.charge_time;
         }
 
         protected override void OnSpawn()
@@ -59,10 +60,22 @@ namespace RoverRefueling
         {
             if (battery.value >= battery.GetMax())
                 return true;
-            float need = CONSUME_RATE * dt;
-            storage.ConsumeAndGetDisease(GameTags.CombustibleLiquid, need, out float consumed, out var diseaseInfo, out float _);
+            float need = fuelConsumeRate * dt;
+            storage.ConsumeAndGetDisease(RoverRefuelingStationConfig.fuelTag, need, out float consumed, out var diseaseInfo, out float _);
             primaryElement.AddDisease(diseaseInfo.idx, diseaseInfo.count, "Refueling");
             return consumed < need;
+        }
+
+        public override List<Descriptor> GetDescriptors(GameObject go)
+        {
+            var list = base.GetDescriptors(go);
+            var item = default(Descriptor);
+            item.SetupDescriptor(RoverRefuelingStationConfig.fuelTag.ProperName(),
+                string.Format(STRINGS.BUILDINGS.PREFABS.ROVERREFUELINGSTATION.REQUIREMENT_TOOLTIP,
+                RoverRefuelingOptions.Instance.fuel_mass_per_charge, RoverRefuelingStationConfig.fuelTag.ProperName()),
+                Descriptor.DescriptorType.Requirement);
+            list.Add(item);
+            return list;
         }
 
         public override Vector3 GetTargetPoint() => storage.GetTargetPoint();

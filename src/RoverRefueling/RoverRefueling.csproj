@@ -14,16 +14,21 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup>
-    <Title>Rover Refueling</Title>
+    <Title>Rover's Recharger</Title>
     <Description>Allows you to charge the Rover's battery with chemical fuel</Description>
     <ModVersion>1.0.0</ModVersion>
     <SupportedContent>EXPANSION1_ID</SupportedContent>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\lib\BaseOptions.cs">
+      <Link>BaseOptions.cs</Link>
+    </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="RoverRefuelingOptions.cs" />
+    <Compile Include="STRINGS.cs" />
     <Compile Include="WhirlPoolFxEffectConfig.cs" />
     <Compile Include="RoverRefuelingWorkable.cs" />
     <Compile Include="RoverRefuelingStation.cs" />
