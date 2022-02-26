@@ -71,7 +71,7 @@ namespace SanchozzONIMods.Lib
 
 
         // добавляем постройки в меню
-        public static void AddBuildingToPlanScreen(HashedString category, string buildingId, string addAfterBuildingId = null)
+        public static void AddBuildingToPlanScreen(HashedString category, string buildingId, string subcategoryID = "uncategorized", string addAfterBuildingId = null)
         {
             int index = BUILDINGS.PLANORDER.FindIndex(x => x.category == category);
             if (index == -1)
@@ -79,17 +79,18 @@ namespace SanchozzONIMods.Lib
                 Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{category}' category in the building menu.");
                 return;
             }
-            var planOrderList = BUILDINGS.PLANORDER[index].data;
+            var planOrderList = BUILDINGS.PLANORDER[index].buildingAndSubcategoryData;
             if (planOrderList == null)
             {
                 Debug.LogWarning($"{modInfo.assemblyName}: Could not add '{buildingId}' to the building menu.");
                 return;
             }
-            int neighborIdx = planOrderList.IndexOf(addAfterBuildingId);
+            var item = new KeyValuePair<string, string>(buildingId, subcategoryID);
+            int neighborIdx = (addAfterBuildingId == null) ? -1 : planOrderList.FindIndex(x => x.Key == addAfterBuildingId);
             if (neighborIdx != -1)
-                planOrderList.Insert(neighborIdx + 1, buildingId);
+                planOrderList.Insert(neighborIdx + 1, item);
             else
-                planOrderList.Add(buildingId);
+                planOrderList.Add(item);
         }
 
         // добавляем постройки в технологии

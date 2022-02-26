@@ -31,7 +31,7 @@ namespace BuildableGeneShuffler
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuilding()
         {
-            Utils.AddBuildingToPlanScreen("Medical", BuildableGeneShufflerConfig.ID);
+            Utils.AddBuildingToPlanScreen("Medical", BuildableGeneShufflerConfig.ID, "wellness");
             Utils.AddBuildingToTechnology("MedicineIV", BuildableGeneShufflerConfig.ID);
             PGameUtils.CopySoundsToAnim(BuildableGeneShufflerConfig.anim, "geneshuffler_kanim");
         }

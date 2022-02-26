@@ -26,7 +26,7 @@ namespace HEPBridgeInsulationTile
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuilding()
         {
-            Utils.AddBuildingToPlanScreen("HEP", HEPBridgeInsulationTileConfig.ID, HEPBridgeTileConfig.ID);
+            Utils.AddBuildingToPlanScreen("HEP", HEPBridgeInsulationTileConfig.ID, "HEP", HEPBridgeTileConfig.ID);
             PGameUtils.CopySoundsToAnim("wallbridge_orb_transporter_kanim", "orb_transporter_kanim");
             // заменяем технологию для клеевской пластины
             var klei_tech_current = Db.Get().Techs.TryGetTechForTechItem(HEPBridgeTileConfig.ID);
