@@ -169,10 +169,7 @@ namespace ReBuildableAETN
         [HarmonyPatch(typeof(Immigration), "ConfigureCarePackages")]
         private static class Immigration_ConfigureCarePackages
         {
-            private static bool Prepare()
-            {
-                return ReBuildableAETNOptions.Instance.CarePackage.Enabled;
-            }
+            private static bool Prepare() => ReBuildableAETNOptions.Instance.CarePackage.Enabled;
 
             private static bool Condition(Tag tag)
             {
@@ -293,10 +290,7 @@ namespace ReBuildableAETN
         [HarmonyPatch(typeof(ArtifactPOIStates.Instance), nameof(ArtifactPOIStates.Instance.PickNewArtifactToHarvest))]
         private static class ArtifactPOIStates_Instance_PickNewArtifactToHarvest
         {
-            private static bool Prepare()
-            {
-                return DlcManager.IsExpansion1Active() && ReBuildableAETNOptions.Instance.SpaceOutPOIChance.Enabled;
-            }
+            private static bool Prepare() => DlcManager.IsExpansion1Active();
 
             private static bool Prefix(ArtifactPOIStates.Instance __instance, int ___numHarvests)
             {
@@ -305,7 +299,8 @@ namespace ReBuildableAETN
                 {
                     return true;
                 }
-                if (UnityEngine.Random.Range(0f, 100f) < ReBuildableAETNOptions.Instance.SpaceOutPOIChance.SpacePOIChance)
+                var chance = ReBuildableAETNOptions.Instance.SpaceOutPOIChance;
+                if (__instance.CanHarvestArtifact() && chance.Enabled && UnityEngine.Random.Range(0f, 100f) < chance.SpacePOIChance)
                 {
                     __instance.artifactToHarvest = string.Empty;
                     return false;
@@ -324,14 +319,11 @@ namespace ReBuildableAETN
         [HarmonyPatch(typeof(ArtifactPOIStates.Instance), nameof(ArtifactPOIStates.Instance.GetArtifactToHarvest))]
         private static class ArtifactPOIStates_Instance_GetArtifactToHarvest
         {
-            private static bool Prepare()
-            {
-                return DlcManager.IsExpansion1Active() && ReBuildableAETNOptions.Instance.SpaceOutPOIChance.Enabled;
-            }
+            private static bool Prepare() => DlcManager.IsExpansion1Active();
 
             private static bool Prefix(ArtifactPOIStates.Instance __instance, ref string __result)
             {
-                if (string.IsNullOrEmpty(__instance.artifactToHarvest))
+                if (__instance.CanHarvestArtifact() && ReBuildableAETNOptions.Instance.SpaceOutPOIChance.Enabled && __instance.artifactToHarvest == string.Empty)
                 {
                     __result = ID;
                     return false;
@@ -346,18 +338,35 @@ namespace ReBuildableAETN
 #endif
         }
 
+        private static bool IsNotGameArtifactID(string id) => string.IsNullOrEmpty(id) || id == ID;
+
         // запись о проанализированном артифакте на станции анализа
+        // тут тоже нужно избежать записи id в сейф
         [HarmonyPatch(typeof(ArtifactSelector), nameof(ArtifactSelector.RecordArtifactAnalyzed))]
         private static class ArtifactSelector_RecordArtifactAnalyzed
         {
             private static bool Prefix(string id, ref bool __result)
             {
-                if (id == ID)
+                if (IsNotGameArtifactID(id))
                 {
                     __result = false;
                     return false;
                 }
                 return true;
+            }
+        }
+
+        // и еще одна предосторожность
+        [HarmonyPatch(typeof(ArtifactSelector), "OnSpawn")]
+        private static class ArtifactSelector_OnSpawn
+        {
+            private static void Prefix(Dictionary<ArtifactType, List<string>> ___placedArtifacts, List<string> ___analyzedArtifatIDs)
+            {
+                foreach (var x in ___placedArtifacts.Keys)
+                {
+                    ___placedArtifacts[x].RemoveAll(IsNotGameArtifactID);
+                }
+                ___analyzedArtifatIDs.RemoveAll(IsNotGameArtifactID);
             }
         }
     }
