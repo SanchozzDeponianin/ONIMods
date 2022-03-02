@@ -3,9 +3,7 @@ using Klei.AI;
 using KSerialization;
 using UnityEngine;
 using STRINGS;
-
 using PeterHan.PLib.Detours;
-
 using static BetterPlantTending.BetterPlantTendingAssets;
 
 namespace BetterPlantTending
@@ -43,8 +41,8 @@ namespace BetterPlantTending
             component.CreateExtraSeed();
         });
 
-        //private delegate void QueueUpdateChore(Tinkerable tinkerable);
-        //private static readonly QueueUpdateChore UpdateChore = typeof(Tinkerable).Detour<QueueUpdateChore>();
+        private static readonly System.Func<SeedProducer, string, int, bool, GameObject> ProduceSeed = 
+            typeof(SeedProducer).Detour<System.Func<SeedProducer, string, int, bool, GameObject>>("ProduceSeed");
 
         protected override void OnPrefabInit()
         {
@@ -64,18 +62,14 @@ namespace BetterPlantTending
                 tinkerable.tinkerMaterialTag = AllowFarmTinkerDecorative ? FarmStationConfig.TINKER_TOOLS : GameTags.Void;
             Subscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Subscribe((int)GameHashes.Died, OnUprootedDelegate);
-#if EXPANSION1
             Subscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
-#endif
         }
 
         protected override void OnCleanUp()
         {
             Unsubscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Unsubscribe((int)GameHashes.Died, OnUprootedDelegate);
-#if EXPANSION1
             Unsubscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
-#endif
             base.OnCleanUp();
         }
 
@@ -96,8 +90,7 @@ namespace BetterPlantTending
             if (hasExtraSeedAvailable)
             {
                 hasExtraSeedAvailable = false;
-                seedProducer.ProduceSeed(seedProducer.seedInfo.seedId);
-                //UpdateChore(tinkerable);
+                ProduceSeed(seedProducer, seedProducer.seedInfo.seedId, 1, true);
             }
         }
 

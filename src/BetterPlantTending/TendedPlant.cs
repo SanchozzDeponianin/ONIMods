@@ -7,10 +7,8 @@ namespace BetterPlantTending
     {
         protected static readonly string[] CropTendingEffects = new string[] {
             FARM_TINKER_EFFECT_ID,
-#if EXPANSION1
             DIVERGENT_CROP_TENDED_EFFECT_ID,
             DIVERGENT_CROP_TENDED_WORM_EFFECT_ID,
-#endif
         };
 
         [MyCmpReq]

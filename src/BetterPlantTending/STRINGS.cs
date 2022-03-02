@@ -68,10 +68,8 @@ namespace BetterPlantTending
                 { COLDBREATHER, UI.FormatAsKeyWord(CREATURES.SPECIES.COLDBREATHER.NAME) },
                 { OXYFERN, UI.FormatAsKeyWord(CREATURES.SPECIES.OXYFERN.NAME) },
                 { FARMTINKER, UI.FormatAsKeyWord(global::STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.NAME) },
-#if EXPANSION1
                 { DIVERGENTCROPTENDED, UI.FormatAsKeyWord(CREATURES.MODIFIERS.DIVERGENTPLANTTENDED.NAME)},
                 { WORMCROPTENDED, UI.FormatAsKeyWord(CREATURES.MODIFIERS.DIVERGENTPLANTTENDEDWORM.NAME)}
-#endif
             };
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
 

@@ -15,8 +15,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <Title>Better Plant Tending</Title>
-    <Description></Description>
-    <ModVersion>1.2.0</ModVersion>
+    <Description>Provides a number of improvements for how your Farmers, Worms and Beetles take care of plants.</Description>
+    <ModVersion>2.0.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

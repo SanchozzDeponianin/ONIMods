@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using TUNING;
-
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
 using PeterHan.PLib.Options;
 using static BetterPlantTending.BetterPlantTendingAssets;
 
@@ -29,14 +27,12 @@ namespace BetterPlantTending
             "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.GENEGAL")]
         public bool PreventTendingGrownOrWilting { get; set; } = true;
 
-#if EXPANSION1
         [JsonProperty]
         [Option(
             "TrunkInsteadofBranch",
             "TrunkInsteadofBranch",
             "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.GENEGAL")]
         public bool DivergentTendingTrunkInsteadofBranch { get; set; } = false;
-#endif
         // шансы доп семян
         [JsonProperty]
         [Option(
@@ -84,7 +80,6 @@ namespace BetterPlantTending
         [Limit(0.005, 0.04)]
         public float ExtraSeedTendingChance { get; set; } = EXTRA_SEED_CHANCE_PER_BOTANIST_SKILL;
 
-#if EXPANSION1
         // эффекты жучары
         [JsonProperty]
         [Option(
@@ -140,6 +135,5 @@ namespace BetterPlantTending
             Format = "F2")]
         [Limit(0, 2 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
         public float ExtraSeedChanceWormModifier { get; set; } = EXTRA_SEED_CHANCE_MODIFIER_WORM;
-#endif
     }
 }

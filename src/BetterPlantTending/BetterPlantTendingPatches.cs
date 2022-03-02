@@ -1,31 +1,29 @@
-﻿#define DEBUG
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using Harmony;
+using HarmonyLib;
 using Klei.AI;
 using TUNING;
 using UnityEngine;
-
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
-
+using PeterHan.PLib.PatchManager;
 using static BetterPlantTending.BetterPlantTendingAssets;
 
 namespace BetterPlantTending
 {
-    internal static class BetterPlantTendingPatches
+    internal sealed class BetterPlantTendingPatches : KMod.UserMod2
     {
-
-        public static void OnLoad()
+        public override void OnLoad(Harmony harmony)
         {
+            base.OnLoad(harmony);
             PUtil.InitLibrary();
-            PUtil.RegisterPatchClass(typeof(BetterPlantTendingPatches));
-            POptions.RegisterOptions(typeof(BetterPlantTendingOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(BetterPlantTendingPatches));
+            new POptions().RegisterOptions(this, typeof(BetterPlantTendingOptions));
         }
 
         [PLibMethod(RunAt.AfterModsLoad)]
@@ -170,9 +168,7 @@ namespace BetterPlantTending
                     float seedChance = worker.GetComponent<AttributeConverters>().Get(ExtraSeedTendingChance).Evaluate();
                     // множитель длительности эффекта.
                     float effectMultiplier =
-#if EXPANSION1
                         worker.GetAttributes().Get(Db.Get().Attributes.Get(__instance.effectAttributeId)).GetTotalValue() * __instance.effectMultiplier +
-#endif
                         1f;
                     // чем выше навык, тем дольше эффект, тем реже убобряют, поэтому перемножаем чтобы выровнять шансы
 
@@ -353,7 +349,6 @@ namespace BetterPlantTending
 
         // todo: починить баг с прокачкой механики вместо фермерства
 
-#if EXPANSION1
 
         // научиваем жучинкусов убобрять безурожайные растения, такие как холодых и оксихрен, и декоративочка
         // а также корректируем убобрение дерева
@@ -486,6 +481,5 @@ namespace BetterPlantTending
                 dt *= ai.GetTotalValue() / (RM.Get(__instance.master).Replanted ? CROPS.GROWTH_RATE : CROPS.WILD_GROWTH_RATE);
             }
         }
-#endif
     }
 }

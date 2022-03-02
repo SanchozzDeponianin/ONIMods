@@ -16,35 +16,31 @@ namespace BetterPlantTending
         internal const float EXTRA_SEED_CHANCE_BASE_VALUE_DECORATIVE = CROPS.BASE_BONUS_SEED_PROBABILITY;
         internal const float EXTRA_SEED_CHANCE_BASE_VALUE_NOT_DECORATIVE = 0;
         internal const float EXTRA_SEED_CHANCE_PER_BOTANIST_SKILL = 0.02f;
-#if EXPANSION1
+
         internal const float THROUGHPUT_MODIFIER_DIVERGENT = 0.2f;
         internal const float THROUGHPUT_MODIFIER_WORM = 1;
 
         internal const float EXTRA_SEED_CHANCE_MODIFIER_DIVERGENT = 0.02f;
         internal const float EXTRA_SEED_CHANCE_MODIFIER_WORM = 0.1f;
-#endif
+
         internal static Attribute ColdBreatherThroughput;
         internal static AttributeModifier ColdBreatherThroughputBaseValue;
         private static AttributeModifier ColdBreatherThroughputFarmTinkerModifier;
-#if EXPANSION1
         private static AttributeModifier ColdBreatherThroughputDivergentModifier;
         private static AttributeModifier ColdBreatherThroughputWormModifier;
-#endif
+
         internal static Attribute OxyfernThroughput;
         internal static AttributeModifier OxyfernThroughputBaseValue;
         private static AttributeModifier OxyfernThroughputFarmTinkerModifier;
-#if EXPANSION1
         private static AttributeModifier OxyfernThroughputDivergentModifier;
         private static AttributeModifier OxyfernThroughputWormModifier;
-#endif
+
         internal static Attribute ExtraSeedChance;
         internal static AttributeModifier ExtraSeedChanceDecorativeBaseValue;
         internal static AttributeModifier ExtraSeedChanceNotDecorativeBaseValue;
         internal static AttributeConverter ExtraSeedTendingChance;
-#if EXPANSION1
         private static AttributeModifier ExtraSeedChanceDivergentModifier;
         private static AttributeModifier ExtraSeedChanceWormModifier;
-#endif
 
         internal static void Init()
         {
@@ -119,9 +115,9 @@ namespace BetterPlantTending
                 attribute: db.Attributes.Botanist,
                 multiplier: EXTRA_SEED_CHANCE_PER_BOTANIST_SKILL,
                 base_value: 0f,
-                formatter: toPercent);
+                formatter: toPercent,
+                available_dlcs: DlcManager.AVAILABLE_ALL_VERSIONS);
 
-#if EXPANSION1
             // модификаторы для жучинкусов
             var effectDivergentCropTended = db.effects.Get(DIVERGENT_CROP_TENDED_EFFECT_ID);
             var effectWormCropTended = db.effects.Get(DIVERGENT_CROP_TENDED_WORM_EFFECT_ID);
@@ -165,7 +161,6 @@ namespace BetterPlantTending
                 value: EXTRA_SEED_CHANCE_MODIFIER_WORM,
                 is_readonly: false);
             effectWormCropTended.Add(ExtraSeedChanceWormModifier);
-#endif
         }
 
         internal static void LoadOptions()
@@ -177,14 +172,12 @@ namespace BetterPlantTending
             ExtraSeedChanceDecorativeBaseValue.SetValue(options.ExtraSeedChanceDecorativeBaseValue);
             ExtraSeedChanceNotDecorativeBaseValue.SetValue(options.ExtraSeedChanceNotDecorativeBaseValue);
             ExtraSeedTendingChance.multiplier = options.ExtraSeedTendingChance;
-#if EXPANSION1
             ColdBreatherThroughputDivergentModifier.SetValue(options.ColdBreatherThroughputDivergentModifier);
             ColdBreatherThroughputWormModifier.SetValue(options.ColdBreatherThroughputWormModifier);
             OxyfernThroughputDivergentModifier.SetValue(options.OxyfernThroughputDivergentModifier);
             OxyfernThroughputWormModifier.SetValue(options.OxyfernThroughputWormModifier);
             ExtraSeedChanceDivergentModifier.SetValue(options.ExtraSeedChanceDivergentModifier);
             ExtraSeedChanceWormModifier.SetValue(options.ExtraSeedChanceWormModifier);
-#endif
         }
     }
 }
