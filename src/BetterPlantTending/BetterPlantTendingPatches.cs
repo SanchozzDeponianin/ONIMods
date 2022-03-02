@@ -183,18 +183,64 @@ namespace BetterPlantTending
             }
         }
 
-        // предотвращаем повторное убобрение фермерами если доп семя заспавнилось
+        // предотвращаем убобрение фермерами 
+        // если растение засохло или полностью выросло
+        // или декоротивное доп семя заспавнилось
+
+        // todo: проверить спящие растения типа газотравы
+        [HarmonyPatch(typeof(Tinkerable), "OnPrefabInit")]
+        internal static class Tinkerable_OnPrefabInit
+        {
+            private static void Postfix(Tinkerable __instance, EventSystem.IntraObjectHandler<Tinkerable> ___OnEffectRemovedDelegate)
+            {
+                if (__instance.tinkerMaterialTag == FarmStationConfig.TINKER_TOOLS)
+                {
+                    // чтобы обновить чору после того как белка извлекла семя
+                    __instance.Subscribe((int)GameHashes.SeedProduced, ___OnEffectRemovedDelegate);
+                    // чтобы обновить чору когда растение засыхает/растёт/выросло
+                    if (BetterPlantTendingOptions.Instance.PreventTendingGrownOrWilting)
+                    {
+                        __instance.Subscribe((int)GameHashes.Wilt, ___OnEffectRemovedDelegate);
+                        __instance.Subscribe((int)GameHashes.WiltRecover, ___OnEffectRemovedDelegate);
+                        __instance.Subscribe((int)GameHashes.Grow, ___OnEffectRemovedDelegate);
+                        //__instance.Subscribe((int)GameHashes.Harvest, ___OnEffectRemovedDelegate);
+                    }
+                }
+            }
+        }
+
+        // если убобрение не нужно - эмулируем как будто оно уже есть
         [HarmonyPatch(typeof(Tinkerable), "HasEffect")]
         internal static class Tinkerable_HasEffect
         {
             private static void Postfix(Tinkerable __instance, ref bool __result)
             {
-                var extra = __instance.GetComponent<ExtraSeedProducer>();
-                if (extra != null)
+                if (__result)
+                    return;
+                if (__instance.tinkerMaterialTag == FarmStationConfig.TINKER_TOOLS)
                 {
-                    __result = __result || !extra.ShouldFarmTinkerTending;
+                    if (BetterPlantTendingOptions.Instance.PreventTendingGrownOrWilting)
+                    {
+                        if (__instance.HasTag(GameTags.Wilting)) // засохло
+                        {
+                            __result = true;
+                            return;
+                        }
+                        // todo: дерего
+                        
+                        if (__instance.GetComponent<Growing>()?.IsGrown() ?? false) // полностью выросло
+                        {
+                            __result = true;
+                            return;
+                        }
+                    }
+
+                    if (!__instance.GetComponent<ExtraSeedProducer>()?.ShouldFarmTinkerTending ?? false)
+                    {
+                        __result = true;
+                        return;
+                    }
                 }
-                // todo: может быть. прикрутить запрет убобрять засохшие или полностью выросшие.
             }
         }
 
@@ -315,39 +361,9 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(CropTendingStates), "FindCrop")]
         internal static class CropTendingStates_FindCrop
         {
-            private static bool IsNotNeedTending(Growing growing)
-            {
-                if (growing == null)
-                    return true;
-                // todo: сделать опционально
-                if (growing.HasTag(ForestTreeBranchConfig.ID)) // не нужно убобрять отдельные ветки
-                    return true;
-                if (growing.HasTag(ForestTreeConfig.ID)) // дерево
-                {
-                    if (growing.IsGrown())
-                    {
-                        // не нужно убобрять дерево если все ветки выросли
-                        // todo: проверить можно ли упростить
-                        var buddingTrunk = growing.GetComponent<BuddingTrunk>();
-                        if (buddingTrunk != null)
-                        {
-                            for (int i = 0; i < ForestTreeConfig.NUM_BRANCHES; i++)
-                            {
-                                var growingBranch = buddingTrunk.GetBranchAtPosition(i)?.GetComponent<Growing>();
-                                if (growingBranch != null && !growingBranch.IsGrown())
-                                {
-                                    return false;
-                                }
-                            }
-                        }
-                        return true;
-                    }
-                    else
-                        return false;
-                }
-                // остальные растения не нужно убобрять если выросли
-                return growing.IsGrown();
-            }
+            private static readonly int radius = (int)Math.Sqrt((int)(typeof(CropTendingStates).GetFieldSafe("MAX_SQR_EUCLIDEAN_DISTANCE", true)?.GetRawConstantValue() ?? 625));
+            private static bool TrunkInsteadofBranch => BetterPlantTendingOptions.Instance.DivergentTendingTrunkInsteadofBranch;
+            private static bool PreventTendingWilting => BetterPlantTendingOptions.Instance.PreventTendingGrownOrWilting;
 
             // поиск растений для убобрения.
             // Клеи зачем-то перебирают список всех урожайных растений на карте
@@ -355,8 +371,7 @@ namespace BetterPlantTending
             private static List<KMonoBehaviour> FindPlants(int myWorldId, CropTendingStates.Instance smi)
             {
                 var entries = ListPool<ScenePartitionerEntry, GameScenePartitioner>.Allocate();
-                // todo: вычислять радиус из константы
-                var search_extents = new Extents(Grid.PosToCell(smi.master.transform.GetPosition()), 25);
+                var search_extents = new Extents(Grid.PosToCell(smi.master.transform.GetPosition()), radius);
                 GameScenePartitioner.Instance.GatherEntries(search_extents, GameScenePartitioner.Instance.plants, entries);
                 var plants = entries
                     .Select((e) => e.obj as KMonoBehaviour)
@@ -365,6 +380,45 @@ namespace BetterPlantTending
                     .ToList();
                 entries.Recycle();
                 return plants;
+            }
+
+            // проверка что растение нуждается в убобрении.
+            // заменяем простую клеевскую проверку на эту:
+            private static bool IsNotNeedTending(Growing growing)
+            {
+                if (growing == null)
+                    return true;
+                if (PreventTendingWilting && !growing.IsGrowing())
+                    return true;
+                if (TrunkInsteadofBranch)
+                {
+                    if (growing.HasTag(ForestTreeBranchConfig.ID)) // не нужно убобрять отдельные ветки
+                        return true;
+                    if (growing.HasTag(ForestTreeConfig.ID)) // дерево
+                    {
+                        if (growing.IsGrown())
+                        {
+                            // не нужно убобрять дерево если все ветки выросли
+                            var buddingTrunk = growing.GetComponent<BuddingTrunk>();
+                            if (buddingTrunk != null)
+                            {
+                                for (int i = 0; i < ForestTreeConfig.NUM_BRANCHES; i++)
+                                {
+                                    var growingBranch = buddingTrunk.GetBranchAtPosition(i)?.GetComponent<Growing>();
+                                    if (growingBranch != null && !growingBranch.IsGrown())
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                            return true;
+                        }
+                        else
+                            return false;
+                    }
+                }
+                // остальные растения не нужно убобрять если выросли
+                return growing.IsGrown();
             }
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)

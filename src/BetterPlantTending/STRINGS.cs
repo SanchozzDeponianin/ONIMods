@@ -52,6 +52,7 @@ namespace BetterPlantTending
 
             public class CATEGORY
             {
+                public static LocString GENEGAL = "Genegal";
                 public static LocString FARMTINKER = "\"{FARMTINKER}\" additional effects";
                 public static LocString DIVERGENTCROPTENDED = "\"{DIVERGENTCROPTENDED}\" additional effects";
                 public static LocString WORMCROPTENDED = "\"{WORMCROPTENDED}\" additional effects";

@@ -13,22 +13,50 @@ namespace BetterPlantTending
     [ConfigFile(IndentOutput: true)]
     internal class BetterPlantTendingOptions : BaseOptions<BetterPlantTendingOptions>
     {
-        // эффекты и настройки фермера
+        // основные настройки
         // todo: причесать
         [JsonProperty]
         [Option(
-            "allowDecorative", 
-            "allowDecorative", 
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER")]
+            "allowDecorative",
+            "allowDecorative",
+            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.GENEGAL")]
         public bool AllowFarmTinkerDecorative { get; set; } = true;
 
         [JsonProperty]
         [Option(
-            "allowGrownOrWilting", 
-            "allowGrownOrWilting", 
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER")]
-        public bool AllowFarmTinkerGrownOrWilting { get; set; } = false;
+            "allowGrownOrWilting",
+            "allowGrownOrWilting",
+            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.GENEGAL")]
+        public bool PreventTendingGrownOrWilting { get; set; } = true;
 
+#if EXPANSION1
+        [JsonProperty]
+        [Option(
+            "TrunkInsteadofBranch",
+            "TrunkInsteadofBranch",
+            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.GENEGAL")]
+        public bool DivergentTendingTrunkInsteadofBranch { get; set; } = false;
+#endif
+        // шансы доп семян
+        [JsonProperty]
+        [Option(
+            "BetterPlantTending.STRINGS.OPTIONS..TITLE",
+            "BetterPlantTending.STRINGS.OPTIONS..TOOLTIP",
+            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.GENEGAL",
+            Format = "F2")]
+        [Limit(0, 2 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
+        public float ExtraSeedChanceDecorativeBaseValue { get; set; } = EXTRA_SEED_CHANCE_BASE_VALUE_DECORATIVE;
+
+        [JsonProperty]
+        [Option(
+            "BetterPlantTending.STRINGS.OPTIONS..TITLE",
+            "BetterPlantTending.STRINGS.OPTIONS..TOOLTIP",
+            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.GENEGAL",
+            Format = "F2")]
+        [Limit(0, CROPS.BASE_BONUS_SEED_PROBABILITY)]
+        public float ExtraSeedChanceNotDecorativeBaseValue { get; set; } = EXTRA_SEED_CHANCE_BASE_VALUE_NOT_DECORATIVE;
+
+        // эффекты фермера
         [JsonProperty]
         [Option(
             "BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_MODIFIER.TITLE",
@@ -46,25 +74,6 @@ namespace BetterPlantTending
             Format = "F1")]
         [Limit(1, 4)]
         public float OxyfernThroughputFarmTinkerModifier { get; set; } = THROUGHPUT_MODIFIER_FARMTINKER;
-
-        // шансы доп семян
-        [JsonProperty]
-        [Option(
-            "BetterPlantTending.STRINGS.OPTIONS..TITLE",
-            "BetterPlantTending.STRINGS.OPTIONS..TOOLTIP",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER",
-            Format = "F2")]
-        [Limit(0, 2 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
-        public float ExtraSeedChanceDecorativeBaseValue { get; set; } = EXTRA_SEED_CHANCE_BASE_VALUE_DECORATIVE;
-
-        [JsonProperty]
-        [Option(
-            "BetterPlantTending.STRINGS.OPTIONS..TITLE",
-            "BetterPlantTending.STRINGS.OPTIONS..TOOLTIP",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER",
-            Format = "F2")]
-        [Limit(0, CROPS.BASE_BONUS_SEED_PROBABILITY)]
-        public float ExtraSeedChanceNotDecorativeBaseValue { get; set; } = EXTRA_SEED_CHANCE_BASE_VALUE_NOT_DECORATIVE;
 
         [JsonProperty]
         [Option(

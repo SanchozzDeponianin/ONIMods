@@ -3,6 +3,9 @@ using Klei.AI;
 using KSerialization;
 using UnityEngine;
 using STRINGS;
+
+using PeterHan.PLib.Detours;
+
 using static BetterPlantTending.BetterPlantTendingAssets;
 
 namespace BetterPlantTending
@@ -14,17 +17,21 @@ namespace BetterPlantTending
         private SeedProducer seedProducer;
         [MyCmpReq]
         private Tinkerable tinkerable;
+        [MyCmpReq]
+        private WiltCondition wilting;
 #pragma warning restore CS0649
 
         [Serialize]
         private bool hasExtraSeedAvailable = false;
-        private bool allowFarmTinkerDecorative = false;
+        
         [SerializeField]
         internal bool isNotDecorative = false;
 
+        private static bool AllowFarmTinkerDecorative => BetterPlantTendingOptions.Instance.AllowFarmTinkerDecorative;
+        private bool IsWilting => BetterPlantTendingOptions.Instance.PreventTendingGrownOrWilting && wilting.IsWilting();
         public bool ExtraSeedAvailable => hasExtraSeedAvailable;
-        public bool ShouldDivergentTending => isNotDecorative || !hasExtraSeedAvailable;
-        public bool ShouldFarmTinkerTending => isNotDecorative || (allowFarmTinkerDecorative && !hasExtraSeedAvailable);
+        public bool ShouldDivergentTending => (isNotDecorative || !hasExtraSeedAvailable) && !IsWilting;
+        public bool ShouldFarmTinkerTending => isNotDecorative || !hasExtraSeedAvailable;
 
         private static readonly EventSystem.IntraObjectHandler<ExtraSeedProducer> OnUprootedDelegate = new EventSystem.IntraObjectHandler<ExtraSeedProducer>(delegate (ExtraSeedProducer component, object data)
         {
@@ -36,34 +43,30 @@ namespace BetterPlantTending
             component.CreateExtraSeed();
         });
 
+        //private delegate void QueueUpdateChore(Tinkerable tinkerable);
+        //private static readonly QueueUpdateChore UpdateChore = typeof(Tinkerable).Detour<QueueUpdateChore>();
+
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
-            allowFarmTinkerDecorative = BetterPlantTendingOptions.Instance.AllowFarmTinkerDecorative;
             var attributes = this.GetAttributes();
             attributes.Add(ExtraSeedChance);
             if (isNotDecorative)
                 attributes.Add(ExtraSeedChanceNotDecorativeBaseValue);
             else
                 attributes.Add(ExtraSeedChanceDecorativeBaseValue);
-
-            // todo: потом убрать
-            Debug.Log($"ExtraSeedProducer.OnPrefabInit name={gameObject.name}, isNotDecorative = {isNotDecorative}, allowFarmTinkerDecorative = {allowFarmTinkerDecorative}");
         }
 
         protected override void OnSpawn()
         {
             base.OnSpawn();
             if (!isNotDecorative)
-                tinkerable.tinkerMaterialTag = allowFarmTinkerDecorative ? FarmStationConfig.TINKER_TOOLS : GameTags.Void;
+                tinkerable.tinkerMaterialTag = AllowFarmTinkerDecorative ? FarmStationConfig.TINKER_TOOLS : GameTags.Void;
             Subscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Subscribe((int)GameHashes.Died, OnUprootedDelegate);
 #if EXPANSION1
             Subscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
 #endif
-
-            // todo: потом убрать
-            Debug.Log($"ExtraSeedProducer.OnSpawn name={gameObject.name}, isNotDecorative = {isNotDecorative}, allowFarmTinkerDecorative = {allowFarmTinkerDecorative}");
         }
 
         protected override void OnCleanUp()
@@ -78,14 +81,14 @@ namespace BetterPlantTending
 
         public void CreateExtraSeed(float seedChanceByWorker = 0)
         {
-            // шанс получить семя базовый + за счет эффектов
-            float seedChance = this.GetAttributes().Get(ExtraSeedChance).GetTotalValue();
-            // ... + за счет навыка фермера
-            if (UnityEngine.Random.Range(0f, 1f) <= seedChance + seedChanceByWorker)
-                hasExtraSeedAvailable = true;
-
-            // todo: потом убрать
-            Debug.Log($"CreateExtraSeed: name={gameObject.name}, seedChance={seedChance}, seedChanceByWorker={seedChanceByWorker}, Total={seedChance + seedChanceByWorker}, hasExtraSeedAvailable={hasExtraSeedAvailable}");
+            if (!wilting.IsWilting())
+            {
+                // шанс получить семя базовый + за счет эффектов
+                float seedChance = this.GetAttributes().Get(ExtraSeedChance).GetTotalValue();
+                // ... + за счет навыка фермера
+                if (Random.Range(0f, 1f) <= seedChance + seedChanceByWorker)
+                    hasExtraSeedAvailable = true;
+            }
         }
 
         public void ExtractExtraSeed()
@@ -94,6 +97,7 @@ namespace BetterPlantTending
             {
                 hasExtraSeedAvailable = false;
                 seedProducer.ProduceSeed(seedProducer.seedInfo.seedId);
+                //UpdateChore(tinkerable);
             }
         }
 
