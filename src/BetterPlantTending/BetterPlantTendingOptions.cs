@@ -27,12 +27,6 @@ namespace BetterPlantTending
             "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.GENEGAL")]
         public bool PreventTendingGrownOrWilting { get; set; } = true;
 
-        [JsonProperty]
-        [Option(
-            "TrunkInsteadofBranch",
-            "TrunkInsteadofBranch",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.GENEGAL")]
-        public bool DivergentTendingTrunkInsteadofBranch { get; set; } = false;
         // шансы доп семян
         [JsonProperty]
         [Option(

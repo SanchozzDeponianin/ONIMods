@@ -47,7 +47,7 @@ namespace BetterPlantTending
 
         // Оксихрен
         [HarmonyPatch(typeof(OxyfernConfig), nameof(OxyfernConfig.CreatePrefab))]
-        internal static class OxyfernConfig_CreatePrefab
+        private static class OxyfernConfig_CreatePrefab
         {
             private static void Postfix(GameObject __result)
             {
@@ -57,7 +57,7 @@ namespace BetterPlantTending
         }
 
         [HarmonyPatch(typeof(Oxyfern), nameof(Oxyfern.SetConsumptionRate))]
-        internal static class Oxyfern_SetConsumptionRate
+        private static class Oxyfern_SetConsumptionRate
         {
             private static void Postfix(Oxyfern __instance, ElementConsumer ___elementConsumer, ElementConverter ___elementConverter)
             {
@@ -70,7 +70,7 @@ namespace BetterPlantTending
 
         // Холодых
         [HarmonyPatch(typeof(ColdBreatherConfig), nameof(ColdBreatherConfig.CreatePrefab))]
-        internal static class ColdBreatherConfig_CreatePrefab
+        private static class ColdBreatherConfig_CreatePrefab
         {
             private static void Postfix(GameObject __result)
             {
@@ -80,7 +80,7 @@ namespace BetterPlantTending
         }
 
         [HarmonyPatch(typeof(ColdBreather), "OnReplanted")]
-        internal static class ColdBreather_OnReplanted
+        private static class ColdBreather_OnReplanted
         {
             private static void Postfix(ColdBreather __instance)
             {
@@ -92,7 +92,7 @@ namespace BetterPlantTending
         // todo: нужно перепроверить это!
         // фикс для элементконсумера, чтобы статуситем не исчезал после обновления
         [HarmonyPatch(typeof(ElementConsumer), "UpdateStatusItem")]
-        internal static class ElementConsumer_UpdateStatusItem
+        private static class ElementConsumer_UpdateStatusItem
         {
             private static void Prefix(ElementConsumer __instance, ref System.Guid ___statusHandle, KSelectable ___selectable)
             {
@@ -106,44 +106,35 @@ namespace BetterPlantTending
 #endif
 
         // дерево
-        [HarmonyPatch(typeof(ForestTreeConfig), nameof(ForestTreeConfig.CreatePrefab))]
-        internal static class ForestTreeConfig_CreatePrefab
+        // в ванили отдельные верки не будут убобрять после загрузки сейва
+        // так как до них не доходит событие OnUpdateRoom
+        // потому что ветки забанены в RoomProberе
+        // чиним это
+        // todo: сделать опцией
+        [HarmonyPatch(typeof(BuddingTrunk), "OnPrefabInit")]
+        private static class BuddingTrunk_OnPrefabInit
         {
-            private static void Postfix(GameObject __result)
-            {
-                __result.AddOrGet<TendedForestTree>();
-            }
-        }
+            private static readonly EventSystem.IntraObjectHandler<BuddingTrunk> OnUpdateRoomDelegate =
+                new EventSystem.IntraObjectHandler<BuddingTrunk>((component, data) => RetriggerOnUpdateRoom(component, data));
 
-        // в ванилле ветка имеет "тинкерабле" и  "эффекты"
-        // но её практически никогда не убобряют
-        // с модом тоже
-        // однако крайне редко удается случайно отловить когда убобряют
-        // как то связано с засыханием и ростом новых веток
-        // поэтому - грязный хак чтобы не могли убобрить
-        [HarmonyPatch(typeof(ForestTreeBranchConfig), "CreatePrefab")]
-        internal static class ForestTreeBranchConfig_CreatePrefab
-        {
-            private static void Postfix(GameObject __result)
+            private static void RetriggerOnUpdateRoom(BuddingTrunk trunk, object data)
             {
-                __result.GetComponent<Tinkerable>().tinkerMaterialTag = GameTags.Void;
+                for (int i = 0; i < ForestTreeConfig.NUM_BRANCHES; i++)
+                {
+                    trunk.GetBranchAtPosition(i)?.Trigger((int)GameHashes.UpdateRoom, data);
+                }
             }
-        }
 
-        // применить эффект при росте новой ветки дерева
-        [HarmonyPatch(typeof(TreeBud), "OnSpawn")]
-        internal static class TreeBud_OnSpawn
-        {
-            private static void Prefix(TreeBud __instance, Ref<BuddingTrunk> ___buddingTrunk)
+            private static void Postfix(BuddingTrunk __instance)
             {
-                TendedForestTree.ApplyModifierToBranch(__instance, ___buddingTrunk.Get());
+                __instance.Subscribe((int)GameHashes.UpdateRoom, OnUpdateRoomDelegate);
             }
         }
 
         // дополнительные семена безурожайных растений
         // todo: растение ловушка тоже не даёт семян. обдумать это.
         [HarmonyPatch(typeof(EntityTemplates), nameof(EntityTemplates.CreateAndRegisterSeedForPlant))]
-        internal static class EntityTemplates_CreateAndRegisterSeedForPlant
+        private static class EntityTemplates_CreateAndRegisterSeedForPlant
         {
             private static void Postfix(GameObject plant)
             {
@@ -157,7 +148,7 @@ namespace BetterPlantTending
 
         // заспавним доп семя при убобрении фермерами
         [HarmonyPatch(typeof(Tinkerable), "OnCompleteWork")]
-        internal static class Tinkerable_OnCompleteWork
+        private static class Tinkerable_OnCompleteWork
         {
             private static void Postfix(Tinkerable __instance, Worker worker)
             {
@@ -182,10 +173,9 @@ namespace BetterPlantTending
         // предотвращаем убобрение фермерами 
         // если растение засохло или полностью выросло
         // или декоротивное доп семя заспавнилось
-
         // todo: проверить спящие растения типа газотравы
         [HarmonyPatch(typeof(Tinkerable), "OnPrefabInit")]
-        internal static class Tinkerable_OnPrefabInit
+        private static class Tinkerable_OnPrefabInit
         {
             private static void Postfix(Tinkerable __instance, EventSystem.IntraObjectHandler<Tinkerable> ___OnEffectRemovedDelegate)
             {
@@ -207,7 +197,7 @@ namespace BetterPlantTending
 
         // если убобрение не нужно - эмулируем как будто оно уже есть
         [HarmonyPatch(typeof(Tinkerable), "HasEffect")]
-        internal static class Tinkerable_HasEffect
+        private static class Tinkerable_HasEffect
         {
             private static void Postfix(Tinkerable __instance, ref bool __result)
             {
@@ -222,15 +212,12 @@ namespace BetterPlantTending
                             __result = true;
                             return;
                         }
-                        // todo: дерего
-                        
                         if (__instance.GetComponent<Growing>()?.IsGrown() ?? false) // полностью выросло
                         {
                             __result = true;
                             return;
                         }
                     }
-
                     if (!__instance.GetComponent<ExtraSeedProducer>()?.ShouldFarmTinkerTending ?? false)
                     {
                         __result = true;
@@ -242,7 +229,7 @@ namespace BetterPlantTending
 
         // научиваем белочек делать экстракцию декоративных безурожайных семян
         [HarmonyPatch(typeof(ClimbableTreeMonitor.Instance), "FindClimbableTree")]
-        internal static class ClimbableTreeMonitor_Instance_FindClimbableTree
+        private static class ClimbableTreeMonitor_Instance_FindClimbableTree
         {
             private static void AddPlant(List<KMonoBehaviour> list, KMonoBehaviour plant)
             {
@@ -294,7 +281,7 @@ namespace BetterPlantTending
         }
 
         [HarmonyPatch(typeof(TreeClimbStates), "Rummage")]
-        internal static class TreeClimbStates_Rummage
+        private static class TreeClimbStates_Rummage
         {
             private static void Postfix(TreeClimbStates.Instance smi)
             {
@@ -307,7 +294,7 @@ namespace BetterPlantTending
         // а то обычно для неурожайных растений "эффекты" вообще не отображаются.
         // грязновато. но ладно.
         [HarmonyPatch(typeof(GameUtil), nameof(GameUtil.GetPlantEffectDescriptors))]
-        internal static class GameUtil_GetPlantEffectDescriptors
+        private static class GameUtil_GetPlantEffectDescriptors
         {
             private static Component GetTwoComponents(GameObject go)
             {
@@ -351,14 +338,11 @@ namespace BetterPlantTending
 
 
         // научиваем жучинкусов убобрять безурожайные растения, такие как холодых и оксихрен, и декоративочка
-        // а также корректируем убобрение дерева
         // использован достаточно грязный хак. но все работает.
         [HarmonyPatch(typeof(CropTendingStates), "FindCrop")]
-        internal static class CropTendingStates_FindCrop
+        private static class CropTendingStates_FindCrop
         {
             private static readonly int radius = (int)Math.Sqrt((int)(typeof(CropTendingStates).GetFieldSafe("MAX_SQR_EUCLIDEAN_DISTANCE", true)?.GetRawConstantValue() ?? 625));
-            private static bool TrunkInsteadofBranch => BetterPlantTendingOptions.Instance.DivergentTendingTrunkInsteadofBranch;
-            private static bool PreventTendingWilting => BetterPlantTendingOptions.Instance.PreventTendingGrownOrWilting;
 
             // поиск растений для убобрения.
             // Клеи зачем-то перебирают список всех урожайных растений на карте
@@ -378,41 +362,14 @@ namespace BetterPlantTending
             }
 
             // проверка что растение нуждается в убобрении.
+            // растения не нужно убобрять если полностью выросли или не растут
             // заменяем простую клеевскую проверку на эту:
             private static bool IsNotNeedTending(Growing growing)
             {
                 if (growing == null)
                     return true;
-                if (PreventTendingWilting && !growing.IsGrowing())
+                if (BetterPlantTendingOptions.Instance.PreventTendingGrownOrWilting && !growing.IsGrowing())
                     return true;
-                if (TrunkInsteadofBranch)
-                {
-                    if (growing.HasTag(ForestTreeBranchConfig.ID)) // не нужно убобрять отдельные ветки
-                        return true;
-                    if (growing.HasTag(ForestTreeConfig.ID)) // дерево
-                    {
-                        if (growing.IsGrown())
-                        {
-                            // не нужно убобрять дерево если все ветки выросли
-                            var buddingTrunk = growing.GetComponent<BuddingTrunk>();
-                            if (buddingTrunk != null)
-                            {
-                                for (int i = 0; i < ForestTreeConfig.NUM_BRANCHES; i++)
-                                {
-                                    var growingBranch = buddingTrunk.GetBranchAtPosition(i)?.GetComponent<Growing>();
-                                    if (growingBranch != null && !growingBranch.IsGrown())
-                                    {
-                                        return false;
-                                    }
-                                }
-                            }
-                            return true;
-                        }
-                        else
-                            return false;
-                    }
-                }
-                // остальные растения не нужно убобрять если выросли
                 return growing.IsGrown();
             }
 
@@ -470,7 +427,7 @@ namespace BetterPlantTending
         // растение-ловушка: производство газа  пропорционально её скорости роста
         // todo: сделать опционально
         [HarmonyPatch(typeof(CritterTrapPlant.StatesInstance), nameof(CritterTrapPlant.StatesInstance.AddGas))]
-        internal static class CritterTrapPlant_StatesInstance_AddGas
+        private static class CritterTrapPlant_StatesInstance_AddGas
         {
             private static readonly IDetouredField<CritterTrapPlant, ReceptacleMonitor> RM = PDetours.DetourField<CritterTrapPlant, ReceptacleMonitor>("rm");
 

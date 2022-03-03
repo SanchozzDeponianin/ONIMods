@@ -33,7 +33,6 @@
     <Compile Include="STRINGS.cs" />
     <Compile Include="TendedColdBreather.cs" />
     <Compile Include="TendedPlant.cs" />
-    <Compile Include="TendedForestTree.cs" />
     <Compile Include="TendedOxyfern.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
