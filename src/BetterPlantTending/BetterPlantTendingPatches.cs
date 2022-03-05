@@ -173,14 +173,18 @@ namespace BetterPlantTending
         // предотвращаем убобрение фермерами 
         // если растение засохло или полностью выросло
         // или декоротивное доп семя заспавнилось
+        // при изменении состояния растения нужно перепроверить задачу
         // todo: проверить спящие растения типа газотравы
+        // заодно чиним что качается механика заместо фермерства
         [HarmonyPatch(typeof(Tinkerable), "OnPrefabInit")]
         private static class Tinkerable_OnPrefabInit
         {
-            private static void Postfix(Tinkerable __instance, EventSystem.IntraObjectHandler<Tinkerable> ___OnEffectRemovedDelegate)
+            private static void Postfix(Tinkerable __instance, ref AttributeConverter ___attributeConverter, ref string ___skillExperienceSkillGroup, EventSystem.IntraObjectHandler<Tinkerable> ___OnEffectRemovedDelegate)
             {
                 if (__instance.tinkerMaterialTag == FarmStationConfig.TINKER_TOOLS)
                 {
+                    ___attributeConverter = Db.Get().AttributeConverters.PlantTendSpeed;
+                    ___skillExperienceSkillGroup = Db.Get().SkillGroups.Farming.Id;
                     // чтобы обновить чору после того как белка извлекла семя
                     __instance.Subscribe((int)GameHashes.SeedProduced, ___OnEffectRemovedDelegate);
                     // чтобы обновить чору когда растение засыхает/растёт/выросло
@@ -223,6 +227,20 @@ namespace BetterPlantTending
                         __result = true;
                         return;
                     }
+                }
+            }
+        }
+
+        // ишшо одно место чиним что качается механика заместо фермерства
+        [HarmonyPatch(typeof(TinkerStation), "OnPrefabInit")]
+        private static class TinkerStation_OnPrefabInit
+        {
+            private static void Postfix(TinkerStation __instance, ref AttributeConverter ___attributeConverter, ref string ___skillExperienceSkillGroup)
+            {
+                if (__instance.outputPrefab == FarmStationConfig.TINKER_TOOLS)
+                {
+                    ___attributeConverter = Db.Get().AttributeConverters.HarvestSpeed;
+                    ___skillExperienceSkillGroup = Db.Get().SkillGroups.Farming.Id;
                 }
             }
         }
@@ -333,9 +351,6 @@ namespace BetterPlantTending
                 return instructionsList;
             }
         }
-
-        // todo: починить баг с прокачкой механики вместо фермерства
-
 
         // научиваем жучинкусов убобрять безурожайные растения, такие как холодых и оксихрен, и декоративочка
         // использован достаточно грязный хак. но все работает.
