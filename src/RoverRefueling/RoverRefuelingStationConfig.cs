@@ -41,6 +41,7 @@ namespace RoverRefueling
             var prefabID = go.GetComponent<KPrefabID>();
             prefabID.AddTag(RoomConstraints.ConstraintTags.IndustrialMachinery);
             prefabID.AddTag(GameTags.NotRocketInteriorBuilding);
+            prefabID.AddTag(GameTags.OverlayBehindConduits);
             var storage = BuildingTemplates.CreateDefaultStorage(go, false);
             storage.capacityKg = capacity;
             storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
