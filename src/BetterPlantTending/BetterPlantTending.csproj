@@ -29,6 +29,7 @@
     <Compile Include="BetterPlantTendingOptions.cs" />
     <Compile Include="BetterPlantTendingPatches.cs" />
     <Compile Include="BetterPlantTendingAssets.cs" />
+    <Compile Include="TendedSaltPlant.cs" />
     <Compile Include="ExtraSeedProducer.cs" />
     <Compile Include="STRINGS.cs" />
     <Compile Include="TendedColdBreather.cs" />

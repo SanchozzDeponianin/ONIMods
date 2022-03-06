@@ -25,8 +25,8 @@ namespace BetterPlantTending
         [SerializeField]
         internal bool isNotDecorative = false;
 
-        private static bool AllowFarmTinkerDecorative => BetterPlantTendingOptions.Instance.AllowFarmTinkerDecorative;
-        private bool IsWilting => BetterPlantTendingOptions.Instance.PreventTendingGrownOrWilting && wilting.IsWilting();
+        private static bool AllowFarmTinkerDecorative => BetterPlantTendingOptions.Instance.allow_tinker_decorative;
+        private bool IsWilting => BetterPlantTendingOptions.Instance.prevent_tending_grown_or_wilting && wilting.IsWilting();// todo: косяк ?
         public bool ExtraSeedAvailable => hasExtraSeedAvailable;
         public bool ShouldDivergentTending => (isNotDecorative || !hasExtraSeedAvailable) && !IsWilting;
         public bool ShouldFarmTinkerTending => isNotDecorative || !hasExtraSeedAvailable;
@@ -73,14 +73,19 @@ namespace BetterPlantTending
             base.OnCleanUp();
         }
 
-        public void CreateExtraSeed(float seedChanceByWorker = 0)
+        public void CreateExtraSeed(Worker worker = null)
         {
-            if (!wilting.IsWilting())
+            if (!hasExtraSeedAvailable && !wilting.IsWilting())
             {
                 // шанс получить семя базовый + за счет эффектов
                 float seedChance = this.GetAttributes().Get(ExtraSeedChance).GetTotalValue();
-                // ... + за счет навыка фермера
-                if (Random.Range(0f, 1f) <= seedChance + seedChanceByWorker)
+                // шанс получить семя за счет навыка фермера
+                if (worker != null)
+                {
+                    seedChance += worker.GetComponent<AttributeConverters>().Get(
+                        Db.Get().AttributeConverters.SeedHarvestChance).Evaluate();
+                }
+                if (Random.Range(0f, 1f) <= seedChance)
                     hasExtraSeedAvailable = true;
             }
         }
@@ -94,7 +99,7 @@ namespace BetterPlantTending
             }
         }
 
-        // todo: описатель шансов доп семян. доделать текст
+        // описатель шансов доп семян.
         public List<Descriptor> GetDescriptors(GameObject go)
         {
             float seedChance = this?.GetAttributes()?.Get(ExtraSeedChance)?.GetTotalValue() ??

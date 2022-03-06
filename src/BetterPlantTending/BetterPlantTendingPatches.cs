@@ -61,7 +61,8 @@ namespace BetterPlantTending
         {
             private static void Postfix(Oxyfern __instance, ElementConsumer ___elementConsumer, ElementConverter ___elementConverter)
             {
-                float multiplier = __instance.GetAttributes().Get(OxyfernThroughput).GetTotalValue();
+                // дикость уже учитывается внутри Oxyfern.SetConsumptionRate
+                float multiplier = __instance.GetAttributes().Get(fakeGrowingRate.AttributeId).GetTotalValue() / CROPS.GROWTH_RATE;
                 ___elementConsumer.consumptionRate *= multiplier;
                 ___elementConsumer.RefreshConsumptionRate();
                 ___elementConverter.SetWorkSpeedMultiplier(multiplier);
@@ -75,7 +76,7 @@ namespace BetterPlantTending
             private static void Postfix(GameObject __result)
             {
                 Tinkerable.MakeFarmTinkerable(__result);
-                __result.AddOrGet<TendedColdBreather>();
+                __result.AddOrGet<TendedColdBreather>().emitRads = __result.GetComponent<RadiationEmitter>()?.emitRads ?? 0f;
             }
         }
 
@@ -110,7 +111,6 @@ namespace BetterPlantTending
         // так как до них не доходит событие OnUpdateRoom
         // потому что ветки забанены в RoomProberе
         // чиним это
-        // todo: сделать опцией
         [HarmonyPatch(typeof(BuddingTrunk), "OnPrefabInit")]
         private static class BuddingTrunk_OnPrefabInit
         {
@@ -127,7 +127,27 @@ namespace BetterPlantTending
 
             private static void Postfix(BuddingTrunk __instance)
             {
-                __instance.Subscribe((int)GameHashes.UpdateRoom, OnUpdateRoomDelegate);
+                if (BetterPlantTendingOptions.Instance.fix_tinkering_tree_branches)
+                    __instance.Subscribe((int)GameHashes.UpdateRoom, OnUpdateRoomDelegate);
+            }
+        }
+
+        // солёная лоза, ну и заодно и неиспользуемый кактус, они оба на одной основе сделаны
+        [HarmonyPatch]
+        private static class SaltPlantConfig_CreatePrefab
+        {
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                return new List<MethodBase>()
+                {
+                    typeof(SaltPlantConfig).GetMethodSafe(nameof(SaltPlantConfig.CreatePrefab), false),
+                    typeof(FilterPlantConfig).GetMethodSafe(nameof(FilterPlantConfig.CreatePrefab), false),
+                };
+            }
+
+            private static void Postfix(GameObject __result)
+            {
+                __result.AddOrGet<TendedSaltPlant>().consumptionRate = __result.GetComponent<ElementConsumer>().consumptionRate;
             }
         }
 
@@ -152,21 +172,7 @@ namespace BetterPlantTending
         {
             private static void Postfix(Tinkerable __instance, Worker worker)
             {
-                var extra = __instance.GetComponent<ExtraSeedProducer>();
-                if (extra != null && !extra.ExtraSeedAvailable)
-                {
-                    // шанс получить семя за счет навыка фермера
-                    float seedChance = worker.GetComponent<AttributeConverters>().Get(ExtraSeedTendingChance).Evaluate();
-                    // множитель длительности эффекта.
-                    float effectMultiplier =
-                        worker.GetAttributes().Get(Db.Get().Attributes.Get(__instance.effectAttributeId)).GetTotalValue() * __instance.effectMultiplier +
-                        1f;
-                    // чем выше навык, тем дольше эффект, тем реже убобряют, поэтому перемножаем чтобы выровнять шансы
-
-                    Debug.Log($"Tinkerable ExtraSeed effectMultiplier={effectMultiplier}, seedChance={seedChance}");
-
-                    extra.CreateExtraSeed(seedChance * effectMultiplier);
-                }
+                __instance.GetComponent<ExtraSeedProducer>()?.CreateExtraSeed(worker);
             }
         }
 
@@ -188,7 +194,7 @@ namespace BetterPlantTending
                     // чтобы обновить чору после того как белка извлекла семя
                     __instance.Subscribe((int)GameHashes.SeedProduced, ___OnEffectRemovedDelegate);
                     // чтобы обновить чору когда растение засыхает/растёт/выросло
-                    if (BetterPlantTendingOptions.Instance.PreventTendingGrownOrWilting)
+                    if (BetterPlantTendingOptions.Instance.prevent_tending_grown_or_wilting)
                     {
                         __instance.Subscribe((int)GameHashes.Wilt, ___OnEffectRemovedDelegate);
                         __instance.Subscribe((int)GameHashes.WiltRecover, ___OnEffectRemovedDelegate);
@@ -209,7 +215,7 @@ namespace BetterPlantTending
                     return;
                 if (__instance.tinkerMaterialTag == FarmStationConfig.TINKER_TOOLS)
                 {
-                    if (BetterPlantTendingOptions.Instance.PreventTendingGrownOrWilting)
+                    if (BetterPlantTendingOptions.Instance.prevent_tending_grown_or_wilting)
                     {
                         if (__instance.HasTag(GameTags.Wilting)) // засохло
                         {
@@ -383,7 +389,7 @@ namespace BetterPlantTending
             {
                 if (growing == null)
                     return true;
-                if (BetterPlantTendingOptions.Instance.PreventTendingGrownOrWilting && !growing.IsGrowing())
+                if (BetterPlantTendingOptions.Instance.prevent_tending_grown_or_wilting && !growing.IsGrowing())
                     return true;
                 return growing.IsGrown();
             }
