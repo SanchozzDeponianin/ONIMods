@@ -21,12 +21,12 @@ namespace BetterPlantTending
 
         [Serialize]
         private bool hasExtraSeedAvailable = false;
-        
+
         [SerializeField]
         internal bool isNotDecorative = false;
 
         private static bool AllowFarmTinkerDecorative => BetterPlantTendingOptions.Instance.allow_tinker_decorative;
-        private bool IsWilting => BetterPlantTendingOptions.Instance.prevent_tending_grown_or_wilting && wilting.IsWilting();// todo: косяк ?
+        private bool IsWilting => BetterPlantTendingOptions.Instance.prevent_tending_grown_or_wilting && wilting.IsWilting();
         public bool ExtraSeedAvailable => hasExtraSeedAvailable;
         public bool ShouldDivergentTending => (isNotDecorative || !hasExtraSeedAvailable) && !IsWilting;
         public bool ShouldFarmTinkerTending => isNotDecorative || !hasExtraSeedAvailable;
@@ -41,7 +41,7 @@ namespace BetterPlantTending
             component.CreateExtraSeed();
         });
 
-        private static readonly System.Func<SeedProducer, string, int, bool, GameObject> ProduceSeed = 
+        private static readonly System.Func<SeedProducer, string, int, bool, GameObject> ProduceSeed =
             typeof(SeedProducer).Detour<System.Func<SeedProducer, string, int, bool, GameObject>>("ProduceSeed");
 
         protected override void OnPrefabInit()
@@ -63,6 +63,8 @@ namespace BetterPlantTending
             Subscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Subscribe((int)GameHashes.Died, OnUprootedDelegate);
             Subscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
+            if (!BetterPlantTendingOptions.Instance.extra_seed_chance.pip_required_to_extract)
+                Subscribe((int)GameHashes.EffectRemoved, OnUprootedDelegate);
         }
 
         protected override void OnCleanUp()
@@ -70,6 +72,8 @@ namespace BetterPlantTending
             Unsubscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Unsubscribe((int)GameHashes.Died, OnUprootedDelegate);
             Unsubscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
+            if (!BetterPlantTendingOptions.Instance.extra_seed_chance.pip_required_to_extract)
+                Unsubscribe((int)GameHashes.EffectRemoved, OnUprootedDelegate);
             base.OnCleanUp();
         }
 

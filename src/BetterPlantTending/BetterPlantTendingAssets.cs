@@ -76,10 +76,10 @@ namespace BetterPlantTending
         {
             BetterPlantTendingOptions.Reload();
             var options = BetterPlantTendingOptions.Instance;
-            ExtraSeedChanceDecorativeBaseValue.SetValue(options.extra_seed_chance_base_value_decorative);
-            ExtraSeedChanceNotDecorativeBaseValue.SetValue(options.extra_seed_chance_base_value_not_decorative);
-            ExtraSeedChanceDivergentModifier.SetValue(options.extra_seed_chance_modifier_divergent);
-            ExtraSeedChanceWormModifier.SetValue(options.extra_seed_chance_modifier_worm);
+            ExtraSeedChanceDecorativeBaseValue.SetValue(options.extra_seed_chance.base_value_decorative);
+            ExtraSeedChanceNotDecorativeBaseValue.SetValue(options.extra_seed_chance.base_value_not_decorative);
+            ExtraSeedChanceDivergentModifier.SetValue(options.extra_seed_chance.modifier_divergent);
+            ExtraSeedChanceWormModifier.SetValue(options.extra_seed_chance.modifier_worm);
         }
     }
 }

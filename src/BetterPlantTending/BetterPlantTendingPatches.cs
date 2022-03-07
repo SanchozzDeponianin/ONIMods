@@ -107,7 +107,7 @@ namespace BetterPlantTending
 #endif
 
         // дерево
-        // в ванили отдельные верки не будут убобрять после загрузки сейва
+        // в ванили отдельные ветки не будут убобрять после загрузки сейва
         // так как до них не доходит событие OnUpdateRoom
         // потому что ветки забанены в RoomProberе
         // чиним это
@@ -132,6 +132,63 @@ namespace BetterPlantTending
             }
         }
 
+        // разблокируем возможность мутации
+        [HarmonyPatch(typeof(BuddingTrunk), "ExtractExtraSeed")]
+        private static class BuddingTrunk_ExtractExtraSeed
+        {
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+
+            private static GameObject AddMutation(GameObject seed, BuddingTrunk trunk)
+            {
+                if (BetterPlantTendingOptions.Instance.unlock_tree_mutation)
+                {
+                    var trunk_mutant = trunk.GetComponent<MutantPlant>();
+                    var seed_mutant = seed.GetComponent<MutantPlant>();
+                    if (trunk_mutant != null && trunk_mutant.IsOriginal
+                        && seed_mutant != null && trunk.GetComponent<SeedProducer>().RollForMutation())
+                    {
+                        seed_mutant.Mutate();
+                    }
+                }
+                return seed;
+            }
+            /*
+            ...
+                Util.KInstantiate(Assets.GetPrefab("ForestTreeSeed"), position)
+            +++     .AddMutation(this)
+                    .SetActive(true);
+            */
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                var instructionsList = instructions.ToList();
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
+
+                var kInstantiate = typeof(Util).GetMethodSafe(nameof(Util.KInstantiate), true, typeof(GameObject), typeof(Vector3));
+                var addMutation = typeof(BuddingTrunk_ExtractExtraSeed).GetMethodSafe(nameof(AddMutation), true, PPatchTools.AnyArguments);
+
+                bool result = false;
+                for (int i = 0; i < instructionsList.Count; i++)
+                {
+                    var instruction = instructionsList[i];
+                    if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && kInstantiate == info)
+                    {
+                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, addMutation));
+#if DEBUG
+                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
+#endif
+                        result = true;
+                        break;
+                    }
+                }
+                if (!result)
+                {
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
+                }
+                return instructionsList;
+            }
+        }
+
         // солёная лоза, ну и заодно и неиспользуемый кактус, они оба на одной основе сделаны
         [HarmonyPatch]
         private static class SaltPlantConfig_CreatePrefab
@@ -151,8 +208,34 @@ namespace BetterPlantTending
             }
         }
 
+        // растение-ловушка:
+        // производство газа  пропорционально её скорости роста
+        [HarmonyPatch(typeof(CritterTrapPlant.StatesInstance), nameof(CritterTrapPlant.StatesInstance.AddGas))]
+        private static class CritterTrapPlant_StatesInstance_AddGas
+        {
+            private static void Prefix(CritterTrapPlant.StatesInstance __instance, ref float dt)
+            {
+                if (BetterPlantTendingOptions.Instance.critter_trap.adjust_gas_production)
+                {
+                    var growth_rate = __instance.master.GetAttributes().Get(Db.Get().Amounts.Maturity.deltaAttribute.Id).GetTotalValue();
+                    var base_growth_rate = BetterPlantTendingOptions.Instance.critter_trap.use_gas_production_replanted_value ? CROPS.GROWTH_RATE : CROPS.WILD_GROWTH_RATE;
+                    dt *= growth_rate / base_growth_rate;
+                }
+            }
+        }
+
+        // возможность дафать семена
+        [HarmonyPatch(typeof(CritterTrapPlant), "OnSpawn")]
+        private static class CritterTrapPlant_OnSpawn
+        {
+            private static void Postfix(CritterTrapPlant __instance)
+            {
+                if (BetterPlantTendingOptions.Instance.critter_trap.can_give_seeds)
+                    __instance.GetComponent<SeedProducer>().seedInfo.productionType = SeedProducer.ProductionType.Harvest;
+            }
+        }
+
         // дополнительные семена безурожайных растений
-        // todo: растение ловушка тоже не даёт семян. обдумать это.
         [HarmonyPatch(typeof(EntityTemplates), nameof(EntityTemplates.CreateAndRegisterSeedForPlant))]
         private static class EntityTemplates_CreateAndRegisterSeedForPlant
         {
@@ -180,7 +263,6 @@ namespace BetterPlantTending
         // если растение засохло или полностью выросло
         // или декоротивное доп семя заспавнилось
         // при изменении состояния растения нужно перепроверить задачу
-        // todo: проверить спящие растения типа газотравы
         // заодно чиним что качается механика заместо фермерства
         [HarmonyPatch(typeof(Tinkerable), "OnPrefabInit")]
         private static class Tinkerable_OnPrefabInit
@@ -199,7 +281,8 @@ namespace BetterPlantTending
                         __instance.Subscribe((int)GameHashes.Wilt, ___OnEffectRemovedDelegate);
                         __instance.Subscribe((int)GameHashes.WiltRecover, ___OnEffectRemovedDelegate);
                         __instance.Subscribe((int)GameHashes.Grow, ___OnEffectRemovedDelegate);
-                        //__instance.Subscribe((int)GameHashes.Harvest, ___OnEffectRemovedDelegate);
+                        __instance.Subscribe((int)GameHashes.CropSleep, ___OnEffectRemovedDelegate);
+                        __instance.Subscribe((int)GameHashes.CropWakeUp, ___OnEffectRemovedDelegate);
                     }
                 }
             }
@@ -222,7 +305,8 @@ namespace BetterPlantTending
                             __result = true;
                             return;
                         }
-                        if (__instance.GetComponent<Growing>()?.IsGrown() ?? false) // полностью выросло
+                        var growing = __instance.GetComponent<Growing>();
+                        if (growing != null && (growing.IsGrown() || !growing.IsGrowing())) // полностью выросло или не растёт
                         {
                             __result = true;
                             return;
@@ -290,10 +374,11 @@ namespace BetterPlantTending
                         instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldloc_1));
                         instructionsList.Insert(++i, new CodeInstruction(instruction_ldlocs));
                         instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, addPlant));
-                        result = true;
 #if DEBUG
                         PUtil.LogDebug($"'{methodName}' Transpiler injected");
 #endif
+                        result = true;
+                        break;
                     }
                 }
                 if (!result)
@@ -344,10 +429,11 @@ namespace BetterPlantTending
                     if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && getComponent == info)
                     {
                         instructionsList[i] = new CodeInstruction(OpCodes.Call, getTwoComponents);
-                        result = true;
 #if DEBUG
                         PUtil.LogDebug($"'{methodName}' Transpiler injected");
 #endif
+                        result = true;
+                        break;
                     }
                 }
                 if (!result)
@@ -442,21 +528,6 @@ namespace BetterPlantTending
                     PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
                 }
                 return instructionsList;
-            }
-        }
-
-        // растение-ловушка: производство газа  пропорционально её скорости роста
-        // todo: сделать опционально
-        [HarmonyPatch(typeof(CritterTrapPlant.StatesInstance), nameof(CritterTrapPlant.StatesInstance.AddGas))]
-        private static class CritterTrapPlant_StatesInstance_AddGas
-        {
-            private static readonly IDetouredField<CritterTrapPlant, ReceptacleMonitor> RM = PDetours.DetourField<CritterTrapPlant, ReceptacleMonitor>("rm");
-
-            private static void Prefix(CritterTrapPlant.StatesInstance __instance, ref float dt)
-            {
-                var id = Db.Get().Amounts.Maturity.deltaAttribute.Id;
-                var ai = __instance.master.GetAttributes().Get(id);
-                dt *= ai.GetTotalValue() / (RM.Get(__instance.master).Replanted ? CROPS.GROWTH_RATE : CROPS.WILD_GROWTH_RATE);
             }
         }
     }
