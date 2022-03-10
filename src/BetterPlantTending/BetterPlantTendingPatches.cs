@@ -106,7 +106,7 @@ namespace BetterPlantTending
         }
 #endif
 
-        // дерево
+        // деревянное дерево
         // в ванили отдельные ветки не будут убобрять после загрузки сейва
         // так как до них не доходит событие OnUpdateRoom
         // потому что ветки забанены в RoomProberе
@@ -232,6 +232,92 @@ namespace BetterPlantTending
             {
                 if (BetterPlantTendingOptions.Instance.critter_trap.can_give_seeds)
                     __instance.GetComponent<SeedProducer>().seedInfo.productionType = SeedProducer.ProductionType.Harvest;
+            }
+        }
+
+        // резиногое дерего:
+        // делаем дерего убобряемым
+        [HarmonyPatch(typeof(SapTreeConfig), nameof(SapTreeConfig.CreatePrefab))]
+        private static class SapTreeConfig_CreatePrefab
+        {
+            private static void Postfix(GameObject __result)
+            {
+                Tinkerable.MakeFarmTinkerable(__result);
+                var prefabID = __result.GetComponent<KPrefabID>();
+                prefabID.AddTag(GameTags.Plant);
+                prefabID.prefabInitFn += go =>
+                {
+                    var attributes = go.GetAttributes();
+                    attributes.Add(Db.Get().Amounts.Maturity.deltaAttribute);
+                    attributes.Add(fakeGrowingRate);
+                };
+                prefabID.prefabSpawnFn += go =>
+                {
+                    var tinkerable = go.GetComponent<Tinkerable>();
+                    // широкое на широкое, иначе дупли получают по  морде и занимаются хернёй
+                    if (BetterPlantTendingOptions.Instance.allow_tinker_saptree)
+                        tinkerable.SetOffsetTable(OffsetGroups.InvertedWideTable);
+                    else
+                        tinkerable.tinkerMaterialTag = GameTags.Void;
+                };
+            }
+        }
+
+        // ускоряем поедание жранины и выделение резины
+        [HarmonyPatch]
+        private static class SapTree_StatesInstance_EatFoodItem_Ooze
+        {
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                return new List<MethodBase>()
+                {
+                    typeof(SapTree.StatesInstance).GetMethodSafe(nameof(SapTree.StatesInstance.EatFoodItem), false, PPatchTools.AnyArguments),
+                    typeof(SapTree.StatesInstance).GetMethodSafe(nameof(SapTree.StatesInstance.Ooze), false, PPatchTools.AnyArguments),
+                };
+            }
+
+            private static void Prefix(SapTree.StatesInstance __instance, ref float dt)
+            {
+                dt *= __instance.gameObject.GetAttributes().Get(fakeGrowingRate.AttributeId).GetTotalValue() / CROPS.GROWTH_RATE;
+            }
+        }
+
+        // ускоряем конверсию жранины в резины
+        [HarmonyPatch(typeof(SapTree.StatesInstance), nameof(SapTree.StatesInstance.EatFoodItem))]
+        private static class SapTree_StatesInstance_EatFoodItem
+        {
+            /*
+            тут в норме dt = 1 поэтому можно просто умножить. если клеи поменяют, то придется городить чтото посложнее
+            --- float mass = pickupable.GetComponent<Edible>().Calories * 0.001f * base.def.kcalorieToKGConversionRatio;
+            +++ float mass = pickupable.GetComponent<Edible>().Calories * 0.001f * base.def.kcalorieToKGConversionRatio * dt;
+            */
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                var instructionsList = instructions.ToList();
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
+
+                var Ratio = typeof(SapTree.Def).GetFieldSafe(nameof(SapTree.Def.kcalorieToKGConversionRatio), false);
+
+                bool result = false;
+                for (int i = 0; i < instructionsList.Count; i++)
+                {
+                    var instruction = instructionsList[i];
+                    if ((instruction.opcode == OpCodes.Ldfld) && (instruction.operand is FieldInfo info) && Ratio == info)
+                    {
+                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_1));
+                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Mul));
+#if DEBUG
+                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
+#endif
+                        result = true;
+                        break;
+                    }
+                }
+                if (!result)
+                {
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
+                }
+                return instructionsList;
             }
         }
 

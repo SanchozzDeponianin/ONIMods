@@ -17,6 +17,15 @@ namespace BetterPlantTending
 
         [JsonProperty]
         [Option]
+        public bool allow_tinker_saptree { get; set; } = true;
+
+        [JsonProperty]
+        [Option(Format = "F2")]
+        [Limit(0, 1)]
+        public float farm_tinker_bonus_decor { get; set; } = FARM_TINKER_BONUS_DECOR;
+
+        [JsonProperty]
+        [Option]
         public bool prevent_tending_grown_or_wilting { get; set; } = true;
 
         [JsonProperty]

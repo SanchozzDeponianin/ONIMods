@@ -1,6 +1,5 @@
 ﻿using Klei.AI;
 using STRINGS;
-//using TUNING;
 
 namespace BetterPlantTending
 {
@@ -9,6 +8,7 @@ namespace BetterPlantTending
         internal const string FARM_TINKER_EFFECT_ID = "FarmTinker";
         internal const string DIVERGENT_CROP_TENDED_EFFECT_ID = "DivergentCropTended";
         internal const string DIVERGENT_CROP_TENDED_WORM_EFFECT_ID = "DivergentCropTendedWorm";
+        internal const float FARM_TINKER_BONUS_DECOR = 0.5f;
 
         // todo: поразмыслить над шансами семян
         internal const float EXTRA_SEED_CHANCE_BASE_VALUE_DECORATIVE = 1.5f * TUNING.CROPS.BASE_BONUS_SEED_PROBABILITY;
@@ -17,6 +17,7 @@ namespace BetterPlantTending
         internal const float EXTRA_SEED_CHANCE_MODIFIER_WORM = 1.5f * TUNING.CROPS.BASE_BONUS_SEED_PROBABILITY;
 
         internal static AttributeModifier fakeGrowingRate;
+        private static AttributeModifier FarmTinkerBonusDecor;
         internal static Attribute ExtraSeedChance;
         internal static AttributeModifier ExtraSeedChanceDecorativeBaseValue;
         internal static AttributeModifier ExtraSeedChanceNotDecorativeBaseValue;
@@ -35,6 +36,14 @@ namespace BetterPlantTending
                 description: CREATURES.STATS.MATURITY.GROWING,
                 is_multiplier: false,
                 is_readonly: true);
+
+            FarmTinkerBonusDecor = new AttributeModifier(
+                attribute_id: db.BuildingAttributes.Decor.Id,
+                value: FARM_TINKER_BONUS_DECOR,
+                description: DUPLICANTS.MODIFIERS.FARMTINKER.NAME,
+                is_multiplier: true,
+                is_readonly: false);
+            effectFarmTinker.Add(FarmTinkerBonusDecor);
 
             ExtraSeedChance = new Attribute(
                 id: nameof(ExtraSeedChance),
@@ -76,6 +85,7 @@ namespace BetterPlantTending
         {
             BetterPlantTendingOptions.Reload();
             var options = BetterPlantTendingOptions.Instance;
+            FarmTinkerBonusDecor.SetValue(options.farm_tinker_bonus_decor);
             ExtraSeedChanceDecorativeBaseValue.SetValue(options.extra_seed_chance.base_value_decorative);
             ExtraSeedChanceNotDecorativeBaseValue.SetValue(options.extra_seed_chance.base_value_not_decorative);
             ExtraSeedChanceDivergentModifier.SetValue(options.extra_seed_chance.modifier_divergent);
