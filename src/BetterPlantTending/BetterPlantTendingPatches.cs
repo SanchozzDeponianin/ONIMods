@@ -616,5 +616,31 @@ namespace BetterPlantTending
                 return instructionsList;
             }
         }
+
+        // исправление неконсистентности поглощения твердых удобрений засохшими растениями после загрузки сейфа
+        // патчим FertilizationMonitor чтобы был больше похож на IrrigationMonitor
+        // todo: останавливать поглощения воды/удобрений при других причинах отсутствии роста, учесть нюансы: ветки дерева, растение-ловушка
+        [HarmonyPatch(typeof(FertilizationMonitor.Instance), nameof(FertilizationMonitor.Instance.StartAbsorbing))]
+        private static class FertilizationMonitor_Instance_StartAbsorbing
+        {
+            private static bool Prefix(FertilizationMonitor.Instance __instance)
+            {
+                if (__instance.gameObject.HasTag(GameTags.Wilting))
+                {
+                    __instance.StopAbsorbing();
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        [HarmonyPatch(typeof(FertilizationMonitor), nameof(FertilizationMonitor.InitializeStates))]
+        private static class FertilizationMonitor_InitializeStates
+        {
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                return PPatchTools.ReplaceConstant(instructions, (int)GameHashes.WiltRecover, (int)GameHashes.TagsChanged, true);
+            }
+        }
     }
 }
