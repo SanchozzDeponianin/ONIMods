@@ -2,6 +2,7 @@
 {
     public abstract class TendedPlant : KMonoBehaviour
     {
+        protected virtual bool ApplyModifierOnEffectAdded => true;
         protected virtual bool ApplyModifierOnEffectRemoved => true;
 
         private static readonly EventSystem.IntraObjectHandler<TendedPlant> OnEffectChangedDelegate =
@@ -12,14 +13,16 @@
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            Subscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
+            if (ApplyModifierOnEffectAdded)
+                Subscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
             if (ApplyModifierOnEffectRemoved)
                 Subscribe((int)GameHashes.EffectRemoved, OnEffectChangedDelegate);
         }
 
         protected override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
+            if (ApplyModifierOnEffectAdded)
+                Unsubscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
             if (ApplyModifierOnEffectRemoved)
                 Unsubscribe((int)GameHashes.EffectRemoved, OnEffectChangedDelegate);
             if (updateHandle.IsValid)

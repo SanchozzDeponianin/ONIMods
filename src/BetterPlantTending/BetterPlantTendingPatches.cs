@@ -256,7 +256,10 @@ namespace BetterPlantTending
                     var tinkerable = go.GetComponent<Tinkerable>();
                     // широкое на широкое, иначе дупли получают по  морде и занимаются хернёй
                     if (BetterPlantTendingOptions.Instance.allow_tinker_saptree)
+                    {
                         tinkerable.SetOffsetTable(OffsetGroups.InvertedWideTable);
+                        go.GetComponent<Storage>().SetOffsetTable(OffsetGroups.InvertedWideTable);
+                    }
                     else
                         tinkerable.tinkerMaterialTag = GameTags.Void;
                 };
@@ -392,7 +395,7 @@ namespace BetterPlantTending
                             return;
                         }
                         var growing = __instance.GetComponent<Growing>();
-                        if (growing != null && (growing.IsGrown() || !growing.IsGrowing())) // полностью выросло или не растёт
+                        if (growing != null && (growing.ReachedNextHarvest() || !growing.IsGrowing())) // полностью выросло или не растёт
                         {
                             __result = true;
                             return;
@@ -563,7 +566,7 @@ namespace BetterPlantTending
                     return true;
                 if (BetterPlantTendingOptions.Instance.prevent_tending_grown_or_wilting && !growing.IsGrowing())
                     return true;
-                return growing.IsGrown();
+                return growing.ReachedNextHarvest();
             }
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
@@ -617,15 +620,19 @@ namespace BetterPlantTending
             }
         }
 
-        // исправление неконсистентности поглощения твердых удобрений засохшими растениями после загрузки сейфа
+        // вопервых исправление неконсистентности поглощения твердых удобрений засохшими растениями после загрузки сейфа
         // патчим FertilizationMonitor чтобы был больше похож на IrrigationMonitor
-        // todo: останавливать поглощения воды/удобрений при других причинах отсутствии роста, учесть нюансы: ветки дерева, растение-ловушка
+        // вовторых останавливаем поглощения воды/удобрений при других причинах отсутствии роста,
+        // с учетом нюансов: ветки дерева
+        // для ентого внедряем собственный компонент
         [HarmonyPatch(typeof(FertilizationMonitor.Instance), nameof(FertilizationMonitor.Instance.StartAbsorbing))]
         private static class FertilizationMonitor_Instance_StartAbsorbing
         {
             private static bool Prefix(FertilizationMonitor.Instance __instance)
             {
-                if (__instance.gameObject.HasTag(GameTags.Wilting))
+                if (__instance.gameObject.HasTag(GameTags.Wilting)
+                    || (BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning
+                        && !__instance.GetComponent<ExtendedFertilizationIrrigationMonitor>().ShouldAbsorbing()))
                 {
                     __instance.StopAbsorbing();
                     return false;
@@ -640,6 +647,77 @@ namespace BetterPlantTending
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
             {
                 return PPatchTools.ReplaceConstant(instructions, (int)GameHashes.WiltRecover, (int)GameHashes.TagsChanged, true);
+            }
+
+            private static void Postfix(FertilizationMonitor __instance)
+            {
+                __instance.replanted.fertilized.absorbing
+                    .Enter(smi => smi.GetComponent<ExtendedFertilizationIrrigationMonitor>().Subscribe())
+                    .Exit(smi => smi.GetComponent<ExtendedFertilizationIrrigationMonitor>().Unsubscribe());
+            }
+        }
+
+        [HarmonyPatch(typeof(IrrigationMonitor.Instance), nameof(IrrigationMonitor.Instance.UpdateAbsorbing))]
+        private static class IrrigationMonitor_Instance_UpdateIrrigation
+        {
+            private static void Prefix(IrrigationMonitor.Instance __instance, ref bool allow)
+            {
+                allow = allow && !__instance.gameObject.HasTag(GameTags.Wilting);
+                if (BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning)
+                    allow = allow && __instance.GetComponent<ExtendedFertilizationIrrigationMonitor>().ShouldAbsorbing();
+            }
+        }
+
+        [HarmonyPatch(typeof(IrrigationMonitor), nameof(IrrigationMonitor.InitializeStates))]
+        private static class IrrigationMonitor_InitializeStates
+        {
+            private static void Postfix(IrrigationMonitor __instance)
+            {
+                __instance.replanted.irrigated.absorbing
+                    .Enter(smi => smi.GetComponent<ExtendedFertilizationIrrigationMonitor>().Subscribe())
+                    .Exit(smi => smi.GetComponent<ExtendedFertilizationIrrigationMonitor>().Unsubscribe());
+            }
+        }
+
+        [HarmonyPatch]
+        private static class EntityTemplates_ExtendPlantToFertilizableIrrigated
+        {
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                return new List<MethodBase>()
+                {
+                    typeof(EntityTemplates).GetMethodSafe(nameof(EntityTemplates.ExtendPlantToFertilizable), true, PPatchTools.AnyArguments),
+                    typeof(EntityTemplates).GetMethodSafe(nameof(EntityTemplates.ExtendPlantToIrrigated), true, typeof(GameObject), typeof(PlantElementAbsorber.ConsumeInfo[])),
+                };
+            }
+
+            private static void Postfix(GameObject __result)
+            {
+                __result.AddOrGet<ExtendedFertilizationIrrigationMonitor>();
+            }
+        }
+
+        // ретриггерим от веток дерева на ствол, чтобы пересчитать необходимость поглощения воды/удобрений
+        private static readonly EventSystem.IntraObjectHandler<TreeBud> OnGrowDelegate =
+            new EventSystem.IntraObjectHandler<TreeBud>((component, data) =>
+                component?.buddingTrunk?.Get()?.Trigger((int)GameHashes.Grow));
+
+        [HarmonyPatch(typeof(TreeBud), "SubscribeToTrunk")]
+        private static class TreeBud_SubscribeToTrunk
+        {
+            private static void Postfix(TreeBud __instance)
+            {
+                if (BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning)
+                    __instance.Subscribe((int)GameHashes.Grow, OnGrowDelegate);
+            }
+        }
+
+        [HarmonyPatch(typeof(TreeBud), "UnsubscribeToTrunk")]
+        private static class TreeBud_UnsubscribeToTrunk
+        {
+            private static void Postfix(TreeBud __instance)
+            {
+                __instance.Unsubscribe((int)GameHashes.Grow, OnGrowDelegate, true);
             }
         }
     }

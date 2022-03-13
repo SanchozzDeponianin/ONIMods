@@ -30,6 +30,10 @@ namespace BetterPlantTending
 
         [JsonProperty]
         [Option]
+        public bool prevent_fertilization_irrigation_not_growning { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
         public bool fix_tinkering_tree_branches { get; set; } = true;
 
         [JsonProperty]
