@@ -63,7 +63,7 @@ namespace BetterPlantTending
             Subscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Subscribe((int)GameHashes.Died, OnUprootedDelegate);
             Subscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
-            if (!BetterPlantTendingOptions.Instance.extra_seed_chance.pip_required_to_extract)
+            if (!BetterPlantTendingOptions.Instance.extra_seeds.pip_required_to_extract)
                 Subscribe((int)GameHashes.EffectRemoved, OnUprootedDelegate);
         }
 
@@ -72,7 +72,7 @@ namespace BetterPlantTending
             Unsubscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Unsubscribe((int)GameHashes.Died, OnUprootedDelegate);
             Unsubscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
-            if (!BetterPlantTendingOptions.Instance.extra_seed_chance.pip_required_to_extract)
+            if (!BetterPlantTendingOptions.Instance.extra_seeds.pip_required_to_extract)
                 Unsubscribe((int)GameHashes.EffectRemoved, OnUprootedDelegate);
             base.OnCleanUp();
         }

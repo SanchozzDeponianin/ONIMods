@@ -34,61 +34,53 @@ namespace BetterPlantTending
 
         [JsonProperty]
         [Option]
-        public bool fix_tinkering_tree_branches { get; set; } = true;
+        public bool tree_fix_tinkering_branches { get; set; } = true;
 
         [JsonProperty]
         [Option]
-        public bool fix_oxyfern_output_cell { get; set; } = true;
+        public bool tree_unlock_mutation { get; set; } = true;
 
         [JsonProperty]
         [Option]
-        public bool adjust_gas_consumption { get; set; } = true;
+        public bool oxyfern_fix_output_cell { get; set; } = true;
 
         [JsonProperty]
         [Option]
-        public bool adjust_radiation_emission_by_grow_speed { get; set; } = true;
+        public bool saltplant_adjust_gas_consumption { get; set; } = true;
 
         [JsonProperty]
         [Option]
-        public bool adjust_radiation_emission_by_wildness { get; set; } = true;
+        public bool coldbreather_adjust_radiation_by_grow_speed { get; set; } = true;
 
         [JsonProperty]
         [Option]
-        public bool unlock_tree_mutation { get; set; } = true;
+        public bool coldbreather_decrease_radiation_by_wildness { get; set; } = true;
 
-        // растение-ловушка
-        [JsonObject(MemberSerialization.OptIn)]
-        public class CritterTrap
-        {
-            [JsonProperty]
-            [Option]
-            public bool adjust_gas_production { get; set; } = true;
-
-            [JsonProperty]
-            [Option]
-            public bool use_gas_production_replanted_value { get; set; } = false;
-
-            [JsonProperty]
-            [Option]
-            public bool can_give_seeds { get; set; } = true;
-        }
         [JsonProperty]
         [Option]
-        public CritterTrap critter_trap { get; set; } = new CritterTrap();
+        public bool critter_trap_adjust_gas_production { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool critter_trap_decrease_gas_production_by_wildness { get; set; } = false;
+
+        [JsonProperty]
+        [Option]
+        public bool critter_trap_can_give_seeds { get; set; } = true;
 
         // шансы доп семян
         [JsonObject(MemberSerialization.OptIn)]
-        public class ExtraSeedChance
+        public class ExtraSeeds
         {
             [JsonProperty]
             [Option(Format = "F2")]
             [Limit(0, 4 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
-            public float base_value_decorative { get; set; } = EXTRA_SEED_CHANCE_BASE_VALUE_DECORATIVE;
+            public float base_chance_decorative { get; set; } = EXTRA_SEED_CHANCE_BASE_VALUE_DECORATIVE;
 
             [JsonProperty]
             [Option(Format = "F2")]
             [Limit(0, CROPS.BASE_BONUS_SEED_PROBABILITY)]
-            public float base_value_not_decorative { get; set; } = EXTRA_SEED_CHANCE_BASE_VALUE_NOT_DECORATIVE;
+            public float base_chance_not_decorative { get; set; } = EXTRA_SEED_CHANCE_BASE_VALUE_NOT_DECORATIVE;
 
             [JsonProperty]
             [Option(Format = "F2")]
@@ -106,6 +98,6 @@ namespace BetterPlantTending
         }
         [JsonProperty]
         [Option]
-        public ExtraSeedChance extra_seed_chance { get; set; } = new ExtraSeedChance();
+        public ExtraSeeds extra_seeds { get; set; } = new ExtraSeeds();
     }
 }

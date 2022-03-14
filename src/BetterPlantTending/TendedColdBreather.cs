@@ -52,9 +52,9 @@ namespace BetterPlantTending
             if (emitter != null)
             {
                 var rads = emitRads;
-                if (BetterPlantTendingOptions.Instance.adjust_radiation_emission_by_grow_speed)
+                if (BetterPlantTendingOptions.Instance.coldbreather_adjust_radiation_by_grow_speed)
                     rads *= grow_multiplier;
-                if (BetterPlantTendingOptions.Instance.adjust_radiation_emission_by_wildness)
+                if (BetterPlantTendingOptions.Instance.coldbreather_decrease_radiation_by_wildness)
                     rads *= wild_multiplier;
                 if (emitter.emitRads != rads)
                 {

@@ -26,13 +26,12 @@ namespace BetterPlantTending
             new POptions().RegisterOptions(this, typeof(BetterPlantTendingOptions));
         }
 
-        [PLibMethod(RunAt.AfterModsLoad)]
+        [PLibMethod(RunAt.BeforeDbInit)]
         private static void Localize()
         {
-            Utils.InitLocalization(typeof(STRINGS)/*, writeStringsTemplate: true*/);
+            Utils.InitLocalization(typeof(STRINGS));
         }
 
-        // добавляем атрибуты и модификаторы 
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()
         {
@@ -53,7 +52,7 @@ namespace BetterPlantTending
             {
                 Tinkerable.MakeFarmTinkerable(__result);
                 __result.AddOrGet<TendedOxyfern>();
-                if (BetterPlantTendingOptions.Instance.fix_oxyfern_output_cell)
+                if (BetterPlantTendingOptions.Instance.oxyfern_fix_output_cell)
                     __result.GetComponent<ElementConverter>().outputElements[0].outputElementOffset.y += 0.5f;
             }
         }
@@ -129,7 +128,7 @@ namespace BetterPlantTending
 
             private static void Postfix(BuddingTrunk __instance)
             {
-                if (BetterPlantTendingOptions.Instance.fix_tinkering_tree_branches)
+                if (BetterPlantTendingOptions.Instance.tree_fix_tinkering_branches)
                     __instance.Subscribe((int)GameHashes.UpdateRoom, OnUpdateRoomDelegate);
             }
         }
@@ -142,7 +141,7 @@ namespace BetterPlantTending
 
             private static GameObject AddMutation(GameObject seed, BuddingTrunk trunk)
             {
-                if (BetterPlantTendingOptions.Instance.unlock_tree_mutation)
+                if (BetterPlantTendingOptions.Instance.tree_unlock_mutation)
                 {
                     var trunk_mutant = trunk.GetComponent<MutantPlant>();
                     var seed_mutant = seed.GetComponent<MutantPlant>();
@@ -239,10 +238,10 @@ namespace BetterPlantTending
         {
             private static void Prefix(CritterTrapPlant.StatesInstance __instance, ref float dt)
             {
-                if (BetterPlantTendingOptions.Instance.critter_trap.adjust_gas_production)
+                if (BetterPlantTendingOptions.Instance.critter_trap_adjust_gas_production)
                 {
                     var growth_rate = __instance.master.GetAttributes().Get(Db.Get().Amounts.Maturity.deltaAttribute.Id).GetTotalValue();
-                    var base_growth_rate = BetterPlantTendingOptions.Instance.critter_trap.use_gas_production_replanted_value ? CROPS.GROWTH_RATE : CROPS.WILD_GROWTH_RATE;
+                    var base_growth_rate = BetterPlantTendingOptions.Instance.critter_trap_decrease_gas_production_by_wildness ? CROPS.GROWTH_RATE : CROPS.WILD_GROWTH_RATE;
                     dt *= growth_rate / base_growth_rate;
                 }
             }
@@ -254,7 +253,7 @@ namespace BetterPlantTending
         {
             private static void Postfix(CritterTrapPlant __instance)
             {
-                if (BetterPlantTendingOptions.Instance.critter_trap.can_give_seeds)
+                if (BetterPlantTendingOptions.Instance.critter_trap_can_give_seeds)
                     __instance.GetComponent<SeedProducer>().seedInfo.productionType = SeedProducer.ProductionType.Harvest;
             }
         }

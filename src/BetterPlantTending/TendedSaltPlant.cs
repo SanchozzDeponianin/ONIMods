@@ -33,7 +33,7 @@ namespace BetterPlantTending
 
         public override void ApplyModifier()
         {
-            if (BetterPlantTendingOptions.Instance.adjust_gas_consumption)
+            if (BetterPlantTendingOptions.Instance.saltplant_adjust_gas_consumption)
             {
                 // в этих растениях дикость уже учтена внутри Growing
                 float multiplier = this.GetAttributes().Get(Db.Get().Amounts.Maturity.deltaAttribute).GetTotalValue() / CROPS.GROWTH_RATE;
