@@ -53,6 +53,8 @@ namespace BetterPlantTending
             {
                 Tinkerable.MakeFarmTinkerable(__result);
                 __result.AddOrGet<TendedOxyfern>();
+                if (BetterPlantTendingOptions.Instance.fix_oxyfern_output_cell)
+                    __result.GetComponent<ElementConverter>().outputElements[0].outputElementOffset.y += 0.5f;
             }
         }
 
@@ -186,6 +188,28 @@ namespace BetterPlantTending
                     PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
                 }
                 return instructionsList;
+            }
+        }
+
+        // применяем мутацию от ствола на ветку
+        [HarmonyPatch(typeof(TreeBud), nameof(TreeBud.SetTrunkPosition))]
+        private static class TreeBud_SetTrunkPosition
+        {
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+
+            private static readonly IDetouredField<PlantSubSpeciesCatalog, HashSet<Tag>> identifiedSubSpecies =
+                PDetours.DetourField<PlantSubSpeciesCatalog, HashSet<Tag>>("identifiedSubSpecies");
+
+            private static void Postfix(TreeBud __instance, BuddingTrunk budding_trunk)
+            {
+                var budding_mutant = budding_trunk?.GetComponent<MutantPlant>();
+                if (budding_mutant != null && !budding_mutant.IsOriginal)
+                {
+                    var branch_mutant = __instance.GetComponent<MutantPlant>();
+                    budding_mutant.CopyMutationsTo(branch_mutant);
+                    // принудительно но по тихому идентифицируем мутацию ветки
+                    identifiedSubSpecies.Get(PlantSubSpeciesCatalog.Instance).Add(branch_mutant.SubSpeciesID);
+                }
             }
         }
 

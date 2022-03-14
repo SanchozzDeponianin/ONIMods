@@ -38,6 +38,10 @@ namespace BetterPlantTending
 
         [JsonProperty]
         [Option]
+        public bool fix_oxyfern_output_cell { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
         public bool adjust_gas_consumption { get; set; } = true;
 
         [JsonProperty]
