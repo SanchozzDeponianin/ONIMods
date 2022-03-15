@@ -3,6 +3,7 @@ using Klei.AI;
 using KSerialization;
 using UnityEngine;
 using STRINGS;
+using PeterHan.PLib.Detours;
 using static BetterPlantTending.BetterPlantTendingAssets;
 
 namespace BetterPlantTending
@@ -14,17 +15,21 @@ namespace BetterPlantTending
         private SeedProducer seedProducer;
         [MyCmpReq]
         private Tinkerable tinkerable;
+        [MyCmpReq]
+        private WiltCondition wilting;
 #pragma warning restore CS0649
 
         [Serialize]
         private bool hasExtraSeedAvailable = false;
-        private bool allowFarmTinkerDecorative = false;
+
         [SerializeField]
         internal bool isNotDecorative = false;
 
+        private static bool AllowFarmTinkerDecorative => BetterPlantTendingOptions.Instance.allow_tinker_decorative;
+        private bool IsWilting => BetterPlantTendingOptions.Instance.prevent_tending_grown_or_wilting && wilting.IsWilting();
         public bool ExtraSeedAvailable => hasExtraSeedAvailable;
-        public bool ShouldDivergentTending => isNotDecorative || !hasExtraSeedAvailable;
-        public bool ShouldFarmTinkerTending => isNotDecorative || (allowFarmTinkerDecorative && !hasExtraSeedAvailable);
+        public bool ShouldDivergentTending => (isNotDecorative || !hasExtraSeedAvailable) && !IsWilting;
+        public bool ShouldFarmTinkerTending => isNotDecorative || !hasExtraSeedAvailable;
 
         private static readonly EventSystem.IntraObjectHandler<ExtraSeedProducer> OnUprootedDelegate = new EventSystem.IntraObjectHandler<ExtraSeedProducer>(delegate (ExtraSeedProducer component, object data)
         {
@@ -36,56 +41,57 @@ namespace BetterPlantTending
             component.CreateExtraSeed();
         });
 
+        private static readonly System.Func<SeedProducer, string, int, bool, GameObject> ProduceSeed =
+            typeof(SeedProducer).Detour<System.Func<SeedProducer, string, int, bool, GameObject>>("ProduceSeed");
+
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
-            allowFarmTinkerDecorative = BetterPlantTendingOptions.Instance.AllowFarmTinkerDecorative;
             var attributes = this.GetAttributes();
             attributes.Add(ExtraSeedChance);
             if (isNotDecorative)
                 attributes.Add(ExtraSeedChanceNotDecorativeBaseValue);
             else
                 attributes.Add(ExtraSeedChanceDecorativeBaseValue);
-
-            // todo: потом убрать
-            Debug.Log($"ExtraSeedProducer.OnPrefabInit name={gameObject.name}, isNotDecorative = {isNotDecorative}, allowFarmTinkerDecorative = {allowFarmTinkerDecorative}");
         }
 
         protected override void OnSpawn()
         {
             base.OnSpawn();
             if (!isNotDecorative)
-                tinkerable.tinkerMaterialTag = allowFarmTinkerDecorative ? FarmStationConfig.TINKER_TOOLS : GameTags.Void;
+                tinkerable.tinkerMaterialTag = AllowFarmTinkerDecorative ? FarmStationConfig.TINKER_TOOLS : GameTags.Void;
             Subscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Subscribe((int)GameHashes.Died, OnUprootedDelegate);
-#if EXPANSION1
             Subscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
-#endif
-
-            // todo: потом убрать
-            Debug.Log($"ExtraSeedProducer.OnSpawn name={gameObject.name}, isNotDecorative = {isNotDecorative}, allowFarmTinkerDecorative = {allowFarmTinkerDecorative}");
+            if (!BetterPlantTendingOptions.Instance.extra_seeds.pip_required_to_extract)
+                Subscribe((int)GameHashes.EffectRemoved, OnUprootedDelegate);
         }
 
         protected override void OnCleanUp()
         {
             Unsubscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Unsubscribe((int)GameHashes.Died, OnUprootedDelegate);
-#if EXPANSION1
             Unsubscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
-#endif
+            if (!BetterPlantTendingOptions.Instance.extra_seeds.pip_required_to_extract)
+                Unsubscribe((int)GameHashes.EffectRemoved, OnUprootedDelegate);
             base.OnCleanUp();
         }
 
-        public void CreateExtraSeed(float seedChanceByWorker = 0)
+        public void CreateExtraSeed(Worker worker = null)
         {
-            // шанс получить семя базовый + за счет эффектов
-            float seedChance = this.GetAttributes().Get(ExtraSeedChance).GetTotalValue();
-            // ... + за счет навыка фермера
-            if (UnityEngine.Random.Range(0f, 1f) <= seedChance + seedChanceByWorker)
-                hasExtraSeedAvailable = true;
-
-            // todo: потом убрать
-            Debug.Log($"CreateExtraSeed: name={gameObject.name}, seedChance={seedChance}, seedChanceByWorker={seedChanceByWorker}, Total={seedChance + seedChanceByWorker}, hasExtraSeedAvailable={hasExtraSeedAvailable}");
+            if (!hasExtraSeedAvailable && !wilting.IsWilting())
+            {
+                // шанс получить семя базовый + за счет эффектов
+                float seedChance = this.GetAttributes().Get(ExtraSeedChance).GetTotalValue();
+                // шанс получить семя за счет навыка фермера
+                if (worker != null)
+                {
+                    seedChance += worker.GetComponent<AttributeConverters>().Get(
+                        Db.Get().AttributeConverters.SeedHarvestChance).Evaluate();
+                }
+                if (Random.Range(0f, 1f) <= seedChance)
+                    hasExtraSeedAvailable = true;
+            }
         }
 
         public void ExtractExtraSeed()
@@ -93,11 +99,11 @@ namespace BetterPlantTending
             if (hasExtraSeedAvailable)
             {
                 hasExtraSeedAvailable = false;
-                seedProducer.ProduceSeed(seedProducer.seedInfo.seedId);
+                ProduceSeed(seedProducer, seedProducer.seedInfo.seedId, 1, true);
             }
         }
 
-        // todo: описатель шансов доп семян. доделать текст
+        // описатель шансов доп семян.
         public List<Descriptor> GetDescriptors(GameObject go)
         {
             float seedChance = this?.GetAttributes()?.Get(ExtraSeedChance)?.GetTotalValue() ??

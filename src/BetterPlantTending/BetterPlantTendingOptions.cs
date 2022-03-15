@@ -1,136 +1,103 @@
 ﻿using Newtonsoft.Json;
 using TUNING;
-
 using SanchozzONIMods.Lib;
-using PeterHan.PLib;
 using PeterHan.PLib.Options;
 using static BetterPlantTending.BetterPlantTendingAssets;
 
 namespace BetterPlantTending
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ModInfo("Better Plant Tending", "https://steamcommunity.com/sharedfiles/filedetails/?id=1933433002")]
     [ConfigFile(IndentOutput: true)]
     internal class BetterPlantTendingOptions : BaseOptions<BetterPlantTendingOptions>
     {
-        // эффекты и настройки фермера
-        // todo: причесать
+        // основные настройки
         [JsonProperty]
-        [Option(
-            "allowDecorative", 
-            "allowDecorative", 
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER")]
-        public bool AllowFarmTinkerDecorative { get; set; } = true;
+        [Option]
+        public bool allow_tinker_decorative { get; set; } = true;
 
         [JsonProperty]
-        [Option(
-            "allowGrownOrWilting", 
-            "allowGrownOrWilting", 
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER")]
-        public bool AllowFarmTinkerGrownOrWilting { get; set; } = false;
+        [Option]
+        public bool allow_tinker_saptree { get; set; } = true;
 
         [JsonProperty]
-        [Option(
-            "BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_MODIFIER.TITLE",
-            "BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_MODIFIER.TOOLTIP",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER",
-             Format = "F1")]
-        [Limit(1, 4)]
-        public float ColdBreatherThroughputFarmTinkerModifier { get; set; } = THROUGHPUT_MODIFIER_FARMTINKER;
+        [Option(Format = "F2")]
+        [Limit(0, 1)]
+        public float farm_tinker_bonus_decor { get; set; } = FARM_TINKER_BONUS_DECOR;
 
         [JsonProperty]
-        [Option(
-            "BetterPlantTending.STRINGS.OPTIONS.OXYFERN_MODIFIER.TITLE",
-            "BetterPlantTending.STRINGS.OPTIONS.OXYFERN_MODIFIER.TOOLTIP",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER",
-            Format = "F1")]
-        [Limit(1, 4)]
-        public float OxyfernThroughputFarmTinkerModifier { get; set; } = THROUGHPUT_MODIFIER_FARMTINKER;
+        [Option]
+        public bool prevent_tending_grown_or_wilting { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool prevent_fertilization_irrigation_not_growning { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool tree_fix_tinkering_branches { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool tree_unlock_mutation { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool oxyfern_fix_output_cell { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool saltplant_adjust_gas_consumption { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool coldbreather_adjust_radiation_by_grow_speed { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool coldbreather_decrease_radiation_by_wildness { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool critter_trap_adjust_gas_production { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool critter_trap_decrease_gas_production_by_wildness { get; set; } = false;
+
+        [JsonProperty]
+        [Option]
+        public bool critter_trap_can_give_seeds { get; set; } = true;
 
         // шансы доп семян
-        [JsonProperty]
-        [Option(
-            "BetterPlantTending.STRINGS.OPTIONS..TITLE",
-            "BetterPlantTending.STRINGS.OPTIONS..TOOLTIP",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER",
-            Format = "F2")]
-        [Limit(0, 2 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
-        public float ExtraSeedChanceDecorativeBaseValue { get; set; } = EXTRA_SEED_CHANCE_BASE_VALUE_DECORATIVE;
+        [JsonObject(MemberSerialization.OptIn)]
+        public class ExtraSeeds
+        {
+            [JsonProperty]
+            [Option(Format = "F2")]
+            [Limit(0, 4 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
+            public float base_chance_decorative { get; set; } = EXTRA_SEED_CHANCE_BASE_VALUE_DECORATIVE;
 
-        [JsonProperty]
-        [Option(
-            "BetterPlantTending.STRINGS.OPTIONS..TITLE",
-            "BetterPlantTending.STRINGS.OPTIONS..TOOLTIP",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER",
-            Format = "F2")]
-        [Limit(0, CROPS.BASE_BONUS_SEED_PROBABILITY)]
-        public float ExtraSeedChanceNotDecorativeBaseValue { get; set; } = EXTRA_SEED_CHANCE_BASE_VALUE_NOT_DECORATIVE;
+            [JsonProperty]
+            [Option(Format = "F2")]
+            [Limit(0, CROPS.BASE_BONUS_SEED_PROBABILITY)]
+            public float base_chance_not_decorative { get; set; } = EXTRA_SEED_CHANCE_BASE_VALUE_NOT_DECORATIVE;
 
-        [JsonProperty]
-        [Option(
-            "BetterPlantTending.STRINGS.OPTIONS..TITLE",
-            "BetterPlantTending.STRINGS.OPTIONS..TOOLTIP",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.FARMTINKER",
-            Format = "F3")]
-        [Limit(0.005, 0.04)]
-        public float ExtraSeedTendingChance { get; set; } = EXTRA_SEED_CHANCE_PER_BOTANIST_SKILL;
+            [JsonProperty]
+            [Option(Format = "F2")]
+            [Limit(0, 2 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
+            public float modifier_divergent { get; set; } = EXTRA_SEED_CHANCE_MODIFIER_DIVERGENT;
 
-#if EXPANSION1
-        // эффекты жучары
-        [JsonProperty]
-        [Option(
-            "BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_MODIFIER.TITLE",
-            "BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_MODIFIER.TOOLTIP",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.DIVERGENTCROPTENDED",
-            Format = "F1")]
-        [Limit(0.05, 0.5)]
-        public float ColdBreatherThroughputDivergentModifier { get; set; } = THROUGHPUT_MODIFIER_DIVERGENT;
+            [JsonProperty]
+            [Option(Format = "F2")]
+            [Limit(0, 2 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
+            public float modifier_worm { get; set; } = EXTRA_SEED_CHANCE_MODIFIER_WORM;
 
+            [JsonProperty]
+            [Option]
+            public bool pip_required_to_extract { get; set; } = true;
+        }
         [JsonProperty]
-        [Option(
-            "BetterPlantTending.STRINGS.OPTIONS.OXYFERN_MODIFIER.TITLE",
-            "BetterPlantTending.STRINGS.OPTIONS.OXYFERN_MODIFIER.TOOLTIP",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.DIVERGENTCROPTENDED",
-            Format = "F2")]
-        [Limit(0.05, 0.5)]
-        public float OxyfernThroughputDivergentModifier { get; set; } = THROUGHPUT_MODIFIER_DIVERGENT;
-
-        [JsonProperty]
-        [Option(
-            "BetterPlantTending.STRINGS.OPTIONS..TITLE",
-            "BetterPlantTending.STRINGS.OPTIONS..TOOLTIP",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.DIVERGENTCROPTENDED",
-            Format = "F2")]
-        [Limit(0, 2 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
-        public float ExtraSeedChanceDivergentModifier { get; set; } = EXTRA_SEED_CHANCE_MODIFIER_DIVERGENT;
-
-        // эффекты червячары
-        [JsonProperty]
-        [Option(
-            "BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_MODIFIER.TITLE",
-            "BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_MODIFIER.TOOLTIP",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.WORMCROPTENDED",
-            Format = "F1")]
-        [Limit(0.5, 2)]
-        public float ColdBreatherThroughputWormModifier { get; set; } = THROUGHPUT_MODIFIER_WORM;
-
-        [JsonProperty]
-        [Option(
-            "BetterPlantTending.STRINGS.OPTIONS.OXYFERN_MODIFIER.TITLE",
-            "BetterPlantTending.STRINGS.OPTIONS.OXYFERN_MODIFIER.TOOLTIP",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.WORMCROPTENDED",
-            Format = "F1")]
-        [Limit(0.5, 2)]
-        public float OxyfernThroughputWormModifier { get; set; } = THROUGHPUT_MODIFIER_WORM;
-
-        [JsonProperty]
-        [Option(
-            "BetterPlantTending.STRINGS.OPTIONS..TITLE",
-            "BetterPlantTending.STRINGS.OPTIONS..TOOLTIP",
-            "BetterPlantTending.STRINGS.OPTIONS.CATEGORY.WORMCROPTENDED",
-            Format = "F2")]
-        [Limit(0, 2 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
-        public float ExtraSeedChanceWormModifier { get; set; } = EXTRA_SEED_CHANCE_MODIFIER_WORM;
-#endif
+        [Option]
+        public ExtraSeeds extra_seeds { get; set; } = new ExtraSeeds();
     }
 }

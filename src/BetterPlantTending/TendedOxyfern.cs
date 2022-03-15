@@ -14,13 +14,12 @@ namespace BetterPlantTending
         {
             base.OnPrefabInit();
             var attributes = this.GetAttributes();
-            attributes.Add(OxyfernThroughput);
-            attributes.Add(OxyfernThroughputBaseValue);
+            attributes.Add(Db.Get().Amounts.Maturity.deltaAttribute);
+            attributes.Add(fakeGrowingRate);
         }
 
         public override void ApplyModifier()
         {
-            base.ApplyModifier();
             oxyfern.SetConsumptionRate();
         }
     }
