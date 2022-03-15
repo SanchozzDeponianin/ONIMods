@@ -115,8 +115,8 @@ msgstr "Если вы выключите это, семена сами выпа�
 
 #. BetterPlantTending.STRINGS.OPTIONS.PREVENT_FERTILIZATION_IRRIGATION_NOT_GROWNING.NAME
 msgctxt "BetterPlantTending.STRINGS.OPTIONS.PREVENT_FERTILIZATION_IRRIGATION_NOT_GROWNING.NAME"
-msgid "Wilted or non-growing plants will not consume solid and liquid fertilizers"
-msgstr "Увядшие или не-растущие растения не будут потреблять твёрдые и жидкие удобрения"
+msgid "Non-growing plants will not consume solid and liquid fertilizers"
+msgstr "Не-растущие растения не будут потреблять твёрдые и жидкие удобрения"
 
 #. BetterPlantTending.STRINGS.OPTIONS.PREVENT_TENDING_GROWN_OR_WILTING.NAME
 msgctxt "BetterPlantTending.STRINGS.OPTIONS.PREVENT_TENDING_GROWN_OR_WILTING.NAME"

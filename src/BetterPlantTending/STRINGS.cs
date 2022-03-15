@@ -49,7 +49,7 @@ namespace BetterPlantTending
             }
             public class PREVENT_FERTILIZATION_IRRIGATION_NOT_GROWNING
             {
-                public static LocString NAME = "Wilted or non-growing plants will not consume solid and liquid fertilizers";
+                public static LocString NAME = "Non-growing plants will not consume solid and liquid fertilizers";
                 public static LocString TOOLTIP = "";
             }
             public class FARM_TINKER_BONUS_DECOR

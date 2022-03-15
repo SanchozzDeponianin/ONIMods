@@ -115,7 +115,7 @@ msgstr ""
 
 #. BetterPlantTending.STRINGS.OPTIONS.PREVENT_FERTILIZATION_IRRIGATION_NOT_GROWNING.NAME
 msgctxt "BetterPlantTending.STRINGS.OPTIONS.PREVENT_FERTILIZATION_IRRIGATION_NOT_GROWNING.NAME"
-msgid "Wilted or non-growing plants will not consume solid and liquid fertilizers"
+msgid "Non-growing plants will not consume solid and liquid fertilizers"
 msgstr ""
 
 #. BetterPlantTending.STRINGS.OPTIONS.PREVENT_TENDING_GROWN_OR_WILTING.NAME
