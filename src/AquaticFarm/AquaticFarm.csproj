@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Aquatic Farm</Title>
     <Description>Adds a new Aquatic Farm tile that can absorbs Liquids from the world for irrigation. Does not require Liquid Piping.</Description>
-    <ModVersion>1.2.3</ModVersion>
+    <ModVersion>1.2.4</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

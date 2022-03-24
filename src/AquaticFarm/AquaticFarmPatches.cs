@@ -24,7 +24,7 @@ namespace AquaticFarm
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuilding()
         {
-            Utils.AddBuildingToPlanScreen("Food", AquaticFarmConfig.ID, "farming", FarmTileConfig.ID);
+            ModUtil.AddBuildingToPlanScreen("Food", AquaticFarmConfig.ID, "farming", FarmTileConfig.ID);
             Utils.AddBuildingToTechnology("FineDining", AquaticFarmConfig.ID);
         }
     }

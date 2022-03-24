@@ -71,6 +71,7 @@ namespace SanchozzONIMods.Lib
 
 
         // добавляем постройки в меню
+        [Obsolete("need to replace it to 'ModUtil.AddBuildingToPlanScreen'", false)]
         public static void AddBuildingToPlanScreen(HashedString category, string buildingId, string subcategoryID = "uncategorized", string addAfterBuildingId = null)
         {
             int index = BUILDINGS.PLANORDER.FindIndex(x => x.category == category);

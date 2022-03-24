@@ -28,7 +28,7 @@ namespace MechanicsStation
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuildingAndModifiers()
         {
-            Utils.AddBuildingToPlanScreen("Equipment", MechanicsStationConfig.ID, "work stations", PowerControlStationConfig.ID);
+            ModUtil.AddBuildingToPlanScreen("Equipment", MechanicsStationConfig.ID, "work stations", PowerControlStationConfig.ID);
             Utils.AddBuildingToTechnology("RefinedObjects", MechanicsStationConfig.ID);
             Init();
         }

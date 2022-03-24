@@ -38,7 +38,7 @@ namespace ReBuildableAETN
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()
         {
-            Utils.AddBuildingToPlanScreen("Utilities", MassiveHeatSinkConfig.ID, "temperature");
+            ModUtil.AddBuildingToPlanScreen("Utilities", MassiveHeatSinkConfig.ID, "temperature");
             Utils.AddBuildingToTechnology("Catalytics", MassiveHeatSinkConfig.ID);
             GameTags.MaterialBuildingElements.Add(ID);
             // добавляем ядра -выдры- в космос в ванилле

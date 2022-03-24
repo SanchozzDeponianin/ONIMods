@@ -35,7 +35,7 @@ namespace SuitRecharger
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()
         {
-            Utils.AddBuildingToPlanScreen("Equipment", SuitRechargerConfig.ID, "suits general", SuitFabricatorConfig.ID);
+            ModUtil.AddBuildingToPlanScreen("Equipment", SuitRechargerConfig.ID, "suits general", SuitFabricatorConfig.ID);
             Utils.AddBuildingToTechnology("ImprovedGasPiping", SuitRechargerConfig.ID);
             PGameUtils.CopySoundsToAnim("suitrecharger_kanim", "suit_maker_kanim");
             SuitRecharger.Init();

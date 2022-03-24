@@ -38,8 +38,8 @@ namespace ButcherStation
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuildingsAndModifier()
         {
-            Utils.AddBuildingToPlanScreen("Equipment", FishingStationConfig.ID, "work stations", ShearingStationConfig.ID);
-            Utils.AddBuildingToPlanScreen("Equipment", ButcherStationConfig.ID, "work stations", ShearingStationConfig.ID);
+            ModUtil.AddBuildingToPlanScreen("Equipment", FishingStationConfig.ID, "work stations", ShearingStationConfig.ID);
+            ModUtil.AddBuildingToPlanScreen("Equipment", ButcherStationConfig.ID, "work stations", ShearingStationConfig.ID);
             Utils.AddBuildingToTechnology("AnimalControl", ButcherStationConfig.ID, FishingStationConfig.ID);
 
             var formatter = new ToPercentAttributeFormatter(1f, GameUtil.TimeSlice.None);
