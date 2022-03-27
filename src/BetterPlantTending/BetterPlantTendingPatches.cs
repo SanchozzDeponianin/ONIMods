@@ -504,9 +504,15 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(TreeClimbStates), "Rummage")]
         private static class TreeClimbStates_Rummage
         {
-            private static void Postfix(TreeClimbStates.Instance smi)
+            private static bool Prefix(TreeClimbStates.Instance smi)
             {
-                smi.sm.target.Get(smi)?.GetComponent<ExtraSeedProducer>()?.ExtractExtraSeed();
+                var extraSeedProducer = smi.sm.target.Get(smi)?.GetComponent<ExtraSeedProducer>();
+                if (extraSeedProducer != null)
+                {
+                    extraSeedProducer.ExtractExtraSeed();
+                    return false;
+                }
+                return true;
             }
         }
 
