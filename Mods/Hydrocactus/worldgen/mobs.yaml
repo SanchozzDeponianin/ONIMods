@@ -1,0 +1,24 @@
+MobLookupTable:
+  # keys to remove from in-memory structure when this file is loaded
+  remove: []
+  # elements to add from in-memory structure when this file is loaded
+  add:
+    med_FilterPlant:
+      prefabName: FilterPlant
+      location: Floor
+      selectMethod: Centroid
+      density:
+        min: 0.07
+        max: 0.13
+      width: 1
+      height: 1
+    med_FilterPlantSeed:
+      prefabName: FilterPlantSeed
+      location: Solid
+      selectMethod: Centroid
+      density:
+        min: 0.004
+        max: 0.006
+      width: 1
+      height: 1
+
