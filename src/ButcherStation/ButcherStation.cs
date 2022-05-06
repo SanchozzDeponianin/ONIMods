@@ -202,7 +202,7 @@ namespace ButcherStation
                 {
                     var smi = targetRanchStation.GetSMI<RancherChore.RancherChoreStates.Instance>();
                     var rancher = smi.sm.rancher.Get(smi);
-                    extraMeatSpawner.onDeathDropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
+                    extraMeatSpawner.dropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
                 }
                 var butcherStation = targetRanchStation.GetComponent<ButcherStation>();
                 if (butcherStation != null && butcherStation.leaveAlive)

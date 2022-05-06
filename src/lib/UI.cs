@@ -111,7 +111,7 @@ namespace SanchozzONIMods.Lib.UI
                 OnTextChanged = OnTextChanged,
             }.AddOnRealize(realized => text_go = realized);
 
-            var margin = new RectOffset(12, 12, 0, 0);
+            var margin = new RectOffset(12, 12, 2, 2);
             var panel_top = new PPanel("slider_top_" + name)
             {
                 Alignment = TextAnchor.MiddleCenter,

@@ -91,14 +91,23 @@ namespace ButcherStation
                 }
                 return num;
             };
-            def.interactLoopCount = 2;
             def.rancherInteractAnim = "anim_interacts_shearingstation_kanim";
             def.ranchedPreAnim = "grooming_pre";
             //def.ranchedLoopAnim = "grooming_loop";
             def.ranchedLoopAnim = "hit";
             def.ranchedPstAnim = "grooming_pst";
-            def.synchronizeBuilding = true;
+            def.worktime = 3f;
             Prioritizable.AddRef(go);
+        }
+
+        public override void ConfigurePost(BuildingDef def)
+        {
+            foreach (var prefab in Assets.GetPrefabsWithComponent<Butcherable>())
+            {
+                var b = prefab.GetComponent<Butcherable>();
+                if (b.drops != null && b.drops.Length > 0)
+                    prefab.AddOrGet<ExtraMeatSpawner>();
+            }
         }
     }
 }

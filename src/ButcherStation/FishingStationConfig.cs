@@ -102,12 +102,11 @@ namespace ButcherStation
                 }
                 return Grid.InvalidCell;
             };
-            def.interactLoopCount = 1;
             def.rancherInteractAnim = "anim_interacts_fishingstation_kanim";
             def.ranchedPreAnim = "bitehook";
             def.ranchedLoopAnim = "caught_loop";
             def.ranchedPstAnim = "trapped_pre";
-            def.synchronizeBuilding = true;
+            def.worktime = 2f;
             Prioritizable.AddRef(go);
             go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.Complete;
         }

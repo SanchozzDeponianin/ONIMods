@@ -1,12 +1,20 @@
-﻿using STRINGS;
+﻿using System.Collections.Generic;
+using STRINGS;
+using UnityEngine;
 
 namespace ButcherStation
 {
     public class ExtraMeatSpawner : KMonoBehaviour
     {
-        public string onDeathDropID = string.Empty;
-        public int onDeathDropCount = 0;
-        public float onDeathDropMultiplier = 0f;
+        public static HashSet<string> meats = new HashSet<string>() { MeatConfig.ID, FishMeatConfig.ID, ShellfishMeatConfig.ID };
+
+        public float dropMultiplier = 0f;
+        private bool butchered = false;
+
+#pragma warning disable CS0649
+        [MyCmpGet]
+        private Butcherable butcherable;
+#pragma warning restore CS0649
 
         protected override void OnSpawn()
         {
@@ -22,18 +30,36 @@ namespace ButcherStation
 
         private void SpawnExtraMeat(object data)
         {
-            if (onDeathDropID != string.Empty && onDeathDropCount > 0 && onDeathDropMultiplier > 0)
+            if (!butchered && dropMultiplier > 0f && butcherable != null && butcherable.drops != null && butcherable.drops.Length > 0)
             {
-                var extraMeat = Scenario.SpawnPrefab(Grid.PosToCell(gameObject), 0, 0, onDeathDropID);
-                extraMeat.SetActive(true);
-                var primaryElement = extraMeat.GetComponent<PrimaryElement>();
-                primaryElement.Units = onDeathDropMultiplier * onDeathDropCount;
-                primaryElement.Temperature = gameObject.GetComponent<PrimaryElement>().Temperature;
-                var edible = extraMeat.GetComponent<Edible>();
-                if (edible)
+                var drops = new Dictionary<string, float>(meats.Count);
+                foreach (var drop_id in butcherable.drops)
+                    if (meats.Contains(drop_id))
+                    {
+                        if (drops.ContainsKey(drop_id))
+                            drops[drop_id] += 1f;
+                        else
+                            drops[drop_id] = 1f;
+                    }
+                if (drops.Count > 0)
                 {
-                    ReportManager.Instance.ReportValue(ReportManager.ReportType.CaloriesCreated, edible.Calories, StringFormatter.Replace(UI.ENDOFDAYREPORT.NOTES.BUTCHERED, "{0}", extraMeat.GetProperName()), UI.ENDOFDAYREPORT.NOTES.BUTCHERED_CONTEXT);
+                    int cell = Grid.PosToCell(gameObject);
+                    float temp = GetComponent<PrimaryElement>().Temperature;
+                    foreach (var drop in drops)
+                    {
+                        var extraMeat = Scenario.SpawnPrefab(cell, 0, 0, drop.Key);
+                        extraMeat.SetActive(true);
+                        var primaryElement = extraMeat.GetComponent<PrimaryElement>();
+                        primaryElement.Units = dropMultiplier * drop.Value;
+                        primaryElement.Temperature = temp;
+                        var edible = extraMeat.GetComponent<Edible>();
+                        if (edible)
+                        {
+                            ReportManager.Instance.ReportValue(ReportManager.ReportType.CaloriesCreated, edible.Calories, StringFormatter.Replace(UI.ENDOFDAYREPORT.NOTES.BUTCHERED, "{0}", extraMeat.GetProperName()), UI.ENDOFDAYREPORT.NOTES.BUTCHERED_CONTEXT);
+                        }
+                    }
                 }
+                butchered = true;
             }
         }
     }

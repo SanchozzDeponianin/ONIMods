@@ -72,18 +72,12 @@ namespace ButcherStation
             }
         }
 
-        // добавляем тэги для убиваемых животных и дополнительное мясо
+        // добавляем тэги для убиваемых животных
         [HarmonyPatch(typeof(EntityTemplates), nameof(EntityTemplates.ExtendEntityToBasicCreature))]
         private static class EntityTemplates_ExtendEntityToBasicCreature
         {
-            private static void Postfix(GameObject __result, string onDeathDropID, int onDeathDropCount)
+            private static void Postfix(GameObject __result)
             {
-                if (onDeathDropCount > 0 && (onDeathDropID == MeatConfig.ID || onDeathDropID == FishMeatConfig.ID))
-                {
-                    var extraMeatSpawner = __result.AddOrGet<ExtraMeatSpawner>();
-                    extraMeatSpawner.onDeathDropID = onDeathDropID;
-                    extraMeatSpawner.onDeathDropCount = onDeathDropCount;
-                }
                 __result.GetComponent<KPrefabID>().prefabSpawnFn += delegate (GameObject inst)
                 {
                     if (inst.GetDef<RanchableMonitor.Def>() != null)
@@ -337,53 +331,6 @@ namespace ButcherStation
             }
         }
 
-        // фикс для правильного подсчета рыбы в точке доставки
-        [HarmonyPatch(typeof(CreatureDeliveryPoint), "RefreshCreatureCount")]
-        private static class CreatureDeliveryPoint_RefreshCreatureCount
-        {
-            /*
-            --- int cell = Grid.PosToCell(this);
-            +++ int cell = Grid.OffsetCell( Grid.PosToCell(this), spawnOffset );
-            */
-            private static int CorrectedCell(int cell, CreatureDeliveryPoint cdp)
-            {
-                int corrected = Grid.OffsetCell(cell, cdp.spawnOffset);
-                return Grid.IsValidCell(corrected) ? corrected : cell;
-            }
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
-            {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
-                var PosToCell = typeof(Grid).GetMethod(nameof(Grid.PosToCell), new Type[] { typeof(KMonoBehaviour) });
-                var correctedCell = typeof(CreatureDeliveryPoint_RefreshCreatureCount).GetMethodSafe(nameof(CorrectedCell), true, PPatchTools.AnyArguments);
-
-                bool result = false;
-                if (PosToCell != null && correctedCell != null)
-                {
-                    for (int i = 0; i < instructionsList.Count; i++)
-                    {
-                        var instruction = instructionsList[i];
-                        if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && info == PosToCell)
-                        {
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, correctedCell));
-                            result = true;
-#if DEBUG
-                            Debug.Log($"'{methodName}' Transpiler injected");
-#endif
-                            break;
-                        }
-                    }
-                }
-                if (!result)
-                {
-                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
-            }
-        }
-
         // для замены максимума жеготных
         [HarmonyPatch(typeof(CreatureDeliveryPoint), "IUserControlledCapacity.get_MaxCapacity")]
         private static class CreatureDeliveryPoint_get_MaxCapacity
@@ -397,7 +344,6 @@ namespace ButcherStation
 
         // фикс чтобы станции правильно потребляли искричество
         // похоже на удаление гланд ректально, но тут по другому будет сложно подлезть
-        // фикс зависшей анимации, когда ранчер уходит например жрать, бросив задание посередине
         [HarmonyPatch(typeof(RancherChore.RancherChoreStates), nameof(RancherChore.RancherChoreStates.InitializeStates))]
         private static class RancherChore_RancherChoreStates_InitializeStates
         {
@@ -405,13 +351,7 @@ namespace ButcherStation
             {
                 ___ranchcreature
                     .Enter(smi => smi?.ranchStation?.GetComponent<Operational>()?.SetActive(true))
-                    .Exit(smi => smi?.ranchStation?.GetComponent<Operational>()?.SetActive(false))
-                    .Exit(smi =>
-                    {
-                        var kbak = smi?.ranchStation?.GetComponent<KBatchedAnimController>();
-                        if (kbak != null && kbak.PlayMode == KAnim.PlayMode.Loop)
-                            kbak.PlayMode = KAnim.PlayMode.Once;
-                    });
+                    .Exit(smi => smi?.ranchStation?.GetComponent<Operational>()?.SetActive(false));
             }
         }
 
