@@ -10,7 +10,7 @@ namespace ButcherStation
     public class ButcherStationOptions : BaseOptions<ButcherStationOptions>
     {
         [JsonProperty]
-        [Option]
+        [Option(Format = "F0")]
         [Limit(ButcherStation.CREATURELIMIT, 1000)]
         public int max_creature_limit { get; set; } = ButcherStation.CREATURELIMIT;
 
