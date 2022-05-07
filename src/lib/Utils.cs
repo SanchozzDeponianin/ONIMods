@@ -184,7 +184,6 @@ namespace SanchozzONIMods.Lib
             // ключи должны получиться в формате 
             // "STRINGS.{Namespace}.OPTIONS.{Name}.XXX"
             // где ХХХ = NAME TOOLTIP или CATEGORY соотвественно
-            // todo: теперь надо все моды причесать в соответсвии
             var locstring_tree_options = locstring_tree_root.GetNestedType("OPTIONS");
             if (locstring_tree_options != null)
             {
@@ -233,7 +232,6 @@ namespace SanchozzONIMods.Lib
         }
 
         // замена текста в загруженной локализации
-        // todo: старый вариант. оставить для совместимости, потом постепенно убрать.
         [Obsolete("need to replace it to 'ReplaceText'", false)]
         public static void ReplaceLocString(ref LocString locString, string search, string replacement)
         {

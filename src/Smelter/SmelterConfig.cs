@@ -140,11 +140,16 @@ namespace Smelter
             };
         }
 
-        internal static void ConfigureRecipes()
+        public override void ConfigurePost(BuildingDef def)
+        {
+            ConfigureRecipes();
+        }
+
+        private static void ConfigureRecipes()
         {
             const float INPUT_KG = 100f;
             // добавляем переплавку абиссалития в электроплавильню
-            if (SmelterOptions.Instance.RecipeKatairiteToTungsten)
+            if (SmelterOptions.Instance.recipes.Katairite_To_Tungsten)
             {
                 const float PHOSPHORUS = 10f;
                 const float SALT = 20f;
@@ -153,35 +158,40 @@ namespace Smelter
                 const float CHLORINEGAS = SALT * SALT_TO_CHLORINE_RATIO;
                 const float MAGMA = INPUT_KG - TUNGSTEN - CHLORINEGAS;
 
-                var ingredients = new ComplexRecipe.RecipeElement[]
-                {
-                    new ComplexRecipe.RecipeElement(SimHashes.Katairite.CreateTag(), TUNGSTEN),
-                    new ComplexRecipe.RecipeElement(SimHashes.Salt.CreateTag(), SALT),
-                    new ComplexRecipe.RecipeElement(SimHashes.Phosphorus.CreateTag(), PHOSPHORUS)
-                };
                 var results = new ComplexRecipe.RecipeElement[]
                 {
                     new ComplexRecipe.RecipeElement(SimHashes.Tungsten.CreateTag(), TUNGSTEN),
                     new ComplexRecipe.RecipeElement(SimHashes.IgneousRock.CreateTag(), MAGMA),
                     new ComplexRecipe.RecipeElement(SimHashes.ChlorineGas.CreateTag(), CHLORINEGAS)
                 };
-                string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID(MetalRefineryConfig.ID, SimHashes.Katairite.CreateTag());
-                string id = ComplexRecipeManager.MakeRecipeID(MetalRefineryConfig.ID, ingredients, results);
-                new ComplexRecipe(id, ingredients, results)
+
+                foreach (var phosphorus in new SimHashes[] { SimHashes.Phosphorus, SimHashes.LiquidPhosphorus })
                 {
-                    time = BUILDINGS.FABRICATION_TIME_SECONDS.MODERATE,
-                    description = string.Format(
-                        global::STRINGS.BUILDINGS.PREFABS.METALREFINERY.RECIPE_DESCRIPTION,
-                        ElementLoader.FindElementByHash(SimHashes.Tungsten).name,
-                        ElementLoader.FindElementByHash(SimHashes.Katairite).name),
-                    nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
-                    fabricators = new List<Tag> { TagManager.Create(MetalRefineryConfig.ID) }
-                };
-                ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, id);
+                    var ingredients = new ComplexRecipe.RecipeElement[]
+                    {
+                        new ComplexRecipe.RecipeElement(SimHashes.Katairite.CreateTag(), TUNGSTEN),
+                        new ComplexRecipe.RecipeElement(SimHashes.Salt.CreateTag(), SALT),
+                        new ComplexRecipe.RecipeElement(phosphorus.CreateTag(), PHOSPHORUS)
+                    };
+
+                    string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID(MetalRefineryConfig.ID, SimHashes.Katairite.CreateTag());
+                    string id = ComplexRecipeManager.MakeRecipeID(MetalRefineryConfig.ID, ingredients, results);
+                    new ComplexRecipe(id, ingredients, results)
+                    {
+                        time = BUILDINGS.FABRICATION_TIME_SECONDS.MODERATE,
+                        description = string.Format(
+                            global::STRINGS.BUILDINGS.PREFABS.METALREFINERY.RECIPE_DESCRIPTION,
+                            ElementLoader.FindElementByHash(SimHashes.Tungsten).name,
+                            ElementLoader.FindElementByHash(SimHashes.Katairite).name),
+                        nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
+                        fabricators = new List<Tag> { TagManager.Create(MetalRefineryConfig.ID) }
+                    };
+                    ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, id);
+                }
             }
 
             // добавляем переплавку фосфора в стеклоплавильню
-            if (SmelterOptions.Instance.RecipePhosphoriteToPhosphorus)
+            if (SmelterOptions.Instance.recipes.Phosphorite_To_Phosphorus)
             {
                 var ingredients = new ComplexRecipe.RecipeElement[]
                 {
@@ -189,7 +199,7 @@ namespace Smelter
                 };
                 var results = new ComplexRecipe.RecipeElement[]
                 {
-                    new ComplexRecipe.RecipeElement(SimHashes.LiquidPhosphorus.CreateTag(), INPUT_KG)
+                    new ComplexRecipe.RecipeElement(SimHashes.LiquidPhosphorus.CreateTag(), INPUT_KG, ComplexRecipe.RecipeElement.TemperatureOperation.Melted)
                 };
                 string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID(GlassForgeConfig.ID, SimHashes.Phosphorite.CreateTag());
                 string id = ComplexRecipeManager.MakeRecipeID(GlassForgeConfig.ID, ingredients, results);
@@ -244,8 +254,11 @@ namespace Smelter
             glassforge_recipes
                 .Do((ComplexRecipe recipe) =>
                 {
+                    var material = ElementLoader.GetElement(recipe.results[0].material);
+                    var result = (material.lowTempTransition != null && material.lowTemp > OUTPUT_TEMPERATURE) ? material.lowTempTransition.tag : material.tag;
                     var results = new ComplexRecipe.RecipeElement[] {
-                        new ComplexRecipe.RecipeElement(ElementLoader.GetElement(recipe.results[0].material).lowTempTransition.tag, recipe.results[0].amount) };
+                        new ComplexRecipe.RecipeElement(result, recipe.results[0].amount) };
+
                     string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID(ID, recipe.ingredients[0].material);
                     string id = ComplexRecipeManager.MakeRecipeID(ID, recipe.ingredients, results);
                     new ComplexRecipe(id, recipe.ingredients, results)
@@ -259,7 +272,7 @@ namespace Smelter
                 });
 
             // добавляем переплавку пластика
-            if (SmelterOptions.Instance.RecipePlasticToNaphtha)
+            if (SmelterOptions.Instance.recipes.Plastic_To_Naphtha)
             {
                 var ingredients = new ComplexRecipe.RecipeElement[]
                 {
@@ -285,7 +298,7 @@ namespace Smelter
             }
 
             // добавляем варку резины
-            if (DlcManager.IsExpansion1Active() && SmelterOptions.Instance.RecipeResinToIsoresin)
+            if (DlcManager.IsExpansion1Active() && SmelterOptions.Instance.recipes.Resin_To_Isoresin)
             {
                 var resin = ElementLoader.FindElementByHash(SimHashes.Resin);
                 var water = resin.highTempTransition.lowTempTransition;
@@ -342,7 +355,7 @@ namespace Smelter
             }
 
             // добавляем древесный уголь в печку
-            if (SmelterOptions.Instance.RecipeWoodToCarbon)
+            if (SmelterOptions.Instance.recipes.Wood_To_Carbon)
             {
                 const float WOOD = 200f;
                 const float CARBON = 100f;
@@ -354,8 +367,8 @@ namespace Smelter
                 };
                 var results = new ComplexRecipe.RecipeElement[]
                 {
-                    new ComplexRecipe.RecipeElement(SimHashes.RefinedCarbon.CreateTag(), CARBON),
-                    new ComplexRecipe.RecipeElement(SimHashes.CarbonDioxide.CreateTag(), CO2)
+                    new ComplexRecipe.RecipeElement(SimHashes.RefinedCarbon.CreateTag(), CARBON, ComplexRecipe.RecipeElement.TemperatureOperation.Heated),
+                    new ComplexRecipe.RecipeElement(SimHashes.CarbonDioxide.CreateTag(), CO2, ComplexRecipe.RecipeElement.TemperatureOperation.Heated)
                 };
                 string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID(KilnConfig.ID, WoodLogConfig.TAG);
                 string id = ComplexRecipeManager.MakeRecipeID(KilnConfig.ID, ingredients, results);

@@ -56,51 +56,51 @@ namespace Smelter
         {
             public class RECIPES
             {
-                public static LocString TITLE = $"Enable new recipes";
+                public static LocString CATEGORY = $"Enable new recipes";
+            }
 
-                public class KATAIRITE_TO_TUNGSTEN
-                {
-                    public static LocString TITLE = $"Recipe {KATAIRITE} to {TUNGSTEN}";
-                    public static LocString TOOLTIP = $"Available at {SMELTER}, {METALREFINERY}";
-                }
-                public class PHOSPHORITE_TO_PHOSPHORUS
-                {
-                    public static LocString TITLE = $"Recipe {PHOSPHORITE} to {PHOSPHORUS}";
-                    public static LocString TOOLTIP = $"Available at {SMELTER}, {GLASSFORGE}";
-                }
-                public class POLYPROPYLENE_TO_NAPHTHA
-                {
-                    public static LocString TITLE = $"Recipe {POLYPROPYLENE} to {NAPHTHA}";
-                    public static LocString TOOLTIP = $"Available at {SMELTER}";
-                }
+            public class KATAIRITE_TO_TUNGSTEN
+            {
+                public static LocString NAME = $"{KATAIRITE} to {TUNGSTEN}";
+                public static LocString TOOLTIP = $"Available at {SMELTER}, {METALREFINERY}";
+            }
+            public class PHOSPHORITE_TO_PHOSPHORUS
+            {
+                public static LocString NAME = $"{PHOSPHORITE} to {PHOSPHORUS}";
+                public static LocString TOOLTIP = $"Available at {SMELTER}, {GLASSFORGE}";
+            }
+            public class PLASTIC_TO_NAPHTHA
+            {
+                public static LocString NAME = $"{POLYPROPYLENE} to {NAPHTHA}";
+                public static LocString TOOLTIP = $"Available at {SMELTER}";
+            }
 
-                public class RESIN_TO_ISORESIN
-                {
-                    public static LocString TITLE = $"Recipe {RESIN} to {ISORESIN}";
-                    public static LocString TOOLTIP = $"Available at {SMELTER}";
-                }
+            public class RESIN_TO_ISORESIN
+            {
+                public static LocString NAME = $"{RESIN} to {ISORESIN}";
+                public static LocString TOOLTIP = $"Available at {SMELTER}";
+            }
 
-                public class WOOD_TO_REFINEDCARBON
-                {
-                    public static LocString TITLE = $"Recipe {WOOD} to {REFINEDCARBON}";
-                    public static LocString TOOLTIP = $"Available at {KILN}";
-                }
+            public class WOOD_TO_CARBON
+            {
+                public static LocString NAME = $"{WOOD} to {REFINEDCARBON}";
+                public static LocString TOOLTIP = $"Available at {KILN}";
             }
 
             public class FEATURES
             {
-                public static LocString TITLE = $"Enable some features for vanilla buildings";
+                public static LocString CATEGORY = $"Enable some features for vanilla buildings";
+            }
 
-                public class DROP_OVERHEATED_COOLANT
-                {
-                    public static LocString TITLE = $"{METALREFINERY} will drop the overheated {UI.FormatAsKeyWord("Coolant")}";
-                    public static LocString TOOLTIP = $"The overheated {UI.FormatAsKeyWord("Coolant")} is dropped directly into the atmosphere\nThis will help prevent damage to the output Pipe";
-                }
-                public class REUSE_COOLANT
-                {
-                    public static LocString TITLE = $"{METALREFINERY} will re-use the waste {UI.FormatAsKeyWord("Coolant")}";
-                    public static LocString TOOLTIP = $"This can speed up production and reduce {UI.FormatAsKeyWord("Coolant")} consumption";
-                }
+            public class METALREFINERY_DROP_OVERHEATED_COOLANT
+            {
+                public static LocString NAME = $"{METALREFINERY} will drop the overheated {UI.FormatAsKeyWord("Coolant")}";
+                public static LocString TOOLTIP = $"The overheated {UI.FormatAsKeyWord("Coolant")} is dropped directly into the atmosphere\nThis will help prevent damage to the output Pipe";
+            }
+            public class METALREFINERY_REUSE_COOLANT
+            {
+                public static LocString NAME = $"{METALREFINERY} will re-use the waste {UI.FormatAsKeyWord("Coolant")}";
+                public static LocString TOOLTIP = $"This can speed up production and reduce {UI.FormatAsKeyWord("Coolant")} consumption";
             }
         }
 
