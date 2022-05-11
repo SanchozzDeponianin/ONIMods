@@ -17,7 +17,7 @@ namespace SquirrelGenerator
         public int GeneratorWattageRating { get; set; } = 250;
 
         [JsonProperty]
-        [Option]
+        [Option(Format = "F0")]
         [Limit(BUILDINGS.SELF_HEAT_KILOWATTS.TIER1 * Constants.KW2DTU_S, BUILDINGS.SELF_HEAT_KILOWATTS.TIER3 * Constants.KW2DTU_S)]
         public int SelfHeatWatts { get; set; } = (int)(BUILDINGS.SELF_HEAT_KILOWATTS.TIER2 * Constants.KW2DTU_S);
 

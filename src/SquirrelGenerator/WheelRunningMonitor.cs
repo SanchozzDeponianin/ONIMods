@@ -9,7 +9,7 @@ namespace SquirrelGenerator
     {
         public const int SEARCH_WHEEL_RADIUS = 25;
         public const int SEARCH_MIN_INTERVAL = 15;
-        public const int SEARCH_MAX_INTERVAL = 60;
+        public const int SEARCH_MAX_INTERVAL = 30;
         private const int SEARCH_RESUME_INTERVAL = 1;
         private const int MAX_NAVIGATE_DISTANCE = 200;
 
