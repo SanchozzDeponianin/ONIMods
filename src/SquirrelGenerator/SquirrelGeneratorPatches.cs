@@ -39,7 +39,7 @@ namespace SquirrelGenerator
 
         // добавить белкам новое поведение
         [HarmonyPatch(typeof(BaseSquirrelConfig), nameof(BaseSquirrelConfig.BaseSquirrel))]
-        internal static class BaseSquirrelConfig_BaseSquirrel
+        private static class BaseSquirrelConfig_BaseSquirrel
         {
             internal static void Postfix(GameObject __result, bool is_baby)
             {
@@ -50,15 +50,15 @@ namespace SquirrelGenerator
             }
 
             /*
-            ChoreTable.Builder chore_table = new ChoreTable.Builder().Add(new DeathStates.Def(), true).Add(new AnimInterruptStates.Def(), true)
+            ChoreTable.Builder chore_table = new ChoreTable.Builder().Add(new DeathStates.Def()).Add(new AnimInterruptStates.Def())
                 <блаблабла>
-                .Add(new CallAdultStates.Def(), true)
+                .Add(new CallAdultStates.Def())
+                .Add(new SeedPlantingStates.Def(блабла))
         +++     .PushInterruptGroup()
-        +++     .Add(new WheelRunningStates.Def(), true)
+        +++     .Add(new WheelRunningStates.Def())
         +++     .PopInterruptGroup()
-                .Add(new SeedPlantingStates.Def(), true)
                 .PopInterruptGroup()
-                .Add(new IdleStates.Def(), true);
+                .Add(new IdleStates.Def());
             */
             private static ChoreTable.Builder Inject(ChoreTable.Builder builder)
             {
@@ -69,25 +69,32 @@ namespace SquirrelGenerator
             {
                 var instructionsList = instructions.ToList();
                 string methodName = method.DeclaringType.FullName + "." + method.Name;
-                var constructor = typeof(SeedPlantingStates.Def).GetConstructors()[0];
+
+                var pop = typeof(ChoreTable.Builder).GetMethodSafe(nameof(ChoreTable.Builder.PopInterruptGroup), false, PPatchTools.AnyArguments);
+                var inject = typeof(BaseSquirrelConfig_BaseSquirrel).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments);
                 bool result = false;
-                for (int i = 0; i < instructionsList.Count; i++)
+
+                if (pop != null && inject != null)
                 {
-                    CodeInstruction instruction = instructionsList[i];
-                    if (instruction.opcode == OpCodes.Newobj && (instruction.operand is ConstructorInfo info) && info == constructor)
+                    for (int i = 0; i < instructionsList.Count; i++)
                     {
-                        yield return new CodeInstruction(OpCodes.Call, typeof(BaseSquirrelConfig_BaseSquirrel).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments));
-                        result = true;
+                        var instruction = instructionsList[i];
+                        if ((instruction.opcode == OpCodes.Call || instruction.opcode == OpCodes.Callvirt) && (instruction.operand is MethodInfo info) && info == pop)
+                        {
+                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Call, inject));
+                            result = true;
 #if DEBUG
                         PUtil.LogDebug($"'{methodName}' Transpiler injected");
 #endif
+                            break;
+                        }
                     }
-                    yield return instruction;
                 }
                 if (!result)
                 {
                     PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
                 }
+                return instructionsList;
             }
         }
 
