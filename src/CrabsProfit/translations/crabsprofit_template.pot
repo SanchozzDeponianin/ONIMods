@@ -1,0 +1,60 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.BABY_CRAB_SHELL.VARIANT_FRESH_WATER.DESC
+msgctxt "CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.BABY_CRAB_SHELL.VARIANT_FRESH_WATER.DESC"
+msgid "Can be crushed to produce <style=\"KKeyword\">Random Ore</style>."
+msgstr ""
+
+#. CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.BABY_CRAB_SHELL.VARIANT_FRESH_WATER.NAME
+msgctxt "CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.BABY_CRAB_SHELL.VARIANT_FRESH_WATER.NAME"
+msgid "Small Sanishell Molt"
+msgstr ""
+
+#. CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.CRAB_SHELL.VARIANT_FRESH_WATER.DESC
+msgctxt "CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.CRAB_SHELL.VARIANT_FRESH_WATER.DESC"
+msgid "Can be crushed to produce <style=\"KKeyword\">Random Ore</style>."
+msgstr ""
+
+#. CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.CRAB_SHELL.VARIANT_FRESH_WATER.NAME
+msgctxt "CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.CRAB_SHELL.VARIANT_FRESH_WATER.NAME"
+msgid "Sanishell Molt"
+msgstr ""
+
+#. CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.RANDOMORE.DESC
+msgctxt "CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.RANDOMORE.DESC"
+msgid "It magically turns into a randomly chosen Metallic Ore."
+msgstr ""
+
+#. CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.RANDOMORE.NAME
+msgctxt "CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.RANDOMORE.NAME"
+msgid "Random Ore"
+msgstr ""
+
+#. CrabsProfit.STRINGS.OPTIONS.BABYCRABFRESHWATER_MASS_DIVIDER.NAME
+msgctxt "CrabsProfit.STRINGS.OPTIONS.BABYCRABFRESHWATER_MASS_DIVIDER.NAME"
+msgid "<style=\"KKeyword\">Small Sanishell Molt</style> is less X times"
+msgstr ""
+
+#. CrabsProfit.STRINGS.OPTIONS.CRAB_MEAT.NAME
+msgctxt "CrabsProfit.STRINGS.OPTIONS.CRAB_MEAT.NAME"
+msgid "{CRAB} meat amount, units"
+msgstr ""
+
+#. CrabsProfit.STRINGS.OPTIONS.CRABFRESHWATER_SHELL_MASS.NAME
+msgctxt "CrabsProfit.STRINGS.OPTIONS.CRABFRESHWATER_SHELL_MASS.NAME"
+msgid "<style=\"KKeyword\">Sanishell Molt</style> mass, kg"
+msgstr ""
+
+#. CrabsProfit.STRINGS.OPTIONS.CRABWOOD_MEAT.NAME
+msgctxt "CrabsProfit.STRINGS.OPTIONS.CRABWOOD_MEAT.NAME"
+msgid "{CRABWOOD} meat amount, units"
+msgstr ""
+
+#. CrabsProfit.STRINGS.OPTIONS.ORE_WEIGHTS.CATEGORY
+msgctxt "CrabsProfit.STRINGS.OPTIONS.ORE_WEIGHTS.CATEGORY"
+msgid "Random Ore Chances Table"
+msgstr ""
+

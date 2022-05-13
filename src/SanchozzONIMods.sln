@@ -77,6 +77,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoverRefueling", "RoverRefu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hydrocactus", "Hydrocactus\Hydrocactus.csproj", "{DA7CDB0A-612B-4996-82CF-2ADDD334C65D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrabsProfit", "CrabsProfit\CrabsProfit.csproj", "{98A2F2D4-013C-46C3-8103-A9B745F53067}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MainlineSteam = Debug|MainlineSteam
@@ -325,6 +327,14 @@ Global
 		{DA7CDB0A-612B-4996-82CF-2ADDD334C65D}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{DA7CDB0A-612B-4996-82CF-2ADDD334C65D}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{DA7CDB0A-612B-4996-82CF-2ADDD334C65D}.Release|StableBackup.Build.0 = Release|StableBackup
+		{98A2F2D4-013C-46C3-8103-A9B745F53067}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
+		{98A2F2D4-013C-46C3-8103-A9B745F53067}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
+		{98A2F2D4-013C-46C3-8103-A9B745F53067}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
+		{98A2F2D4-013C-46C3-8103-A9B745F53067}.Debug|StableBackup.Build.0 = Debug|StableBackup
+		{98A2F2D4-013C-46C3-8103-A9B745F53067}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
+		{98A2F2D4-013C-46C3-8103-A9B745F53067}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
+		{98A2F2D4-013C-46C3-8103-A9B745F53067}.Release|StableBackup.ActiveCfg = Release|StableBackup
+		{98A2F2D4-013C-46C3-8103-A9B745F53067}.Release|StableBackup.Build.0 = Release|StableBackup
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
