@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using TUNING;
 using HarmonyLib;
 #if USESPLIB
@@ -305,6 +306,25 @@ namespace SanchozzONIMods.Lib
             {
                 ReplaceAllLocStringTextByDictionary(nestedType, replacementDictionary);
             }
+        }
+
+        public static CodeInstruction GetMatchingLoadInstruction(CodeInstruction store)
+        {
+            CodeInstruction instr;
+            var opcode = store.opcode;
+            if (opcode == OpCodes.Stloc)
+                instr = new CodeInstruction(OpCodes.Ldloc, store.operand);
+            else if (opcode == OpCodes.Stloc_0)
+                instr = new CodeInstruction(OpCodes.Ldloc_0);
+            else if (opcode == OpCodes.Stloc_1)
+                instr = new CodeInstruction(OpCodes.Ldloc_1);
+            else if (opcode == OpCodes.Stloc_2)
+                instr = new CodeInstruction(OpCodes.Ldloc_2);
+            else if (opcode == OpCodes.Stloc_3)
+                instr = new CodeInstruction(OpCodes.Ldloc_3);
+            else
+                instr = null;
+            return instr;
         }
     }
 }

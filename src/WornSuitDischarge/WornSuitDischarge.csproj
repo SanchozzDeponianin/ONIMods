@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Worn Suit doesn't drop Canister</Title>
     <Description>A Worn Suits does not drop the Canisters. Oxygen and Kerosene are returned to the Suit Dock for later reuse.</Description>
-    <ModVersion>1.1.0</ModVersion>
+    <ModVersion>1.1.1</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
@@ -28,6 +28,9 @@
     </Compile>
     <Compile Include="..\lib\StorageDropper.cs">
       <Link>StorageDropper.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\Utils.cs">
+      <Link>Utils.cs</Link>
     </Compile>
     <Compile Include="WornSuitDischargePatches.cs" />
   </ItemGroup>

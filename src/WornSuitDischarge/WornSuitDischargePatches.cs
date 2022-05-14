@@ -87,7 +87,6 @@ namespace WornSuitDischarge
         }
 
         // снятие костюма задачей "вернуть костюм" если док занят
-        // не удалось протестировать, возможно мёртвая ветка кода игры.
         [HarmonyPatch(typeof(SuitLocker.ReturnSuitWorkable), "OnCompleteWork")]
         private static class SuitLocker_ReturnSuitWorkable_OnCompleteWork
         {
@@ -111,26 +110,35 @@ namespace WornSuitDischarge
                 var instructionsList = instructions.ToList();
                 string methodName = method.DeclaringType.FullName + "." + method.Name;
 
+                var getequipment = typeof(MinionIdentity).GetMethodSafe(nameof(MinionIdentity.GetEquipment), false, PPatchTools.AnyArguments);
                 var unassign = typeof(Assignable).GetMethodSafe(nameof(Assignable.Unassign), false, PPatchTools.AnyArguments);
                 var trytransfer = typeof(SuitLocker_ReturnSuitWorkable_OnCompleteWork).GetMethodSafe(nameof(TryTransfer), true, PPatchTools.AnyArguments);
 
                 bool result = false;
-                if (unassign != null && trytransfer != null)
+                if (getequipment != null && unassign != null && trytransfer != null)
                 {
+                    CodeInstruction Ldloc_equipment = null;
                     for (int i = 0; i < instructionsList.Count(); i++)
                     {
                         var instruction = instructionsList[i];
-                        if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && info == unassign)
+                        if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info))
                         {
-                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Dup));     // assignable
-                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldarg_0)); // workable
-                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldloc_0)); // equipment
-                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Call, trytransfer));
-                            result = true;
+                            if (info == getequipment)
+                            {
+                                Ldloc_equipment = Utils.GetMatchingLoadInstruction(instructionsList[i + 1]);
+                            }
+                            if (Ldloc_equipment != null && info == unassign)
+                            {
+                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Dup));     // assignable
+                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldarg_0)); // workable
+                                instructionsList.Insert(i++, Ldloc_equipment);
+                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Call, trytransfer));
+                                result = true;
 #if DEBUG
-                            PUtil.LogDebug($"'{methodName}' Transpiler injected");
+                                PUtil.LogDebug($"'{methodName}' Transpiler injected");
 #endif
-                            break;
+                                break;
+                            }
                         }
                     }
                 }
@@ -185,28 +193,37 @@ namespace WornSuitDischarge
                 var instructionsList = instructions.ToList();
                 string methodName = method.DeclaringType.FullName + "." + method.Name;
 
+                var getequipment = typeof(MinionIdentity).GetMethodSafe(nameof(MinionIdentity.GetEquipment), false, PPatchTools.AnyArguments);
                 var unassign = typeof(Assignable).GetMethodSafe(nameof(Assignable.Unassign), false, PPatchTools.AnyArguments);
                 var trytransfer = typeof(SuitMarker_SuitMarkerReactable_Run).GetMethodSafe(nameof(TryTransfer), true, PPatchTools.AnyArguments);
                 var suitMarker = typeof(SuitMarker).GetNestedType("SuitMarkerReactable", PPatchTools.BASE_FLAGS).GetFieldSafe("suitMarker", false);
 
                 bool result = false;
-                if (unassign != null && trytransfer != null && suitMarker != null)
+                if (getequipment != null && unassign != null && trytransfer != null && suitMarker != null)
                 {
+                    CodeInstruction Ldloc_equipment = null;
                     for (int i = 0; i < instructionsList.Count(); i++)
                     {
                         var instruction = instructionsList[i];
-                        if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && info == unassign)
+                        if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info))
                         {
-                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Dup));     // assignable
-                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldarg_0));
-                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldfld, suitMarker));
-                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldloc_0)); // equipment
-                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Call, trytransfer));
-                            result = true;
+                            if (info == getequipment)
+                            {
+                                Ldloc_equipment = Utils.GetMatchingLoadInstruction(instructionsList[i + 1]);
+                            }
+                            if (Ldloc_equipment != null && info == unassign)
+                            {
+                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Dup));     // assignable
+                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldarg_0));
+                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldfld, suitMarker));
+                                instructionsList.Insert(i++, Ldloc_equipment);
+                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Call, trytransfer));
+                                result = true;
 #if DEBUG
-                            PUtil.LogDebug($"'{methodName}' Transpiler injected");
+                                PUtil.LogDebug($"'{methodName}' Transpiler injected");
 #endif
-                            break;
+                                break;
+                            }
                         }
                     }
                 }
