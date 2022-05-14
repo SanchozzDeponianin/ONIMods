@@ -40,6 +40,7 @@ namespace CrabsProfit
         [HarmonyPatch(typeof(CrabConfig), nameof(CrabConfig.CreateCrab))]
         private static class CrabConfig_CreateCrab
         {
+            private static bool Prepare() => CrabsProfitOptions.Instance.Crab_Meat > 0;
             private static void Postfix(GameObject __result)
             {
                 AddDrop(__result, ShellfishMeatConfig.ID, CrabsProfitOptions.Instance.Crab_Meat);
@@ -49,6 +50,7 @@ namespace CrabsProfit
         [HarmonyPatch(typeof(CrabWoodConfig), nameof(CrabWoodConfig.CreateCrabWood))]
         private static class CrabWoodConfig_CreateCrabWood
         {
+            private static bool Prepare() => CrabsProfitOptions.Instance.CrabWood_Meat > 0;
             private static void Postfix(GameObject __result)
             {
                 AddDrop(__result, ShellfishMeatConfig.ID, CrabsProfitOptions.Instance.CrabWood_Meat);
@@ -59,6 +61,7 @@ namespace CrabsProfit
         [HarmonyPatch(typeof(CrabFreshWaterConfig), nameof(CrabFreshWaterConfig.CreatePrefab))]
         private static class CrabFreshWaterConfig_CreatePrefab
         {
+            private static bool Prepare() => CrabsProfitOptions.Instance.CrabFreshWater_Shell_Mass > 0;
             private static void Postfix(GameObject __result)
             {
                 AddDrop(__result, CrabFreshWaterShellConfig.ID, 1);
@@ -68,6 +71,7 @@ namespace CrabsProfit
         [HarmonyPatch(typeof(BabyCrabFreshWaterConfig), nameof(BabyCrabFreshWaterConfig.CreatePrefab))]
         private static class BabyCrabFreshWaterConfig_CreatePrefab
         {
+            private static bool Prepare() => CrabsProfitOptions.Instance.CrabFreshWater_Shell_Mass > 0;
             private static void Postfix(GameObject __result)
             {
                 AddDrop(__result, BabyCrabFreshWaterShellConfig.ID, 1);

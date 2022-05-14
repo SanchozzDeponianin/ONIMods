@@ -1,24 +1,47 @@
 ﻿using Newtonsoft.Json;
+using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Options;
 
 namespace CrabsProfit
 {
+    /*
+        некоторые соображения:
+        краб живёт 100 циклов (95 взрослый)
+        размножается 60 циклов дикий, 6 циклов ручной довольный
+        итого, 1 краб родит до 15 при благоприятных условиях
+        электрослизняк жрет руду 60 кг в цикл и живет 100 циклов
+        итого ему нужно 6к руды
+        чтобы 1 краб прокормил 1 слизня - оптимально 6к / 15 == 400 руды с краба
+        и пусть руда с крабёнков будет бонусом
+    */
     internal enum ShellMass
     {
+        [Option] mass0 = 0,
         [Option] mass50 = 50,
         [Option] mass100 = 100,
         [Option] mass200 = 200,
         [Option] mass300 = 300,
         [Option] mass400 = 400,
-        [Option] mass500 = 500
+        [Option] mass500 = 500,
+        [Option] mass600 = 600,
+        [Option] mass700 = 700,
+        [Option] mass800 = 800,
+        [Option] mass900 = 900,
+        [Option] mass1000 = 1000,
     }
 
     internal enum BabyShellMassDivider
     {
         [Option] div2 = 2,
+        [Option] div3 = 3,
+        [Option] div4 = 4,
         [Option] div5 = 5,
-        [Option] div10 = 10
+        [Option] div6 = 6,
+        [Option] div7 = 7,
+        [Option] div8 = 8,
+        [Option] div9 = 9,
+        [Option] div10 = 10,
     }
 
     [JsonObject(MemberSerialization.OptIn)]
@@ -38,11 +61,19 @@ namespace CrabsProfit
 
         [JsonProperty]
         [Option]
-        public ShellMass CrabFreshWater_Shell_Mass { get; set; } = ShellMass.mass200;
+        public ShellMass CrabFreshWater_Shell_Mass { get; set; } = ShellMass.mass400;
 
         [JsonProperty]
         [Option]
-        public BabyShellMassDivider BabyCrabFreshWater_Mass_Divider { get; set; } = BabyShellMassDivider.div5;
+        public BabyShellMassDivider BabyCrabFreshWater_Mass_Divider { get; set; } = BabyShellMassDivider.div4;
+
+        // если в настройках задать нулевую массу - то пусть масса шкорлупы останется минимально ненулевой
+        // просто не добавлять дроп
+        [JsonIgnore]
+        public float AdultShellMass => Mathf.Max((float)CrabFreshWater_Shell_Mass, (float)ShellMass.mass50);
+
+        [JsonIgnore]
+        public float BabyShellMass => AdultShellMass / Mathf.Max((float)BabyCrabFreshWater_Mass_Divider, 1f);
 
         public class OreWeights
         {

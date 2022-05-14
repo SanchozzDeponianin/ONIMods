@@ -52,6 +52,7 @@ namespace CrabsProfit
             public class CRABFRESHWATER_SHELL_MASS
             {
                 public static LocString NAME = $"{UI.FormatAsKeyWord(ITEMS.INDUSTRIAL_PRODUCTS.CRAB_SHELL.VARIANT_FRESH_WATER.NAME)} mass, kg";
+                public static LocString TOOLTIP = "If you set this to zero, the new molt will not drop,\nand the previously dropped molt will have a mass of 50 kg.";
             }
             public class BABYCRABFRESHWATER_MASS_DIVIDER
             {

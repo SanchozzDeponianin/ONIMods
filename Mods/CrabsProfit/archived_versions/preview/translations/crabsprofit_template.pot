@@ -48,6 +48,11 @@ msgctxt "CrabsProfit.STRINGS.OPTIONS.CRABFRESHWATER_SHELL_MASS.NAME"
 msgid "<style=\"KKeyword\">Sanishell Molt</style> mass, kg"
 msgstr ""
 
+#. CrabsProfit.STRINGS.OPTIONS.CRABFRESHWATER_SHELL_MASS.TOOLTIP
+msgctxt "CrabsProfit.STRINGS.OPTIONS.CRABFRESHWATER_SHELL_MASS.TOOLTIP"
+msgid "If you set this to zero, the new molt will not drop,\nand the previously dropped molt will have a mass of 50 kg."
+msgstr ""
+
 #. CrabsProfit.STRINGS.OPTIONS.CRABWOOD_MEAT.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.CRABWOOD_MEAT.NAME"
 msgid "{CRABWOOD} meat amount, units"
