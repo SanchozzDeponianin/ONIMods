@@ -79,6 +79,10 @@ namespace CrabsProfit
         {
             private const int min_normal = 1, min_rare = 0, max = 10;
 
+            [JsonIgnore]
+            [Option]
+            public LocText Base_Ore => null;
+
             [JsonProperty]
             [Option]
             [Limit(min_normal, max)]
@@ -87,22 +91,7 @@ namespace CrabsProfit
             [JsonProperty]
             [Option]
             [Limit(min_normal, max)]
-            public int Cobaltite { get; set; } = 8;
-
-            [JsonProperty]
-            [Option]
-            [Limit(min_normal, max)]
             public int Cuprite { get; set; } = 7;
-
-            [JsonProperty]
-            [Option]
-            [Limit(min_rare, max)]
-            public int Electrum { get; set; } = 0;
-
-            [JsonProperty]
-            [Option]
-            [Limit(min_rare, max)]
-            public int FoolsGold { get; set; } = 0;
 
             [JsonProperty]
             [Option]
@@ -121,23 +110,65 @@ namespace CrabsProfit
 
             [JsonProperty]
             [Option]
-            [Limit(min_rare, max)]
-            public int Mercury { get; set; } = 0;
+            [Limit(min_normal, max)]
+            public int Rust { get; set; } = 7;
 
             [JsonProperty]
             [Option]
             [Limit(min_normal, max)]
-            public int Rust { get; set; } = 7;
+            public int Wolframite { get; set; } = 4;
+
+            [JsonIgnore]
+            [Option]
+            public LocText DLC1_Ore => null;
+
+            [JsonProperty]
+            [Option]
+            [Limit(min_normal, max)]
+            public int Cobaltite { get; set; } = 8;
 
             [JsonProperty]
             [Option]
             [Limit(min_rare, max)]
             public int UraniumOre { get; set; } = 1;
 
+            [JsonIgnore]
+            [Option]
+            public LocText Exotic_Ore => null;
+
             [JsonProperty]
             [Option]
-            [Limit(min_normal, max)]
-            public int Wolframite { get; set; } = 4;
+            [Limit(min_rare, max)]
+            public int Electrum { get; set; } = 0;
+
+            [JsonProperty]
+            [Option]
+            [Limit(min_rare, max)]
+            public int FoolsGold { get; set; } = 0;
+
+            [JsonProperty]
+            [Option]
+            [Limit(min_rare, max)]
+            public int Mercury { get; set; } = 0;
+
+            [JsonProperty]
+            [Option]
+            [Limit(min_rare, max)]
+            public int Radium { get; set; } = 0;
+
+            [JsonIgnore]
+            [Option]
+            public LocText Chemical_Processing_Ore => null;
+
+            [JsonProperty]
+            [Option]
+            [Limit(min_rare, max)]
+            public int ArgentiteOre { get; set; } = 0;
+
+            [JsonProperty]
+            [Option]
+            [Limit(min_rare, max)]
+            public int AurichalciteOre { get; set; } = 0;
         }
 
         [JsonProperty]

@@ -65,9 +65,13 @@ namespace CrabsProfit
                 { SimHashes.IronOre,        opt.IronOre},
                 { SimHashes.Lead,           opt.Lead},
                 { SimHashes.Mercury,        opt.Mercury},
+                { SimHashes.Radium,         opt.Radium},
                 { SimHashes.Rust,           opt.Rust},
                 { SimHashes.UraniumOre,     opt.UraniumOre},
                 { SimHashes.Wolframite,     opt.Wolframite},
+                // из Chemical Processing:
+                { (SimHashes)Hash.SDBMLower(nameof(opt.ArgentiteOre)),     opt.ArgentiteOre},
+                { (SimHashes)Hash.SDBMLower(nameof(opt.AurichalciteOre)),  opt.AurichalciteOre},
             };
             weights.Keys.ToList().ForEach(hash =>
             {

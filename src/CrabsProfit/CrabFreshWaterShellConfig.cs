@@ -49,7 +49,7 @@ namespace CrabsProfit
             new ComplexRecipe(id, ingredients, results)
             {
                 time = TUNING.BUILDINGS.FABRICATION_TIME_SECONDS.SHORT,
-                description = string.Format(BUILDINGS.PREFABS.ROCKCRUSHER.LIME_RECIPE_DESCRIPTION, RANDOMORE.NAME, shell_id.ToTag().ProperName()),
+                description = string.Format(BUILDINGS.PREFABS.ROCKCRUSHER.LIME_RECIPE_DESCRIPTION, RANDOMORE.NAME.text, shell_id.ToTag().ProperName()),
                 nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
                 fabricators = new List<Tag> { TagManager.Create(RockCrusherConfig.ID) }
             };

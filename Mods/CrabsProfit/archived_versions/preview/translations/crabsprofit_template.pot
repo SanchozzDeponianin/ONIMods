@@ -33,9 +33,29 @@ msgctxt "CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.RANDOMORE.NAME"
 msgid "Random Ore"
 msgstr ""
 
+#. CrabsProfit.STRINGS.OPTIONS.ARGENTITEORE.NAME
+msgctxt "CrabsProfit.STRINGS.OPTIONS.ARGENTITEORE.NAME"
+msgid "Silver Ore"
+msgstr ""
+
+#. CrabsProfit.STRINGS.OPTIONS.AURICHALCITEORE.NAME
+msgctxt "CrabsProfit.STRINGS.OPTIONS.AURICHALCITEORE.NAME"
+msgid "Zinc Ore"
+msgstr ""
+
 #. CrabsProfit.STRINGS.OPTIONS.BABYCRABFRESHWATER_MASS_DIVIDER.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.BABYCRABFRESHWATER_MASS_DIVIDER.NAME"
 msgid "<style=\"KKeyword\">Small Sanishell Molt</style> is less X times"
+msgstr ""
+
+#. CrabsProfit.STRINGS.OPTIONS.BASE_ORE.NAME
+msgctxt "CrabsProfit.STRINGS.OPTIONS.BASE_ORE.NAME"
+msgid "Basic Ores"
+msgstr ""
+
+#. CrabsProfit.STRINGS.OPTIONS.CHEMICAL_PROCESSING_ORE.NAME
+msgctxt "CrabsProfit.STRINGS.OPTIONS.CHEMICAL_PROCESSING_ORE.NAME"
+msgid "Ronivan's <style=\"KKeyword\">Chemical Processing</style> Ores"
 msgstr ""
 
 #. CrabsProfit.STRINGS.OPTIONS.CRAB_MEAT.NAME
@@ -56,6 +76,21 @@ msgstr ""
 #. CrabsProfit.STRINGS.OPTIONS.CRABWOOD_MEAT.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.CRABWOOD_MEAT.NAME"
 msgid "{CRABWOOD} meat amount, units"
+msgstr ""
+
+#. CrabsProfit.STRINGS.OPTIONS.DLC1_ORE.NAME
+msgctxt "CrabsProfit.STRINGS.OPTIONS.DLC1_ORE.NAME"
+msgid "Spaced Out! Ores"
+msgstr ""
+
+#. CrabsProfit.STRINGS.OPTIONS.EXOTIC_ORE.NAME
+msgctxt "CrabsProfit.STRINGS.OPTIONS.EXOTIC_ORE.NAME"
+msgid "Exotic Ores"
+msgstr ""
+
+#. CrabsProfit.STRINGS.OPTIONS.EXOTIC_ORE.TOOLTIP
+msgctxt "CrabsProfit.STRINGS.OPTIONS.EXOTIC_ORE.TOOLTIP"
+msgid "These Ores exist in the game, but are not used.\nThey can be used by some mods."
 msgstr ""
 
 #. CrabsProfit.STRINGS.OPTIONS.ORE_WEIGHTS.CATEGORY

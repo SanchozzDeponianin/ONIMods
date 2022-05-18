@@ -62,6 +62,31 @@ namespace CrabsProfit
             {
                 public static LocString CATEGORY = "Random Ore Chances Table";
             }
+            public class BASE_ORE
+            {
+                public static LocString NAME = "Basic Ores";
+            }
+            public class DLC1_ORE
+            {
+                public static LocString NAME = "Spaced Out! Ores";
+            }
+            public class EXOTIC_ORE
+            {
+                public static LocString NAME = "Exotic Ores";
+                public static LocString TOOLTIP = "These Ores exist in the game, but are not used.\nThey can be used by some mods.";
+            }
+            public class CHEMICAL_PROCESSING_ORE
+            {
+                public static LocString NAME = $"Ronivan's {UI.FormatAsKeyWord("Chemical Processing")} Ores";
+            }
+            public class ARGENTITEORE
+            {
+                public static LocString NAME = "Silver Ore";
+            }
+            public class AURICHALCITEORE
+            {
+                public static LocString NAME = "Zinc Ore";
+            }
         }
 
         internal static void DoReplacement()
@@ -89,7 +114,8 @@ namespace CrabsProfit
             foreach (var info in typeof(CrabsProfitOptions.OreWeights).GetProperties())
             {
                 var id = info.Name.ToUpperInvariant();
-                AddStrings(id, UI.StripLinkFormatting(Strings.Get(string.Format(element, id))));
+                if (Strings.TryGet(string.Format(element, id), out var ore_name))
+                    AddStrings(id, UI.StripLinkFormatting(ore_name));
             }
         }
     }
