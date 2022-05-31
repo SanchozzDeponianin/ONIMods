@@ -68,6 +68,7 @@ namespace NoManualDelivery
             // из ДЛЦ:
             UraniumCentrifugeConfig.ID,
             NuclearReactorConfig.ID,
+            NoseconeHarvestConfig.ID,
 
             // из модов:
             // Aquatic Farm https://steamcommunity.com/sharedfiles/filedetails/?id=1910961538
@@ -85,6 +86,8 @@ namespace NoManualDelivery
             "InsulatedFarmTile", "InsulatedHydroponicFarm",
             // Freezer https://steamcommunity.com/sharedfiles/filedetails/?id=2618339179
             "Freezer",
+            // Modified Storage https://steamcommunity.com/sharedfiles/filedetails/?id=1900617368
+            "Ktoblin.ModifiedRefrigerator", "Ktoblin.ModifiedStorageLockerSmart",
         };
 
         private static List<string> BuildingToMakeAutomatableWithTransferArmPickupGasLiquid = new List<string>()
