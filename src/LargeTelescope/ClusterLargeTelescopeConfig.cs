@@ -71,5 +71,15 @@ namespace LargeTelescope
             if (LargeTelescopeOptions.Instance.not_require_gas_pipe)
                 go.GetComponent<RequireInputs>().SetRequirements(true, false);
         }
+
+        // убираем требование к трубе у ClusterTelescopeEnclosed
+        // здеся, потому что попытка патчить пустого метода DoPostConfigureComplete
+        // изза бага в гармони высывает глюки на не-виндах
+        public override void ConfigurePost(BuildingDef def)
+        {
+            if (LargeTelescopeOptions.Instance.not_require_gas_pipe)
+                Assets.GetBuildingDef(ClusterTelescopeEnclosedConfig.ID).BuildingComplete
+                    .GetComponent<RequireInputs>().SetRequirements(true, false);
+        }
     }
 }

@@ -62,17 +62,6 @@ namespace LargeTelescope
             }
         }
 
-        // убираем требование к трубе
-        [HarmonyPatch(typeof(ClusterTelescopeEnclosedConfig), nameof(ClusterTelescopeEnclosedConfig.DoPostConfigureComplete))]
-        private static class ClusterTelescopeEnclosedConfig_DoPostConfigureComplete
-        {
-            private static bool Prepare() => LargeTelescopeOptions.Instance.not_require_gas_pipe;
-            private static void Postfix(GameObject go)
-            {
-                go.GetComponent<RequireInputs>().SetRequirements(true, false);
-            }
-        }
-
         // убираем требование чоры к наличию кислорода
         [HarmonyPatch(typeof(ClusterTelescope.Instance), nameof(ClusterTelescope.Instance.CreateChore))]
         private static class ClusterTelescope_Instance_CreateChore
