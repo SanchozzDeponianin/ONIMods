@@ -69,6 +69,7 @@ namespace NoManualDelivery
             UraniumCentrifugeConfig.ID,
             NuclearReactorConfig.ID,
             NoseconeHarvestConfig.ID,
+            RailGunPayloadOpenerConfig.ID,
 
             // из модов:
             // Aquatic Farm https://steamcommunity.com/sharedfiles/filedetails/?id=1910961538
