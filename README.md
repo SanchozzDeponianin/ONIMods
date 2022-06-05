@@ -4,6 +4,7 @@ Steam Workshop: https://steamcommunity.com/profiles/76561198341359629/myworkshop
 Last tested on game versions: Vanilla and Spaced Out! DLC **509629**
 
 Limited support for so-called beta versions:
+
 *Public_Testing* - Do not wait for a quick release of fixes if something breaks.
 *Public_Previous_Update* and *Public_Pre_Mergedown* - Previously working mods should theoretically continue to work, but: there are no new mods, no updates, no new features, no fixes.
 
