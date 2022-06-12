@@ -43,6 +43,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | :--------: | :---------------: | :-----------: | :-------------------: |
 | [Artifacts in Care Packages](https://steamcommunity.com/sharedfiles/filedetails/?id=2455735197) | Allows to get Artifacts in Care Packages | Yes | Yes
 | [Better Farming Effects and Tweaks](https://steamcommunity.com/sharedfiles/filedetails/?id=2778941969) | Provides a number of improvements for how your Farmers, Worms and Beetles take care of plants, including seed propagation of non-yielding plants | Yes | Yes |
+| [Configurable Automation-controlled Doors](https://steamcommunity.com/sharedfiles/filedetails/?id=2820163949) | Allows you to select, for each Door individually, the desired state with a green / red automation signal, including the "Auto" state. | Yes | Yes |
 | [Eat every day](https://steamcommunity.com/sharedfiles/filedetails/?id=2573532147) | It forces duplicants to eat every day, even at the "no sweat" difficulty level, which guarantees a stable morale bonus. | Yes | Yes |
 | [Enclosed Telescope Tune-Up](https://steamcommunity.com/sharedfiles/filedetails/?id=2630438094) | Tuning of a Enclosed Telescope: increased the radius and scanning speed, adjusted requirements, some improvements and bug fixes. | No | Yes |
 | [Hydrocactus](https://steamcommunity.com/sharedfiles/filedetails/?id=2794198686) | Allows you to obtain a half-forgotten plant Hydrocactus in an normal fair game | No | Yes |
