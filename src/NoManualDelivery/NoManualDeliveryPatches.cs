@@ -54,6 +54,7 @@ namespace NoManualDelivery
             ObjectDispenserConfig.ID,
             RationBoxConfig.ID,
             RefrigeratorConfig.ID,
+            OuthouseConfig.ID,
             FarmTileConfig.ID,
             HydroponicFarmConfig.ID,
             PlanterBoxConfig.ID,
