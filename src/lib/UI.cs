@@ -13,6 +13,11 @@ namespace SanchozzONIMods.Lib.UI
         // установка и считывание значений реализованы через акции-каллбаки
         public static PPanel AddCheckBox(this PPanel parent, string prefix, string name, Action<bool> onChecked, out Action<bool> setChecked, out Action<bool> setActive)
         {
+            return AddCheckBox(parent, prefix, name, onChecked, out setChecked, out setActive, out Action<string> _);
+        }
+
+        public static PPanel AddCheckBox(this PPanel parent, string prefix, string name, Action<bool> onChecked, out Action<bool> setChecked, out Action<bool> setActive, out Action<string> setText)
+        {
             prefix = (prefix + name).ToUpperInvariant();
             GameObject cb_go = null;
             var cb = new PCheckBox(name)
@@ -39,6 +44,7 @@ namespace SanchozzONIMods.Lib.UI
                     PCheckBox.SetCheckState(cb_go, @checked ? PCheckBox.STATE_CHECKED : PCheckBox.STATE_UNCHECKED);
             };
             setActive = on => cb_go?.SetActive(on);
+            setText = text => { if (cb_go != null) PUIElements.SetText(cb_go, text); };
             return parent.AddChild(cb);
         }
 

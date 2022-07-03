@@ -81,6 +81,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrabsProfit", "CrabsProfit\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartLogicDoors", "SmartLogicDoors\SmartLogicDoors.csproj", "{99502226-3187-4B58-8FC4-76D6D3C2852A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttributeRestrictions", "AttributeRestrictions\AttributeRestrictions.csproj", "{6A7810B6-49C7-4AEC-B970-D8D38FAF64CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MainlineSteam = Debug|MainlineSteam
@@ -345,6 +347,14 @@ Global
 		{99502226-3187-4B58-8FC4-76D6D3C2852A}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{99502226-3187-4B58-8FC4-76D6D3C2852A}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{99502226-3187-4B58-8FC4-76D6D3C2852A}.Release|StableBackup.Build.0 = Release|StableBackup
+		{6A7810B6-49C7-4AEC-B970-D8D38FAF64CC}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
+		{6A7810B6-49C7-4AEC-B970-D8D38FAF64CC}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
+		{6A7810B6-49C7-4AEC-B970-D8D38FAF64CC}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
+		{6A7810B6-49C7-4AEC-B970-D8D38FAF64CC}.Debug|StableBackup.Build.0 = Debug|StableBackup
+		{6A7810B6-49C7-4AEC-B970-D8D38FAF64CC}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
+		{6A7810B6-49C7-4AEC-B970-D8D38FAF64CC}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
+		{6A7810B6-49C7-4AEC-B970-D8D38FAF64CC}.Release|StableBackup.ActiveCfg = Release|StableBackup
+		{6A7810B6-49C7-4AEC-B970-D8D38FAF64CC}.Release|StableBackup.Build.0 = Release|StableBackup
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
