@@ -13,7 +13,7 @@ namespace NoManualDelivery
         {
             public class ALLOWALWAYSPICKUPEDIBLE
             {
-                public static LocString NAME = "Duplicants can always picking up Food and Medicine.";
+                public static LocString NAME = "Duplicants can always pick up Food and Medicine.";
                 public static LocString TOOLTIP = string.Concat(new string[]
                 {
                     "Duplicants will ignore the ",
