@@ -5,7 +5,7 @@ msgstr ""
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME"
-msgid "Duplicants can always picking up Food and Medicine."
+msgid "Duplicants can always pick up Food and Medicine."
 msgstr ""
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP
