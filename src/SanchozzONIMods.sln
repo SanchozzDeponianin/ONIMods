@@ -61,8 +61,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuitRecharger", "SuitRechar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReBuildableAETN", "ReBuildableAETN\ReBuildableAETN.csproj", "{CAD7AFEB-4A67-43BF-8A12-83236BBB719F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OilWellCapBugFix", "OilWellCapBugFix\OilWellCapBugFix.csproj", "{12285107-7117-4A26-8A4A-AAE37DFB90F8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EatEveryDay", "EatEveryDay\EatEveryDay.csproj", "{D2F24263-EDE5-4FE4-BF79-AE6AA84ED46C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LargeTelescope", "LargeTelescope\LargeTelescope.csproj", "{04FB6DB1-8A5D-4540-B0B1-4809523DA53A}"
@@ -267,14 +265,6 @@ Global
 		{CAD7AFEB-4A67-43BF-8A12-83236BBB719F}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{CAD7AFEB-4A67-43BF-8A12-83236BBB719F}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{CAD7AFEB-4A67-43BF-8A12-83236BBB719F}.Release|StableBackup.Build.0 = Release|StableBackup
-		{12285107-7117-4A26-8A4A-AAE37DFB90F8}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
-		{12285107-7117-4A26-8A4A-AAE37DFB90F8}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
-		{12285107-7117-4A26-8A4A-AAE37DFB90F8}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
-		{12285107-7117-4A26-8A4A-AAE37DFB90F8}.Debug|StableBackup.Build.0 = Debug|StableBackup
-		{12285107-7117-4A26-8A4A-AAE37DFB90F8}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
-		{12285107-7117-4A26-8A4A-AAE37DFB90F8}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
-		{12285107-7117-4A26-8A4A-AAE37DFB90F8}.Release|StableBackup.ActiveCfg = Release|StableBackup
-		{12285107-7117-4A26-8A4A-AAE37DFB90F8}.Release|StableBackup.Build.0 = Release|StableBackup
 		{D2F24263-EDE5-4FE4-BF79-AE6AA84ED46C}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
 		{D2F24263-EDE5-4FE4-BF79-AE6AA84ED46C}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
 		{D2F24263-EDE5-4FE4-BF79-AE6AA84ED46C}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
