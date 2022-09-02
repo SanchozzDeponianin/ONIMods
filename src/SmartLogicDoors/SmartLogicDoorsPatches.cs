@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -37,16 +38,18 @@ namespace SmartLogicDoors
         [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
         private static class DetailsScreen_OnPrefabInit
         {
-            private static void Postfix(List<DetailsScreen.SideScreenRef> ___sideScreens)
+            private static void Postfix()
             {
                 PUIUtils.AddSideScreenContent<SmartLogicDoorSideScreen>();
             }
         }
 
         // аррргхх !!! ну почему сортировка сидэскреенов сделана через жёппу ? такая боль добавить свой экран в нужное место
+        // ишшо и хармони приглючивает
         [HarmonyPatch(typeof(SideScreenContent), nameof(SideScreenContent.GetSideScreenSortOrder))]
         private static class SideScreenContent_GetSideScreenSortOrder
         {
+            private static bool Prepare() => Environment.OSVersion.Platform.Equals(PlatformID.Win32NT);
             private static void Postfix(SideScreenContent __instance, ref int __result)
             {
                 if (__instance is DoorToggleSideScreen)
