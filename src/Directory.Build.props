@@ -76,6 +76,7 @@
     <Reference Include="UnityEngine.TextRenderingModule" HintPath="$(GameFolder)/UnityEngine.TextRenderingModule.dll" />
     <Reference Include="UnityEngine.UI" HintPath="$(GameFolder)/UnityEngine.UI.dll" />
     <Reference Include="UnityEngine.UIModule" HintPath="$(GameFolder)/UnityEngine.UIModule.dll" />
+    <Reference Include="FMODUnity" HintPath="$(GameFolder)/FMODUnity.dll" />
   </ItemGroup>
 
   <!-- PLib -->

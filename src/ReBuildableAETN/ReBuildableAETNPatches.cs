@@ -40,7 +40,7 @@ namespace ReBuildableAETN
         {
             ModUtil.AddBuildingToPlanScreen("Utilities", MassiveHeatSinkConfig.ID, "temperature");
             Utils.AddBuildingToTechnology("Catalytics", MassiveHeatSinkConfig.ID);
-            GameTags.MaterialBuildingElements.Add(ID);
+            GameTags.MaterialBuildingElements.Add(MaterialBuildingTag);
             // добавляем ядра -выдры- в космос в ванилле
             var chance = ReBuildableAETNOptions.Instance.VanillaPlanetChance;
             if (DlcManager.IsPureVanilla() && chance.Enabled)
@@ -73,7 +73,7 @@ namespace ReBuildableAETN
             private static void Postfix(ref BuildingDef __result)
             {
                 __result.ViewMode = OverlayModes.GasConduits.ID;
-                __result.MaterialCategory = MATERIALS.REFINED_METALS.AddItem(ID).ToArray();
+                __result.MaterialCategory = MATERIALS.REFINED_METALS.AddItem(MaterialBuildingTag.Name).ToArray();
                 __result.Mass = __result.Mass.AddItem(2).ToArray();
                 if (ReBuildableAETNOptions.Instance.AddLogicPort)
                     __result.LogicInputPorts = LogicOperationalController.CreateSingleInputPortList(new CellOffset(1, 0));
@@ -138,21 +138,21 @@ namespace ReBuildableAETN
                 return DlcManager.IsExpansion1Active();
             }
 
-            private static void InjectForbiddenTag(FetchList2 fetchList, Tag tag, Tag[] required_tags, Tag[] forbidden_tags, float amount, FetchOrder2.OperationalRequirement operationalRequirement)
+            private static void InjectForbiddenTag(FetchList2 fetchList, Tag tag, Tag[] forbidden_tags, float amount, Operational.State operationalRequirement)
             {
                 forbidden_tags = (forbidden_tags ?? new Tag[0]).AddItem(GameTags.CharmedArtifact).ToArray();
-                fetchList.Add(tag, required_tags, forbidden_tags, amount, operationalRequirement);
+                fetchList.Add(tag, forbidden_tags, amount, operationalRequirement);
             }
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
             {
                 string methodName = method.DeclaringType.FullName + "." + method.Name;
-                var fetchList_Add = typeof(FetchList2).GetMethodSafe(nameof(FetchList2.Add), false, typeof(Tag), typeof(Tag[]), typeof(Tag[]), typeof(float), typeof(FetchOrder2.OperationalRequirement));
+                var fetchList_Add = typeof(FetchList2).GetMethodSafe(nameof(FetchList2.Add), false, typeof(Tag), typeof(Tag[]), typeof(float), typeof(Operational.State));
                 var injectForbiddenTag = typeof(Constructable_OnSpawn).GetMethodSafe(nameof(InjectForbiddenTag), true, PPatchTools.AnyArguments);
 
                 if (fetchList_Add != null && injectForbiddenTag != null)
                 {
-                    instructions = PPatchTools.ReplaceMethodCall(instructions, fetchList_Add, injectForbiddenTag);
+                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, fetchList_Add, injectForbiddenTag);
 #if DEBUG
                         PUtil.LogDebug($"'{methodName}' Transpiler injected");
 #endif
@@ -215,7 +215,7 @@ namespace ReBuildableAETN
 
                 if (AddOrGetDemolishable != null && injectSetLocker != null)
                 {
-                    instructions = PPatchTools.ReplaceMethodCall(instructions, AddOrGetDemolishable, injectSetLocker);
+                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, AddOrGetDemolishable, injectSetLocker);
 #if DEBUG
                         PUtil.LogDebug($"'{methodName}' Transpiler injected");
 #endif

@@ -91,11 +91,11 @@ namespace Smelter
 
             var manualDeliveryKG = go.AddOrGet<ManualDeliveryKG>();
             manualDeliveryKG.SetStorage(lcfr.outStorage);
-            manualDeliveryKG.requestedItemTag = FUEL_TAG;
+            manualDeliveryKG.RequestedItemTag = FUEL_TAG;
             manualDeliveryKG.capacity = FUEL_STORE_CAPACITY;
             manualDeliveryKG.refillMass = FUEL_STORE_CAPACITY / 2;
             manualDeliveryKG.choreTypeIDHash = Db.Get().ChoreTypes.MachineFetch.IdHash;
-            manualDeliveryKG.operationalRequirement = FetchOrder2.OperationalRequirement.Functional;
+            manualDeliveryKG.operationalRequirement = Operational.State.Functional;
 
             var workable = go.AddOrGet<SmelterWorkable>();
             workable.overrideAnims = new KAnimFile[] { Assets.GetAnim("anim_interacts_smelter_kanim") };

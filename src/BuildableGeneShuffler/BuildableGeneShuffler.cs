@@ -22,11 +22,14 @@ namespace BuildableGeneShuffler
 
             public bool IsReady() => HasEnoughBrine() && HasMorb();
 
-            private static Tag[] requiredFetchTags = new Tag[] { GameTags.Creatures.Deliverable };
+            private static readonly IDetouredField<FetchOrder2, Tag> RequiredFetchTag
+                = PDetours.DetourFieldLazy<FetchOrder2, Tag>(nameof(FetchOrder2.RequiredTag));
+
             public FetchList2 CreateFetchList()
             {
                 var fetchList = new FetchList2(master.storage, Db.Get().ChoreTypes.DoctorFetch);
-                fetchList.Add(GlomConfig.ID, requiredFetchTags, null, 1f, FetchOrder2.OperationalRequirement.Functional);
+                fetchList.Add(GlomConfig.ID, null, 1f, Operational.State.Functional);
+                RequiredFetchTag.Set(fetchList.FetchOrders[0], GameTags.Creatures.Deliverable);
                 return fetchList;
             }
 

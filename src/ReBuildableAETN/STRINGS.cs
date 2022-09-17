@@ -41,6 +41,11 @@ namespace ReBuildableAETN
                     public static LocString TOOLTIP = $"Now this Natural Feature can be deconstructed to obtain {NEUTRONIUM_CORE}.";
                 }
             }
+
+            public class TAGS
+            {
+                public static LocString BUILDINGNEUTRONIUMCORE = "";
+            }
         }
 
         public class UI
@@ -127,6 +132,7 @@ namespace ReBuildableAETN
         internal static void DoReplacement()
         {
             MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.NAME = global::STRINGS.MISC.STATUSITEMS.STUDIED.NAME;
+            MISC.TAGS.BUILDINGNEUTRONIUMCORE = ITEMS.MASSIVE_HEATSINK_CORE.NAME;
             var dictionary = new Dictionary<string, string>()
             {
                 { MASSIVEHEATSINK, PREFABS.MASSIVEHEATSINK.NAME },

@@ -36,17 +36,6 @@ namespace VaricolouredBalloons
             VaricolouredBalloonsHelper.InitializeAnims();
         }
 
-        // подкручиваем скрытный приоритет задач типа получения шаров
-        // для случая если включена галка "Enable Proximity"
-        // делаем его подобным скрытному приоритету других не-рабочих задач
-        [PLibMethod(RunAt.AfterDbInit)]
-        private static void AfterDbInit()
-        {
-            var JoyReaction = Db.Get().ChoreTypes.JoyReaction;
-            // JoyReaction.explicitPriority = JoyReaction.priority;
-            Traverse.Create(JoyReaction).Property<int>(nameof(ChoreType.explicitPriority)).Value = JoyReaction.priority;
-        }
-
         [PLibMethod(RunAt.OnStartGame)]
         private static void OnStartGame()
         {

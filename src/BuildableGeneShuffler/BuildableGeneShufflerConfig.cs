@@ -45,9 +45,9 @@ namespace BuildableGeneShuffler
             var md = go.AddOrGet<ManualDeliveryKG>();
             md.capacity = brine_mass;
             md.refillMass = brine_mass;
-            md.requestedItemTag = SimHashes.Brine.CreateTag();
+            md.RequestedItemTag = SimHashes.Brine.CreateTag();
             md.choreTypeIDHash = Db.Get().ChoreTypes.DoctorFetch.IdHash;
-            md.operationalRequirement = FetchOrder2.OperationalRequirement.Functional;
+            md.operationalRequirement = Operational.State.Functional;
             md.SetStorage(storage);
 
             go.AddOrGet<BuildableGeneShuffler>();

@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Varicoloured Balloons</Title>
     <Description>Adds more different colors and variations of balloons.</Description>
-    <ModVersion>1.2.1</ModVersion>
+    <ModVersion>1.2.2</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>  
   <ItemGroup>

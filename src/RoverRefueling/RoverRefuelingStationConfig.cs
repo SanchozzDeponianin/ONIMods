@@ -48,7 +48,7 @@ namespace RoverRefueling
             Prioritizable.AddRef(go);
             var md = go.AddComponent<ManualDeliveryKG>();
             md.SetStorage(storage);
-            md.requestedItemTag = fuelTag;
+            md.RequestedItemTag = fuelTag;
             md.capacity = capacity;
             md.refillMass = mass_per_charge;
             md.choreTypeIDHash = Db.Get().ChoreTypes.Fetch.IdHash;

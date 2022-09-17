@@ -275,9 +275,9 @@ namespace WornSuitDischarge
                 var md = go.AddComponent<ManualDeliveryKG>();
                 md.capacity = capacity;
                 md.refillMass = refill * capacity;
-                md.requestedItemTag = requestedTag;
+                md.RequestedItemTag = requestedTag;
                 md.choreTypeIDHash = Db.Get().ChoreTypes.MachineFetch.IdHash;
-                md.operationalRequirement = FetchOrder2.OperationalRequirement.Functional;
+                md.operationalRequirement = Operational.State.Functional;
                 md.allowPause = true;
                 return md;
             }

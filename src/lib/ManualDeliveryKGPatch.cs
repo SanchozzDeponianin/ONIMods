@@ -79,7 +79,7 @@ namespace SanchozzONIMods.Shared
 
         private static string ResolveTooltip(string tooltip, ManualDeliveryKG manualDelivery)
         {
-            return $"{tooltip}\n{string.Format(BUILDING.STATUSITEMS.WAITINGFORMATERIALS.LINE_ITEM_UNITS, manualDelivery.requestedItemTag.ProperName())}";
+            return $"{tooltip}\n{string.Format(BUILDING.STATUSITEMS.WAITINGFORMATERIALS.LINE_ITEM_UNITS, manualDelivery.RequestedItemTag.ProperName())}";
         }
 
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)

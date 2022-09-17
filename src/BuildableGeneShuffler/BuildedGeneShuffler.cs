@@ -55,7 +55,12 @@ namespace BuildableGeneShuffler
             if (isBuilded && !destroyed)
             {
                 destroyed = true;
-                GetComponent<Deconstructable>()?.SpawnItemsFromConstruction();
+                var deconstructable = GetComponent<Deconstructable>();
+                if (deconstructable != null)
+                {
+                    deconstructable.allowDeconstruction = true;
+                    deconstructable.SpawnItemsFromConstruction();
+                }
             }
         }
     }

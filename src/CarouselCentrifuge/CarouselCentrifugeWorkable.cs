@@ -26,7 +26,6 @@ namespace CarouselCentrifuge
         {
             new Tuple<HashedString, HashedString[]>("anim_cheer_kanim", new HashedString[] { "cheer_pre", "cheer_loop", "cheer_pst" }),
             new Tuple<HashedString, HashedString[]>("anim_clapcheer_kanim", new HashedString[] { "clapcheer_pre", "clapcheer_loop", "clapcheer_pst" }),
-            //new Tuple<HashedString, HashedString[]>("anim_react_thumbsup_kanim", new HashedString[] { "react" }),
         };
 
         public CarouselCentrifugeWorkable()
@@ -100,8 +99,8 @@ namespace CarouselCentrifuge
                         new EmoteChore(
                             target: chore_provider,
                             chore_type: Db.Get().ChoreTypes.EmoteHighPriority,
-                            emote_kanim: emote_anims[i].first,
-                            emote_anims: emote_anims[i].second,
+                            animFile: emote_anims[i].first,
+                            anims: emote_anims[i].second,
                             get_status_item: null
                             );
                     }

@@ -10,6 +10,7 @@ namespace ReBuildableAETN
         public const float MASS = 50f;
         public const float TEMPERATURE = 100f;
         public static Tag tag = TagManager.Create(ID);
+        public static Tag MaterialBuildingTag = TagManager.Create("BuildingNeutroniumCore");
 
         public static readonly ArtifactTier TIER_CORE = new ArtifactTier(
             STRINGS.UI.SPACEARTIFACTS.ARTIFACTTIERS.TIER_CORE.key, DECOR.BONUS.TIER7, 0);
@@ -35,6 +36,7 @@ namespace ReBuildableAETN
                     GameTags.IndustrialIngredient,
                     GameTags.PedestalDisplayable,
                     GameTags.Artifact,
+                    MaterialBuildingTag,
                 });
 
             // это частично спокировано из ArtifactConfig.CreateArtifact, надо поглядывать если что то поменяют
