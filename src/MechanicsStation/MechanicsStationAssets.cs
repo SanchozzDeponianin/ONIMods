@@ -28,16 +28,11 @@ namespace MechanicsStation
         private static Effect MachineTinkerEffect;
         private static AttributeConverter MachineTinkerEffectDuration;
 
-        // для устранения конфликта с модом "Rooms Expanded" с комнатой "кухня"
-        public static bool RoomsExpandedFound { get; private set; } = false;
-        private static RoomType KitchenRoom;
-        private static Tag KitchenBuildingTag = Tag.Invalid;
-
         internal static void Init()
         {
             var db = Db.Get();
 
-            // тюнингуем и актифируем комнату
+            // тюнингуем и актифируем комнату "мащинэщоп"
             // подхватывать максимальный размер комнаты из тюнинга
             int maxRoomSize = TuningData<RoomProber.Tuning>.Get().maxRoomSize;
             var MAXIMUM_SIZE_MAX = new RoomConstraints.Constraint(
@@ -60,21 +55,21 @@ namespace MechanicsStation
 
             db.RoomTypes.Add(db.RoomTypes.MachineShop);
 
-            // детектим "Rooms Expanded". модифицируем "мастерскую" чтобы она могла быть обгрейднутна до "кухни"
+            // модифицируем "мастерскую" чтобы она могла быть обгрейднутна до "кухни"
+            var upgrade_paths = db.RoomTypes.MachineShop.upgrade_paths.AddToArray(db.RoomTypes.Kitchen);
+            var priority = System.Math.Min(db.RoomTypes.MachineShop.priority, db.RoomTypes.Kitchen.priority);
+            // детектим "Rooms Expanded"
             var RoomsExpanded = PPatchTools.GetTypeSafe("RoomsExpanded.RoomTypes_AllModded", "RoomsExpandedMerged");
             if (RoomsExpanded != null)
             {
                 PUtil.LogDebug("RoomsExpanded found. Attempt to add compatibility.");
                 try
                 {
-                    KitchenRoom = (RoomType)RoomsExpanded.GetPropertySafe<RoomType>("KitchenRoom", true)?.GetValue(null, null);
-                    if (KitchenRoom != null)
+                    var KitchenetteRoom = (RoomType)RoomsExpanded.GetPropertySafe<RoomType>("KitchenetteRoom", true)?.GetValue(null);
+                    if (KitchenetteRoom != null)
                     {
-                        var upgrade_paths = db.RoomTypes.MachineShop.upgrade_paths.AddToArray(KitchenRoom);
-                        Traverse.Create(db.RoomTypes.MachineShop).Property(nameof(RoomType.upgrade_paths)).SetValue(upgrade_paths);
-                        Traverse.Create(db.RoomTypes.MachineShop).Property(nameof(RoomType.priority)).SetValue(KitchenRoom.priority);
-                        KitchenBuildingTag = "KitchenBuildingTag".ToTag();
-                        RoomsExpandedFound = true;
+                        upgrade_paths = upgrade_paths.AddToArray(KitchenetteRoom);
+                        priority = System.Math.Min(priority, KitchenetteRoom.priority);
                     }
                 }
                 catch (System.Exception e)
@@ -82,6 +77,9 @@ namespace MechanicsStation
                     PUtil.LogExcWarn(e);
                 }
             }
+            var MachineShop = Traverse.Create(db.RoomTypes.MachineShop);
+            MachineShop.Property(nameof(RoomType.upgrade_paths)).SetValue(upgrade_paths);
+            MachineShop.Property(nameof(RoomType.priority)).SetValue(priority);
 
             // добавляем перк для работы на станции
             CanMachineTinker = db.SkillPerks.Add(new SimpleSkillPerk(
@@ -144,7 +142,7 @@ namespace MechanicsStation
         }
 
         // сделать постройку улучшаемой
-        internal static Tinkerable MakeMachineTinkerable(GameObject go)
+        private static Tinkerable MakeMachineTinkerable(GameObject go)
         {
             var tinkerable = Tinkerable.MakePowerTinkerable(go);
             tinkerable.tinkerMaterialTag = MechanicsStationConfig.TINKER_TOOLS;
@@ -158,7 +156,6 @@ namespace MechanicsStation
             tinkerable.effectAttributeId = Db.Get().Attributes.Machinery.Id;
             tinkerable.effectMultiplier = MACHINE_TINKER_EFFECT_DURATION_PER_SKILL;
 
-            go.AddOrGet<RoomTracker>().requiredRoomType = Db.Get().RoomTypes.MachineShop.Id;
             // а это для корректного изменения времени работы после изменения в настройках
             go.GetComponent<KPrefabID>().prefabSpawnFn += delegate (GameObject prefab)
             {
@@ -170,11 +167,29 @@ namespace MechanicsStation
                     _tinkerable.effectMultiplier = MechanicsStationOptions.Instance.machine_tinker_effect_duration_per_skill / 100;
                 }
             };
-            // если "Rooms Expanded" найден, добавляем в кухонные постройки компонент для работы в нескольких комнатах.
-            if (RoomsExpandedFound && go.HasTag(KitchenBuildingTag))
+            return tinkerable;
+        }
+
+        // сделать постройку улучшаемой и восстановить оригинальные параметры RoomTracker если они были
+        internal static Tinkerable MakeMachineTinkerableSave(GameObject go)
+        {
+            Tinkerable tinkerable;
+            // проверяем был ли до нас
+            var originRoomTracker = go.GetComponent<RoomTracker>();
+            if (originRoomTracker != null)
             {
-                var multiRoomTracker = go.AddOrGet<MultiRoomTracker>();
-                multiRoomTracker.possibleRoomTypes = new string[] { Db.Get().RoomTypes.MachineShop.Id, KitchenRoom.Id };
+                var requiredRoomType = originRoomTracker.requiredRoomType;
+                var requirement = originRoomTracker.requirement;
+                tinkerable = MakeMachineTinkerable(go);
+                originRoomTracker.requiredRoomType = requiredRoomType;
+                originRoomTracker.requirement = requirement;
+            }
+            else
+            {
+                // либо добавляем компонент для работы в нескольких комнатах
+                tinkerable = MakeMachineTinkerable(go);
+                go.AddOrGet<RoomTracker>().requiredRoomType = Db.Get().RoomTypes.MachineShop.Id;
+                go.AddOrGet<MultiRoomTracker>().allowAnyRoomType = true;
             }
             return tinkerable;
         }

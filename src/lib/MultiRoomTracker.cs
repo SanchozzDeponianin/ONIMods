@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using UnityEngine;
 using PeterHan.PLib.Detours;
 
 namespace SanchozzONIMods.Shared
@@ -7,6 +8,10 @@ namespace SanchozzONIMods.Shared
     [SkipSaveFileSerialization]
     public class MultiRoomTracker : KMonoBehaviour
     {
+        [SerializeField]
+        public bool allowAnyRoomType = false;
+
+        [SerializeField]
         public string[] possibleRoomTypes;
 
 #pragma warning disable CS0649
@@ -36,7 +41,8 @@ namespace SanchozzONIMods.Shared
         private void OnUpdateRoom(object data)
         {
             var room = (Room)data;
-            if (room != null && roomTracker != null && possibleRoomTypes != null && room.roomType.Id != roomTracker.requiredRoomType && possibleRoomTypes.Contains(room.roomType.Id))
+            if (room != null && roomTracker != null && room.roomType.Id != roomTracker.requiredRoomType 
+                && (allowAnyRoomType || (possibleRoomTypes != null && possibleRoomTypes.Contains(room.roomType.Id))))
             {
                 roomTracker.requiredRoomType = room.roomType.Id;
                 UPDATEROOM.Invoke(roomTracker, room);

@@ -39,7 +39,7 @@ namespace MechanicsStation
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
             go.AddOrGet<LoopingSounds>();
-            go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.MachineShop, false);
+            go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.MachineShopType, false);
         }
 
         public override void DoPostConfigureComplete(GameObject go)
@@ -61,7 +61,7 @@ namespace MechanicsStation
             tinkerStation.fetchChoreType = Db.Get().ChoreTypes.MachineFetch.IdHash;
             var roomTracker = go.AddOrGet<RoomTracker>();
             roomTracker.requiredRoomType = Db.Get().RoomTypes.MachineShop.Id;
-            roomTracker.requirement = RoomsExpandedFound ? RoomTracker.Requirement.Recommended : RoomTracker.Requirement.Required;
+            roomTracker.requirement = RoomTracker.Requirement.Recommended;
             Prioritizable.AddRef(go);
             go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject gameObject)
             {

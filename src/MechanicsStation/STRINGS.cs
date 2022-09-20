@@ -22,7 +22,7 @@ namespace MechanicsStation
                     public static LocString EFFECT = string.Concat(new string[]
                     {
                         $"Produces {UI.FormatAsLink(MACHINE_PARTS, "MACHINE_PARTS")} to improve building production efficiency.\n\n",
-                        $"Assigned Duplicants must possess the {UI.FormatAsLink(MACHINE_TECHNICIAN, "Technicals1")} trait.\n\n",
+                        $"Assigned Duplicants must possess the {UI.FormatAsLink(MACHINE_TECHNICIAN, "Technicals1")} skill.\n\n",
                         $"This building is a necessary component of the {MACHINE_SHOP} room."
                     });
                 }

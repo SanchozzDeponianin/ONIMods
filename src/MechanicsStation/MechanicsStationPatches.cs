@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
@@ -41,7 +44,7 @@ namespace MechanicsStation
 
         // шестеренки
         [HarmonyPatch(typeof(MachinePartsConfig), nameof(MachinePartsConfig.CreatePrefab))]
-        internal static class MachinePartsConfig_CreatePrefab
+        private static class MachinePartsConfig_CreatePrefab
         {
             private static void Postfix(ref GameObject __result)
             {
@@ -51,18 +54,56 @@ namespace MechanicsStation
         }
 
         // не выбрасывать шестеренки из фабрикаторов
-        [HarmonyPatch(typeof(ComplexFabricator), "OnPrefabInit")]
-        internal static class ComplexFabricator_OnPrefabInit
+        [HarmonyPatch(typeof(ComplexFabricator), "DropExcessIngredients")]
+        private static class ComplexFabricator_DropExcessIngredients
         {
-            private static void Postfix(ref ComplexFabricator __instance)
+            private static HashSet<Tag> Inject(HashSet<Tag> tags)
             {
-                __instance.keepAdditionalTags.SetTag(MachinePartsConfig.TAG);
+                tags.Add(MachinePartsConfig.ID);
+                return tags;
+            }
+            /*
+        	    HashSet<Tag> hashSet = new HashSet<Tag>();
+            +++ hashSet.Add(MachinePartsConfig.ID);
+	            if (this.keepAdditionalTag != Tag.Invalid)
+		            hashSet.Add(this.keepAdditionalTag);
+            */
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                var instructionsList = instructions.ToList();
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
+
+                var newobj = typeof(HashSet<Tag>).GetConstructor(System.Type.EmptyTypes);
+                var inject = typeof(ComplexFabricator_DropExcessIngredients).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments);
+                bool result = false;
+
+                if (newobj != null && inject != null)
+                {
+                    for (int i = 0; i < instructionsList.Count; i++)
+                    {
+                        var instruction = instructionsList[i];
+                        if (instruction.opcode == OpCodes.Newobj && (instruction.operand is ConstructorInfo info) && info == newobj)
+                        {
+                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, inject));
+                            result = true;
+#if DEBUG
+                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
+#endif
+                            break;
+                        }
+                    }
+                }
+                if (!result)
+                {
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
+                }
+                return instructionsList;
             }
         }
 
         // добавление построек для улучшения
         // todo: добавлять постройки из длц по мере необходимости
-        private static List<string> BuildingWithElementConverterStopList = new List<string>()
+        private static readonly List<string> BuildingWithElementConverterStopList = new List<string>()
         {
             ResearchCenterConfig.ID,            // слишком читерно
             AdvancedResearchCenterConfig.ID,
@@ -74,7 +115,7 @@ namespace MechanicsStation
             RadiationLightConfig.ID,            // бесполезно. todo: в будующем сделать повышение радиации
         };
 
-        private static List<string> BuildingWithComplexFabricatorWorkableStopList = new List<string>()
+        private static readonly List<string> BuildingWithComplexFabricatorWorkableStopList = new List<string>()
         {
             GenericFabricatorConfig.ID,         // странная старая хрень
             EggCrackerConfig.ID,                // было бы нелепо ;-D
@@ -83,7 +124,7 @@ namespace MechanicsStation
         };
 
         [HarmonyPatch(typeof(Assets), nameof(Assets.AddBuildingDef))]
-        internal static class Assets_AddBuildingDef
+        private static class Assets_AddBuildingDef
         {
             private static void Prefix(ref BuildingDef def)
             {
@@ -93,7 +134,7 @@ namespace MechanicsStation
                     // перерабатывающие постройки, требующие искричество
                     if (def.RequiresPowerInput && go.GetComponent<ElementConverter>() != null && !BuildingWithElementConverterStopList.Contains(def.PrefabID))
                     {
-                        MakeMachineTinkerable(go);
+                        MakeMachineTinkerableSave(go);
                         // увеличить всасывание (впервую очередь для скруббера)
                         // увеличить ёмкость потребления из трубы
                         if (go.GetComponent<ConduitConsumer>() != null || go.GetComponent<PassiveElementConsumer>() != null)
@@ -138,7 +179,13 @@ namespace MechanicsStation
                     // фабрикаторы
                     else if (go.GetComponent<ComplexFabricatorWorkable>() != null && !BuildingWithComplexFabricatorWorkableStopList.Contains(def.PrefabID))
                     {
-                        MakeMachineTinkerable(go);
+                        MakeMachineTinkerableSave(go);
+                        go.AddOrGet<TinkerableWorkable>();
+                    }
+                    // специи
+                    else if (def.PrefabID == SpiceGrinderConfig.ID)
+                    {
+                        MakeMachineTinkerableSave(go);
                         go.AddOrGet<TinkerableWorkable>();
                     }
                 }
@@ -147,7 +194,7 @@ namespace MechanicsStation
 
         // хак для повышения скорости работы фабрикаторов
         [HarmonyPatch(typeof(Workable), nameof(Workable.GetEfficiencyMultiplier))]
-        internal static class Workable_GetEfficiencyMultiplier
+        private static class Workable_GetEfficiencyMultiplier
         {
             private static void Postfix(Workable __instance, ref float __result)
             {
@@ -161,7 +208,7 @@ namespace MechanicsStation
 
         // хак для повышения скорости выработки газа скважиной
         [HarmonyPatch(typeof(OilWellCap), nameof(OilWellCap.AddGasPressure))]
-        internal static class OilWellCap_AddGasPressure
+        private static class OilWellCap_AddGasPressure
         {
             private static void Prefix(OilWellCap __instance, ref float dt)
             {
@@ -179,7 +226,7 @@ namespace MechanicsStation
         // и перенаправляем сообщения в скважину
 
         [HarmonyPatch(typeof(OilWellConfig), nameof(OilWellConfig.CreatePrefab))]
-        internal static class OilWellConfig_CreatePrefab
+        private static class OilWellConfig_CreatePrefab
         {
             private static void Postfix(ref GameObject __result)
             {
@@ -200,7 +247,7 @@ namespace MechanicsStation
         }
 
         [HarmonyPatch(typeof(BuildingAttachPoint), "OnPrefabInit")]
-        internal static class BuildingAttachPoint_OnPrefabInit
+        private static class BuildingAttachPoint_OnPrefabInit
         {
             private static void Postfix(BuildingAttachPoint __instance)
             {
@@ -209,7 +256,7 @@ namespace MechanicsStation
         }
 
         [HarmonyPatch(typeof(BuildingAttachPoint), "OnCleanUp")]
-        internal static class BuildingAttachPoint_OnCleanUp
+        private static class BuildingAttachPoint_OnCleanUp
         {
             private static void Prefix(BuildingAttachPoint __instance)
             {

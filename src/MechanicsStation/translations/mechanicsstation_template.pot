@@ -5,7 +5,7 @@ msgstr ""
 
 #. MechanicsStation.STRINGS.BUILDINGS.PREFABS.MECHANICSSTATION.EFFECT
 msgctxt "MechanicsStation.STRINGS.BUILDINGS.PREFABS.MECHANICSSTATION.EFFECT"
-msgid "Produces <link=\"MACHINEPARTS\">{MACHINE_PARTS}</link> to improve building production efficiency.\n\nAssigned Duplicants must possess the <link=\"TECHNICALS1\">{MACHINE_TECHNICIAN}</link> trait.\n\nThis building is a necessary component of the {MACHINE_SHOP} room."
+msgid "Produces <link=\"MACHINEPARTS\">{MACHINE_PARTS}</link> to improve building production efficiency.\n\nAssigned Duplicants must possess the <link=\"TECHNICALS1\">{MACHINE_TECHNICIAN}</link> skill.\n\nThis building is a necessary component of the {MACHINE_SHOP} room."
 msgstr ""
 
 #. MechanicsStation.STRINGS.DUPLICANTS.ATTRIBUTES.CRAFTINGSPEED.NAME
