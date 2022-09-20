@@ -66,6 +66,7 @@ namespace NoManualDelivery
             SolidBoosterConfig.ID,
             ResearchCenterConfig.ID,
             SweepBotStationConfig.ID,
+            SpiceGrinderConfig.ID,
             // из ДЛЦ:
             UraniumCentrifugeConfig.ID,
             NuclearReactorConfig.ID,
