@@ -52,7 +52,6 @@ namespace ButcherStation
                 base_value: 0f,
                 formatter: formatter,
                 available_dlcs: DlcManager.AVAILABLE_ALL_VERSIONS);
-
             RoomsExpandedCompat();
         }
 
@@ -103,16 +102,17 @@ namespace ButcherStation
                 }
             }
 
-            private static ChoreTable.Builder Inject(ChoreTable.Builder builder)
+            private static ChoreTable.Builder Inject(ChoreTable.Builder builder, bool is_baby)
             {
-                return builder.Add(new RanchedStates.Def());
+                return builder.Add(new RanchedStates.Def() { WaitingAnim = "idle_loop" }, !is_baby);
             }
             /*
                 ChoreTable.Builder chore_table = new ChoreTable.Builder().Add
                 blablabla
                 .PushInterruptGroup()
-           +++  .Add(new RanchedStates.Def(), true)
                 .Add(new FixedCaptureStates.Def(), true)
+           +++  .Add(new RanchedStates.Def(), !is_baby)
+                .Add(new LayEggStates.Def(), !is_baby)
                 blablabla
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
@@ -120,18 +120,21 @@ namespace ButcherStation
                 var instructionsList = instructions.ToList();
                 string methodName = method.DeclaringType.FullName + "." + method.Name;
 
-                var PushInterruptGroup = typeof(ChoreTable.Builder).GetMethod(nameof(ChoreTable.Builder.PushInterruptGroup));
-                var Inject = typeof(BasePacuConfig_CreatePrefab).GetMethod(nameof(BasePacuConfig_CreatePrefab.Inject), BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+                var LayEggDef = typeof(LayEggStates.Def).GetConstructor(Type.EmptyTypes);
+                var is_baby = typeof(BasePacuConfig).GetMethodSafe(nameof(BasePacuConfig.CreatePrefab), true, PPatchTools.AnyArguments)
+                    ?.GetParameters().First(arg => arg.Name == "is_baby");
+                var Inject = typeof(BasePacuConfig_CreatePrefab).GetMethodSafe(nameof(BasePacuConfig_CreatePrefab.Inject), true, PPatchTools.AnyArguments);
 
                 bool result = false;
-                if (PushInterruptGroup != null && Inject != null)
+                if (LayEggDef != null && Inject != null && is_baby != null)
                 {
                     for (int i = 0; i < instructionsList.Count; i++)
                     {
                         var instruction = instructionsList[i];
-                        if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && PushInterruptGroup == info)
+                        if ((instruction.opcode == OpCodes.Newobj) && (instruction.operand is ConstructorInfo info) && LayEggDef == info)
                         {
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, Inject));
+                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldarg_S, is_baby.Position));
+                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Call, Inject));
                             result = true;
 #if DEBUG
                             Debug.Log($"'{methodName}' Transpiler injected");
@@ -147,146 +150,105 @@ namespace ButcherStation
             }
         }
 
-        // хак, чтобы ранчо-станции проверяли допустимость комнаты по главной клетке постройки
-        // а не по конечной клетке для приручения жеготного. иначе рыбалка не работает
-        // хак, чтобы убивать в первую очередь совсем лишних, затем старых, затем просто лишних.
-        // хак, чтобы заменить жесткокодированую проверку типа комнату "ранчо" на комнату, заданную в роомтракере - для совместимости с "роом эхпандед"
+        // подменяем список жеготных, чтобы убивать в первую очередь совсем лишних, затем старых, затем просто лишних.
         [HarmonyPatch(typeof(RanchStation.Instance), nameof(RanchStation.Instance.FindRanchable))]
         private static class RanchStation_Instance_FindRanchable
         {
-            private static CavityInfo GetCavityForCell(int cell)
+            private static List<KPrefabID> GetOrderedCreatureList(List<KPrefabID> creatures, RanchStation.Instance smi)
             {
-                return Game.Instance.roomProber.GetCavityForCell(cell);
-            }
-
-            private static List<KPrefabID> GetOrderedCreatureList(List<KPrefabID> creatures, RanchStation.Instance instance)
-            {
-                if (creatures.Count > 0)
+                var butcherStation = smi.GetComponent<ButcherStation>();
+                if (butcherStation != null)
                 {
-                    var butcherStation = instance.GetComponent<ButcherStation>();
-                    if (butcherStation != null)
-                    {
-                        butcherStation.RefreshCreatures(creatures);
-                        return butcherStation.Creatures;
-                    }
+                    butcherStation.RefreshCreatures();
+                    return butcherStation.CachedCreatures;
                 }
                 return creatures;
             }
             /*
-            --- int targetRanchCell = this.GetTargetRanchCell();
-            +++ int targetRanchCell = Grid.PosToCell(this);
-                CavityInfo cavityForCell = Game.Instance.roomProber.GetCavityForCell(targetRanchCell);
-                if (cavityForCell blablabla || blablabla
-            ---     || cavityForCell.room.roomType != Db.Get().RoomTypes.CreaturePen)
-            +++     || cavityForCell.room.roomType != GetTrueRoomType(Db.Get().RoomTypes.CreaturePen, this)
-                {
-                    blablabla
-                    return;
-                }
-            +++ targetRanchCell = this.GetTargetRanchCell();
-            +++ cavityForCell = Game.Instance.roomProber.GetCavityForCell(targetRanchCell);
-                if (this.targetRanchable blablabla)
-                blablabla
-                blablabla
-            --- foreach (KPrefabID creature in cavity_info.creatures)
-            +++ foreach (KPrefabID creature in GetOrderedCreatureList(cavity_info.creatures, this))
-                { blablabla
+                var creatures = this.ranch.cavity.creatures;
+            +++ creatures = GetOrderedCreatureList(creatures, this);
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
             {
                 var instructionsList = instructions.ToList();
                 string methodName = method.DeclaringType.FullName + "." + method.Name;
 
-                var GetTargetRanchCell = typeof(RanchStation.Instance).GetMethod(nameof(RanchStation.Instance.GetTargetRanchCell));
-                var PosToCell = typeof(Grid).GetMethod(nameof(Grid.PosToCell), new Type[] { typeof(StateMachine.Instance) });
-                var get_targetRanchable = typeof(RanchStation.Instance).GetProperty(nameof(RanchStation.Instance.targetRanchable)).GetGetMethod(true);
                 var creatures = typeof(CavityInfo).GetField(nameof(CavityInfo.creatures));
-                var GetCavityForCell = typeof(RanchStation_Instance_FindRanchable).GetMethodSafe(nameof(RanchStation_Instance_FindRanchable.GetCavityForCell), true, PPatchTools.AnyArguments);
                 var GetOrderedCreatureList = typeof(RanchStation_Instance_FindRanchable).GetMethodSafe(nameof(RanchStation_Instance_FindRanchable.GetOrderedCreatureList), true, PPatchTools.AnyArguments);
 
-                bool flag1 = true;
-                bool flag2 = true;
-                bool flag3 = true;
-                if (GetTargetRanchCell != null && PosToCell != null && get_targetRanchable != null && creatures != null && GetCavityForCell != null && GetOrderedCreatureList != null)
+                bool result = false;
+                if (creatures != null && GetOrderedCreatureList != null)
                 {
                     for (int i = 0; i < instructionsList.Count; i++)
                     {
                         var instruction = instructionsList[i];
-                        if (flag1 && ((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info1) && info1 == GetTargetRanchCell)
-                        {
-
-                            instructionsList[i] = new CodeInstruction(OpCodes.Call, PosToCell);
-                            flag1 = false;
-#if DEBUG
-                            Debug.Log($"'{methodName}' Transpiler #1 injected");
-#endif
-                        }
-                        else if (flag2 && ((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info2) && info2 == get_targetRanchable)
-                        {
-                            instructionsList.Insert(i, new CodeInstruction(OpCodes.Call, GetTargetRanchCell));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Stloc_0));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldloc_0));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, GetCavityForCell));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Stloc_1));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                            flag2 = false;
-#if DEBUG
-                            Debug.Log($"'{methodName}' Transpiler #2 injected");
-#endif
-                        }
-                        else if (flag3 && (instruction.opcode == OpCodes.Ldfld) && (instructionsList[i + 1].opcode == OpCodes.Callvirt) && (instruction.operand is FieldInfo info3) && info3 == creatures)
+                        if (instruction.opcode == OpCodes.Ldfld && instruction.operand is FieldInfo info && info == creatures)
                         {
                             instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
                             instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, GetOrderedCreatureList));
-                            flag3 = false;
+                            result = true;
 #if DEBUG
-                            Debug.Log($"'{methodName}' Transpiler #3 injected");
-#endif
-                        }
-                    }
-                }
-                if (flag1 || flag2 || flag3)
-                {
-                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
-            }
-
-            private static RoomType GetTrueRoomType(RoomType type, RanchStation.Instance instance)
-            {
-                var roomtype = instance?.GetComponent<RoomTracker>()?.requiredRoomType;
-                if (string.IsNullOrEmpty(roomtype))
-                    return type;
-                return Db.Get().RoomTypes.TryGet(roomtype) ?? type;
-            }
-
-            internal static IEnumerable<CodeInstruction> TranspilerCompat(IEnumerable<CodeInstruction> instructions, MethodBase method)
-            {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
-                var CreaturePen = typeof(RoomTypes).GetField(nameof(RoomTypes.CreaturePen));
-                var GetTrueRoomType = typeof(RanchStation_Instance_FindRanchable).GetMethodSafe(nameof(RanchStation_Instance_FindRanchable.GetTrueRoomType), true, PPatchTools.AnyArguments);
-
-                bool flag4 = true;
-                if (CreaturePen != null && GetTrueRoomType != null)
-                {
-                    for (int i = 0; i < instructionsList.Count; i++)
-                    {
-                        var instruction = instructionsList[i];
-                        if (flag4 && (instruction.opcode == OpCodes.Ldfld) && (instruction.operand is FieldInfo info4) && info4 == CreaturePen)
-                        {
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, GetTrueRoomType));
-                            flag4 = false;
-#if DEBUG
-                            Debug.Log($"'{methodName}' Transpiler #4 injected");
+                            Debug.Log($"'{methodName}' Transpiler injected");
 #endif
                             break;
                         }
                     }
                 }
-                if (flag4)
+                if (!result)
+                {
+                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
+                }
+                return instructionsList;
+            }
+        }
+
+        // хак, чтобы рыбалка работала, 
+        // при проверке допустимости жеготного сравнивать его пещеру с пещерой точки призыва, а не комнатой самой постройки
+        [HarmonyPatch(typeof(RanchStation.Instance), "CanRanchableBeRanchedAtRanchStation")]
+        private static class RanchStation_CanRanchableBeRanchedAtRanchStation
+        {
+            private static CavityInfo GetFishingCavity(CavityInfo cavity, RanchStation.Instance smi)
+            {
+                if (smi.PrefabID() == FishingStationConfig.ID)
+                {
+                    return Game.Instance.roomProber.GetCavityForCell(smi.def.GetTargetRanchCell(smi));
+                }
+                return cavity;
+            }
+            /*
+                int cell = Grid.PosToCell(ranchable.transform.GetPosition());
+				var cavityForCell = Game.Instance.roomProber.GetCavityForCell(cell);
+				bool flag = cavityForCell == null 
+            ---     || cavityForCell != this.ranch.cavity;
+            +++     || cavityForCell != GetFishingCavity(this.ranch.cavity, this);
+            */
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                var instructionsList = instructions.ToList();
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
+
+                var cavity = typeof(Room).GetField(nameof(Room.cavity));
+                var GetFishingCavity = typeof(RanchStation_CanRanchableBeRanchedAtRanchStation).GetMethodSafe(nameof(RanchStation_CanRanchableBeRanchedAtRanchStation.GetFishingCavity), true, PPatchTools.AnyArguments);
+
+                bool result = false;
+                if (cavity != null && GetFishingCavity != null)
+                {
+                    for (int i = 0; i < instructionsList.Count; i++)
+                    {
+                        var instruction = instructionsList[i];
+                        if (instruction.opcode == OpCodes.Ldfld && instruction.operand is FieldInfo info && info == cavity)
+                        {
+                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, GetFishingCavity));
+                            result = true;
+#if DEBUG
+                            Debug.Log($"'{methodName}' Transpiler injected");
+#endif
+                            break;
+                        }
+                    }
+                }
+                if (!result)
                 {
                     Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
                 }
@@ -298,12 +260,12 @@ namespace ButcherStation
         [HarmonyPatch(typeof(RanchedStates), nameof(RanchedStates.InitializeStates))]
         private static class RanchedStates_InitializeStates
         {
-            private static void Postfix(RanchedStates.State ___runaway, RanchedStates.State ___behaviourcomplete)
+            private static void Postfix(RanchedStates.RanchStates ___ranch)
             {
-                ___runaway
-                    .TagTransition(GameTags.Creatures.Bagged, ___behaviourcomplete)
-                    .TagTransition(GameTags.Creatures.Die, ___behaviourcomplete)
-                    .TagTransition(GameTags.Dead, ___behaviourcomplete);
+                ___ranch.Runaway
+                    .TagTransition(GameTags.Creatures.Bagged, null)
+                    .TagTransition(GameTags.Creatures.Die, null)
+                    .TagTransition(GameTags.Dead, null);
             }
         }
 
@@ -327,7 +289,14 @@ namespace ButcherStation
             {
                 var PlayAnim = typeof(GameStateMachine<BaggedStates, BaggedStates.Instance, IStateMachineTarget, BaggedStates.Def>.State).GetMethodSafe("PlayAnim", false, typeof(string), typeof(KAnim.PlayMode));
                 var Stub = typeof(BaggedStates_InitializeStates).GetMethodSafe(nameof(PlayAnimStub), true, PPatchTools.AnyArguments);
-                return PPatchTools.ReplaceMethodCall(instructions, PlayAnim, Stub);
+                if (PlayAnim != null && Stub != null)
+                    return PPatchTools.ReplaceMethodCallSafe(instructions, PlayAnim, Stub);
+                else
+                {
+                    string methodName = method.DeclaringType.FullName + "." + method.Name;
+                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
+                    return instructions;
+                }
             }
         }
 
@@ -343,15 +312,25 @@ namespace ButcherStation
         }
 
         // фикс чтобы станции правильно потребляли искричество
-        // похоже на удаление гланд ректально, но тут по другому будет сложно подлезть
-        [HarmonyPatch(typeof(RancherChore.RancherChoreStates), nameof(RancherChore.RancherChoreStates.InitializeStates))]
-        private static class RancherChore_RancherChoreStates_InitializeStates
+        [HarmonyPatch(typeof(RancherChore.RancherWorkable), "OnPrefabInit")]
+        private static class RancherChore_RancherWorkable_OnPrefabInit
         {
-            private static void Postfix(GameStateMachine<RancherChore.RancherChoreStates, RancherChore.RancherChoreStates.Instance, IStateMachineTarget, object>.State ___ranchcreature)
+            private static void Postfix(RancherChore.RancherWorkable __instance)
             {
-                ___ranchcreature
-                    .Enter(smi => smi?.ranchStation?.GetComponent<Operational>()?.SetActive(true))
-                    .Exit(smi => smi?.ranchStation?.GetComponent<Operational>()?.SetActive(false));
+                __instance.OnWorkableEventCB += OnWorkableEvent;
+            }
+
+            private static void OnWorkableEvent(Workable workable, Workable.WorkableEvent @event)
+            {
+                switch (@event)
+                {
+                    case Workable.WorkableEvent.WorkStarted:
+                        workable?.GetComponent<Operational>()?.SetActive(true);
+                        break;
+                    case Workable.WorkableEvent.WorkStopped:
+                        workable?.GetComponent<Operational>()?.SetActive(false);
+                        break;
+                }
             }
         }
 
@@ -363,30 +342,82 @@ namespace ButcherStation
         private static void RoomsExpandedCompat()
         {
             var db = Db.Get();
-            var RoomsExpanded = PPatchTools.GetTypeSafe("RoomsExpanded.RoomTypes_AllModded", "RoomsExpandedMerged");
+            var RoomsExpanded = PPatchTools.GetTypeSafe("RoomsExpanded.RoomTypes_AllModded");
             if (RoomsExpanded != null)
             {
                 PUtil.LogDebug("RoomsExpanded found. Attempt to add compatibility.");
                 try
                 {
-                    AquariumRoom = (RoomType)RoomsExpanded.GetPropertySafe<RoomType>("Aquarium", true)?.GetValue(null, null);
+                    AquariumRoom = (RoomType)RoomsExpanded.GetPropertySafe<RoomType>("Aquarium", true)?.GetValue(null);
                     if (AquariumRoom != null)
                     {
                         var upgrade_paths = db.RoomTypes.CreaturePen.upgrade_paths.AddToArray(AquariumRoom);
                         Traverse.Create(db.RoomTypes.CreaturePen).Property(nameof(RoomType.upgrade_paths)).SetValue(upgrade_paths);
-                        Traverse.Create(AquariumRoom).Property(nameof(RoomType.priority)).SetValue(db.RoomTypes.CreaturePen.priority);
+                        var priority = Math.Max(db.RoomTypes.CreaturePen.priority, AquariumRoom.priority);
+                        Traverse.Create(AquariumRoom).Property(nameof(RoomType.priority)).SetValue(priority);
                         RoomsExpandedFound = true;
                     }
                 }
-                catch (System.Exception e)
+                catch (Exception e)
                 {
                     PUtil.LogExcWarn(e);
                 }
             }
             if (RoomsExpandedFound)
             {
-                harmony.PatchTranspile(typeof(RanchStation.Instance), nameof(RanchStation.Instance.FindRanchable),
-                    new HarmonyMethod(typeof(RanchStation_Instance_FindRanchable), nameof(RanchStation_Instance_FindRanchable.TranspilerCompat)));
+                harmony.PatchTranspile(typeof(RanchStation.Instance), "OnRoomUpdated",
+                    new HarmonyMethod(typeof(RanchStation_OnRoomUpdated), nameof(RanchStation_OnRoomUpdated.TranspilerCompat)));
+            }
+        }
+
+        // хак, чтобы заменить жесткокодированую проверку типа комнату "ранчо"
+        // на комнату, заданную в роомтракере - для совместимости с "роом эхпандед"
+        //[HarmonyPatch(typeof(RanchStation.Instance), "OnRoomUpdated")]
+        private static class RanchStation_OnRoomUpdated
+        {
+            private static RoomType GetTrueRoomType(RoomType type, RanchStation.Instance smi)
+            {
+                if (smi.PrefabID() == FishingStationConfig.ID)
+                {
+                    var roomtype = smi.GetComponent<RoomTracker>()?.requiredRoomType;
+                    if (string.IsNullOrEmpty(roomtype))
+                        return type;
+                    return Db.Get().RoomTypes.TryGet(roomtype) ?? type;
+                }
+                return type;
+            }
+
+            internal static IEnumerable<CodeInstruction> TranspilerCompat(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                var instructionsList = instructions.ToList();
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
+
+                var CreaturePen = typeof(RoomTypes).GetField(nameof(RoomTypes.CreaturePen));
+                var GetTrueRoomType = typeof(RanchStation_OnRoomUpdated).GetMethodSafe(nameof(RanchStation_OnRoomUpdated.GetTrueRoomType), true, PPatchTools.AnyArguments);
+
+                bool result = false;
+                if (CreaturePen != null && GetTrueRoomType != null)
+                {
+                    for (int i = 0; i < instructionsList.Count; i++)
+                    {
+                        var instruction = instructionsList[i];
+                        if ((instruction.opcode == OpCodes.Ldfld) && (instruction.operand is FieldInfo info) && info == CreaturePen)
+                        {
+                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, GetTrueRoomType));
+                            result = true;
+#if DEBUG
+                            Debug.Log($"'{methodName}' Transpiler injected");
+#endif
+                            break;
+                        }
+                    }
+                }
+                if (!result)
+                {
+                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
+                }
+                return instructionsList;
             }
         }
     }

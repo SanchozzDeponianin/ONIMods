@@ -14,7 +14,7 @@ namespace ButcherStation
                 id: ID,
                 width: 3,
                 height: 3,
-                anim: "butcher_station_kanim",   //  "metalreclaimer_kanim"
+                anim: "butcher_station_kanim",
                 hitpoints: BUILDINGS.HITPOINTS.TIER2,
                 construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER1,
                 construction_mass: BUILDINGS.CONSTRUCTION_MASS_KG.TIER4,
@@ -42,13 +42,13 @@ namespace ButcherStation
         {
             var prefabID = go.GetComponent<KPrefabID>();
             prefabID.AddTag(RoomConstraints.ConstraintTags.CreatureRelocator, false);
-            prefabID.AddTag(RoomConstraints.ConstraintTags.RanchStation, false);
+            prefabID.AddTag(RoomConstraints.ConstraintTags.RanchStationType, false);
             var storage = go.AddOrGet<Storage>();
             storage.allowItemRemoval = false;
             storage.showDescriptor = false;
             storage.storageFilters = new List<Tag> { ButcherStation.ButcherableCreature };
             storage.allowSettingOnlyFetchMarkedItems = false;
-            go.AddOrGet<TreeFilterable>();
+            go.AddOrGet<TreeFilterable>().uiHeight = TreeFilterable.UISideScreenHeight.Short;
             var butcherStation = go.AddOrGet<ButcherStation>();
             butcherStation.creatureEligibleTag = ButcherStation.ButcherableCreature;
             go.AddOrGet<LoopingSounds>();
@@ -61,42 +61,19 @@ namespace ButcherStation
         public override void DoPostConfigureComplete(GameObject go)
         {
             var def = go.AddOrGetDef<RanchStation.Def>();
-            def.isCreatureEligibleToBeRanchedCb = delegate (GameObject creature_go, RanchStation.Instance ranch_station_smi)
+            def.IsCritterEligibleToBeRanchedCb = (creature_go, ranch_station_smi) =>
             {
                 var butcherStation = ranch_station_smi.GetComponent<ButcherStation>();
                 return butcherStation?.IsCreatureEligibleToBeButched(creature_go) ?? false;
             };
-            def.onRanchCompleteCb = delegate (GameObject creature_go)
-            {
-                ButcherStation.ButchCreature(creature_go);
-            };
-            def.getTargetRanchCell = delegate (RanchStation.Instance smi)
-            {
-                int num = Grid.InvalidCell;
-                if (!smi.IsNullOrStopped())
-                {
-                    num = Grid.PosToCell(smi.transform.GetPosition());
-                    var targetRanchable = smi.targetRanchable;
-                    if (!targetRanchable.IsNullOrStopped())
-                    {
-                        if (targetRanchable.HasTag(GameTags.Creatures.Flyer))
-                        {
-                            num = Grid.CellAbove(num);
-                            if (targetRanchable.HasTag(MooConfig.ID))
-                            {
-                                num = Grid.CellLeft(num);
-                            }
-                        }
-                    }
-                }
-                return num;
-            };
-            def.rancherInteractAnim = "anim_interacts_shearingstation_kanim";
-            def.ranchedPreAnim = "grooming_pre";
-            //def.ranchedLoopAnim = "grooming_loop";
-            def.ranchedLoopAnim = "hit";
-            def.ranchedPstAnim = "grooming_pst";
-            def.worktime = 3f;
+            def.OnRanchCompleteCb = (creature_go) => ButcherStation.ButchCreature(creature_go);
+            //def.GetTargetRanchCell = (smi) =>;
+            def.RancherInteractAnim = "anim_interacts_shearingstation_kanim";
+            def.RanchedPreAnim = "hit";
+            def.RanchedLoopAnim = "hit";
+            def.RanchedPstAnim = "idle_loop";
+            def.WorkTime = 3f;
+            go.AddOrGet<SkillPerkMissingComplainer>().requiredSkillPerk = Db.Get().SkillPerks.CanWrangleCreatures.Id;
             Prioritizable.AddRef(go);
         }
 

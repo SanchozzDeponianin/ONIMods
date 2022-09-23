@@ -6,6 +6,7 @@ using Klei.AI;
 using KSerialization;
 using STRINGS;
 using UnityEngine;
+using PeterHan.PLib.Detours;
 
 namespace ButcherStation
 {
@@ -17,14 +18,19 @@ namespace ButcherStation
 
         public Tag creatureEligibleTag = ButcherableCreature;
 
+        public static readonly Tag[] CreatureNotEligibleTags = new Tag[] { GameTags.Creatures.Bagged, GameTags.Trapped, GameTags.Creatures.Die, GameTags.Dead };
+
         public const int CREATURELIMIT = 20;
         public const float EXTRAMEATPERRANCHINGATTRIBUTE = 0.025f;
 
         [Serialize]
         internal int creatureLimit = ButcherStationOptions.Instance.max_creature_limit;
         private int storedCreatureCount;
-        internal List<KPrefabID> Creatures { get; private set; } = new List<KPrefabID>();
+        internal List<KPrefabID> CachedCreatures { get; private set; } = new List<KPrefabID>();
         private bool dirty = true;
+
+        [SerializeField]
+        public bool isExteriorTargetRanchCell = false;
 
         [Serialize]
         internal float ageButchThresold = 0.85f;
@@ -51,6 +57,9 @@ namespace ButcherStation
 #pragma warning disable CS0649
         [MyCmpReq]
         TreeFilterable treeFilterable;
+
+        [MySmiReq]
+        RanchStation.Instance ranchStation;
 #pragma warning restore CS0649
 
         private static StatusItem capacityStatusItem;
@@ -117,7 +126,7 @@ namespace ButcherStation
             }
         }
 
-        private void OnFilterChanged(Tag[] tags)
+        private void OnFilterChanged(HashSet<Tag> _)
         {
             dirty = true;
         }
@@ -127,20 +136,21 @@ namespace ButcherStation
             RefreshCreatures();
         }
 
-        internal void RefreshCreatures(List<KPrefabID> creatures = null)
+        private static readonly IDetouredField<RanchStation.Instance, Room> ranchRoom = PDetours.DetourField<RanchStation.Instance, Room>("ranch");
+        private static readonly List<KPrefabID> emptyList = new List<KPrefabID>();
+
+        internal void RefreshCreatures()
         {
             // обновляем число жеготных в комнате
-            // список может передаваться из патча для RanchStation.Instance
-            if (creatures == null)
-            {
-                int cell = this.GetSMI<RanchStation.Instance>()?.GetTargetRanchCell() ?? Grid.InvalidCell;
-                creatures = Game.Instance.roomProber.GetCavityForCell(cell)?.creatures ?? new List<KPrefabID>();
-            }
+            var cavity = (!isExteriorTargetRanchCell) ? ranchRoom.Get(ranchStation)?.cavity : null;
+            cavity = cavity ?? Game.Instance.roomProber.GetCavityForCell(ranchStation.GetTargetRanchCell());
+            var creatures = cavity?.creatures ?? emptyList;
+
             int old = storedCreatureCount;
             storedCreatureCount = 0;
             foreach (KPrefabID creature in creatures)
             {
-                if (!creature.HasTag(GameTags.Creatures.Bagged) && !creature.HasTag(GameTags.Trapped) && !creature.HasTag(GameTags.Creatures.Die) && !creature.HasTag(GameTags.Dead))
+                if (!creature.HasAnyTags(CreatureNotEligibleTags))
                 {
                     storedCreatureCount++;
                 }
@@ -149,11 +159,11 @@ namespace ButcherStation
                 dirty = true;
             if (dirty)
             {
-                // для оптимизации упорядочиваем список жеготных. 
+                // для оптимизации упорядочиваем список жеготных.
                 // вначале идут не выбранные в фильтре, затем по возрасту.
-                Creatures.Clear();
+                CachedCreatures.Clear();
                 var Age = Db.Get().Amounts.Age;
-                Creatures.AddRange(creatures
+                CachedCreatures.AddRange(creatures
                     .Where(creature => creature != null && creature.gameObject != null)
                     .OrderByDescending(delegate (KPrefabID creature)
                     {
@@ -170,9 +180,10 @@ namespace ButcherStation
 
         public bool IsCreatureEligibleToBeButched(GameObject creature_go)
         {
-            if (!creature_go.HasTag(creatureEligibleTag) || creature_go.HasTag(GameTags.Creatures.Die) || creature_go.HasTag(GameTags.Dead))
+            var kPrefabID = creature_go.GetComponent<KPrefabID>();
+            if (!kPrefabID.HasTag(creatureEligibleTag) || kPrefabID.HasAnyTags(CreatureNotEligibleTags))
                 return false;
-            bool unSelected = !treeFilterable?.ContainsTag(creature_go.GetComponent<KPrefabID>().PrefabTag) ?? false;
+            bool unSelected = !treeFilterable?.ContainsTag(kPrefabID.PrefabTag) ?? false;
             if (unSelected && wrangleUnSelected)
                 return true;
             if (!unSelected && wrangleSurplus && storedCreatureCount > creatureLimit)
@@ -189,7 +200,7 @@ namespace ButcherStation
         public static void ButchCreature(GameObject creature_go, bool moveCreatureToButcherStation = false)
         {
             bool kill = true;
-            var targetRanchStation = creature_go.GetSMI<RanchableMonitor.Instance>()?.targetRanchStation;
+            var targetRanchStation = creature_go.GetSMI<RanchableMonitor.Instance>()?.TargetRanchStation;
             if (targetRanchStation != null)
             {
                 if (moveCreatureToButcherStation)
