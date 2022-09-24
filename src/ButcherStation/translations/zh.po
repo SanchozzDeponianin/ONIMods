@@ -102,6 +102,11 @@ msgstr ""
 "当工作在<style=\"KKeyword\">屠宰站</style>和<style=\"KKeyword\">捕鱼站</"
 "style>会掉落{0}额外的<style=\"KKeyword\">肉</style>"
 
+#. ButcherStation.STRINGS.OPTIONS.ENABLE_NOT_COUNT_BABIES.NAME
+msgctxt "ButcherStation.STRINGS.OPTIONS.ENABLE_NOT_COUNT_BABIES.NAME"
+msgid "Enable "Don't count Babies" Feachure"
+msgstr "启用“不算幼崽”功能"
+
 #. ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.NAME
 msgctxt "ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.NAME"
 msgid ""
@@ -224,6 +229,16 @@ msgctxt ""
 msgid ""
 "A Duplicant will leave the wrangled critters alive instead of butchering them"
 msgstr "一个复制人会留下被抓的小动物活着，而不是把它们屠宰了。"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.NOT_COUNT_BABIES.NAME
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.NOT_COUNT_BABIES.NAME"
+msgid "Don't count Babies"
+msgstr "不算幼崽"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.NOT_COUNT_BABIES.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.NOT_COUNT_BABIES.TOOLTIP"
+msgid "Babies will not be counted when counting the number of Critters in the Room"
+msgstr "当计算房间内小动物数量时，幼崽不会被算在内"
 
 #. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_OLD_AGED.NAME
 msgctxt ""
