@@ -52,7 +52,10 @@ namespace ButcherStation
         internal bool leaveAlive = false;       // оставить живым
 
         [SerializeField]
-        internal bool allowLeaveAlive = false;
+        internal bool allowLeaveAlive = false;  // показывать "оставить живым" в сидэскреене
+
+        [Serialize]                             // добавлено по просьбе одного товарища что сделал китайский перевод
+        internal bool notCountBabies = false;   // не считать детей при обновлении число жеготных в комнате
 
 #pragma warning disable CS0649
         [MyCmpReq]
@@ -102,7 +105,7 @@ namespace ButcherStation
             base.OnSpawn();
             Subscribe((int)GameHashes.CopySettings, OnCopySettings);
             treeFilterable.OnFilterChanged += OnFilterChanged;
-            RefreshCreatures();
+            //RefreshCreatures();
         }
 
         protected override void OnCleanUp()
@@ -123,6 +126,7 @@ namespace ButcherStation
                 wrangleOldAged = butcherStation.wrangleOldAged;
                 wrangleSurplus = butcherStation.wrangleSurplus;
                 leaveAlive = allowLeaveAlive && butcherStation.leaveAlive;
+                notCountBabies = ButcherStationOptions.Instance.enable_not_count_babies && butcherStation.notCountBabies;
             }
         }
 
@@ -148,10 +152,17 @@ namespace ButcherStation
 
             int old = storedCreatureCount;
             storedCreatureCount = 0;
+            bool not_count_babies = ButcherStationOptions.Instance.enable_not_count_babies && notCountBabies;
             foreach (KPrefabID creature in creatures)
             {
                 if (!creature.HasAnyTags(CreatureNotEligibleTags))
                 {
+                    if (not_count_babies)
+                    {
+                        var effects = creature.GetComponent<Effects>();
+                        if (effects != null && effects.HasEffect("IsABaby"))
+                            continue;
+                    }
                     storedCreatureCount++;
                 }
             }
@@ -159,7 +170,7 @@ namespace ButcherStation
                 dirty = true;
             if (dirty)
             {
-                // для оптимизации упорядочиваем список жеготных.
+                // для оптимизации очереди убиения упорядочиваем список жеготных.
                 // вначале идут не выбранные в фильтре, затем по возрасту.
                 CachedCreatures.Clear();
                 var Age = Db.Get().Amounts.Age;
@@ -175,6 +186,7 @@ namespace ButcherStation
                         return age.value / age.GetMax();
                     }));
                 dirty = false;
+                ranchStation.ValidateTargetRanchables();
             }
         }
 

@@ -16,6 +16,8 @@ namespace ButcherStation
         private Action<bool> wrangle_surplus;
         private Action<bool> leave_alive;
         private Action<bool> enable_leave_alive;
+        private Action<bool> not_count_babies;
+        private Action<bool> enable_not_count_babies;
         private Action<float> age_threshold;
         private Action<float> creature_limit;
 
@@ -63,6 +65,9 @@ namespace ButcherStation
                 // ползун количества
                 .AddSliderBox(prefix, nameof(creature_limit), 0f, ButcherStationOptions.Instance.max_creature_limit,
                     f => { if (target != null) target.creatureLimit = Mathf.RoundToInt(f); }, out creature_limit)
+                // не считать детей
+                .AddCheckBox(prefix, nameof(not_count_babies),
+                    b => { if (target != null) { target.notCountBabies = b; target.RefreshCreatures(); } }, out not_count_babies, out enable_not_count_babies)
                 // оставить живым
                 .AddCheckBox(prefix, nameof(leave_alive),
                     b => { if (target != null) target.leaveAlive = b; }, out leave_alive, out enable_leave_alive)
@@ -87,6 +92,8 @@ namespace ButcherStation
                 wrangle_surplus?.Invoke(target.wrangleSurplus);
                 leave_alive?.Invoke(target.leaveAlive);
                 enable_leave_alive?.Invoke(target.allowLeaveAlive);
+                not_count_babies?.Invoke(target.notCountBabies);
+                enable_not_count_babies?.Invoke(ButcherStationOptions.Instance.enable_not_count_babies);
                 age_threshold?.Invoke(target.ageButchThresold * 100f);
                 creature_limit?.Invoke(target.creatureLimit);
             }

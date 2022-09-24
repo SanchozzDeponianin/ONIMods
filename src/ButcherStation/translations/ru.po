@@ -58,6 +58,11 @@ msgctxt "ButcherStation.STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMO
 msgid "{0} Extra <style=\"KKeyword\">Meat</style> when working at the <style=\"KKeyword\">Butcher</style> and <style=\"KKeyword\">Fishing Stations</style>"
 msgstr "{0} дополнительное <style=\"KKeyword\">Мясо</style> при работе на <style=\"KKeyword\">Станциях Живодёра</style> и <style=\"KKeyword\">Рыбалки</style>"
 
+#. ButcherStation.STRINGS.OPTIONS.ENABLE_NOT_COUNT_BABIES.NAME
+msgctxt "ButcherStation.STRINGS.OPTIONS.ENABLE_NOT_COUNT_BABIES.NAME"
+msgid "Enable \"Don't count Babies\" Feachure"
+msgstr "Включить опцию \"Не учитывать детёнышей\""
+
 #. ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.NAME
 msgctxt "ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.NAME"
 msgid "+X% <style=\"KKeyword\">Extra Meat</style> from butchered Critters per each <style=\"KKeyword\">Husbandry</style> attribute level"
@@ -78,21 +83,6 @@ msgctxt "ButcherStation.STRINGS.OPTIONS.MAX_CREATURE_LIMIT.TOOLTIP"
 msgid "Affects both <style=\"KKeyword\">Butcher</style> and <style=\"KKeyword\">Fishing Stations</style> as well as <style=\"KKeyword\">Critter Drop-Off</style> and <style=\"KKeyword\">Fish Release</style>"
 msgstr "Влияет на обе <style=\"KKeyword\">Станции Живодёра</style> и <style=\"KKeyword\">Рыбалки</style>, а также на <style=\"KKeyword\">Переместитель существ</style> и <style=\"KKeyword\">Пункт доставки рыбы</style>"
 
-#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.MIN_MAX
-msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.MIN_MAX"
-msgid "{0}%"
-msgstr "{0}%"
-
-#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.PRE
-msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.PRE"
-msgid " "
-msgstr " "
-
-#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.PST
-msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.PST"
-msgid "%"
-msgstr "%"
-
 #. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP
 msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP"
 msgid "Critters older than this specified value <b>{0}%</b> will be automatically wrangled"
@@ -102,11 +92,6 @@ msgstr "Существа старше указанного значения <b>{
 msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP_LIFESPAN"
 msgid "\n{0} out of {1} cycles lifespan"
 msgstr "\n{0} из {1} циклов срока жизни"
-
-#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.MIN_MAX
-msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.MIN_MAX"
-msgid "{0}"
-msgstr "{0}"
 
 #. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.PRE
 msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.PRE"
@@ -137,6 +122,16 @@ msgstr "Оставлять существ живыми"
 msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.LEAVE_ALIVE.TOOLTIP"
 msgid "A Duplicant will leave the wrangled critters alive instead of butchering them"
 msgstr "Дупликант оставит отловленных существ живыми вместо того, чтобы зарезать их"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.NOT_COUNT_BABIES.NAME
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.NOT_COUNT_BABIES.NAME"
+msgid "Don't count Babies"
+msgstr "Не учитывать детёнышей"
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.NOT_COUNT_BABIES.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.NOT_COUNT_BABIES.TOOLTIP"
+msgid "Babies will not be counted when counting the number of Critters in the Room"
+msgstr "Детёнышы не будут учитываться при подсчете количества существ в комнате"
 
 #. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_OLD_AGED.NAME
 msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_OLD_AGED.NAME"

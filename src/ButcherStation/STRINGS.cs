@@ -100,6 +100,12 @@ namespace ButcherStation
                         public static LocString TOOLTIP = "Critters exceeding this population limit <b>{0}</b> will automatically be wrangled";
                     }
 
+                    public class NOT_COUNT_BABIES
+                    {
+                        public static LocString NAME = "Don't count Babies";
+                        public static LocString TOOLTIP = "Babies will not be counted when counting the number of Critters in the Room";
+                    }
+
                     public static LocString FILTER_LABEL = "Critters filter:";
                 }
             }
@@ -118,10 +124,17 @@ namespace ButcherStation
                 public static LocString NAME = $"{FormatAsKeyWord("Max Critters")} limit";
                 public static LocString TOOLTIP = $"Affects both {FormatAsKeyWord("Butcher")} and {FormatAsKeyWord("Fishing Stations")} as well as {FormatAsKeyWord("Critter Drop-Off")} and {FormatAsKeyWord("Fish Release")}";
             }
+
+            public class ENABLE_NOT_COUNT_BABIES
+            {
+                public static LocString NAME = "Enable \"Don't count Babies\" Feachure";
+                public static LocString TOOLTIP = "";
+            }
         }
 
         internal static void DoReplacement()
         {
+            OPTIONS.ENABLE_NOT_COUNT_BABIES.TOOLTIP = UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.NOT_COUNT_BABIES.TOOLTIP;
             LocString.CreateLocStringKeys(typeof(BUILDING));
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
             LocString.CreateLocStringKeys(typeof(UI));

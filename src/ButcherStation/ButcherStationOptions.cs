@@ -18,5 +18,9 @@ namespace ButcherStation
         [Option(Format = "F2")]
         [Limit(0, 10)]
         public float extra_meat_per_ranching_attribute { get; set; } = ButcherStation.EXTRAMEATPERRANCHINGATTRIBUTE * 100f;
+
+        [JsonProperty]
+        [Option]
+        public bool enable_not_count_babies { get; set; } = false;
     }
 }
