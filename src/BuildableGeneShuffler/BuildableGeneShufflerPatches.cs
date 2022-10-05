@@ -9,6 +9,7 @@ using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
+using static STRINGS.DUPLICANTS.CHORES.GENESHUFFLE;
 
 namespace BuildableGeneShuffler
 {
@@ -34,6 +35,21 @@ namespace BuildableGeneShuffler
             ModUtil.AddBuildingToPlanScreen("Medical", BuildableGeneShufflerConfig.ID, "wellness");
             Utils.AddBuildingToTechnology("MedicineIV", BuildableGeneShufflerConfig.ID);
             PGameUtils.CopySoundsToAnim(BuildableGeneShufflerConfig.anim, "geneshuffler_kanim");
+            // создаём собственный тип поручения, который имитирует "Use Neural Vacillator"
+            // но имеет приоритеты как у обычных рабочих поручений
+            var db = Db.Get();
+            BuildableGeneShuffler.PrepareGeneShuffler = new ChoreType(
+                id: nameof(BuildableGeneShuffler.PrepareGeneShuffler),
+                parent: db.ChoreTypes,
+                chore_groups: new string[] { nameof(db.ChoreGroups.MedicalAid) },
+                urge: "",
+                name: NAME,
+                status_message: STATUS,
+                tooltip: TOOLTIP,
+                interrupt_exclusion: new List<Tag>(0),
+                implicit_priority: db.ChoreTypes.DoctorFetch.priority,
+                explicit_priority: db.ChoreTypes.DoctorFetch.explicitPriority)
+            { interruptPriority = db.ChoreTypes.DoctorFetch.interruptPriority };
         }
 
         [HarmonyPatch(typeof(GeneShufflerConfig), nameof(GeneShufflerConfig.CreatePrefab))]

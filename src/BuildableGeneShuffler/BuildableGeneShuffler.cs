@@ -36,7 +36,7 @@ namespace BuildableGeneShuffler
             public Chore CreateChore()
             {
                 var workChore = new WorkChore<GeneShufflerPrepare>(
-                    chore_type: Db.Get().ChoreTypes.GeneShuffle,
+                    chore_type: PrepareGeneShuffler,
                     target: master.workable,
                     schedule_block: Db.Get().ScheduleBlockTypes.Work,
                     only_when_operational: true);
@@ -118,6 +118,8 @@ namespace BuildableGeneShuffler
             public override Vector3 GetFacingTarget() => transform.GetPosition() + Vector3.left;
             public override bool InstantlyFinish(Worker worker) => false;
         }
+
+        internal static ChoreType PrepareGeneShuffler;
 
 #pragma warning disable CS0649
         [MyCmpAdd]
