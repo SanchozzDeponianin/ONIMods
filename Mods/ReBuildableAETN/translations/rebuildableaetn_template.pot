@@ -1,0 +1,105 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. ReBuildableAETN.STRINGS.ITEMS.MASSIVE_HEATSINK_CORE.DESC
+msgctxt "ReBuildableAETN.STRINGS.ITEMS.MASSIVE_HEATSINK_CORE.DESC"
+msgid "A mysterious thingy, presumably made of refined <link=\"UNOBTANIUM\">Neutronium</link>. Very cold to the touch.\n\nIt is a necessary component for rebuilding the {MASSIVEHEATSINK}"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.ITEMS.MASSIVE_HEATSINK_CORE.NAME
+msgctxt "ReBuildableAETN.STRINGS.ITEMS.MASSIVE_HEATSINK_CORE.NAME"
+msgid "Neutronium Core"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.NAME
+msgctxt "ReBuildableAETN.STRINGS.MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.NAME"
+msgid ""
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.TOOLTIP
+msgctxt "ReBuildableAETN.STRINGS.MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.TOOLTIP"
+msgid "Now this Natural Feature can be deconstructed to obtain {NEUTRONIUM_CORE}."
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.ADDLOGICPORT.NAME
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.ADDLOGICPORT.NAME"
+msgid "Add Logic Port to the {MASSIVEHEATSINK}"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.CAREPACKAGE.CATEGORY
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.CAREPACKAGE.CATEGORY"
+msgid "Obtaining a {NEUTRONIUM_CORE} from a Care Packages"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.ENABLED.NAME
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.ENABLED.NAME"
+msgid "Enable"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.GRAVITASPOICHANCE.CATEGORY
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.GRAVITASPOICHANCE.CATEGORY"
+msgid "Obtaining a {NEUTRONIUM_CORE} when rummage some objects"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.ICEGIANTCHANCE.NAME
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.ICEGIANTCHANCE.NAME"
+msgid "A chance to obtain from the {ICEGIANT}"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.ICYDWARFCHANCE.NAME
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.ICYDWARFCHANCE.NAME"
+msgid "A chance to obtain from the {ICYDWARF}"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.LOCKERPOICHANCE.NAME
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.LOCKERPOICHANCE.NAME"
+msgid "A chance to obtain from the {SETLOCKER} and the {VENDINGMACHINE}"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.MINCYCLE.NAME
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.MINCYCLE.NAME"
+msgid "Cycles before the {NEUTRONIUM_CORE} will be available"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.RAREPOICHANCE.NAME
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.RAREPOICHANCE.NAME"
+msgid "A chance to obtain from the {DIRECTOR_DESK} and the {SATELLITE3}"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.REQUIREDISCOVERED.NAME
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.REQUIREDISCOVERED.NAME"
+msgid "{NEUTRONIUM_CORE} must be discovered"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.REQUIREDISCOVERED.TOOLTIP
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.REQUIREDISCOVERED.TOOLTIP"
+msgid "First you have to obtain the {NEUTRONIUM_CORE} in a different way"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.SPACEOUTPOICHANCE.CATEGORY
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.SPACEOUTPOICHANCE.CATEGORY"
+msgid "Obtaining a {NEUTRONIUM_CORE} from a Space POIs"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.SPACEPOICHANCE.NAME
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.SPACEPOICHANCE.NAME"
+msgid "A chance to obtain from a Space POIs"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.SPACEPOICHANCE.TOOLTIP
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.SPACEPOICHANCE.TOOLTIP"
+msgid "The new chance value takes effect on further visits"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.OPTIONS.VANILLAPLANETCHANCE.CATEGORY
+msgctxt "ReBuildableAETN.STRINGS.OPTIONS.VANILLAPLANETCHANCE.CATEGORY"
+msgid "Obtaining a {NEUTRONIUM_CORE} from a Space Planetoids"
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.UI.SPACEARTIFACTS.ARTIFACTTIERS.TIER_CORE
+msgctxt "ReBuildableAETN.STRINGS.UI.SPACEARTIFACTS.ARTIFACTTIERS.TIER_CORE"
+msgid "Something Very Cold"
+msgstr ""
+
