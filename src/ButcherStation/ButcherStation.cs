@@ -59,6 +59,9 @@ namespace ButcherStation
 
 #pragma warning disable CS0649
         [MyCmpReq]
+        Operational operational;
+
+        [MyCmpReq]
         TreeFilterable treeFilterable;
 
         [MySmiReq]
@@ -137,7 +140,10 @@ namespace ButcherStation
 
         public void Sim4000ms(float dt)
         {
-            RefreshCreatures();
+            dirty = true;
+            // если IsOperational то обновление вызывается из патча RanchStation.Instance.FindRanchable
+            if (!operational.IsOperational)
+                RefreshCreatures();
         }
 
         private static readonly IDetouredField<RanchStation.Instance, Room> ranchRoom = PDetours.DetourField<RanchStation.Instance, Room>("ranch");
