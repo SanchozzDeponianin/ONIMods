@@ -106,9 +106,9 @@ namespace SmartLogicDoors
                         if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && isBitActive == info)
                         {
                             i++;
-                            var ldloc = Utils.GetMatchingLoadInstruction(instructionsList[i]);
-                            if (ldloc != null)
+                            if (instructionsList[i].IsStloc())
                             {
+                                var ldloc = TranspilerUtils.GetMatchingLoadInstruction(instructionsList[i]);
                                 instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
                                 instructionsList.Insert(++i, new CodeInstruction(OpCodes.Dup));
                                 instructionsList.Insert(++i, ldloc);

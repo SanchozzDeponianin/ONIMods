@@ -123,9 +123,9 @@ namespace WornSuitDischarge
                         var instruction = instructionsList[i];
                         if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info))
                         {
-                            if (info == getequipment)
+                            if (info == getequipment && instructionsList[i + 1].IsStloc())
                             {
-                                Ldloc_equipment = Utils.GetMatchingLoadInstruction(instructionsList[i + 1]);
+                                Ldloc_equipment = TranspilerUtils.GetMatchingLoadInstruction(instructionsList[i + 1]);
                             }
                             if (Ldloc_equipment != null && info == unassign)
                             {
@@ -207,9 +207,9 @@ namespace WornSuitDischarge
                         var instruction = instructionsList[i];
                         if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info))
                         {
-                            if (info == getequipment)
+                            if (info == getequipment && instructionsList[i + 1].IsStloc())
                             {
-                                Ldloc_equipment = Utils.GetMatchingLoadInstruction(instructionsList[i + 1]);
+                                Ldloc_equipment = TranspilerUtils.GetMatchingLoadInstruction(instructionsList[i + 1]);
                             }
                             if (Ldloc_equipment != null && info == unassign)
                             {
