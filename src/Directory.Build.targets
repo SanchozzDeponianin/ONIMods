@@ -150,7 +150,6 @@
 
     <ItemGroup>
       <AnimFiles Include="$(ProjectDir)/anim\**/*.*" />
-      <SpritesFiles Include="$(ProjectDir)/sprites/*.*" />
       <TranslationFiles Include="$(ProjectDir)/translations/*.po" />
       <TranslationFiles Include="$(ProjectDir)/translations/*.pot" />
       <WorldGenFiles Include="$(ProjectDir)/worldgen/**/*.*" />
@@ -160,7 +159,6 @@
     <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(InstallFolder)/$(TargetFileName)" />
 
     <Copy SourceFiles="@(AnimFiles)" DestinationFiles="@(AnimFiles->'$(InstallFolder)/anim/%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(SpritesFiles)" DestinationFolder="$(InstallFolder)/sprites" />
     <Copy SourceFiles="@(TranslationFiles)" DestinationFolder="$(InstallFolder)/translations" />
     <Copy SourceFiles="@(WorldGenFiles)" DestinationFiles="@(WorldGenFiles->'$(InstallFolder)/worldgen/%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(YamlFiles)" DestinationFolder="$(InstallFolder)" />

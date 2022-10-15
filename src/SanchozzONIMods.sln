@@ -22,9 +22,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		lib\DurabilityExtensions.cs = lib\DurabilityExtensions.cs
 		lib\EffectsExtensions.cs = lib\EffectsExtensions.cs
 		lib\FXLoopAnim.cs = lib\FXLoopAnim.cs
+		lib\KAnimGroupManager.cs = lib\KAnimGroupManager.cs
 		lib\ManualDeliveryKGPatch.cs = lib\ManualDeliveryKGPatch.cs
 		lib\MultiRoomTracker.cs = lib\MultiRoomTracker.cs
 		lib\StorageDropper.cs = lib\StorageDropper.cs
+		lib\TranspilerUtils.cs = lib\TranspilerUtils.cs
 		lib\UI.cs = lib\UI.cs
 		lib\Utils.cs = lib\Utils.cs
 	EndProjectSection
@@ -80,6 +82,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartLogicDoors", "SmartLogicDoors\SmartLogicDoors.csproj", "{99502226-3187-4B58-8FC4-76D6D3C2852A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttributeRestrictions", "AttributeRestrictions\AttributeRestrictions.csproj", "{6A7810B6-49C7-4AEC-B970-D8D38FAF64CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExoticSpices", "ExoticSpices\ExoticSpices.csproj", "{DE6E8577-3795-4881-A825-33D19E835727}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -345,6 +349,14 @@ Global
 		{6A7810B6-49C7-4AEC-B970-D8D38FAF64CC}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{6A7810B6-49C7-4AEC-B970-D8D38FAF64CC}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{6A7810B6-49C7-4AEC-B970-D8D38FAF64CC}.Release|StableBackup.Build.0 = Release|StableBackup
+		{DE6E8577-3795-4881-A825-33D19E835727}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
+		{DE6E8577-3795-4881-A825-33D19E835727}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
+		{DE6E8577-3795-4881-A825-33D19E835727}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
+		{DE6E8577-3795-4881-A825-33D19E835727}.Debug|StableBackup.Build.0 = Debug|StableBackup
+		{DE6E8577-3795-4881-A825-33D19E835727}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
+		{DE6E8577-3795-4881-A825-33D19E835727}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
+		{DE6E8577-3795-4881-A825-33D19E835727}.Release|StableBackup.ActiveCfg = Release|StableBackup
+		{DE6E8577-3795-4881-A825-33D19E835727}.Release|StableBackup.Build.0 = Release|StableBackup
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
