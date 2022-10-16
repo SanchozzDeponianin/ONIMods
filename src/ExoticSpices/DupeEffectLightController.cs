@@ -15,13 +15,10 @@ namespace ExoticSpices
         {
             public string trackingEffectId = PhosphoRufusSpice.Id;
             public Color Color = Color.cyan;
-            public float Range = 3f;
-            public int Lux = LIGHT2D.LIGHTBUG_LUX;
-            public Vector2 Offset = Vector2.up;
-            public LightShape shape = LightShape.Circle;
+            public float Range = ExoticSpicesOptions.Instance.phospho_rufus_spice.range;
+            public int Lux = ExoticSpicesOptions.Instance.phospho_rufus_spice.lux;
             public float dim_time = 15f;
             public float glow_time = 10f;
-            public bool drawOverlay = true;
         }
 
         public new class Instance : GameInstance
@@ -38,13 +35,13 @@ namespace ExoticSpices
                 light = master.gameObject.AddComponent<Light2D>();
                 light.Color = def.Color;
                 light.overlayColour = LIGHT2D.LIGHTBUG_OVERLAYCOLOR;
-                light.Offset = def.Offset;
+                light.Offset = Vector2.up;
                 light.Range = def.Range;
                 light.Angle = 0f;
                 light.Direction = LIGHT2D.DEFAULT_DIRECTION;
                 light.Lux = def.Lux;
-                light.shape = def.shape;
-                light.drawOverlay = def.drawOverlay;
+                light.shape = LightShape.Circle;
+                light.drawOverlay = true;
                 light.enabled = false;
             }
 

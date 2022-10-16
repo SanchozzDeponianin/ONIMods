@@ -16,7 +16,6 @@ namespace ExoticSpices
         public const float GRASS_PER_1000KKAL = 0.1f;
         public const float EVIL_SEED_PER_1000KKAL = 0.01f;
         public const float MASS_PER_1000KKAL = 3f;
-        public const float ZOMBIE_STAMINA_RECOVERY = 0.6f;
 
         private const string SPRITE_PHOSPHO_RUFUS = "spice_recipe_phospho_rufus";
         private const string SPRITE_GASSYMOO = "spice_recipe_gassy_moo";
@@ -38,6 +37,7 @@ namespace ExoticSpices
         public static Emote ZombieControlEmote;
 
         public static float GassyMooSpiceEmitMass = TRAITS.FLATULENCE_EMIT_MASS;
+        public static SimHashes GassyMooSpiceEmitElement = SimHashes.Methane;
 
         internal static void LoadSprites()
         {
@@ -51,6 +51,7 @@ namespace ExoticSpices
 
         internal static void InitStage1()
         {
+            ExoticSpicesOptions.Reload();
             var db = Db.Get();
             // модификаторы доп шанса на реакцию радовасти
             JoyReactionExtraChance = db.Attributes.Add(new Attribute(
@@ -64,17 +65,17 @@ namespace ExoticSpices
             const string desc = "Spices";
             var PhosphoRufusExtraChance = new AttributeModifier(
                 attribute_id: JoyReactionExtraChance.Id,
-                value: 0.15f,
+                value: ExoticSpicesOptions.Instance.phospho_rufus_spice.joy_reaction_chance / 100f,
                 description: desc,
                 is_readonly: false);
             var GassyMooExtraChance = new AttributeModifier(
                 attribute_id: JoyReactionExtraChance.Id,
-                value: 0.20f,
+                value: ExoticSpicesOptions.Instance.gassy_moo_spice.joy_reaction_chance / 100f,
                 description: desc,
                 is_readonly: false);
             var ZombieExtraChance = new AttributeModifier(
                 attribute_id: JoyReactionExtraChance.Id,
-                value: 0.25f,
+                value: ExoticSpicesOptions.Instance.zombie_spice.joy_reaction_chance / 100f,
                 description: desc,
                 is_readonly: false);
 
@@ -152,14 +153,14 @@ namespace ExoticSpices
             {
                 GassyMooEffect.Add(new AttributeModifier(
                     attribute_id: db.Attributes.Athletics.Id,
-                    value: 8,
+                    value: ExoticSpicesOptions.Instance.gassy_moo_spice.attribute_buff,
                     description: GassyMooEffect.Name,
                     is_multiplier: false,
                     uiOnly: false,
                     is_readonly: true));
                 GassyMooEffect.Add(new AttributeModifier(
                     attribute_id: db.Attributes.Strength.Id,
-                    value: 8,
+                    value: ExoticSpicesOptions.Instance.gassy_moo_spice.attribute_buff,
                     description: GassyMooEffect.Name,
                     is_multiplier: false,
                     uiOnly: false,
@@ -171,7 +172,7 @@ namespace ExoticSpices
             {
                 ZombieEffect.Add(new AttributeModifier(
                     attribute_id: db.Amounts.Stamina.deltaAttribute.Id,
-                    value: db.Amounts.Stamina.maxAttribute.BaseValue * ZOMBIE_STAMINA_RECOVERY / Constants.SECONDS_PER_CYCLE,
+                    value: db.Amounts.Stamina.maxAttribute.BaseValue * ExoticSpicesOptions.Instance.zombie_spice.stamina_buff / 100f / Constants.SECONDS_PER_CYCLE,
                     description: ZombieEffect.Name,
                     is_multiplier: false,
                     uiOnly: false,
@@ -184,6 +185,22 @@ namespace ExoticSpices
             var mass_per_day = GRASS_PER_1000KKAL * moo.Field<float>("DAYS_PLANT_GROWTH_EATEN_PER_CYCLE").Value
                 * moo.Field<float>("KG_POOP_PER_DAY_OF_PLANT").Value * (grass.cropDuration / Constants.SECONDS_PER_CYCLE) / grass.numProduced;
             GassyMooSpiceEmitMass = mass_per_day * (TRAITS.FLATULENCE_EMIT_INTERVAL_MAX + TRAITS.FLATULENCE_EMIT_INTERVAL_MIN) / 2f / Constants.SECONDS_PER_CYCLE;
+            switch (ExoticSpicesOptions.Instance.gassy_moo_spice.emit_mass)
+            {
+                case EmitMass.x0_25:
+                    GassyMooSpiceEmitMass *= 0.25f;
+                    break;
+                case EmitMass.x0_5:
+                    GassyMooSpiceEmitMass *= 0.5f;
+                    break;
+                case EmitMass.x2:
+                    GassyMooSpiceEmitMass *= 2f;
+                    break;
+                case EmitMass.x4:
+                    GassyMooSpiceEmitMass *= 4f;
+                    break;
+            }
+            GassyMooSpiceEmitElement = (ExoticSpicesOptions.Instance.gassy_moo_spice.emit_gas == EmitGas.Methane) ? SimHashes.Methane : SimHashes.ContaminatedOxygen;
         }
 
         public static void CreateEmoteChore(IStateMachineTarget target, Emote emote, float probability)

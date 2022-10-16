@@ -1,0 +1,130 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. ExoticSpices.STRINGS.DUPLICANTS.ATTRIBUTES.JOY_EXTRA_CHANCE.NAME
+msgctxt "ExoticSpices.STRINGS.DUPLICANTS.ATTRIBUTES.JOY_EXTRA_CHANCE.NAME"
+msgid "<style=\"KKeyword\">Joy Reaction</style> chance"
+msgstr "Шанс <style=\"KKeyword\">Радостной реакции</style>"
+
+#. ExoticSpices.STRINGS.DUPLICANTS.MODIFIERS.MOO_COSPLAY_SPICE.ADDITIONAL_EFFECTS
+msgctxt "ExoticSpices.STRINGS.DUPLICANTS.MODIFIERS.MOO_COSPLAY_SPICE.ADDITIONAL_EFFECTS"
+msgid "<style=\"KKeyword\">Mooteorism</style>"
+msgstr "<style=\"KKeyword\">Муутеоризм</style>"
+
+#. ExoticSpices.STRINGS.DUPLICANTS.MODIFIERS.PHOSPHO_RUFUS_SPICE.ADDITIONAL_EFFECTS
+msgctxt "ExoticSpices.STRINGS.DUPLICANTS.MODIFIERS.PHOSPHO_RUFUS_SPICE.ADDITIONAL_EFFECTS"
+msgid "<style=\"KKeyword\">Phosphorescence</style>\n<style=\"KKeyword\">Sound Sleep</style>"
+msgstr "<style=\"KKeyword\">Фосфоресценция</style>\n<style=\"KKeyword\">Крепкий Сон</style>"
+
+#. ExoticSpices.STRINGS.DUPLICANTS.MODIFIERS.ZOMBIE_COSPLAY_SPICE.ADDITIONAL_EFFECTS
+msgctxt "ExoticSpices.STRINGS.DUPLICANTS.MODIFIERS.ZOMBIE_COSPLAY_SPICE.ADDITIONAL_EFFECTS"
+msgid "<style=\"KKeyword\">Tireless</style>"
+msgstr "<style=\"KKeyword\">Неутомимость</style>"
+
+#. ExoticSpices.STRINGS.ITEMS.SPICES.MOO_COSPLAY_SPICE.DESC
+msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.MOO_COSPLAY_SPICE.DESC"
+msgid "Be strong as <link=\"MOO\">Moo</link>. Let the whole Cosmos hear the powerful roar of your Jet Thruster."
+msgstr "Будь сильным, как <link=\"MOO\">Муу</link>. Пусть весь Космос услышит мощный рёв твоего реактивного ускорителя."
+
+#. ExoticSpices.STRINGS.ITEMS.SPICES.MOO_COSPLAY_SPICE.NAME
+msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.MOO_COSPLAY_SPICE.NAME"
+msgid "Moo Spice"
+msgstr "Специя Муу"
+
+#. ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.DESC
+msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.DESC"
+msgid "Duplicants are simply glowing with happiness.\nNo longer need a Lantern to visit the Toilet."
+msgstr "Дупликанты просто светятся от счастья.\nБольше не нужен фонарик для посещения туалета."
+
+#. ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.NAME
+msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.NAME"
+msgid "Phosphorus Spice"
+msgstr "Фосфорная специя"
+
+#. ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.DESC
+msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.DESC"
+msgid "Hurray! Zombie party!\nBrains not included."
+msgstr "Ура! Зомби-Вечеринка!\nМозги не включены."
+
+#. ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.NAME
+msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.NAME"
+msgid "Zombie Spice"
+msgstr "Специя зомби"
+
+#. ExoticSpices.STRINGS.OPTIONS.ATTRIBUTE_BUFF.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.ATTRIBUTE_BUFF.NAME"
+msgid "Strength and Athletics, +X"
+msgstr "Сила и Атлетика, +X"
+
+#. ExoticSpices.STRINGS.OPTIONS.EMIT_GAS.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.EMIT_GAS.NAME"
+msgid "\"Jet Thruster\" exhaust type"
+msgstr "Тип выхлопа \"реактивного ускорителя\""
+
+#. ExoticSpices.STRINGS.OPTIONS.EMIT_GAS.TOOLTIP
+msgctxt "ExoticSpices.STRINGS.OPTIONS.EMIT_GAS.TOOLTIP"
+msgid "What do you prefer? A little free fuel or the opportunity to sniff gases?"
+msgstr "Что ты предпочитаешь ? Немного бесплатного топлива ?\nИли \"Нюхать газы и строить базу\"(с) ?"
+
+#. ExoticSpices.STRINGS.OPTIONS.EMIT_MASS.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.EMIT_MASS.NAME"
+msgid "\"Jet Thruster\" exhaust power"
+msgstr "Мощность выхлопа \"реактивного ускорителя\""
+
+#. ExoticSpices.STRINGS.OPTIONS.EMIT_MASS.TOOLTIP
+msgctxt "ExoticSpices.STRINGS.OPTIONS.EMIT_MASS.TOOLTIP"
+msgid "Exhaust power is calculated according to an empirical formula,\ntaking into account crop productivity of Gas Grass,\ndiet of Gassy Moo and other parameters.\nBut you can slightly decrease or increase it."
+msgstr "Мощность выхлопа рассчитывается по эмпирической формуле\nс учетом урожайности Газовой травы, диеты Муу и других параметров.\nНо вы можете немного уменьшить или увеличить её."
+
+#. ExoticSpices.STRINGS.OPTIONS.JOY_REACTION_CHANCE.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.JOY_REACTION_CHANCE.NAME"
+msgid "Joy Reaction chance, +X%"
+msgstr "Шанс Радостной реакции, +X%"
+
+#. ExoticSpices.STRINGS.OPTIONS.JOY_REACTION_CHANCE.TOOLTIP
+msgctxt "ExoticSpices.STRINGS.OPTIONS.JOY_REACTION_CHANCE.TOOLTIP"
+msgid "Additional chance to start a Joy Reaction\neven if the Duplicant does not have enough Morale."
+msgstr "Дополнительный шанс начать Радостную реакцию,\nдаже если у Дупликанта недостаточно Морали."
+
+#. ExoticSpices.STRINGS.OPTIONS.LUX.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.LUX.NAME"
+msgid "Brightness, Lux"
+msgstr "Яркость, люкс"
+
+#. ExoticSpices.STRINGS.OPTIONS.RANGE.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.RANGE.NAME"
+msgid "Light Range, tiles"
+msgstr "Радиус света, тайлы"
+
+#. ExoticSpices.STRINGS.OPTIONS.STAMINA_BUFF.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.STAMINA_BUFF.NAME"
+msgid "Stamina recovery, +X% per cycle"
+msgstr "Восстановление Выносливости, +X% в цикл"
+
+#. ExoticSpices.STRINGS.OPTIONS.X0_25.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.X0_25.NAME"
+msgid "x0.25"
+msgstr "x0.25"
+
+#. ExoticSpices.STRINGS.OPTIONS.X0_5.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.X0_5.NAME"
+msgid "x0.5"
+msgstr "x0.5"
+
+#. ExoticSpices.STRINGS.OPTIONS.X1.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.X1.NAME"
+msgid "normal"
+msgstr "норма"
+
+#. ExoticSpices.STRINGS.OPTIONS.X2.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.X2.NAME"
+msgid "x2"
+msgstr "x2"
+
+#. ExoticSpices.STRINGS.OPTIONS.X4.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.X4.NAME"
+msgid "x4"
+msgstr "x4"
+

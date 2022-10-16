@@ -22,7 +22,7 @@ namespace ExoticSpices
             public Instance(IStateMachineTarget master) : base(master)
             {
                 StaminaThresholdNormal = Db.Get().Amounts.Stamina.maxAttribute.BaseValue;
-                StaminaThresholdZombie = 0.3f * StaminaThresholdNormal;
+                StaminaThresholdZombie = 0.15f * StaminaThresholdNormal;
                 effects = master.GetComponent<Effects>();
             }
 

@@ -7,6 +7,7 @@ using UnityEngine;
 using Klei.AI;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
+using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
 
 namespace ExoticSpices
@@ -22,7 +23,7 @@ namespace ExoticSpices
             base.OnLoad(harmony);
             PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(typeof(ExoticSpicesPatches));
-            //new POptions().RegisterOptions(this, typeof(Options));
+            new POptions().RegisterOptions(this, typeof(ExoticSpicesOptions));
             new KAnimGroupManager().RegisterInteractAnims(ANIM_IDLE_ZOMBIE, ANIM_LOCO_ZOMBIE, ANIM_LOCO_WALK_ZOMBIE, ANIM_REACT_BUTT_SCRATCH);
         }
 
@@ -34,7 +35,7 @@ namespace ExoticSpices
         }
 
         [PLibMethod(RunAt.AfterDbInit)]
-        private static void AddBuildingAndModifiers()
+        private static void AfterDbInit()
         {
             InitStage1();
         }
@@ -163,18 +164,26 @@ namespace ExoticSpices
                 }
             }
 
-            private static float GetEmitMass(GameObject flatulent)
+            private static float GetEmitMass(GameObject flatulent, out SimHashes emit_element)
             {
                 var effects = flatulent.GetComponent<Effects>();
                 if (effects != null && effects.HasEffect(GassyMooSpice.Id))
                 {
+                    emit_element = GassyMooSpiceEmitElement;
                     float mass = GassyMooSpiceEmitMass;
                     var traits = flatulent.GetComponent<Traits>();
                     if (traits != null && traits.HasTrait(FLATULENCE))
-                        mass = 2f * mass + TUNING.TRAITS.FLATULENCE_EMIT_MASS;
+                    {
+                        emit_element = SimHashes.Methane;
+                        mass = (2f * mass) + TUNING.TRAITS.FLATULENCE_EMIT_MASS;
+                    }
                     return mass;
                 }
-                else return TUNING.TRAITS.FLATULENCE_EMIT_MASS;
+                else
+                {
+                    emit_element = SimHashes.Methane;
+                    return TUNING.TRAITS.FLATULENCE_EMIT_MASS;
+                }
             }
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method, ILGenerator IL)
@@ -182,14 +191,22 @@ namespace ExoticSpices
                 var iList = instructions.ToList();
                 var getEmitMass = typeof(Flatulence_Emit).GetMethodSafe(nameof(GetEmitMass), true, PPatchTools.AnyArguments);
                 var mass = IL.DeclareLocal(typeof(float));
+                var element = IL.DeclareLocal(typeof(SimHashes));
                 int i = 0;
                 iList.Insert(i++, new CodeInstruction(OpCodes.Ldarg_1));
+                iList.Insert(i++, TranspilerUtils.GetLoadLocalInstruction(element.LocalIndex, true));
                 iList.Insert(i++, new CodeInstruction(OpCodes.Call, getEmitMass));
                 iList.Insert(i++, TranspilerUtils.GetStoreLocalInstruction(mass.LocalIndex));
                 while (i < iList.Count)
                 {
                     if (iList[i].LoadsConstant(TUNING.TRAITS.FLATULENCE_EMIT_MASS))
+                    {
                         iList[i] = TranspilerUtils.GetLoadLocalInstruction(mass.LocalIndex);
+                    }
+                    else if (iList[i].LoadsConstant(SimHashes.Methane))
+                    {
+                        iList[i] = TranspilerUtils.GetLoadLocalInstruction(element.LocalIndex);
+                    }
                     i++;
                 }
                 return iList;

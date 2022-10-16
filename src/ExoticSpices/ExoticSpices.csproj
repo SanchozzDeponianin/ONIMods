@@ -32,6 +32,7 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="ExoticSpicesOptions.cs" />
     <Compile Include="DupeEffectZombie.cs" />
     <Compile Include="DupeEffectFlatulence.cs" />
     <Compile Include="DupeEffectLightController.cs" />

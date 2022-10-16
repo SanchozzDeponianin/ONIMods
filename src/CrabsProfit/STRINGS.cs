@@ -40,7 +40,6 @@ namespace CrabsProfit
 
         public class OPTIONS
         {
-            // todo: допилить строки
             public class CRAB_MEAT
             {
                 public static LocString NAME = $"{CRAB} meat amount, units";
