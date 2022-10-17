@@ -55,8 +55,8 @@ namespace ExoticSpices
         }
 
 #pragma warning disable CS0649
-        State zombie_off;
-        State zombie_on;
+        private State zombie_off;
+        private State zombie_on;
 #pragma warning restore CS0649
 
         public override void InitializeStates(out BaseState default_state)

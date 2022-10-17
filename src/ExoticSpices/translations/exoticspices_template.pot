@@ -10,7 +10,7 @@ msgstr ""
 
 #. ExoticSpices.STRINGS.DUPLICANTS.MODIFIERS.MOO_COSPLAY_SPICE.ADDITIONAL_EFFECTS
 msgctxt "ExoticSpices.STRINGS.DUPLICANTS.MODIFIERS.MOO_COSPLAY_SPICE.ADDITIONAL_EFFECTS"
-msgid "<style=\"KKeyword\">Mooteorism</style>"
+msgid "<style=\"KKeyword\">Mooteorism</style>\n<style=\"KKeyword\">Armored Eyes</style>"
 msgstr ""
 
 #. ExoticSpices.STRINGS.DUPLICANTS.MODIFIERS.PHOSPHO_RUFUS_SPICE.ADDITIONAL_EFFECTS

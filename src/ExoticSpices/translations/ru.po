@@ -10,8 +10,8 @@ msgstr "Шанс <style=\"KKeyword\">Радостной реакции</style>"
 
 #. ExoticSpices.STRINGS.DUPLICANTS.MODIFIERS.MOO_COSPLAY_SPICE.ADDITIONAL_EFFECTS
 msgctxt "ExoticSpices.STRINGS.DUPLICANTS.MODIFIERS.MOO_COSPLAY_SPICE.ADDITIONAL_EFFECTS"
-msgid "<style=\"KKeyword\">Mooteorism</style>"
-msgstr "<style=\"KKeyword\">Муутеоризм</style>"
+msgid "<style=\"KKeyword\">Mooteorism</style>\n<style=\"KKeyword\">Armored Eyes</style>"
+msgstr "<style=\"KKeyword\">Муутеоризм</style>\n<style=\"KKeyword\">Броневые глаза</style>"
 
 #. ExoticSpices.STRINGS.DUPLICANTS.MODIFIERS.PHOSPHO_RUFUS_SPICE.ADDITIONAL_EFFECTS
 msgctxt "ExoticSpices.STRINGS.DUPLICANTS.MODIFIERS.PHOSPHO_RUFUS_SPICE.ADDITIONAL_EFFECTS"

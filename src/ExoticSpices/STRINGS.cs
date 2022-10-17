@@ -22,7 +22,7 @@ namespace ExoticSpices
                 }
                 public class MOO_COSPLAY_SPICE
                 {
-                    public static LocString ADDITIONAL_EFFECTS = UI.FormatAsKeyWord("Mooteorism");
+                    public static LocString ADDITIONAL_EFFECTS = $"{UI.FormatAsKeyWord("Mooteorism")}\n{UI.FormatAsKeyWord("Armored Eyes")}";
                 }
                 public class ZOMBIE_COSPLAY_SPICE
                 {

@@ -206,7 +206,7 @@ namespace ExoticSpices
         public static void CreateEmoteChore(IStateMachineTarget target, Emote emote, float probability)
         {
             if (probability > Random.value)
-                new EmoteChore(target, Db.Get().ChoreTypes.EmoteHighPriority, emote);
+                new EmoteChore(target.GetComponent<ChoreProvider>(), Db.Get().ChoreTypes.EmoteHighPriority, emote);
         }
     }
 }
