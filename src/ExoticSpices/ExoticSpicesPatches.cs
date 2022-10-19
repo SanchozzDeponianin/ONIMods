@@ -16,15 +16,14 @@ namespace ExoticSpices
 
     internal sealed class ExoticSpicesPatches : KMod.UserMod2
     {
-        private static Harmony Harmony;
         public override void OnLoad(Harmony harmony)
         {
-            Harmony = harmony;
             base.OnLoad(harmony);
             PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(typeof(ExoticSpicesPatches));
             new POptions().RegisterOptions(this, typeof(ExoticSpicesOptions));
             new KAnimGroupManager().RegisterInteractAnims(ANIM_IDLE_ZOMBIE, ANIM_LOCO_ZOMBIE, ANIM_LOCO_WALK_ZOMBIE, ANIM_REACT_BUTT_SCRATCH);
+            new ModdedSpicesSerializationManager().RegisterModdedSpices(PHOSPHO_RUFUS_SPICE, GASSY_MOO_SPICE, ZOMBIE_SPICE);
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -145,7 +144,7 @@ namespace ExoticSpices
         {
             private static void Postfix(Worker worker)
             {
-                if (worker.GetComponent<Effects>().HasEffect(GassyMooSpice.Id))
+                if (worker.GetComponent<Effects>().HasEffect(GASSY_MOO_SPICE))
                     CreateEmoteChore(worker, ButtScratchEmote, 0.75f);
             }
         }
@@ -156,7 +155,7 @@ namespace ExoticSpices
         {
             private static void Postfix(Flatulence __instance)
             {
-                if (__instance.GetComponent<Effects>().HasEffect(GassyMooSpice.Id))
+                if (__instance.GetComponent<Effects>().HasEffect(GASSY_MOO_SPICE))
                 {
                     var smi = __instance.GetSMI<StaminaMonitor.Instance>();
                     if (!smi.IsNullOrStopped() && !smi.IsSleeping())
@@ -167,7 +166,7 @@ namespace ExoticSpices
             private static float GetEmitMass(GameObject flatulent, out SimHashes emit_element)
             {
                 var effects = flatulent.GetComponent<Effects>();
-                if (effects != null && effects.HasEffect(GassyMooSpice.Id))
+                if (effects != null && effects.HasEffect(GASSY_MOO_SPICE))
                 {
                     emit_element = GassyMooSpiceEmitElement;
                     float mass = GassyMooSpiceEmitMass;
@@ -250,7 +249,5 @@ namespace ExoticSpices
                 return iList;
             }
         }
-
-        // todo: систему костылей и подпорок для обхода проблемы необработки игрой инвалидных специй
     }
 }

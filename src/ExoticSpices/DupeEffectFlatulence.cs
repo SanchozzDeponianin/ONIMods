@@ -20,7 +20,7 @@ namespace ExoticSpices
                 traits = master.GetComponent<Traits>();
             }
 
-            public bool ShouldFlatulence() => effects.HasEffect(GassyMooSpice.Id);
+            public bool ShouldFlatulence() => effects.HasEffect(GASSY_MOO_SPICE);
 
             public void SwitchFlatulence(bool on)
             {
@@ -31,13 +31,13 @@ namespace ExoticSpices
             public void ApplyImmunities()
             {
                 foreach (var effect in sm.immunities)
-                    effects.AddImmunity(effect, GassyMooSpice.Id, false);
+                    effects.AddImmunity(effect, GASSY_MOO_SPICE, false);
             }
 
             public void RemoveImmunities()
             {
                 foreach (var effect in sm.immunities)
-                    effects.RemoveImmunity(effect, GassyMooSpice.Id);
+                    effects.RemoveImmunity(effect, GASSY_MOO_SPICE);
             }
         }
 

@@ -13,7 +13,7 @@ namespace ExoticSpices
     {
         public class Def : BaseDef
         {
-            public string trackingEffectId = PhosphoRufusSpice.Id;
+            public string trackingEffectId = PHOSPHO_RUFUS_SPICE;
             public Color Color = Color.cyan;
             public float Range = ExoticSpicesOptions.Instance.phospho_rufus_spice.range;
             public int Lux = ExoticSpicesOptions.Instance.phospho_rufus_spice.lux;

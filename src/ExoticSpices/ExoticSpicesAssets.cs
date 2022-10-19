@@ -8,7 +8,7 @@ using PeterHan.PLib.UI;
 
 namespace ExoticSpices
 {
-    internal class ExoticSpicesAssets
+    internal static class ExoticSpicesAssets
     {
         public const string FLATULENCE = "Flatulence";
 
@@ -16,6 +16,10 @@ namespace ExoticSpices
         public const float GRASS_PER_1000KKAL = 0.1f;
         public const float EVIL_SEED_PER_1000KKAL = 0.01f;
         public const float MASS_PER_1000KKAL = 3f;
+
+        public const string PHOSPHO_RUFUS_SPICE = "PHOSPHO_RUFUS_SPICE";
+        public const string GASSY_MOO_SPICE = "MOO_COSPLAY_SPICE";
+        public const string ZOMBIE_SPICE = "ZOMBIE_COSPLAY_SPICE";
 
         private const string SPRITE_PHOSPHO_RUFUS = "spice_recipe_phospho_rufus";
         private const string SPRITE_GASSYMOO = "spice_recipe_gassy_moo";
@@ -29,9 +33,9 @@ namespace ExoticSpices
         public static readonly Tag Tireless = TagManager.Create(nameof(Tireless));
 
         public static Attribute JoyReactionExtraChance;
-        public static Spice PhosphoRufusSpice;
-        public static Spice GassyMooSpice;
-        public static Spice ZombieSpice;
+        private static Spice PhosphoRufusSpice;
+        private static Spice GassyMooSpice;
+        private static Spice ZombieSpice;
 
         public static Emote ButtScratchEmote;
         public static Emote ZombieControlEmote;
@@ -82,7 +86,7 @@ namespace ExoticSpices
             // новые специи
             PhosphoRufusSpice = new Spice(
                 parent: db.Spices,
-                id: "PHOSPHO_RUFUS_SPICE",
+                id: PHOSPHO_RUFUS_SPICE,
                 ingredients: new Spice.Ingredient[] {
                     new Spice.Ingredient { IngredientSet = new Tag[] { SwampLilyFlowerConfig.ID }, AmountKG = FLOWER_PER_1000KKAL },
                     new Spice.Ingredient { IngredientSet = new Tag[] { SimHashes.Phosphorus.CreateTag() }, AmountKG = MASS_PER_1000KKAL }
@@ -94,7 +98,7 @@ namespace ExoticSpices
 
             GassyMooSpice = new Spice(
                 parent: db.Spices,
-                id: "MOO_COSPLAY_SPICE",
+                id: GASSY_MOO_SPICE,
                 ingredients: new Spice.Ingredient[] {
                     new Spice.Ingredient { IngredientSet = new Tag[] { GasGrassHarvestedConfig.ID }, AmountKG = GRASS_PER_1000KKAL },
                     new Spice.Ingredient { IngredientSet = new Tag[] { SimHashes.Sulfur.CreateTag() }, AmountKG = MASS_PER_1000KKAL }
@@ -106,7 +110,7 @@ namespace ExoticSpices
 
             ZombieSpice = new Spice(
                 parent: db.Spices,
-                id: "ZOMBIE_COSPLAY_SPICE",
+                id: ZOMBIE_SPICE,
                 ingredients: new Spice.Ingredient[] {
                     new Spice.Ingredient { IngredientSet = new Tag[] { EvilFlowerConfig.SEED_ID }, AmountKG = EVIL_SEED_PER_1000KKAL },
                     new Spice.Ingredient { IngredientSet = new Tag[] { SimHashes.Naphtha.CreateTag() }, AmountKG = MASS_PER_1000KKAL }
@@ -136,7 +140,7 @@ namespace ExoticSpices
             // добавляем в них доп. модификаторы
             var db = Db.Get();
 
-            var PhosphoRufusEffect = db.effects.TryGet(PhosphoRufusSpice.Id);
+            var PhosphoRufusEffect = db.effects.TryGet(PHOSPHO_RUFUS_SPICE);
             if (PhosphoRufusEffect != null)
             {
                 PhosphoRufusEffect.Add(new AttributeModifier(
@@ -148,7 +152,7 @@ namespace ExoticSpices
                     is_readonly: true));
             }
 
-            var GassyMooEffect = db.effects.TryGet(GassyMooSpice.Id);
+            var GassyMooEffect = db.effects.TryGet(GASSY_MOO_SPICE);
             if (GassyMooEffect != null)
             {
                 GassyMooEffect.Add(new AttributeModifier(
@@ -167,7 +171,7 @@ namespace ExoticSpices
                     is_readonly: true));
             }
 
-            var ZombieEffect = db.effects.TryGet(ZombieSpice.Id);
+            var ZombieEffect = db.effects.TryGet(ZOMBIE_SPICE);
             if (ZombieEffect != null)
             {
                 ZombieEffect.Add(new AttributeModifier(

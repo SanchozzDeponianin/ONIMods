@@ -31,7 +31,7 @@ namespace ExoticSpices
                 return gameObject.GetAllSMI<UrgeMonitor.Instance>()?.First(smi => smi.GetUrge() == Db.Get().Urges.Sleep);
             }
 
-            public bool ShouldBeZombie() => effects.HasEffect(ZombieSpice.Id);
+            public bool ShouldBeZombie() => effects.HasEffect(ZOMBIE_SPICE);
             public void OnEnter()
             {
                 // идти спать только если мало стамины
