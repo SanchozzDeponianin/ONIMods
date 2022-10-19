@@ -30,8 +30,8 @@ msgstr "Будь сильным, как <link=\"MOO\">Муу</link>. Пусть 
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.MOO_COSPLAY_SPICE.NAME
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.MOO_COSPLAY_SPICE.NAME"
-msgid "Moo Spice"
-msgstr "Специя Муу"
+msgid "<link=\"MOO_COSPLAY_SPICE\">Moo Spice</link>"
+msgstr "<link=\"MOO_COSPLAY_SPICE\">Специя Муу</link>"
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.DESC
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.DESC"
@@ -40,8 +40,8 @@ msgstr "Дупликанты просто светятся от счастья.\
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.NAME
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.NAME"
-msgid "Phosphorus Spice"
-msgstr "Фосфорная специя"
+msgid "<link=\"PHOSPHO_RUFUS_SPICE\">Phosphorus Spice</link>"
+msgstr "<link=\"PHOSPHO_RUFUS_SPICE\">Фосфорная специя</link>"
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.DESC
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.DESC"
@@ -50,8 +50,8 @@ msgstr "Ура! Зомби-Вечеринка!\nМозги не включены
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.NAME
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.NAME"
-msgid "Zombie Spice"
-msgstr "Специя зомби"
+msgid "<link=\"ZOMBIE_COSPLAY_SPICE\">Zombie Spice</link>"
+msgstr "<link=\"ZOMBIE_COSPLAY_SPICE\">Специя зомби</link>"
 
 #. ExoticSpices.STRINGS.OPTIONS.ATTRIBUTE_BUFF.NAME
 msgctxt "ExoticSpices.STRINGS.OPTIONS.ATTRIBUTE_BUFF.NAME"

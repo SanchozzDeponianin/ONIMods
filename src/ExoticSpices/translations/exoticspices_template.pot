@@ -30,7 +30,7 @@ msgstr ""
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.MOO_COSPLAY_SPICE.NAME
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.MOO_COSPLAY_SPICE.NAME"
-msgid "Moo Spice"
+msgid "<link=\"MOO_COSPLAY_SPICE\">Moo Spice</link>"
 msgstr ""
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.DESC
@@ -40,7 +40,7 @@ msgstr ""
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.NAME
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.NAME"
-msgid "Phosphorus Spice"
+msgid "<link=\"PHOSPHO_RUFUS_SPICE\">Phosphorus Spice</link>"
 msgstr ""
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.DESC
@@ -50,7 +50,7 @@ msgstr ""
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.NAME
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.NAME"
-msgid "Zombie Spice"
+msgid "<link=\"ZOMBIE_COSPLAY_SPICE\">Zombie Spice</link>"
 msgstr ""
 
 #. ExoticSpices.STRINGS.OPTIONS.ATTRIBUTE_BUFF.NAME

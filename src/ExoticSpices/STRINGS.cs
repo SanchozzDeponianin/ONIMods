@@ -37,17 +37,17 @@ namespace ExoticSpices
             {
                 public class PHOSPHO_RUFUS_SPICE
                 {
-                    public static LocString NAME = "Phosphorus Spice";
+                    public static LocString NAME = UI.FormatAsLink("Phosphorus Spice", nameof(PHOSPHO_RUFUS_SPICE));
                     public static LocString DESC = "Duplicants are simply glowing with happiness.\nNo longer need a Lantern to visit the Toilet.";
                 }
                 public class MOO_COSPLAY_SPICE
                 {
-                    public static LocString NAME = "Moo Spice";
+                    public static LocString NAME = UI.FormatAsLink("Moo Spice", nameof(MOO_COSPLAY_SPICE));
                     public static LocString DESC = $"Be strong as {UI.FormatAsLink("Moo", "MOO")}. Let the whole Cosmos hear the powerful roar of your Jet Thruster.";
                 }
                 public class ZOMBIE_COSPLAY_SPICE
                 {
-                    public static LocString NAME = "Zombie Spice";
+                    public static LocString NAME = UI.FormatAsLink("Zombie Spice", nameof(ZOMBIE_COSPLAY_SPICE));
                     public static LocString DESC = "Hurray! Zombie party!\nBrains not included.";
                 }
             }
