@@ -79,18 +79,18 @@ namespace VaricolouredBalloons
         [HarmonyPatch(typeof(BalloonStandConfig), nameof(BalloonStandConfig.OnSpawn))]
         private static class BalloonStandConfig_OnSpawn
         {
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
             {
-                return TranspilerInjectOnBeginChoreAction(instructions);
+                return TranspilerInjectOnBeginChoreAction(instructions, method);
             }
         }
 
         [HarmonyPatch(typeof(BalloonStandConfig), "MakeNewBalloonChore")]
         private static class BalloonStandConfig_MakeNewBalloonChore
         {
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
             {
-                return TranspilerInjectOnBeginChoreAction(instructions);
+                return TranspilerInjectOnBeginChoreAction(instructions, method);
             }
 
             // когда "задание 'получить баллон' завершено" - рандомим новый индекс для артиста
@@ -152,23 +152,26 @@ namespace VaricolouredBalloons
                 add_to_daily_report: true
                 );            
         */
-        private static IEnumerable<CodeInstruction> TranspilerInjectOnBeginChoreAction(IEnumerable<CodeInstruction> instructions)
+        private static IEnumerable<CodeInstruction> TranspilerInjectOnBeginChoreAction(IEnumerable<CodeInstruction> instructions, MethodBase method)
         {
+            var iList = instructions.ToList();
+            string methodName = method.DeclaringType.FullName + "." + method.Name;
+
             var makenewballoonchore = AccessTools.Method(typeof(BalloonStandConfig), "MakeNewBalloonChore");
             var onbegingetballoonchore = AccessTools.Method(typeof(VaricolouredBalloonsPatches), nameof(VaricolouredBalloonsPatches.OnBeginGetBalloonChore));
-            var instructionsList = instructions.ToList();
+
             bool result = false;
-            for (int i = 0; i < instructionsList.Count; i++)
+            for (int i = 0; i < iList.Count; i++)
             {
-                var instruction = instructionsList[i];
+                var instruction = iList[i];
                 if (instruction.opcode == OpCodes.Ldftn && (MethodInfo)instruction.operand == makenewballoonchore)
                 {
 #if DEBUG
-                    PUtil.LogDebug($"'{nameof(TranspilerInjectOnBeginChoreAction)}' injected");
+                    PUtil.LogDebug($"'{methodName}' Transpiler injected");
 #endif
                     yield return instruction;
                     i++;
-                    instruction = instructionsList[i];
+                    instruction = iList[i];
                     yield return instruction;           // new Action<Chore>(this.MakeNewBalloonChore)
                     i++;
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
@@ -183,7 +186,7 @@ namespace VaricolouredBalloons
             }
             if (!result)
             {
-                PUtil.LogWarning($"Could not apply {nameof(TranspilerInjectOnBeginChoreAction)}");
+                PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
             }
         }
 
@@ -222,11 +225,11 @@ namespace VaricolouredBalloons
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 var applysymboloverrideballoonfx = AccessTools.Method(typeof(VaricolouredBalloonsPatches), nameof(VaricolouredBalloonsPatches.ApplySymbolOverrideBalloonFX));
-                var instructionsList = instructions.ToList();
+                var iList = instructions.ToList();
                 bool result = false;
-                for (int i = 0; i < instructionsList.Count; i++)
+                for (int i = 0; i < iList.Count; i++)
                 {
-                    var instruction = instructionsList[i];
+                    var instruction = iList[i];
                     if (instruction.opcode == OpCodes.Ret)
                     {
 #if DEBUG
@@ -251,24 +254,97 @@ namespace VaricolouredBalloons
         }
 
         // обработка косяка в базовой игре
-        // завернуто в оболочку Plib на случай если исправят
         // когда пришло время разэкипировки баллона, в зависимости от настроек:
         // либо уничтожаем FX-объект баллона
         // либо не трогаем его и превращаем баг в фичу
         // а также обнуляем ссылку на FX-объект в классе конфига, во избежание конфликтов.
-        [PLibPatch(runtime: RunAt.Immediately, target: typeof(EquippableBalloonConfig), method: "OnUnequipBalloon", IgnoreOnFail = true)]
-        private static void EquippableBalloonConfig_OnUnequipBalloon_Prefix(Equippable eq, ref BalloonFX.Instance ___fx)
+
+        // обработка третьего косяка в базовой игре
+        // если применить инструмент удаления песочницы к дупликанту с шариком - игра вылетит
+        // тут замешана магия Unity и её объекты Шрёдингера которые null и not null одновременно
+        [HarmonyPatch(typeof(EquippableBalloonConfig), "OnUnequipBalloon")]
+        private static class EquippableBalloonConfig_OnUnequipBalloon
         {
-            if (VaricolouredBalloonsOptions.Instance.DestroyFXAfterEffectExpired)
+            private static void Prefix(ref BalloonFX.Instance ___fx)
             {
-                var carrier = (eq?.assignee?.GetSoleOwner()?.GetComponent<MinionAssignablesProxy>().target as KMonoBehaviour)?.GetComponent<VaricolouredBalloonsHelper>();
-                if (carrier?.fx != null)
-                {
-                    carrier.fx.StopSM("Unequipped");
-                    carrier.fx = null;
-                }
+                ___fx = null;
             }
-            ___fx = null;
+
+            private static KMonoBehaviour DestroyFX(KMonoBehaviour target)
+            {
+                if (VaricolouredBalloonsOptions.Instance.DestroyFXAfterEffectExpired && target != null)
+                {
+                    var carrier = target.GetComponent<VaricolouredBalloonsHelper>();
+                    if (carrier != null && carrier.fx != null)
+                    {
+                        carrier.fx.StopSM("Unequipped");
+                        carrier.fx = null;
+                    }
+                }
+                return target;
+            }
+
+            /*
+                var minionAssignablesProxy = soleOwner.GetComponent<MinionAssignablesProxy>();
+            --- if (minionAssignablesProxy.target != null)
+            +++ if ((minionAssignablesProxy.target as KMonoBehaviour) != (UnityEngine.Object)null)
+                {
+            +++     DestroyFX(minionAssignablesProxy.target as KMonoBehaviour);
+                    var effects = (minionAssignablesProxy.target as KMonoBehaviour).GetComponent<Effects>();
+                    if (effects != null)
+                        effects.Remove("HasBalloon");
+                }
+            */
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                var iList = instructions.ToList();
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
+
+                var get_target = typeof(MinionAssignablesProxy)
+                    .GetPropertySafe<IAssignableIdentity>(nameof(MinionAssignablesProxy.target), false)?.GetGetMethod(true);
+                var typeKMonoBehaviour = typeof(KMonoBehaviour);
+                var op_Inequality = typeof(UnityEngine.Object)
+                    .GetMethodSafe("op_Inequality", true, typeof(UnityEngine.Object), typeof(UnityEngine.Object));
+                var destroyFX = typeof(EquippableBalloonConfig_OnUnequipBalloon)
+                    .GetMethodSafe(nameof(DestroyFX), true, PPatchTools.AnyArguments);
+
+                bool result1 = false, result2 = false;
+
+                if (get_target != null && typeKMonoBehaviour != null && op_Inequality != null && destroyFX != null)
+                {
+                    for (int i = 0; i < iList.Count; i++)
+                    {
+                        if (iList[i].Calls(get_target))
+                        {
+                            i++;
+                            if (iList[i].Branches(out _))
+                            {
+                                iList.Insert(i++, new CodeInstruction(OpCodes.Isinst, typeKMonoBehaviour));
+                                iList.Insert(i++, new CodeInstruction(OpCodes.Ldnull));
+                                iList.Insert(i++, new CodeInstruction(OpCodes.Call, op_Inequality));
+                                result1 = true;
+                            }
+                            else if (iList[i].opcode == OpCodes.Isinst && Equals(iList[i].operand, typeKMonoBehaviour))
+                            {
+                                iList.Insert(++i, new CodeInstruction(OpCodes.Call, destroyFX));
+                                result2 = true;
+                            }
+                        }
+                        if (result1 && result2)
+                        {
+#if DEBUG
+                            PUtil.LogDebug($"'{methodName}' Transpiler injected");
+#endif
+                            break;
+                        }
+                    }
+                }
+                if (!(result1 && result2))
+                {
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
+                }
+                return iList;
+            }
         }
 
         // исправление второго косяка в базовой игре
@@ -291,9 +367,10 @@ namespace VaricolouredBalloons
                 return VaricolouredBalloonsOptions.Instance.FixEffectDuration ? HasBalloonDuration : duration;
             }
 
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
             {
-                var instructionsList = instructions.ToList();
+                var iList = instructions.ToList();
+                string methodName = method.DeclaringType.FullName + "." + method.Name;
 
                 var Duration = typeof(TRAITS.JOY_REACTIONS).GetFieldSafe(nameof(TRAITS.JOY_REACTIONS.JOY_REACTION_DURATION), true);
                 var FixDuration = typeof(EquippableBalloon_OnSpawn).GetMethodSafe(nameof(FixJoyReactionDuration), true, PPatchTools.AnyArguments);
@@ -301,14 +378,14 @@ namespace VaricolouredBalloons
                 bool result = false;
                 if (Duration != null && FixDuration != null)
                 {
-                    for (int i = 0; i < instructionsList.Count; i++)
+                    for (int i = 0; i < iList.Count; i++)
                     {
-                        var instruction = instructionsList[i];
+                        var instruction = iList[i];
                         if (instruction.opcode == OpCodes.Ldsfld && instruction.operand is FieldInfo info && info == Duration)
                         {
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, FixDuration));
+                            iList.Insert(++i, new CodeInstruction(OpCodes.Call, FixDuration));
 #if DEBUG
-                            PUtil.LogDebug("'EquippableBalloon.OnSpawn' Transpiler injected");
+                            PUtil.LogDebug($"'{methodName}' Transpiler injected");
 #endif
                             result = true;
                             break;
@@ -317,9 +394,9 @@ namespace VaricolouredBalloons
                 }
                 if (!result)
                 {
-                    PUtil.LogWarning("Could not apply Transpiler to the 'EquippableBalloon.OnSpawn'");
+                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
                 }
-                return instructionsList;
+                return iList;
             }
 
             private static void Postfix(EquippableBalloon __instance)
