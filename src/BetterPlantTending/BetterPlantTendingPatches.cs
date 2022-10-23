@@ -572,8 +572,9 @@ namespace BetterPlantTending
             // поиск растений для убобрения.
             // Клеи зачем-то перебирают список всех урожайных растений на карте
             // а мы заменим на GameScenePartitioner
-            private static List<KMonoBehaviour> FindPlants(int myWorldId, CropTendingStates.Instance smi)
+            private static List<KMonoBehaviour> FindPlants(CropTendingStates.Instance smi)
             {
+                int myWorldId = smi.gameObject.GetMyWorldId();
                 var entries = ListPool<ScenePartitionerEntry, GameScenePartitioner>.Allocate();
                 var search_extents = new Extents(Grid.PosToCell(smi.master.transform.GetPosition()), radius);
                 GameScenePartitioner.Instance.GatherEntries(search_extents, GameScenePartitioner.Instance.plants, entries);
@@ -614,13 +615,15 @@ namespace BetterPlantTending
                     var instruction = instructionsList[i];
                     /*
                     foreach (Crop worldItem in 
-                ---         Components.Crops.GetWorldItems(smi.gameObject.GetMyWorldId()))
-                +++         FindPlants(smi.gameObject.GetMyWorldId(), smi))
+                ---         Components.Crops.GetWorldItems(smi.gameObject.GetMyWorldId(), false))
+                +++         FindPlants(smi))
                     */
                     if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && info == GetWorldItems)
                     {
-                        instructionsList[i] = new CodeInstruction(OpCodes.Ldarg_1);
-                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, findPlants));
+                        for (int j = 0; j < GetWorldItems.GetParameters().Length; j++)
+                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Pop));
+                        instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldarg_1));
+                        instructionsList[i] = new CodeInstruction(OpCodes.Call, findPlants);
                         r1 = true;
 #if DEBUG
                         PUtil.LogDebug($"'{methodName}' Transpiler #1 injected");
