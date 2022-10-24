@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using STRINGS;
 using SanchozzONIMods.Lib;
+using static STRINGS.DUPLICANTS;
 
 namespace CarouselCentrifuge
 {
     public class STRINGS
     {
         private const string MORALE = "{Morale}";
+        private const string SPACENAVIGATION = "{SpaceNavigation}";
 
         public class BUILDINGS
         {
@@ -75,13 +77,19 @@ namespace CarouselCentrifuge
             {
                 public static LocString NAME = $"Duration of the {UI.FormatAsKeyWord("Ride on a Carousel")} effect";
             }
+            public class ENABLETRAINING
+            {
+                public static LocString NAME = $"Allow training the {UI.FormatAsKeyWord(SPACENAVIGATION)} attribute";
+                public static LocString TOOLTIP = "Only Space Out! DLC";
+            }
         }
 
         internal static void DoReplacement()
         {
             var dictionary = new Dictionary<string, string>
             {
-                { MORALE, global::STRINGS.DUPLICANTS.ATTRIBUTES.QUALITYOFLIFE.NAME }
+                { MORALE, ATTRIBUTES.QUALITYOFLIFE.NAME },
+                { SPACENAVIGATION, ATTRIBUTES.SPACENAVIGATION.NAME },
             };
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
             LocString.CreateLocStringKeys(typeof(BUILDINGS));

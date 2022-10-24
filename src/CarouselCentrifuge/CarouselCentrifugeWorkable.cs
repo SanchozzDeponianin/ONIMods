@@ -14,6 +14,7 @@ namespace CarouselCentrifuge
         private static StatusItem vomitStatusItem;
         private static float vomitChancePercent = 5f;
         private static readonly int basePriority = RELAXATION.PRIORITY.TIER5;
+        private Attribute workAttribute = null;
         private Chore chore;
 
 #pragma warning disable CS0649
@@ -44,6 +45,13 @@ namespace CarouselCentrifuge
             showProgressBar = true;
             resetProgressOnStop = true;
             synchronizeAnims = true;
+            if (DlcManager.FeatureClusterSpaceEnabled() && CarouselCentrifugeOptions.Instance.EnableTraining)
+            {
+                workAttribute = Db.Get().Attributes.SpaceNavigation;
+                attributeExperienceMultiplier = DUPLICANTSTATS.ATTRIBUTE_LEVELING.BARELY_EVER_EXPERIENCE;
+                skillExperienceSkillGroup = Db.Get().SkillGroups.Rocketry.Id;
+                skillExperienceMultiplier = SKILLS.BARELY_EVER_EXPERIENCE;
+            }
             SetWorkTime(TUNING.BUILDINGS.WORK_TIME_SECONDS.MEDIUM_WORK_TIME);
             if (vomitStatusItem == null)
             {
@@ -52,6 +60,8 @@ namespace CarouselCentrifuge
             }
             vomitChancePercent = CarouselCentrifugeOptions.Instance.DizzinessChancePercent;
         }
+
+        public override Attribute GetWorkAttribute() => workAttribute;
 
         protected override void OnSpawn()
         {

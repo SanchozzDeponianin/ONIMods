@@ -25,5 +25,9 @@ namespace CarouselCentrifuge
         [Option(Format = "F1")]
         [Limit(0, 100)]
         public float DizzinessChancePercent { get; set; } = 1f;
+
+        [JsonProperty]
+        [Option]
+        public bool EnableTraining { get; set; } = true;
     }
 }

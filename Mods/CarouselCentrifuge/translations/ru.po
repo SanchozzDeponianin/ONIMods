@@ -58,6 +58,16 @@ msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCEPERCENT.TOOLTIP"
 msgid "Set to <style=\"produced\">0</style> to disable <style=\"KKeyword\">Unforeseen consequences</style>"
 msgstr "Установите в <style=\"produced\">0</style> чтобы отключить <style=\"KKeyword\">Непредвиденные последствия</style>"
 
+#. CarouselCentrifuge.STRINGS.OPTIONS.ENABLETRAINING.NAME
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.ENABLETRAINING.NAME"
+msgid "Allow training the <style=\"KKeyword\">{SpaceNavigation}</style> attribute"
+msgstr "Разрешить тренировку атрибута <style=\"KKeyword\">{SpaceNavigation}</style>"
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.ENABLETRAINING.TOOLTIP
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.ENABLETRAINING.TOOLTIP"
+msgid "Only Space Out! DLC"
+msgstr "Только Space Out! DLC"
+
 #. CarouselCentrifuge.STRINGS.OPTIONS.SPECIFICEFFECTDURATION.NAME
 msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.SPECIFICEFFECTDURATION.NAME"
 msgid "Duration of the <style=\"KKeyword\">Ride on a Carousel</style> effect"
