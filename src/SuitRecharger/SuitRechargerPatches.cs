@@ -6,6 +6,7 @@ using UnityEngine;
 using SanchozzONIMods.Lib;
 using SanchozzONIMods.Shared;
 using PeterHan.PLib.Core;
+using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
 using PeterHan.PLib.UI;
 
@@ -18,6 +19,7 @@ namespace SuitRecharger
             base.OnLoad(harmony);
             PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(typeof(SuitRechargerPatches));
+            new POptions().RegisterOptions(this, typeof(SuitRechargerOptions));
         }
 
         public override void OnAllModsLoaded(Harmony harmony, IReadOnlyList<Mod> mods)

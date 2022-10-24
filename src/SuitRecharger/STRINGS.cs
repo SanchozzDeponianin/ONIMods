@@ -73,6 +73,18 @@ namespace SuitRecharger
             }
         }
 
+        public class OPTIONS
+        {
+            public class O2_CAPACITY
+            {
+                public static LocString NAME = "Oxygen storage capacity, kg";
+            }
+            public class FUEL_CAPACITY
+            {
+                public static LocString NAME = "Fuel storage capacity, kg";
+            }
+        }
+
         internal static void DoReplacement()
         {
             LocString.CreateLocStringKeys(typeof(BUILDINGS));

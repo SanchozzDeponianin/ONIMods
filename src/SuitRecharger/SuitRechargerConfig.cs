@@ -8,8 +8,8 @@ namespace SuitRecharger
     public class SuitRechargerConfig : IBuildingConfig
     {
         public const string ID = "SuitRecharger";
-        public const float O2_CAPACITY = 200f;
-        public const float FUEL_CAPACITY = 100f;
+        public static float O2_CAPACITY { get; private set; } = 200f;
+        public static float FUEL_CAPACITY { get; private set; } = 100f;
 
         private readonly ConduitPortInfo fuelInputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 2));
         private readonly ConduitPortInfo liquidWasteOutputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 0));
@@ -41,6 +41,9 @@ namespace SuitRecharger
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
+            O2_CAPACITY = SuitRechargerOptions.Instance.o2_capacity;
+            FUEL_CAPACITY = SuitRechargerOptions.Instance.fuel_capacity;
+
             var o2_consumer = go.AddOrGet<ConduitConsumer>();
             o2_consumer.conduitType = ConduitType.Gas;
             o2_consumer.consumptionRate = ConduitFlow.MAX_GAS_MASS;

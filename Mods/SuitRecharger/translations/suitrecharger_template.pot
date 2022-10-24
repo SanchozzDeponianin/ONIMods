@@ -38,6 +38,16 @@ msgctxt "SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_SUIT_HAS_ENOUG
 msgid "Suit is not durable enough"
 msgstr ""
 
+#. SuitRecharger.STRINGS.OPTIONS.FUEL_CAPACITY.NAME
+msgctxt "SuitRecharger.STRINGS.OPTIONS.FUEL_CAPACITY.NAME"
+msgid "Fuel storage capacity, kg"
+msgstr ""
+
+#. SuitRecharger.STRINGS.OPTIONS.O2_CAPACITY.NAME
+msgctxt "SuitRecharger.STRINGS.OPTIONS.O2_CAPACITY.NAME"
+msgid "Oxygen storage capacity, kg"
+msgstr ""
+
 #. SuitRecharger.STRINGS.STATUSITEMS.FUEL_NOPIPE.TOOLTIP
 msgctxt "SuitRecharger.STRINGS.STATUSITEMS.FUEL_NOPIPE.TOOLTIP"
 msgid "\n<style=\"KKeyword\">Jet Suits</style> will be charged only with <link=\"OXYGEN\">Oxygen</link>"
