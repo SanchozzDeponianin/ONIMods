@@ -47,11 +47,16 @@ namespace WornSuitDischarge
             traverse.Property<int>(nameof(ChoreType.priority)).Value = FetchCritical.priority;
         }
 
+        // аррргх !!!
+        // есть основания полагать, что игра некорректно рассчитывает влияние перка Db.SkillPerks.ExosuitDurability на durability
+        // поэтому придётся пока выключить проверку наличия этого перка
+        // в худшем случае почти поломаный скафандр будет просто разряжен лишний раз раньше времени
+        // (и то только в случае если клеи исправять учёт перка, в чём я очень сомневаюсь)
         private static bool ShouldTransfer(Assignable assignable, Equipment equipment)
         {
-            var resume = equipment?.GetTargetGameObject()?.GetComponent<MinionResume>();
+            //var resume = equipment?.GetTargetGameObject()?.GetComponent<MinionResume>();
             var durability = assignable?.GetComponent<Durability>();
-            return durability != null && durability.IsTrueWornOut(resume);
+            return durability != null && durability.IsTrueWornOut(/*resume*/);
         }
 
         private static void Transfer(Assignable assignable, Storage lockerStorage)
