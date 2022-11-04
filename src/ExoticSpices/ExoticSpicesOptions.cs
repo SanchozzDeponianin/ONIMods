@@ -89,5 +89,10 @@ namespace ExoticSpices
         [JsonProperty]
         [Option]
         public ZombieSpice zombie_spice { get; set; } = new ZombieSpice();
+
+        [JsonProperty]
+        [Option]
+        [Limit(0, 5)]
+        public int carepackage_seeds_amount { get; set; } = 3;
     }
 }

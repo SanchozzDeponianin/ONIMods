@@ -30,8 +30,8 @@ msgstr "Будь сильным, как <link=\"MOO\">Муу</link>. Пусть 
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.MOO_COSPLAY_SPICE.NAME
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.MOO_COSPLAY_SPICE.NAME"
-msgid "<link=\"MOO_COSPLAY_SPICE\">Moo Spice</link>"
-msgstr "<link=\"MOO_COSPLAY_SPICE\">Специя Муу</link>"
+msgid "<link=\"MOOCOSPLAYSPICE\">Moo Spice</link>"
+msgstr "<link=\"MOOCOSPLAYSPICE\">Специя Муу</link>"
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.DESC
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.DESC"
@@ -40,8 +40,8 @@ msgstr "Дупликанты просто светятся от счастья.\
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.NAME
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.NAME"
-msgid "<link=\"PHOSPHO_RUFUS_SPICE\">Phosphorus Spice</link>"
-msgstr "<link=\"PHOSPHO_RUFUS_SPICE\">Фосфорная специя</link>"
+msgid "<link=\"PHOSPHORUFUSSPICE\">Phosphorus Spice</link>"
+msgstr "<link=\"PHOSPHORUFUSSPICE\">Фосфорная специя</link>"
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.DESC
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.DESC"
@@ -50,13 +50,18 @@ msgstr "Ура! Зомби-Вечеринка!\nМозги не включены
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.NAME
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.NAME"
-msgid "<link=\"ZOMBIE_COSPLAY_SPICE\">Zombie Spice</link>"
-msgstr "<link=\"ZOMBIE_COSPLAY_SPICE\">Специя зомби</link>"
+msgid "<link=\"ZOMBIECOSPLAYSPICE\">Zombie Spice</link>"
+msgstr "<link=\"ZOMBIECOSPLAYSPICE\">Специя зомби</link>"
 
 #. ExoticSpices.STRINGS.OPTIONS.ATTRIBUTE_BUFF.NAME
 msgctxt "ExoticSpices.STRINGS.OPTIONS.ATTRIBUTE_BUFF.NAME"
 msgid "Strength and Athletics, +X"
 msgstr "Сила и Атлетика, +X"
+
+#. ExoticSpices.STRINGS.OPTIONS.CAREPACKAGE_SEEDS_AMOUNT.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.CAREPACKAGE_SEEDS_AMOUNT.NAME"
+msgid "The number of <style=\"KKeyword\">Sporechid</style> seeds in the Care Package"
+msgstr "Количество семян <style=\"KKeyword\">Споровика</style> в посылке"
 
 #. ExoticSpices.STRINGS.OPTIONS.EMIT_GAS.NAME
 msgctxt "ExoticSpices.STRINGS.OPTIONS.EMIT_GAS.NAME"

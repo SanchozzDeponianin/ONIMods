@@ -30,7 +30,7 @@ msgstr ""
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.MOO_COSPLAY_SPICE.NAME
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.MOO_COSPLAY_SPICE.NAME"
-msgid "<link=\"MOO_COSPLAY_SPICE\">Moo Spice</link>"
+msgid "<link=\"MOOCOSPLAYSPICE\">Moo Spice</link>"
 msgstr ""
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.DESC
@@ -40,7 +40,7 @@ msgstr ""
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.NAME
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.PHOSPHO_RUFUS_SPICE.NAME"
-msgid "<link=\"PHOSPHO_RUFUS_SPICE\">Phosphorus Spice</link>"
+msgid "<link=\"PHOSPHORUFUSSPICE\">Phosphorus Spice</link>"
 msgstr ""
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.DESC
@@ -50,12 +50,17 @@ msgstr ""
 
 #. ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.NAME
 msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.NAME"
-msgid "<link=\"ZOMBIE_COSPLAY_SPICE\">Zombie Spice</link>"
+msgid "<link=\"ZOMBIECOSPLAYSPICE\">Zombie Spice</link>"
 msgstr ""
 
 #. ExoticSpices.STRINGS.OPTIONS.ATTRIBUTE_BUFF.NAME
 msgctxt "ExoticSpices.STRINGS.OPTIONS.ATTRIBUTE_BUFF.NAME"
 msgid "Strength and Athletics, +X"
+msgstr ""
+
+#. ExoticSpices.STRINGS.OPTIONS.CAREPACKAGE_SEEDS_AMOUNT.NAME
+msgctxt "ExoticSpices.STRINGS.OPTIONS.CAREPACKAGE_SEEDS_AMOUNT.NAME"
+msgid "The number of <style=\"KKeyword\">Sporechid</style> seeds in the Care Package"
 msgstr ""
 
 #. ExoticSpices.STRINGS.OPTIONS.EMIT_GAS.NAME

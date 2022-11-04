@@ -126,6 +126,10 @@ namespace ExoticSpices
             {
                 public static LocString NAME = "";
             }
+            public class CAREPACKAGE_SEEDS_AMOUNT
+            {
+                public static LocString NAME = $"The number of {UI.FormatAsKeyWord("Sporechid")} seeds in the Care Package";
+            }
         }
 
         internal static void DoReplacement()
