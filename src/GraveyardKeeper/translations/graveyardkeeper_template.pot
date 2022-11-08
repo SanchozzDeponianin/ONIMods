@@ -1,0 +1,55 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. GraveyardKeeper.STRINGS.OPTIONS.MAX_PLANTS_SPAWN.NAME
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.MAX_PLANTS_SPAWN.NAME"
+msgid "The maximum number of Plants planted by {SQUIRREL}\nduring one burial of the corpse."
+msgstr ""
+
+#. GraveyardKeeper.STRINGS.OPTIONS.MAX_PLANTS_SPAWN.TOOLTIP
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.MAX_PLANTS_SPAWN.TOOLTIP"
+msgid "In any case, {SQUIRREL} will not plant several identical Plants at a time."
+msgstr ""
+
+#. GraveyardKeeper.STRINGS.OPTIONS.NON_YIELDING_PLANTS.NAME
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.NON_YIELDING_PLANTS.NAME"
+msgid "Non-Yielding Plants"
+msgstr ""
+
+#. GraveyardKeeper.STRINGS.OPTIONS.NON_YIELDING_PLANTS.TOOLTIP
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.NON_YIELDING_PLANTS.TOOLTIP"
+msgid "{COLDBREATHER}, {OXYFERN} and decorative plants."
+msgstr ""
+
+#. GraveyardKeeper.STRINGS.OPTIONS.REGULAR_PLANTS.NAME
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.REGULAR_PLANTS.NAME"
+msgid "Regular Plants"
+msgstr ""
+
+#. GraveyardKeeper.STRINGS.OPTIONS.REGULAR_PLANTS.TOOLTIP
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.REGULAR_PLANTS.TOOLTIP"
+msgid "Most of the Plants that produce crops regularly."
+msgstr ""
+
+#. GraveyardKeeper.STRINGS.OPTIONS.SINGLE_HARVEST_PLANTS.NAME
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.SINGLE_HARVEST_PLANTS.NAME"
+msgid "Single-Harvest Plants"
+msgstr ""
+
+#. GraveyardKeeper.STRINGS.OPTIONS.SINGLE_HARVEST_PLANTS.TOOLTIP
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.SINGLE_HARVEST_PLANTS.TOOLTIP"
+msgid "{BASICFORAGEPLANT}, etc."
+msgstr ""
+
+#. GraveyardKeeper.STRINGS.OPTIONS.TITLE.NAME
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.TITLE.NAME"
+msgid "Choose the types of Plants with which the {SQUIRREL}\nwill decorate the burial place of the Duplicant's corpse."
+msgstr ""
+
+#. GraveyardKeeper.STRINGS.OPTIONS.TITLE.TOOLTIP
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.TITLE.TOOLTIP"
+msgid "If nothing is selected, the {SQUIRREL} will use the {EVILFLOWER}."
+msgstr ""
+

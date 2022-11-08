@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{84650BA3-870A-413A-84BD-789BB1FBA62B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GraveyardKeeper</RootNamespace>
+    <AssemblyName>GraveyardKeeper</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Title>Graveyard Keeper</Title>
+    <Description>The Pip buries the corpses of Duplicants in the ground and decorates them with Plants.</Description>
+    <ModVersion>1.0.0</ModVersion>
+    <UsesPLib>true</UsesPLib>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\lib\BaseOptions.cs">
+      <Link>BaseOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\Utils.cs">
+      <Link>Utils.cs</Link>
+    </Compile>
+    <Compile Include="STRINGS.cs" />
+    <Compile Include="GraveyardKeeperOptions.cs" />
+    <Compile Include="PlantSparkleFX.cs" />
+    <Compile Include="PlantSparkleFXConfig.cs" />
+    <Compile Include="GraveyardKeeperPatches.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -86,6 +86,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttributeRestrictions", "At
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExoticSpices", "ExoticSpices\ExoticSpices.csproj", "{DE6E8577-3795-4881-A825-33D19E835727}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraveyardKeeper", "GraveyardKeeper\GraveyardKeeper.csproj", "{84650BA3-870A-413A-84BD-789BB1FBA62B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MainlineSteam = Debug|MainlineSteam
@@ -358,6 +360,14 @@ Global
 		{DE6E8577-3795-4881-A825-33D19E835727}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{DE6E8577-3795-4881-A825-33D19E835727}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{DE6E8577-3795-4881-A825-33D19E835727}.Release|StableBackup.Build.0 = Release|StableBackup
+		{84650BA3-870A-413A-84BD-789BB1FBA62B}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
+		{84650BA3-870A-413A-84BD-789BB1FBA62B}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
+		{84650BA3-870A-413A-84BD-789BB1FBA62B}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
+		{84650BA3-870A-413A-84BD-789BB1FBA62B}.Debug|StableBackup.Build.0 = Debug|StableBackup
+		{84650BA3-870A-413A-84BD-789BB1FBA62B}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
+		{84650BA3-870A-413A-84BD-789BB1FBA62B}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
+		{84650BA3-870A-413A-84BD-789BB1FBA62B}.Release|StableBackup.ActiveCfg = Release|StableBackup
+		{84650BA3-870A-413A-84BD-789BB1FBA62B}.Release|StableBackup.Build.0 = Release|StableBackup
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
