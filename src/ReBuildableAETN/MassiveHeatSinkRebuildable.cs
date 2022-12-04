@@ -195,24 +195,14 @@ namespace ReBuildableAETN
 
         public string SidescreenButtonTooltip => (studied ? STUDIED_STATUS : (markedForStudy ? PENDING_STATUS : SEND_STATUS));
 
-        public bool SidescreenEnabled()
-        {
-            return !studied;
-        }
+        public bool SidescreenEnabled() => !studied;
 
-        public bool SidescreenButtonInteractable()
-        {
-            return !studied;
-        }
+        public bool SidescreenButtonInteractable() => !studied;
 
-        public void OnSidescreenButtonPressed()
-        {
-            ToggleStudyChore();
-        }
+        public void OnSidescreenButtonPressed() => ToggleStudyChore();
 
-        public int ButtonSideScreenSortOrder()
-        {
-            return 20;
-        }
+        public int ButtonSideScreenSortOrder() => 20;
+
+        public void SetButtonTextOverride(ButtonMenuTextOverride textOverride) { }
     }
 }

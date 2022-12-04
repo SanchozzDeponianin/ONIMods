@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Worn Suit doesn't drop Canister</Title>
     <Description>A Worn Suits does not drop the Canisters. Oxygen and Kerosene are returned to the Suit Dock for later reuse.</Description>
-    <ModVersion>1.1.3</ModVersion>
+    <ModVersion>1.1.4</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

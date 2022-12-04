@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Buildable Neural Vacillator</Title>
     <Description>Allows you to build your own Neural Vacillator.</Description>
-    <ModVersion>1.0.5</ModVersion>
+    <ModVersion>1.0.6</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

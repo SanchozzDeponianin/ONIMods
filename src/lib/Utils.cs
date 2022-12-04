@@ -6,7 +6,7 @@ using System.Reflection;
 using TUNING;
 using HarmonyLib;
 #if USESPLIB
-using PeterHan.PLib.Detours;
+using PeterHan.PLib.Core;
 #endif
 
 namespace SanchozzONIMods.Lib
@@ -246,19 +246,22 @@ namespace SanchozzONIMods.Lib
         }
 
         // замена текста в загруженной локализации
+        private static readonly FieldInfo LocStringText = typeof(LocString).GetField("_text", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        public static void ReplaceText(this LocString locString, string newtext)
+        {
+            if (LocStringText != null)
+                LocStringText.SetValue(locString, newtext);
+            else
+            {
+                var message = "Could not write the '{1}' text into the '{0}' LocString";
 #if USESPLIB
-        private static readonly IDetouredField<LocString, string> LocStringText = PDetours.DetourField<LocString, string>(nameof(LocString.text));
-        public static void ReplaceText(this LocString locString, string newtext)
-        {
-            LocStringText.Set(locString, newtext);
-        }
+                PUtil.LogWarning(message.F(locString.key, newtext));
 #else
-        private static readonly MethodInfo LocStringSetText = typeof(LocString).GetProperty(nameof(LocString.text)).GetSetMethod(true);
-        public static void ReplaceText(this LocString locString, string newtext)
-        {
-            LocStringSetText.Invoke(locString, new object[] { newtext });
-        }
+                Debug.LogWarningFormat(message, locString.key, newtext);
 #endif
+            }
+        }
+
         public static void ReplaceText(this LocString locString, string search, string replacement)
         {
             locString.ReplaceText(locString.text.Replace(search, replacement));

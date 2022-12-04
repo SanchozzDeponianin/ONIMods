@@ -17,7 +17,7 @@
   <PropertyGroup>
     <Title>Sandbox: Mutant Plants</Title>
     <Description>Allows to quickly receive mutant Seeds and Plants in the Sandbox mode</Description>
-    <ModVersion>1.1.0</ModVersion>
+    <ModVersion>1.1.1</ModVersion>
     <SupportedContent>EXPANSION1_ID</SupportedContent>
   </PropertyGroup>
   <ItemGroup>
