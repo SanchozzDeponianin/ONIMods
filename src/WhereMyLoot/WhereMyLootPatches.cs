@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 
@@ -69,21 +69,17 @@ namespace WhereMyLoot
         {
             private static readonly IDetouredField<Demolishable, bool> isMarkedForDemolition =
                 PDetours.DetourFieldLazy<Demolishable, bool>("isMarkedForDemolition");
-            private static void ActivateScreen(LoreBearer loreBearer, KScreen screen)
+            private static void DeactivateScreenIsMarkedForDemolition(LoreBearer loreBearer, KScreen screen)
             {
-                var demolishable = loreBearer?.GetComponent<Demolishable>();
-                if (demolishable != null && isMarkedForDemolition.Get(demolishable))
+                if (loreBearer != null && loreBearer.TryGetComponent<Demolishable>(out var demolishable) && isMarkedForDemolition.Get(demolishable))
                 {
-                    screen.Deactivate();
-                    return;
+                    screen?.Deactivate();
                 }
-                screen.Activate();
             }
             /*
-            --- var infoDialogScreen = GameScreenManager.Instance.StartScreen(blabla);
-            +++ var infoDialogScreen = GameScreenManager.Instance.InstantiateScreen(blabla);
+            --- var infoDialogScreen = LoreBearer.ShowPopupDialog().blabla.AddDefaultOK();
                 blablablabla;
-                // и вот это много раз:
+                // и на версиях 531669 и ранее вот это много раз:
                 if (чтототам)
                 {
                     блаблабла;
@@ -91,51 +87,54 @@ namespace WhereMyLoot
             +++     goto end:
                 }
                 blablablabla;
+                // и в конце
+            --- return;
+            +++ goto end:
             +++ end:
-            +++ ActivateScreen(this, infoDialogScreen);
+            +++ DeactivateScreenIsMarkedForDemolition(this, infoDialogScreen);
                 return;
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method, ILGenerator IL)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
-                var StartScreen = typeof(GameScreenManager).GetMethodSafe(nameof(GameScreenManager.StartScreen), false, PPatchTools.AnyArguments);
-                var InstantiateScreen = typeof(GameScreenManager).GetMethodSafe(nameof(GameScreenManager.InstantiateScreen), false, PPatchTools.AnyArguments);
-                var activateScreen = typeof(LoreBearer_OnClickRead).GetMethodSafe(nameof(ActivateScreen), true, PPatchTools.AnyArguments);
-
+                return TranspilerUtils.Wrap(instructions, original, IL, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
+            {
+                var addDefaultOK = typeof(InfoDialogScreen).GetMethodSafe(nameof(InfoDialogScreen.AddDefaultOK), false, typeof(bool));
+                var deactivateScreen = typeof(LoreBearer_OnClickRead).GetMethodSafe(nameof(DeactivateScreenIsMarkedForDemolition), true, PPatchTools.AnyArguments);
                 bool result = false;
-                if (StartScreen != null && InstantiateScreen != null && activateScreen != null)
+                if (addDefaultOK != null && deactivateScreen != null)
                 {
-                    instructionsList = PPatchTools.ReplaceMethodCall(instructionsList, StartScreen, InstantiateScreen).ToList();
                     var label = IL.DefineLabel();
-                    for (int i = 0; i < instructionsList.Count; i++)
+                    CodeInstruction ldloc_Screen = null;
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction = instructionsList[i];
-                        if (instruction.opcode == OpCodes.Ret)
+                        if (instructions[i].Calls(addDefaultOK) && instructions[i + 1].IsStloc())
                         {
+                            ldloc_Screen = TranspilerUtils.GetMatchingLoadInstruction(instructions[i + 1]);
+                            continue;
+                        }
+                        if (instructions[i].opcode == OpCodes.Ret)
+                        {
+                            var instruction = new CodeInstruction(instructions[i]);
                             instruction.opcode = OpCodes.Br_S;
                             instruction.operand = label;
+                            instructions[i] = instruction;
                         }
                     }
                     var end = new CodeInstruction(OpCodes.Nop);
                     end.labels.Add(label);
-                    instructionsList.Add(end);
-                    instructionsList.Add(new CodeInstruction(OpCodes.Ldarg_0));
-                    instructionsList.Add(new CodeInstruction(OpCodes.Ldloc_0));
-                    instructionsList.Add(new CodeInstruction(OpCodes.Call, activateScreen));
-                    instructionsList.Add(new CodeInstruction(OpCodes.Ret));
-                    result = true;
+                    instructions.Add(end);
+                    if (ldloc_Screen != null)
+                    {
+                        instructions.Add(new CodeInstruction(OpCodes.Ldarg_0));
+                        instructions.Add(ldloc_Screen);
+                        instructions.Add(new CodeInstruction(OpCodes.Call, deactivateScreen));
+                        result = true;
+                    }
+                    instructions.Add(new CodeInstruction(OpCodes.Ret));
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-#if DEBUG
-                else
-                    PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                return instructionsList;
+                return result;
             }
         }
     }

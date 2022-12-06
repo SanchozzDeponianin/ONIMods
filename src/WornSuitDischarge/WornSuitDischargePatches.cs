@@ -110,48 +110,36 @@ namespace WornSuitDischarge
             +++     assignable.Unassign();
 		        }
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
-                var getequipment = typeof(MinionIdentity).GetMethodSafe(nameof(MinionIdentity.GetEquipment), false, PPatchTools.AnyArguments);
-                var unassign = typeof(Assignable).GetMethodSafe(nameof(Assignable.Unassign), false, PPatchTools.AnyArguments);
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var getequipment = typeof(MinionIdentity).GetMethodSafe(nameof(MinionIdentity.GetEquipment), false);
+                var unassign = typeof(Assignable).GetMethodSafe(nameof(Assignable.Unassign), false);
                 var trytransfer = typeof(SuitLocker_ReturnSuitWorkable_OnCompleteWork).GetMethodSafe(nameof(TryTransfer), true, PPatchTools.AnyArguments);
-
-                bool result = false;
                 if (getequipment != null && unassign != null && trytransfer != null)
                 {
                     CodeInstruction Ldloc_equipment = null;
-                    for (int i = 0; i < instructionsList.Count(); i++)
+                    for (int i = 0; i < instructions.Count(); i++)
                     {
-                        var instruction = instructionsList[i];
-                        if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info))
+                        if (instructions[i].Calls(getequipment) && instructions[i + 1].IsStloc())
                         {
-                            if (info == getequipment && instructionsList[i + 1].IsStloc())
-                            {
-                                Ldloc_equipment = TranspilerUtils.GetMatchingLoadInstruction(instructionsList[i + 1]);
-                            }
-                            if (Ldloc_equipment != null && info == unassign)
-                            {
-                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Dup));     // assignable
-                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldarg_0)); // workable
-                                instructionsList.Insert(i++, Ldloc_equipment);
-                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Call, trytransfer));
-                                result = true;
-#if DEBUG
-                                PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                                break;
-                            }
+                            Ldloc_equipment = TranspilerUtils.GetMatchingLoadInstruction(instructions[i + 1]);
+                            continue;
+                        }
+                        if (Ldloc_equipment != null && instructions[i].Calls(unassign))
+                        {
+                            instructions.Insert(i++, new CodeInstruction(OpCodes.Dup));     // assignable
+                            instructions.Insert(i++, new CodeInstruction(OpCodes.Ldarg_0)); // workable
+                            instructions.Insert(i++, Ldloc_equipment);
+                            instructions.Insert(i++, new CodeInstruction(OpCodes.Call, trytransfer));
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 
@@ -185,65 +173,52 @@ namespace WornSuitDischarge
 
             private static MethodBase TargetMethod()
             {
-                return typeof(SuitMarker).GetNestedType("SuitMarkerReactable", PPatchTools.BASE_FLAGS)
-                    .GetMethodSafe("Run", false, PPatchTools.AnyArguments);
+                return typeof(SuitMarker).GetNestedType("UnequipSuitReactable", PPatchTools.BASE_FLAGS).GetMethodSafe("Run", false);
             }
             /*
                     assignable = equipment.GetAssignable(Db.Get().AssignableSlots.Suit);
             +++     TryTransfer(assignable, this.suitMarker, equipment);
 		            assignable.Unassign();
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
-                var getequipment = typeof(MinionIdentity).GetMethodSafe(nameof(MinionIdentity.GetEquipment), false, PPatchTools.AnyArguments);
-                var unassign = typeof(Assignable).GetMethodSafe(nameof(Assignable.Unassign), false, PPatchTools.AnyArguments);
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var getequipment = typeof(MinionIdentity).GetMethodSafe(nameof(MinionIdentity.GetEquipment), false);
+                var unassign = typeof(Assignable).GetMethodSafe(nameof(Assignable.Unassign), false);
                 var trytransfer = typeof(SuitMarker_SuitMarkerReactable_Run).GetMethodSafe(nameof(TryTransfer), true, PPatchTools.AnyArguments);
                 var suitMarker = typeof(SuitMarker).GetNestedType("SuitMarkerReactable", PPatchTools.BASE_FLAGS).GetFieldSafe("suitMarker", false);
-
-                bool result = false;
                 if (getequipment != null && unassign != null && trytransfer != null && suitMarker != null)
                 {
                     CodeInstruction Ldloc_equipment = null;
-                    for (int i = 0; i < instructionsList.Count(); i++)
+                    for (int i = 0; i < instructions.Count(); i++)
                     {
-                        var instruction = instructionsList[i];
-                        if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info))
+                        var instruction = instructions[i];
+                        if (instruction.Calls(getequipment) && instructions[i + 1].IsStloc())
                         {
-                            if (info == getequipment && instructionsList[i + 1].IsStloc())
-                            {
-                                Ldloc_equipment = TranspilerUtils.GetMatchingLoadInstruction(instructionsList[i + 1]);
-                            }
-                            if (Ldloc_equipment != null && info == unassign)
-                            {
-                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Dup));     // assignable
-                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldarg_0));
-                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldfld, suitMarker));
-                                instructionsList.Insert(i++, Ldloc_equipment);
-                                instructionsList.Insert(i++, new CodeInstruction(OpCodes.Call, trytransfer));
-                                result = true;
-#if DEBUG
-                                PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                                break;
-                            }
+                            Ldloc_equipment = TranspilerUtils.GetMatchingLoadInstruction(instructions[i + 1]);
+                        }
+                        if (Ldloc_equipment != null && instruction.Calls(unassign))
+                        {
+                            instructions.Insert(i++, new CodeInstruction(OpCodes.Dup));     // assignable
+                            instructions.Insert(i++, new CodeInstruction(OpCodes.Ldarg_0));
+                            instructions.Insert(i++, new CodeInstruction(OpCodes.Ldfld, suitMarker));
+                            instructions.Insert(i++, Ldloc_equipment);
+                            instructions.Insert(i++, new CodeInstruction(OpCodes.Call, trytransfer));
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 
         // при деконструкции не выпускать кислород в атмосферу
         // доставка кислорода и керосина баллонами
         [HarmonyPatch]
-        private static class XXXSuitLockerConfig_ConfigureBuildingTemplate
+        private static class SuitLockerConfig_ConfigureBuildingTemplate
         {
             private static IEnumerable<MethodBase> TargetMethods()
             {
