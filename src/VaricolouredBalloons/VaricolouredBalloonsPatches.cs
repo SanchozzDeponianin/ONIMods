@@ -79,18 +79,18 @@ namespace VaricolouredBalloons
         [HarmonyPatch(typeof(BalloonStandConfig), nameof(BalloonStandConfig.OnSpawn))]
         private static class BalloonStandConfig_OnSpawn
         {
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerInjectOnBeginChoreAction(instructions, method);
+                return TranspilerUtils.Wrap(instructions, original, TranspilerInjectOnBeginChoreAction);
             }
         }
 
         [HarmonyPatch(typeof(BalloonStandConfig), "MakeNewBalloonChore")]
         private static class BalloonStandConfig_MakeNewBalloonChore
         {
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerInjectOnBeginChoreAction(instructions, method);
+                return TranspilerUtils.Wrap(instructions, original, TranspilerInjectOnBeginChoreAction);
             }
 
             // когда "задание 'получить баллон' завершено" - рандомим новый индекс для артиста
@@ -107,7 +107,7 @@ namespace VaricolouredBalloons
         // перехватываем "задание 'получить баллон' начато"
         // вытаскиваем индекс из артиста, запихиваем его в получателя, и применяем подмену символа анимации 
         // уничтожаем предыдущий FX-объект баллона если он есть
-        private static void OnBeginGetBalloonChore(BalloonStandConfig balloonStandConfig, Chore chore)
+        private static void OnBeginGetBalloonChore(Chore chore)
         {
             var balloonWorkable = chore.target?.GetComponent<GetBalloonWorkable>();
             if (balloonWorkable != null)
@@ -129,65 +129,42 @@ namespace VaricolouredBalloons
 
         // внедряем перехватчик "задание 'получить баллон' начато"
         /*
-            WorkChore<GetBalloonWorkable> workChore = new WorkChore<GetBalloonWorkable>(
-                chore_type: Db.Get().ChoreTypes.JoyReaction, 
-                target: component, 
-                chore_provider: null, 
-                run_until_complete: true, 
-                on_complete: MakeNewBalloonChore, 
-        ---     on_begin: null, 
-        +++     on_begin: VaricolouredBalloonsPatches.OnBeginGetBalloonChore
-                on_end: null, 
-                allow_in_red_alert: true, 
-                schedule_block: Db.Get().ScheduleBlockTypes.Recreation, 
-                ignore_schedule_block: false, 
-                only_when_operational: true, 
-                override_anims: null, 
-                is_preemptable: false, 
-                allow_in_context_menu: true, 
-                allow_prioritization: true, 
-                priority_class: PriorityScreen.PriorityClass.high, 
-                priority_class_value: 5, 
-                ignore_building_assignment: true, 
-                add_to_daily_report: true
-                );            
+            WorkChore<GetBalloonWorkable> workChore = new WorkChore<GetBalloonWorkable>(mnogo blablabla);
+        +++ workChore.onBegin += VaricolouredBalloonsPatches.OnBeginGetBalloonChore;
         */
-        private static IEnumerable<CodeInstruction> TranspilerInjectOnBeginChoreAction(IEnumerable<CodeInstruction> instructions, MethodBase method)
+        
+        private static readonly IDetouredField<Chore, Action<Chore>> ON_BEGIN = PDetours.DetourFieldLazy<Chore, Action<Chore>>("onBegin");
+        private static void InjectOnBeginChoreAction(Chore chore)
         {
-            var iList = instructions.ToList();
-            string methodName = method.DeclaringType.FullName + "." + method.Name;
-
-            var makenewballoonchore = AccessTools.Method(typeof(BalloonStandConfig), "MakeNewBalloonChore");
-            var onbegingetballoonchore = AccessTools.Method(typeof(VaricolouredBalloonsPatches), nameof(VaricolouredBalloonsPatches.OnBeginGetBalloonChore));
-
-            bool result = false;
-            for (int i = 0; i < iList.Count; i++)
+            if (chore != null)
             {
-                var instruction = iList[i];
-                if (instruction.opcode == OpCodes.Ldftn && (MethodInfo)instruction.operand == makenewballoonchore)
+                ON_BEGIN.Set(chore, (Action<Chore>)Delegate.Combine(ON_BEGIN.Get(chore), new Action<Chore>(OnBeginGetBalloonChore)));
+            }
+        }
+
+        private static bool TranspilerInjectOnBeginChoreAction(List<CodeInstruction> instructions)
+        {
+            var workChore = typeof(WorkChore<GetBalloonWorkable>).GetConstructors().FirstOrDefault();
+            var inject = typeof(VaricolouredBalloonsPatches)
+                .GetMethodSafe(nameof(VaricolouredBalloonsPatches.InjectOnBeginChoreAction), true, PPatchTools.AnyArguments);
+            if (workChore != null && inject != null)
+            {
+                for (int i = 0; i < instructions.Count; i++)
                 {
-#if DEBUG
-                    PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                    yield return instruction;
-                    i++;
-                    instruction = iList[i];
-                    yield return instruction;           // new Action<Chore>(this.MakeNewBalloonChore)
-                    i++;
-                    yield return new CodeInstruction(OpCodes.Ldarg_0);
-                    yield return new CodeInstruction(OpCodes.Ldftn, onbegingetballoonchore);
-                    yield return instruction;           // new Action<Chore>(VaricolouredBalloonsPatches.OnBeginGetBalloonChore)
-                    result = true;
-                }
-                else
-                {
-                    yield return instruction;
+                    if (instructions[i].Is(OpCodes.Newobj, workChore))
+                    {
+                        i++;
+                        if (instructions[i].IsStloc())
+                        {
+                            var ldloc_workChore = TranspilerUtils.GetMatchingLoadInstruction(instructions[i]);
+                            instructions.Insert(++i, ldloc_workChore);
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, inject));
+                            return true;
+                        }
+                    }
                 }
             }
-            if (!result)
-            {
-                PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-            }
+            return false;
         }
 
         // сам носимый баллон:
@@ -218,38 +195,38 @@ namespace VaricolouredBalloons
         +++     VaricolouredBalloonsPatches.ApplySymbolOverrideBalloonFX(this, kBatchedAnimController);
 		    }
         */
-
         [HarmonyPatch(typeof(BalloonFX.Instance), MethodType.Constructor, new Type[] { typeof(IStateMachineTarget) })]
         private static class BalloonFX_Instance_Constructor
         {
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var applysymboloverrideballoonfx = AccessTools.Method(typeof(VaricolouredBalloonsPatches), nameof(VaricolouredBalloonsPatches.ApplySymbolOverrideBalloonFX));
-                var iList = instructions.ToList();
-                bool result = false;
-                for (int i = 0; i < iList.Count; i++)
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var createEffect = typeof(FXHelpers).GetMethodSafe(nameof(FXHelpers.CreateEffect), true, PPatchTools.AnyArguments);
+                var applysymboloverrideballoonfx = typeof(VaricolouredBalloonsPatches)
+                    .GetMethodSafe(nameof(VaricolouredBalloonsPatches.ApplySymbolOverrideBalloonFX), true, PPatchTools.AnyArguments);
+                if (createEffect != null && applysymboloverrideballoonfx != null)
                 {
-                    var instruction = iList[i];
-                    if (instruction.opcode == OpCodes.Ret)
+                    CodeInstruction ldloc_kbac = null;
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-#if DEBUG
-                        PUtil.LogDebug($"'{nameof(BalloonFX.Instance)}.Constructor' Transpiler injected");
-#endif
-                        yield return new CodeInstruction(OpCodes.Ldarg_0);
-                        yield return new CodeInstruction(OpCodes.Ldloc_0);
-                        yield return new CodeInstruction(OpCodes.Call, applysymboloverrideballoonfx);
-                        yield return instruction;
-                        result = true;
-                    }
-                    else
-                    {
-                        yield return instruction;
+                        if (instructions[i].Calls(createEffect) && instructions[i + 1].IsStloc())
+                        {
+                            ldloc_kbac = TranspilerUtils.GetMatchingLoadInstruction(instructions[i + 1]);
+                            continue;
+                        }
+                        if (ldloc_kbac != null && instructions[i].opcode == OpCodes.Ret)
+                        {
+                            instructions.Insert(i++, new CodeInstruction(OpCodes.Ldarg_0));
+                            instructions.Insert(i++, ldloc_kbac);
+                            instructions.Insert(i++, new CodeInstruction(OpCodes.Call, applysymboloverrideballoonfx));
+                            return true;
+                        }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{nameof(BalloonFX.Instance)}.Constructor'");
-                }
+                return false;
             }
         }
 
@@ -258,10 +235,6 @@ namespace VaricolouredBalloons
         // либо уничтожаем FX-объект баллона
         // либо не трогаем его и превращаем баг в фичу
         // а также обнуляем ссылку на FX-объект в классе конфига, во избежание конфликтов.
-
-        // обработка третьего косяка в базовой игре
-        // если применить инструмент удаления песочницы к дупликанту с шариком - игра вылетит
-        // тут замешана магия Unity и её объекты Шрёдингера которые null и not null одновременно
         [HarmonyPatch(typeof(EquippableBalloonConfig), "OnUnequipBalloon")]
         private static class EquippableBalloonConfig_OnUnequipBalloon
         {
@@ -272,22 +245,17 @@ namespace VaricolouredBalloons
 
             private static KMonoBehaviour DestroyFX(KMonoBehaviour target)
             {
-                if (VaricolouredBalloonsOptions.Instance.DestroyFXAfterEffectExpired && target != null)
+                if (VaricolouredBalloonsOptions.Instance.DestroyFXAfterEffectExpired && target != null
+                    && target.TryGetComponent<VaricolouredBalloonsHelper>(out var carrier) && carrier.fx != null)
                 {
-                    var carrier = target.GetComponent<VaricolouredBalloonsHelper>();
-                    if (carrier != null && carrier.fx != null)
-                    {
-                        carrier.fx.StopSM("Unequipped");
-                        carrier.fx = null;
-                    }
+                    carrier.fx.StopSM("Unequipped");
+                    carrier.fx = null;
                 }
                 return target;
             }
-
             /*
                 var minionAssignablesProxy = soleOwner.GetComponent<MinionAssignablesProxy>();
-            --- if (minionAssignablesProxy.target != null)
-            +++ if ((minionAssignablesProxy.target as KMonoBehaviour) != (UnityEngine.Object)null)
+                if (!minionAssignablesProxy.target.IsNullOrDestroyed())
                 {
             +++     DestroyFX(minionAssignablesProxy.target as KMonoBehaviour);
                     var effects = (minionAssignablesProxy.target as KMonoBehaviour).GetComponent<Effects>();
@@ -295,55 +263,33 @@ namespace VaricolouredBalloons
                         effects.Remove("HasBalloon");
                 }
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var iList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
                 var get_target = typeof(MinionAssignablesProxy)
                     .GetPropertySafe<IAssignableIdentity>(nameof(MinionAssignablesProxy.target), false)?.GetGetMethod(true);
                 var typeKMonoBehaviour = typeof(KMonoBehaviour);
-                var op_Inequality = typeof(UnityEngine.Object)
-                    .GetMethodSafe("op_Inequality", true, typeof(UnityEngine.Object), typeof(UnityEngine.Object));
                 var destroyFX = typeof(EquippableBalloonConfig_OnUnequipBalloon)
                     .GetMethodSafe(nameof(DestroyFX), true, PPatchTools.AnyArguments);
-
-                bool result1 = false, result2 = false;
-
-                if (get_target != null && typeKMonoBehaviour != null && op_Inequality != null && destroyFX != null)
+                if (get_target != null && typeKMonoBehaviour != null && destroyFX != null)
                 {
-                    for (int i = 0; i < iList.Count; i++)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        if (iList[i].Calls(get_target))
+                        if (instructions[i].Calls(get_target))
                         {
                             i++;
-                            if (iList[i].Branches(out _))
+                            if (instructions[i].Is(OpCodes.Isinst, typeKMonoBehaviour))
                             {
-                                iList.Insert(i++, new CodeInstruction(OpCodes.Isinst, typeKMonoBehaviour));
-                                iList.Insert(i++, new CodeInstruction(OpCodes.Ldnull));
-                                iList.Insert(i++, new CodeInstruction(OpCodes.Call, op_Inequality));
-                                result1 = true;
+                                instructions.Insert(++i, new CodeInstruction(OpCodes.Call, destroyFX));
+                                return true;
                             }
-                            else if (iList[i].opcode == OpCodes.Isinst && Equals(iList[i].operand, typeKMonoBehaviour))
-                            {
-                                iList.Insert(++i, new CodeInstruction(OpCodes.Call, destroyFX));
-                                result2 = true;
-                            }
-                        }
-                        if (result1 && result2)
-                        {
-#if DEBUG
-                            PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                            break;
                         }
                     }
                 }
-                if (!(result1 && result2))
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return iList;
+                return false;
             }
         }
 
@@ -367,36 +313,26 @@ namespace VaricolouredBalloons
                 return VaricolouredBalloonsOptions.Instance.FixEffectDuration ? HasBalloonDuration : duration;
             }
 
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var iList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
                 var Duration = typeof(TRAITS.JOY_REACTIONS).GetFieldSafe(nameof(TRAITS.JOY_REACTIONS.JOY_REACTION_DURATION), true);
                 var FixDuration = typeof(EquippableBalloon_OnSpawn).GetMethodSafe(nameof(FixJoyReactionDuration), true, PPatchTools.AnyArguments);
-
-                bool result = false;
                 if (Duration != null && FixDuration != null)
                 {
-                    for (int i = 0; i < iList.Count; i++)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction = iList[i];
-                        if (instruction.opcode == OpCodes.Ldsfld && instruction.operand is FieldInfo info && info == Duration)
+                        if (instructions[i].LoadsField(Duration))
                         {
-                            iList.Insert(++i, new CodeInstruction(OpCodes.Call, FixDuration));
-#if DEBUG
-                            PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                            result = true;
-                            break;
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, FixDuration));
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return iList;
+                return false;
             }
 
             private static void Postfix(EquippableBalloon __instance)
