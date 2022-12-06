@@ -135,19 +135,22 @@ namespace GraveyardKeeper
                     return EntitySplitter.Split(pickupable, amount, prefab);
             }
 
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions)
             {
                 var EntitySplitter_Split = typeof(EntitySplitter).GetMethodSafe(nameof(EntitySplitter.Split), true, typeof(Pickupable), typeof(float), typeof(GameObject));
                 var splitCorpse = typeof(SeedPlantingStates_PickupComplete).GetMethodSafe(nameof(SplitCorpse), true, typeof(Pickupable), typeof(float), typeof(GameObject));
 
                 if (EntitySplitter_Split != null && splitCorpse != null)
-                    return PPatchTools.ReplaceMethodCallSafe(instructions, EntitySplitter_Split, splitCorpse);
-                else
                 {
-                    string methodName = method.DeclaringType.FullName + "." + method.Name;
-                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                    return instructions;
+                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, EntitySplitter_Split, splitCorpse).ToList();
+                    return true;
                 }
+                return false;
             }
         }
 

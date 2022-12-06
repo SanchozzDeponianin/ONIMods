@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using STRINGS;
@@ -57,36 +56,27 @@ namespace ArtifactCarePackages
         +++ ArtifactImmigration.InjectRandomCarePackages(possiblePackages);
             return possiblePackages[UnityEngine.Random.Range(0, possiblePackages.Count)];
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
 
+            private static bool transpiler(List<CodeInstruction> instructions)
+            { 
                 var list_count = typeof(List<CarePackageInfo>).GetProperty(nameof(List<CarePackageInfo>.Count)).GetGetMethod();
                 var inject = typeof(ArtifactImmigration).GetMethodSafe(nameof(ArtifactImmigration.InjectRandomCarePackages), true, PPatchTools.AnyArguments);
-
-                bool result = false;
                 if (list_count != null && inject != null)
                 {
-                    for (int i = 0; i < instructionsList.Count; i++)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction = instructionsList[i];
-                        if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && info == list_count)
+                        if (instructions[i].Calls(list_count))
                         {
-                            instructionsList.Insert(i, new CodeInstruction(OpCodes.Call, inject));
-                            result = true;
-#if DEBUG
-                            PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                            break;
+                            instructions.Insert(i, new CodeInstruction(OpCodes.Call, inject));
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 
@@ -147,39 +137,27 @@ namespace ArtifactCarePackages
                 gameObject.SetActive(true);
             +++ TryMakeTerrestrialArtifact(gameObject);
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
-                var setActive = typeof(GameObject).GetMethodSafe(nameof(GameObject.SetActive), false, PPatchTools.AnyArguments);
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions)
+            { 
+                var setActive = typeof(GameObject).GetMethodSafe(nameof(GameObject.SetActive), false, typeof(bool));
                 var tryMakeTerrestrialArtifact = typeof(CarePackage_SpawnContents).GetMethodSafe(nameof(CarePackage_SpawnContents.TryMakeTerrestrialArtifact), true, PPatchTools.AnyArguments);
-
-                bool result = false;
                 if (setActive != null && tryMakeTerrestrialArtifact != null)
                 {
-
-                    for (int i = 0; i < instructionsList.Count; i++)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction = instructionsList[i];
-                        if ((instruction.opcode == OpCodes.Call || instruction.opcode == OpCodes.Callvirt)
-                            && (instruction.operand is MethodInfo info) && info == setActive)
+                        if (instructions[i].Calls(setActive))
                         {
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldloc_0));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, tryMakeTerrestrialArtifact));
-                            result = true;
-                            break;
-#if DEBUG
-                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Ldloc_0));
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, tryMakeTerrestrialArtifact));
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 
@@ -203,37 +181,27 @@ namespace ArtifactCarePackages
             --- KBatchedAnimController4.initialAnim = KBatchedAnimController2.initialAnim;
             +++ KBatchedAnimController4.initialAnim = GetProperAnim(KBatchedAnimController2);
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
 
+            private static bool transpiler(List<CodeInstruction> instructions)
+            { 
                 var initialAnim = typeof(KAnimControllerBase).GetFieldSafe(nameof(KAnimControllerBase.initialAnim), false);
                 var getProperAnim = typeof(CarePackage_SetAnimToInfo).GetMethodSafe(nameof(GetProperAnim), true, PPatchTools.AnyArguments);
-
-                bool result = false;
                 if (initialAnim != null && getProperAnim != null)
                 {
-
-                    for (int i = 0; i < instructionsList.Count; i++)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction = instructionsList[i];
-                        if (instruction.opcode == OpCodes.Ldfld && (instruction.operand is FieldInfo info) && info == initialAnim)
+                        if (instructions[i].LoadsField(initialAnim))
                         {
-                            instructionsList[i] = new CodeInstruction(OpCodes.Call, getProperAnim);
-                            result = true;
-                            break;
-#if DEBUG
-                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
+                            instructions[i] = new CodeInstruction(OpCodes.Call, getProperAnim);
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
     }

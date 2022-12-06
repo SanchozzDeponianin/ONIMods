@@ -185,30 +185,34 @@ namespace ExoticSpices
                 }
             }
 
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method, ILGenerator IL)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                var iList = instructions.ToList();
+                return TranspilerUtils.Wrap(instructions, original, IL, transpiler);
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
+            {
                 var getEmitMass = typeof(Flatulence_Emit).GetMethodSafe(nameof(GetEmitMass), true, PPatchTools.AnyArguments);
                 var mass = IL.DeclareLocal(typeof(float));
                 var element = IL.DeclareLocal(typeof(SimHashes));
                 int i = 0;
-                iList.Insert(i++, new CodeInstruction(OpCodes.Ldarg_1));
-                iList.Insert(i++, TranspilerUtils.GetLoadLocalInstruction(element.LocalIndex, true));
-                iList.Insert(i++, new CodeInstruction(OpCodes.Call, getEmitMass));
-                iList.Insert(i++, TranspilerUtils.GetStoreLocalInstruction(mass.LocalIndex));
-                while (i < iList.Count)
+                instructions.Insert(i++, new CodeInstruction(OpCodes.Ldarg_1));
+                instructions.Insert(i++, TranspilerUtils.GetLoadLocalInstruction(element.LocalIndex, true));
+                instructions.Insert(i++, new CodeInstruction(OpCodes.Call, getEmitMass));
+                instructions.Insert(i++, TranspilerUtils.GetStoreLocalInstruction(mass.LocalIndex));
+                while (i < instructions.Count)
                 {
-                    if (iList[i].LoadsConstant(TUNING.TRAITS.FLATULENCE_EMIT_MASS))
+                    if (instructions[i].LoadsConstant(TUNING.TRAITS.FLATULENCE_EMIT_MASS))
                     {
-                        iList[i] = TranspilerUtils.GetLoadLocalInstruction(mass.LocalIndex);
+                        instructions[i] = TranspilerUtils.GetLoadLocalInstruction(mass.LocalIndex);
                     }
-                    else if (iList[i].LoadsConstant(SimHashes.Methane))
+                    else if (instructions[i].LoadsConstant(SimHashes.Methane))
                     {
-                        iList[i] = TranspilerUtils.GetLoadLocalInstruction(element.LocalIndex);
+                        instructions[i] = TranspilerUtils.GetLoadLocalInstruction(element.LocalIndex);
                     }
                     i++;
                 }
-                return iList;
+                return true;
             }
         }
 
@@ -216,37 +220,30 @@ namespace ExoticSpices
         [HarmonyPatch(typeof(Effect), nameof(Effect.CreateTooltip))]
         private static class Effect_CreateTooltip
         {
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method, ILGenerator IL)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                var iList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
+                return TranspilerUtils.Wrap(instructions, original, IL, transpiler);
+            }
 
+            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
+            {
                 var op_Implicit = typeof(StringEntry).GetMethodSafe("op_Implicit", true, typeof(StringEntry));
                 var replace = typeof(string).GetMethodSafe(nameof(string.Replace), false, typeof(string), typeof(string));
                 var linePrefix = typeof(Effect).GetMethodSafe(nameof(Effect.CreateTooltip), true, PPatchTools.AnyArguments)
                     ?.GetParameters()?.First(p => p.ParameterType == typeof(string) && p.Name == "linePrefix");
 
-                bool result = false;
                 if (op_Implicit != null && replace != null && linePrefix != null)
                 {
-                    int i = iList.FindIndex(instr =>
-                        instr.opcode == OpCodes.Call && instr.operand is MethodInfo info && info == op_Implicit);
+                    int i = instructions.FindIndex(instr => instr.Calls(op_Implicit));
                     if (i != -1)
                     {
-                        iList.Insert(++i, new CodeInstruction(OpCodes.Ldstr, "\n"));
-                        iList.Insert(++i, TranspilerUtils.GetLoadArgInstruction(linePrefix.Position));
-                        iList.Insert(++i, new CodeInstruction(OpCodes.Call, replace));
-                        result = true;
-#if DEBUG
-                        Debug.Log($"'{methodName}' Transpiler injected");
-#endif
+                        instructions.Insert(++i, new CodeInstruction(OpCodes.Ldstr, "\n"));
+                        instructions.Insert(++i, TranspilerUtils.GetLoadArgInstruction(linePrefix.Position));
+                        instructions.Insert(++i, new CodeInstruction(OpCodes.Call, replace));
+                        return true;
                     }
                 }
-                if (!result)
-                {
-                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return iList;
+                return false;
             }
         }
 

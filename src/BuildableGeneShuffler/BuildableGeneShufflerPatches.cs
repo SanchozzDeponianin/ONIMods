@@ -105,36 +105,27 @@ namespace BuildableGeneShuffler
 		    ---     array = new float[] { base.GetComponent<PrimaryElement>().Mass };
 	        +++     array = InjectMass(new float[] { base.GetComponent<PrimaryElement>().Mass });
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method, ILGenerator IL)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
 
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
                 var injectMass = typeof(Deconstructable_SpawnItemsFromConstruction).GetMethodSafe(nameof(InjectMass), true, PPatchTools.AnyArguments);
-                bool result = false;
                 if (injectMass != null)
                 {
-                    for (int i = 0; i < instructionsList.Count; i++)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction = instructionsList[i];
-                        if (instruction.opcode == OpCodes.Stelem_R4)
+                        if (instructions[i].opcode == OpCodes.Stelem_R4)
                         {
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, injectMass));
-                            result = true;
-                            break;
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, injectMass));
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-#if DEBUG
-                else
-                    PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                return instructionsList;
+                return false;
             }
         }
 

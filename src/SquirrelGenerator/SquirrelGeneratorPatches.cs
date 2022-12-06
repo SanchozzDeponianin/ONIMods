@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
@@ -65,36 +64,27 @@ namespace SquirrelGenerator
                 return builder.PushInterruptGroup().Add(new WheelRunningStates.Def()).PopInterruptGroup();
             }
 
-            internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
 
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
                 var pop = typeof(ChoreTable.Builder).GetMethodSafe(nameof(ChoreTable.Builder.PopInterruptGroup), false, PPatchTools.AnyArguments);
                 var inject = typeof(BaseSquirrelConfig_BaseSquirrel).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments);
-                bool result = false;
-
                 if (pop != null && inject != null)
                 {
-                    for (int i = 0; i < instructionsList.Count; i++)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction = instructionsList[i];
-                        if ((instruction.opcode == OpCodes.Call || instruction.opcode == OpCodes.Callvirt) && (instruction.operand is MethodInfo info) && info == pop)
+                        if (instructions[i].Calls(pop))
                         {
-                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Call, inject));
-                            result = true;
-#if DEBUG
-                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                            break;
+                            instructions.Insert(i++, new CodeInstruction(OpCodes.Call, inject));
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 

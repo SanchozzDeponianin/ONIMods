@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
@@ -68,36 +67,27 @@ namespace MechanicsStation
 	            if (this.keepAdditionalTag != Tag.Invalid)
 		            hashSet.Add(this.keepAdditionalTag);
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
 
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
                 var newobj = typeof(HashSet<Tag>).GetConstructor(System.Type.EmptyTypes);
                 var inject = typeof(ComplexFabricator_DropExcessIngredients).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments);
-                bool result = false;
-
                 if (newobj != null && inject != null)
                 {
-                    for (int i = 0; i < instructionsList.Count; i++)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction = instructionsList[i];
-                        if (instruction.opcode == OpCodes.Newobj && (instruction.operand is ConstructorInfo info) && info == newobj)
+                        if (instructions[i].Is(OpCodes.Newobj, newobj))
                         {
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, inject));
-                            result = true;
-#if DEBUG
-                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                            break;
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, inject));
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 

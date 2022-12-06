@@ -40,35 +40,27 @@ namespace Smelter
         [HarmonyPatch(typeof(LiquidCooledFueledRefinery), "OnSpawn")]
         private static class LiquidCooledFueledRefinery_OnSpawn
         {
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
 
-                var @base = typeof(LiquidCooledRefinery).GetMethodSafe("OnSpawn", false, PPatchTools.AnyArguments);
-                var basebase = typeof(ComplexFabricator).GetMethodSafe("OnSpawn", false, PPatchTools.AnyArguments);
-                bool result = false;
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var @base = typeof(LiquidCooledRefinery).GetMethodSafe("OnSpawn", false);
+                var basebase = typeof(ComplexFabricator).GetMethodSafe("OnSpawn", false);
                 if (@base != null && basebase != null)
                 {
-                    for (int i = 0; i < instructionsList.Count(); i++)
+                    for (int i = 0; i < instructions.Count(); i++)
                     {
-                        var instruction = instructionsList[i];
-                        if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && info == @base)
+                        if (instructions[i].Calls(@base))
                         {
-                            instructionsList[i] = new CodeInstruction(OpCodes.Call, basebase);
-                            result = true;
-#if DEBUG
-                            PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                            break;
+                            instructions[i] = new CodeInstruction(OpCodes.Call, basebase);
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 

@@ -32,6 +32,9 @@
     <Compile Include="..\lib\StorageDropper.cs">
       <Link>StorageDropper.cs</Link>
     </Compile>
+    <Compile Include="..\lib\TranspilerUtils.cs">
+      <Link>TranspilerUtils.cs</Link>
+    </Compile>
     <Compile Include="..\lib\UI.cs">
       <Link>UI.cs</Link>
     </Compile>

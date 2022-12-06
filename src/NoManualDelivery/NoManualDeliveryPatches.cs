@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
 using TUNING;
@@ -14,7 +12,7 @@ using PeterHan.PLib.PatchManager;
 
 namespace NoManualDelivery
 {
-    internal sealed class NoManualDeliveryPatches:KMod.UserMod2
+    internal sealed class NoManualDeliveryPatches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
@@ -138,17 +136,12 @@ namespace NoManualDelivery
 
             private static void Postfix(Chore ___chore)
             {
-                if (___chore != null && ___chore is FetchChore)
+                if (___chore != null && ___chore is FetchChore chore)
                 {
                     string id = ChorePreconditions.instance.IsAllowedByAutomation.id;
-                    /*
-                    Traverse traverse = Traverse.Create(___chore);
-                    traverse.Field<bool>("arePreconditionsDirty").Value = true;
-                    traverse.Field<List<Chore.PreconditionInstance>>("preconditions").Value.RemoveAll((Chore.PreconditionInstance x) => x.id == id);
-                    */
-                    arePreconditionsDirty.Set(___chore, true);
-                    preconditions.Get(___chore).RemoveAll((Chore.PreconditionInstance x) => x.id == id);
-                    ((FetchChore)___chore).automatable = null;
+                    arePreconditionsDirty.Set(chore, true);
+                    preconditions.Get(chore).RemoveAll((Chore.PreconditionInstance x) => x.id == id);
+                    chore.automatable = null;
                 }
             }
         }
@@ -185,32 +178,19 @@ namespace NoManualDelivery
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-                var CouldBePickedUpByMinion = typeof(Pickupable).GetMethod(nameof(Pickupable.CouldBePickedUpByMinion), new Type[] { typeof(GameObject) });
-                var CouldBePickedUpByTransferArm = typeof(Pickupable).GetMethod(nameof(Pickupable.CouldBePickedUpByTransferArm), new Type[] { typeof(GameObject) });
-                bool result = false;
+                return TranspilerUtils.Wrap(instructions, method, transpiler);
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var CouldBePickedUpByMinion = typeof(Pickupable).GetMethodSafe(nameof(Pickupable.CouldBePickedUpByMinion), false, typeof(GameObject));
+                var CouldBePickedUpByTransferArm = typeof(Pickupable).GetMethodSafe(nameof(Pickupable.CouldBePickedUpByTransferArm), false, typeof(GameObject));
                 if (CouldBePickedUpByMinion != null && CouldBePickedUpByTransferArm != null)
                 {
-                    for (int i = 0; i < instructionsList.Count; i++)
-                    {
-                        var instruction = instructionsList[i];
-                        if (instruction.opcode == OpCodes.Callvirt && (instruction.operand is MethodInfo info) && info == CouldBePickedUpByMinion)
-                        {
-                            instructionsList[i] = new CodeInstruction(OpCodes.Callvirt, CouldBePickedUpByTransferArm);
-                            result = true;
-#if DEBUG
-                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                            break;
-                        }
-                    }
+                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, CouldBePickedUpByMinion, CouldBePickedUpByTransferArm).ToList();
+                    return true;
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"{ Utils.modInfo.assemblyName}: Could not apply apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 

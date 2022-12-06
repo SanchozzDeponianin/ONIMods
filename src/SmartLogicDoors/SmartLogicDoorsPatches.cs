@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
@@ -87,11 +86,13 @@ namespace SmartLogicDoors
             --- this.requestedState = (LogicCircuitNetwork.IsBitActive(0, newValue) ? Door.ControlState.Opened : Door.ControlState.Locked);
             +++ this.requestedState = GetDoorState(this, LogicCircuitNetwork.IsBitActive(0, newValue));
             */
-            internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method, ILGenerator IL)
+            internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
+                return TranspilerUtils.Wrap(instructions, original, IL, transpiler);
+            }
 
+            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL, TranspilerUtils.Log log)
+            {
                 var isBitActive = typeof(LogicCircuitNetwork).GetMethodSafe(nameof(LogicCircuitNetwork.IsBitActive), true, PPatchTools.AnyArguments);
                 var getDoorState = typeof(Door_OnLogicValueChanged).GetMethodSafe(nameof(GetDoorState), true, PPatchTools.AnyArguments);
                 var requestedState = typeof(Door).GetFieldSafe("requestedState", false);
@@ -100,41 +101,33 @@ namespace SmartLogicDoors
                 if (isBitActive != null && getDoorState != null && requestedState != null)
                 {
                     var label = IL.DefineLabel();
-                    for (int i = 0; i < instructionsList.Count; i++)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction = instructionsList[i];
-                        if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && isBitActive == info)
+                        var instruction = instructions[i];
+                        if (instruction.Calls(isBitActive))
                         {
                             i++;
-                            if (instructionsList[i].IsStloc())
+                            if (instructions[i].IsStloc())
                             {
-                                var ldloc = TranspilerUtils.GetMatchingLoadInstruction(instructionsList[i]);
-                                instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                                instructionsList.Insert(++i, new CodeInstruction(OpCodes.Dup));
-                                instructionsList.Insert(++i, ldloc);
-                                instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, getDoorState));
-                                instructionsList.Insert(++i, new CodeInstruction(OpCodes.Br_S, label));
-#if DEBUG
-                                Debug.Log($"'{methodName}' Transpiler#1 injected");
-#endif
+                                var ldloc = TranspilerUtils.GetMatchingLoadInstruction(instructions[i]);
+                                instructions.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                                instructions.Insert(++i, new CodeInstruction(OpCodes.Dup));
+                                instructions.Insert(++i, ldloc);
+                                instructions.Insert(++i, new CodeInstruction(OpCodes.Call, getDoorState));
+                                instructions.Insert(++i, new CodeInstruction(OpCodes.Br_S, label));
                                 result1 = true;
+                                log.Step(1);
                             }
                         }
-                        else if (instruction.opcode == OpCodes.Stfld && (instruction.operand is FieldInfo finfo) && requestedState == finfo)
+                        else if (instruction.StoresField(requestedState))
                         {
                             instruction.labels.Add(label);
-#if DEBUG
-                                Debug.Log($"'{methodName}' Transpiler#2 injected");
-#endif
                             result2 = true;
+                            log.Step(2);
                         }
                     }
                 }
-                if (!(result1 && result2))
-                {
-                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return result1 && result2;
             }
         }
 

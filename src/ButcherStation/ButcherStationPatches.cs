@@ -115,38 +115,29 @@ namespace ButcherStation
                 .Add(new LayEggStates.Def(), !is_baby)
                 blablabla
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
                 var LayEggDef = typeof(LayEggStates.Def).GetConstructor(Type.EmptyTypes);
                 var is_baby = typeof(BasePacuConfig).GetMethodSafe(nameof(BasePacuConfig.CreatePrefab), true, PPatchTools.AnyArguments)
                     ?.GetParameters().First(arg => arg.Name == "is_baby");
                 var Inject = typeof(BasePacuConfig_CreatePrefab).GetMethodSafe(nameof(BasePacuConfig_CreatePrefab.Inject), true, PPatchTools.AnyArguments);
-
-                bool result = false;
                 if (LayEggDef != null && Inject != null && is_baby != null)
                 {
-                    for (int i = 0; i < instructionsList.Count; i++)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction = instructionsList[i];
-                        if ((instruction.opcode == OpCodes.Newobj) && (instruction.operand is ConstructorInfo info) && LayEggDef == info)
+                        if (instructions[i].Is(OpCodes.Newobj, LayEggDef))
                         {
-                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldarg_S, is_baby.Position));
-                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Call, Inject));
-                            result = true;
-#if DEBUG
-                            Debug.Log($"'{methodName}' Transpiler injected");
-#endif
+                            instructions.Insert(i++, TranspilerUtils.GetLoadArgInstruction(is_baby.Position));
+                            instructions.Insert(i++, new CodeInstruction(OpCodes.Call, Inject));
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 
@@ -168,37 +159,27 @@ namespace ButcherStation
                 var creatures = this.ranch.cavity.creatures;
             +++ creatures = GetOrderedCreatureList(creatures, this);
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
                 var creatures = typeof(CavityInfo).GetField(nameof(CavityInfo.creatures));
                 var GetOrderedCreatureList = typeof(RanchStation_Instance_FindRanchable).GetMethodSafe(nameof(RanchStation_Instance_FindRanchable.GetOrderedCreatureList), true, PPatchTools.AnyArguments);
-
-                bool result = false;
                 if (creatures != null && GetOrderedCreatureList != null)
                 {
-                    for (int i = 0; i < instructionsList.Count; i++)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction = instructionsList[i];
-                        if (instruction.opcode == OpCodes.Ldfld && instruction.operand is FieldInfo info && info == creatures)
+                        if (instructions[i].LoadsField(creatures))
                         {
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, GetOrderedCreatureList));
-                            result = true;
-#if DEBUG
-                            Debug.Log($"'{methodName}' Transpiler injected");
-#endif
-                            break;
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, GetOrderedCreatureList));
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 
@@ -222,37 +203,28 @@ namespace ButcherStation
             ---     || cavityForCell != this.ranch.cavity;
             +++     || cavityForCell != GetFishingCavity(this.ranch.cavity, this);
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
 
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
                 var cavity = typeof(Room).GetField(nameof(Room.cavity));
                 var GetFishingCavity = typeof(RanchStation_CanRanchableBeRanchedAtRanchStation).GetMethodSafe(nameof(RanchStation_CanRanchableBeRanchedAtRanchStation.GetFishingCavity), true, PPatchTools.AnyArguments);
-
-                bool result = false;
                 if (cavity != null && GetFishingCavity != null)
                 {
-                    for (int i = 0; i < instructionsList.Count; i++)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction = instructionsList[i];
-                        if (instruction.opcode == OpCodes.Ldfld && instruction.operand is FieldInfo info && info == cavity)
+                        if (instructions[i].LoadsField(cavity))
                         {
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, GetFishingCavity));
-                            result = true;
-#if DEBUG
-                            Debug.Log($"'{methodName}' Transpiler injected");
-#endif
-                            break;
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, GetFishingCavity));
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 
@@ -285,18 +257,20 @@ namespace ButcherStation
             {
                 __instance.bagged.PlayAnim(ChooseBaggedAnim, KAnim.PlayMode.Loop);
             }
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions)
             {
                 var PlayAnim = typeof(GameStateMachine<BaggedStates, BaggedStates.Instance, IStateMachineTarget, BaggedStates.Def>.State).GetMethodSafe("PlayAnim", false, typeof(string), typeof(KAnim.PlayMode));
                 var Stub = typeof(BaggedStates_InitializeStates).GetMethodSafe(nameof(PlayAnimStub), true, PPatchTools.AnyArguments);
                 if (PlayAnim != null && Stub != null)
-                    return PPatchTools.ReplaceMethodCallSafe(instructions, PlayAnim, Stub);
-                else
                 {
-                    string methodName = method.DeclaringType.FullName + "." + method.Name;
-                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                    return instructions;
+                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, PlayAnim, Stub).ToList();
+                    return true;
                 }
+                return false;
             }
         }
 
@@ -387,37 +361,27 @@ namespace ButcherStation
                 return type;
             }
 
-            internal static IEnumerable<CodeInstruction> TranspilerCompat(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            internal static IEnumerable<CodeInstruction> TranspilerCompat(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
                 var CreaturePen = typeof(RoomTypes).GetField(nameof(RoomTypes.CreaturePen));
                 var GetTrueRoomType = typeof(RanchStation_OnRoomUpdated).GetMethodSafe(nameof(RanchStation_OnRoomUpdated.GetTrueRoomType), true, PPatchTools.AnyArguments);
-
-                bool result = false;
                 if (CreaturePen != null && GetTrueRoomType != null)
                 {
-                    for (int i = 0; i < instructionsList.Count; i++)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction = instructionsList[i];
-                        if ((instruction.opcode == OpCodes.Ldfld) && (instruction.operand is FieldInfo info) && info == CreaturePen)
+                        if (instructions[i].LoadsField(CreaturePen))
                         {
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                            instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, GetTrueRoomType));
-                            result = true;
-#if DEBUG
-                            Debug.Log($"'{methodName}' Transpiler injected");
-#endif
-                            break;
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, GetTrueRoomType));
+                            return true;
                         }
                     }
                 }
-                if (!result)
-                {
-                    Debug.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
     }

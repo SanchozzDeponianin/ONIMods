@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using STRINGS;
 using UnityEngine;
 using HarmonyLib;
+using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 
@@ -82,11 +83,13 @@ namespace SanchozzONIMods.Shared
             return $"{tooltip}\n{string.Format(BUILDING.STATUSITEMS.WAITINGFORMATERIALS.LINE_ITEM_UNITS, manualDelivery.RequestedItemTag.ProperName())}";
         }
 
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
         {
-            var instructionsList = instructions.ToList();
-            string methodName = method.DeclaringType.FullName + "." + method.Name;
+            return TranspilerUtils.Wrap(instructions, original, transpiler);
+        }
 
+        private static bool transpiler(List<CodeInstruction> instructions)
+        {
             var Tooltip1 = typeof(UI.USERMENUACTIONS.MANUAL_DELIVERY)
                 .GetFieldSafe(nameof(UI.USERMENUACTIONS.MANUAL_DELIVERY.TOOLTIP), true);
             var Tooltip2 = typeof(UI.USERMENUACTIONS.MANUAL_DELIVERY)
@@ -96,26 +99,18 @@ namespace SanchozzONIMods.Shared
             bool result = false;
             if (Tooltip1 != null && Tooltip2 != null && Resolver != null)
             {
-                for (int i = 0; i < instructionsList.Count(); i++)
+                for (int i = 0; i < instructions.Count(); i++)
                 {
-                    var instruction = instructionsList[i];
-                    if (instruction.opcode == OpCodes.Ldsfld && (instruction.operand is FieldInfo info) && (info == Tooltip1 || info == Tooltip2))
+                    if (instructions[i].LoadsField(Tooltip1) || instructions[i].LoadsField(Tooltip2))
                     {
                         i++;
-                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, Resolver));
+                        instructions.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                        instructions.Insert(++i, new CodeInstruction(OpCodes.Call, Resolver));
                         result = true;
-#if DEBUG
-                            PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
                     }
                 }
             }
-            if (!result)
-            {
-                PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-            }
-            return instructionsList;
+            return result;
         }
     }
 }

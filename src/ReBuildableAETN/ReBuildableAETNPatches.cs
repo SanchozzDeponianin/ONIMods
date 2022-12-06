@@ -144,24 +144,21 @@ namespace ReBuildableAETN
                 fetchList.Add(tag, forbidden_tags, amount, operationalRequirement);
             }
 
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
                 var fetchList_Add = typeof(FetchList2).GetMethodSafe(nameof(FetchList2.Add), false, typeof(Tag), typeof(Tag[]), typeof(float), typeof(Operational.State));
                 var injectForbiddenTag = typeof(Constructable_OnSpawn).GetMethodSafe(nameof(InjectForbiddenTag), true, PPatchTools.AnyArguments);
-
                 if (fetchList_Add != null && injectForbiddenTag != null)
                 {
-                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, fetchList_Add, injectForbiddenTag);
-#if DEBUG
-                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
+                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, fetchList_Add, injectForbiddenTag).ToList();
+                    return true;
                 }
-                else
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructions;
+                return false;
             }
         }
 
@@ -207,24 +204,21 @@ namespace ReBuildableAETN
                 return go.AddOrGet<Demolishable>();
             }
 
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
                 var AddOrGetDemolishable = typeof(EntityTemplateExtensions).GetMethodSafe(nameof(EntityTemplateExtensions.AddOrGet), true, typeof(GameObject))?.MakeGenericMethod(typeof(Demolishable));
                 var injectSetLocker = typeof(PropFacilityDeskConfig_CreatePrefab).GetMethodSafe(nameof(InjectSetLocker), true, PPatchTools.AnyArguments);
-
                 if (AddOrGetDemolishable != null && injectSetLocker != null)
                 {
-                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, AddOrGetDemolishable, injectSetLocker);
-#if DEBUG
-                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
+                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, AddOrGetDemolishable, injectSetLocker).ToList();
+                    return true;
                 }
-                else
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructions;
+                return false;
             }
         }
 

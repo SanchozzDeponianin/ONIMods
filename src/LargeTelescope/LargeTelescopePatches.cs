@@ -90,27 +90,21 @@ namespace LargeTelescope
         {
             private static void StubSetGasProvider(OxygenBreather breather, OxygenBreather.IGasProvider gas_provider) { }
 
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method, ILGenerator IL)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-                var SetGasProvider = typeof(OxygenBreather).GetMethodSafe(nameof(OxygenBreather.SetGasProvider), false, PPatchTools.AnyArguments);
-                var Stub = typeof(ClusterTelescope_ClusterTelescopeWorkable_OnWorkableEvent_Oxygen).GetMethodSafe(nameof(StubSetGasProvider), true, PPatchTools.AnyArguments);
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
 
-                bool result = false;
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var SetGasProvider = typeof(OxygenBreather).GetMethodSafe(nameof(OxygenBreather.SetGasProvider), false, typeof(OxygenBreather.IGasProvider));
+                var Stub = typeof(ClusterTelescope_ClusterTelescopeWorkable_OnWorkableEvent_Oxygen).GetMethodSafe(nameof(StubSetGasProvider), true, PPatchTools.AnyArguments);
                 if (SetGasProvider != null && Stub != null)
                 {
-                    instructions = PPatchTools.ReplaceMethodCall(instructions, SetGasProvider, Stub);
-                    result = true;
+                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, SetGasProvider, Stub).ToList();
+                    return true;
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-#if DEBUG
-                else
-                    PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                return instructions;
+                return false;
             }
         }
     }

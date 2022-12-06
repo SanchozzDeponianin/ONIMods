@@ -159,34 +159,27 @@ namespace BetterPlantTending
             +++     .AddMutation(this)
                     .SetActive(true);
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
                 var kInstantiate = typeof(Util).GetMethodSafe(nameof(Util.KInstantiate), true, typeof(GameObject), typeof(Vector3));
                 var addMutation = typeof(BuddingTrunk_ExtractExtraSeed).GetMethodSafe(nameof(AddMutation), true, PPatchTools.AnyArguments);
-
-                bool result = false;
-                for (int i = 0; i < instructionsList.Count; i++)
+                if (kInstantiate != null && addMutation != null)
                 {
-                    var instruction = instructionsList[i];
-                    if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && kInstantiate == info)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, addMutation));
-#if DEBUG
-                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                        result = true;
-                        break;
+                        if (instructions[i].Calls(kInstantiate))
+                        {
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, addMutation));
+                            return true;
+                        }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 
@@ -317,33 +310,27 @@ namespace BetterPlantTending
             --- float mass = pickupable.GetComponent<Edible>().Calories * 0.001f * base.def.kcalorieToKGConversionRatio;
             +++ float mass = pickupable.GetComponent<Edible>().Calories * 0.001f * base.def.kcalorieToKGConversionRatio * dt;
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
                 var Ratio = typeof(SapTree.Def).GetFieldSafe(nameof(SapTree.Def.kcalorieToKGConversionRatio), false);
-
-                bool result = false;
-                for (int i = 0; i < instructionsList.Count; i++)
+                var dt = typeof(SapTree.StatesInstance).GetMethodSafe(nameof(SapTree.StatesInstance.EatFoodItem), false, typeof(float))?.GetParameters()?.First(p => p.ParameterType == typeof(float) && p.Name == "dt");
+                if (Ratio != null && dt != null)
                 {
-                    var instruction = instructionsList[i];
-                    if ((instruction.opcode == OpCodes.Ldfld) && (instruction.operand is FieldInfo info) && Ratio == info)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldarg_1));
-                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Mul));
-#if DEBUG
-                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                        result = true;
-                        break;
+                        if (instructions[i].LoadsField(Ratio))
+                        {
+                            instructions.Insert(++i, TranspilerUtils.GetLoadArgInstruction(dt));
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Mul));
+                            return true;
+                        }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 
@@ -453,12 +440,11 @@ namespace BetterPlantTending
         {
             private static void AddPlant(List<KMonoBehaviour> list, KMonoBehaviour plant)
             {
-                if (plant?.GetComponent<ExtraSeedProducer>()?.ExtraSeedAvailable ?? false)
+                if (plant != null && plant.TryGetComponent<ExtraSeedProducer>(out var producer) && producer.ExtraSeedAvailable)
                 {
-                    list.Add(plant);
+                    list?.Add(plant);
                 }
             }
-
             /*
             var targets = ListPool<KMonoBehaviour, ClimbableTreeMonitor>.Allocate(); 
             ...
@@ -467,37 +453,39 @@ namespace BetterPlantTending
         +++     AddPlant(targets, target);
             ...
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
-                var getComponent = typeof(Component).GetMethod(nameof(Component.GetComponent), new Type[0]).MakeGenericMethod(typeof(StorageLocker));
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions, TranspilerUtils.Log log)
+            {
+                var allocate = typeof(ListPool<KMonoBehaviour, ClimbableTreeMonitor>).GetMethodSafe(nameof(ListPool<KMonoBehaviour, ClimbableTreeMonitor>.Allocate), true);
+                var getComponent = typeof(Component).GetMethod(nameof(Component.GetComponent), Type.EmptyTypes).MakeGenericMethod(typeof(StorageLocker));
                 var addPlant = typeof(ClimbableTreeMonitor_Instance_FindClimbableTree).GetMethodSafe(nameof(AddPlant), true, PPatchTools.AnyArguments);
-
-                bool result = false;
-                for (int i = 0; i < instructionsList.Count; i++)
+                if (allocate != null && getComponent != null && addPlant != null)
                 {
-                    var instruction = instructionsList[i];
-                    if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && getComponent == info)
+                    CodeInstruction ldloc_list = null;
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        var instruction_ldlocs = instructionsList[i - 1];
-                        ++i;
-                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Ldloc_1));
-                        instructionsList.Insert(++i, new CodeInstruction(instruction_ldlocs));
-                        instructionsList.Insert(++i, new CodeInstruction(OpCodes.Call, addPlant));
-#if DEBUG
-                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                        result = true;
-                        break;
+                        if (instructions[i].Calls(allocate) && instructions[i + 1].IsStloc())
+                        {
+                            ldloc_list = TranspilerUtils.GetMatchingLoadInstruction(instructions[i + 1]);
+                            log.Step(1);
+                            continue;
+                        }
+                        if (ldloc_list != null && instructions[i].Calls(getComponent) && instructions[i - 1].IsLdloc())
+                        {
+                            var ldloc_target = new CodeInstruction(instructions[i - 1]);
+                            ++i;
+                            instructions.Insert(++i, ldloc_list);
+                            instructions.Insert(++i, ldloc_target);
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, addPlant));
+                            log.Step(2);
+                            return true;
+                        }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 
@@ -525,40 +513,40 @@ namespace BetterPlantTending
         {
             private static Component GetTwoComponents(GameObject go)
             {
-                return (Component)go.GetComponent<Growing>() ?? go.GetComponent<ExtraSeedProducer>();
+                if (go != null)
+                {
+                    if (go.TryGetComponent<Growing>(out var growing))
+                        return growing;
+                    if (go.TryGetComponent<ExtraSeedProducer>(out var producer))
+                        return producer;
+                }
+                return null;
             }
             /*
         --- Growing growing = go.GetComponent<Growing>();
         +++ Growing growing = go.GetComponent<Growing>() ?? go.GetComponent<ExtraSeedProducer>();
 	        bool flag = growing == null;
             */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
-                var getComponent = typeof(GameObject).GetMethod(nameof(GameObject.GetComponent), new Type[0]).MakeGenericMethod(typeof(Growing));
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var getComponent = typeof(GameObject).GetMethod(nameof(GameObject.GetComponent), Type.EmptyTypes).MakeGenericMethod(typeof(Growing));
                 var getTwoComponents = typeof(GameUtil_GetPlantEffectDescriptors).GetMethodSafe(nameof(GetTwoComponents), true, PPatchTools.AnyArguments);
-
-                bool result = false;
-                for (int i = 0; i < instructionsList.Count; i++)
+                if (getComponent != null && getTwoComponents != null)
                 {
-                    var instruction = instructionsList[i];
-                    if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && getComponent == info)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        instructionsList[i] = new CodeInstruction(OpCodes.Call, getTwoComponents);
-#if DEBUG
-                        PUtil.LogDebug($"'{methodName}' Transpiler injected");
-#endif
-                        result = true;
-                        break;
+                        if (instructions[i].Calls(getComponent))
+                        {
+                            instructions[i] = new CodeInstruction(OpCodes.Call, getTwoComponents);
+                            return true;
+                        }
                     }
                 }
-                if (!result)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return false;
             }
         }
 
@@ -599,56 +587,54 @@ namespace BetterPlantTending
                 return growing.ReachedNextHarvest();
             }
 
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                var instructionsList = instructions.ToList();
-                string methodName = method.DeclaringType.FullName + "." + method.Name;
-
-                var IsGrown = typeof(Growing).GetMethodSafe("IsGrown", false, PPatchTools.AnyArguments);
-                var GetWorldItems = typeof(Components.Cmps<Crop>).GetMethodSafe("GetWorldItems", false, PPatchTools.AnyArguments);
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions, TranspilerUtils.Log log)
+            {
+                var smi = typeof(CropTendingStates).GetMethodSafe("FindCrop", false, typeof(CropTendingStates.Instance))?.GetParameters()
+                    ?.First(p => p.ParameterType == typeof(CropTendingStates.Instance));
+                var IsGrown = typeof(Growing).GetMethodSafe(nameof(Growing.IsGrown), false);
+                var GetWorldItems = typeof(Components.Cmps<Crop>).GetMethodSafe(nameof(Components.Cmps<Crop>.GetWorldItems), false, PPatchTools.AnyArguments);
                 var findPlants = typeof(CropTendingStates_FindCrop).GetMethodSafe(nameof(FindPlants), true, PPatchTools.AnyArguments);
                 var isNotNeedTending = typeof(CropTendingStates_FindCrop).GetMethodSafe(nameof(IsNotNeedTending), true, PPatchTools.AnyArguments);
 
-                bool r1 = false, r2 = false;
-                for (int i = 0; i < instructionsList.Count; i++)
+                bool result1 = false, result2 = false;
+                if (smi != null && IsGrown != null && GetWorldItems != null && findPlants != null && isNotNeedTending != null)
                 {
-                    var instruction = instructionsList[i];
-                    /*
-                    foreach (Crop worldItem in 
-                ---         Components.Crops.GetWorldItems(smi.gameObject.GetMyWorldId(), false))
-                +++         FindPlants(smi))
-                    */
-                    if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info) && info == GetWorldItems)
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        for (int j = 0; j < GetWorldItems.GetParameters().Length; j++)
-                            instructionsList.Insert(i++, new CodeInstruction(OpCodes.Pop));
-                        instructionsList.Insert(i++, new CodeInstruction(OpCodes.Ldarg_1));
-                        instructionsList[i] = new CodeInstruction(OpCodes.Call, findPlants);
-                        r1 = true;
-#if DEBUG
-                        PUtil.LogDebug($"'{methodName}' Transpiler #1 injected");
-#endif
-                    }
-                    /*        
-                    Growing growing = worldItem.GetComponent<Growing>();
-	            ---	if (!(growing != null && growing.IsGrown()) && блаблабла ...)
-                +++ if (!(growing != null && isNotNeedTending(growing)) && блаблабла ...)
-                    */
-                    if (((instruction.opcode == OpCodes.Call) || (instruction.opcode == OpCodes.Callvirt)) && (instruction.operand is MethodInfo info2) && info2 == IsGrown)
-                    {
-                        instructionsList[i] = new CodeInstruction(OpCodes.Call, isNotNeedTending);
-                        r2 = true;
-#if DEBUG
-                        PUtil.LogDebug($"'{methodName}' Transpiler #2 injected");
-#endif
-                        break;
+                        var instruction = instructions[i];
+                        /*
+                        foreach (Crop worldItem in 
+                    ---         Components.Crops.GetWorldItems(smi.gameObject.GetMyWorldId(), false))
+                    +++         FindPlants(smi))
+                        */
+                        if (instruction.Calls(GetWorldItems))
+                        {
+                            for (int j = 0; j < GetWorldItems.GetParameters().Length; j++)
+                                instructions.Insert(i++, new CodeInstruction(OpCodes.Pop));
+                            instructions.Insert(i++, TranspilerUtils.GetLoadArgInstruction(smi));
+                            instructions[i] = new CodeInstruction(OpCodes.Call, findPlants);
+                            log.Step(1);
+                            result1 = true;
+                        }
+                        /*        
+                        Growing growing = worldItem.GetComponent<Growing>();
+                    ---	if (!(growing != null && growing.IsGrown()) && блаблабла ...)
+                    +++ if (!(growing != null && isNotNeedTending(growing)) && блаблабла ...)
+                        */
+                        if (instruction.Calls(IsGrown))
+                        {
+                            instructions[i] = new CodeInstruction(OpCodes.Call, isNotNeedTending);
+                            log.Step(2);
+                            result2 = true;
+                            break;
+                        }
                     }
                 }
-                if (!r1 || !r2)
-                {
-                    PUtil.LogWarning($"Could not apply Transpiler to the '{methodName}'");
-                }
-                return instructionsList;
+                return result1 && result2;
             }
         }
 
@@ -676,7 +662,7 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(FertilizationMonitor), nameof(FertilizationMonitor.InitializeStates))]
         private static class FertilizationMonitor_InitializeStates
         {
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 return PPatchTools.ReplaceConstant(instructions, (int)GameHashes.WiltRecover, (int)GameHashes.TagsChanged, true);
             }
