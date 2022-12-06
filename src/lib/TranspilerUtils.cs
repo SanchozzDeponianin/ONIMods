@@ -1,11 +1,98 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
+#if USESPLIB
+using PeterHan.PLib.Core;
+#endif
 
 namespace SanchozzONIMods.Lib
 {
     public static class TranspilerUtils
     {
+        // обёртка для транспилеров, для упрощения и унификации логирования в случаях успеха и неудачи
+        public class Log
+        {
+            private string methodName;
+
+            public Log(MethodBase method)
+            {
+                methodName = method.DeclaringType.FullName + "." + method.Name;
+            }
+
+            public void Step(int step)
+            {
+#if DEBUG
+                var message = $"Attempt to inject Transpiler to the '{methodName}' step #{step}";
+#if USESPLIB
+                PUtil.LogDebug(message);
+#else
+                Debug.Log(message);
+#endif
+#endif
+            }
+
+            public void Success()
+            {
+#if DEBUG
+                var message = $"Transpiler injected to the '{methodName}'";
+#if USESPLIB
+                PUtil.LogDebug(message);
+#else
+                Debug.Log(message);
+#endif
+#endif
+            }
+
+            public void Failure()
+            {
+                var message = $"Could not apply Transpiler to the '{methodName}'";
+#if USESPLIB
+                PUtil.LogWarning(message);
+#else
+                Debug.LogWarning(message);
+#endif
+            }
+        }
+
+        public delegate bool Callback_IL_Log(List<CodeInstruction> instructions, ILGenerator IL, Log log);
+        public delegate bool Callback_Log(List<CodeInstruction> instructions, Log log);
+        public delegate bool Callback_IL(List<CodeInstruction> instructions, ILGenerator IL);
+        public delegate bool Callback(List<CodeInstruction> instructions);
+
+        public static IEnumerable<CodeInstruction> Wrap(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL, Callback_IL_Log transpiler)
+        {
+            var modified_instructions = instructions.ToList();
+            var log = new Log(original);
+            if (transpiler(modified_instructions, IL, log))
+            {
+                log.Success();
+                return modified_instructions;
+            }
+            else
+            {
+                log.Failure();
+                return instructions;
+            }
+        }
+
+        public static IEnumerable<CodeInstruction> Wrap(IEnumerable<CodeInstruction> instructions, MethodBase original, Callback_Log transpiler)
+        {
+            return Wrap(instructions, original, null, (list, il, log) => transpiler(list, log));
+        }
+
+        public static IEnumerable<CodeInstruction> Wrap(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL, Callback_IL transpiler)
+        {
+            return Wrap(instructions, original, IL, (list, il, log) => transpiler(list, il));
+        }
+
+        public static IEnumerable<CodeInstruction> Wrap(IEnumerable<CodeInstruction> instructions, MethodBase original, Callback transpiler)
+        {
+            return Wrap(instructions, original, null, (list, il, log) => transpiler(list));
+        }
+
         public static CodeInstruction GetMatchingLoadInstruction(CodeInstruction code)
         {
             var opcode = code.opcode;
@@ -57,6 +144,16 @@ namespace SanchozzONIMods.Lib
             else if (index == 3) return new CodeInstruction(OpCodes.Stloc_3);
             else if (index < 256) return new CodeInstruction(OpCodes.Stloc_S, Convert.ToByte(index));
             else return new CodeInstruction(OpCodes.Stloc, index);
+        }
+
+        public static CodeInstruction GetLoadArgInstruction(ParameterInfo arg, bool useAddress = false)
+        {
+            if (arg == null)
+                throw new ArgumentNullException(nameof(arg));
+            int index = arg.Position;
+            if (arg.Member is MethodBase method && !method.IsStatic)
+                index++;
+            return GetLoadArgInstruction(index, useAddress);
         }
 
         public static CodeInstruction GetLoadArgInstruction(int index, bool useAddress = false)
