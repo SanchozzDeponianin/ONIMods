@@ -46,7 +46,6 @@ namespace SmartLogicDoors
                     b => { OnChecked(b, Door.ControlState.Auto, Door.ControlState.Locked); }, out auto_locked, out _)
                 .AddTo(gameObject);
             ContentContainer = gameObject;
-            titleKey = $"{prefix}TITLE";
             base.OnPrefabInit();
             UpdateScreen();
         }
@@ -86,5 +85,6 @@ namespace SmartLogicDoors
 
         public override void ClearTarget() => target = null;
         public override int GetSideScreenSortOrder() => 10;
+        public override string GetTitle() => STRINGS.UI.UISIDESCREENS.SMARTLOGICDOOR_SIDESCREEN.TITLE.text;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using STRINGS;
 using UnityEngine;
 using SanchozzONIMods.Lib.UI;
 using PeterHan.PLib.UI;
@@ -78,7 +79,6 @@ namespace ButcherStation
                 })
                 .AddTo(gameObject);
             ContentContainer = gameObject;
-            titleKey = "STRINGS.UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.TITLE";
             base.OnPrefabInit();
             UpdateScreen();
         }
@@ -108,7 +108,7 @@ namespace ButcherStation
         }
 
         public override void ClearTarget() => target = null;
-
         public override int GetSideScreenSortOrder() => 30;
+        public override string GetTitle() => UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.TITLE.text;
     }
 }
