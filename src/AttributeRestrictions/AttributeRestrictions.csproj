@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Attribute-based Workshop Restrictions</Title>
     <Description>.</Description>
-    <ModVersion>1.0.1</ModVersion>
+    <ModVersion>1.0.2</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

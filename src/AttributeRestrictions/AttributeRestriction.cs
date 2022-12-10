@@ -7,7 +7,7 @@ namespace AttributeRestrictions
     [SerializationConfig(MemberSerialization.OptIn)]
     public class AttributeRestriction : KMonoBehaviour
     {
-        private static readonly EventSystem.IntraObjectHandler<AttributeRestriction> OnCopySettingsDelegate = 
+        private static readonly EventSystem.IntraObjectHandler<AttributeRestriction> OnCopySettingsDelegate =
             new EventSystem.IntraObjectHandler<AttributeRestriction>((component, data) => component.OnCopySettings(data));
 
         [Serialize]
@@ -35,10 +35,9 @@ namespace AttributeRestrictions
             sortOrder = 20,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
-                // todo: Lookup содержит внутре GetComponent. поискать пути оптимизации
                 var restriction = data as AttributeRestriction;
                 Attribute attribute;
-                if (restriction != null && restriction.isEnabled && (attribute = restriction.requiredAttribute ) != null)
+                if (restriction != null && restriction.isEnabled && (attribute = restriction.requiredAttribute) != null)
                 {
                     var value = attribute.Lookup(context.consumerState.gameObject).GetTotalValue();
                     return restriction.isBelow ? value <= restriction.requiredAttributeLevel : value >= restriction.requiredAttributeLevel;

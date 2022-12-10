@@ -112,7 +112,6 @@ namespace AttributeRestrictions
                     f => { if (target != null) target.requiredAttributeLevel = Mathf.RoundToInt(f); }, out required_level)
                 .AddTo(gameObject);
             ContentContainer = gameObject;
-            titleKey = $"{prefix}TITLE";
             base.OnPrefabInit();
             UpdateScreen();
         }
@@ -178,7 +177,7 @@ namespace AttributeRestrictions
         }
 
         public override void ClearTarget() => target = null;
-
         public override int GetSideScreenSortOrder() => -30;
+        public override string GetTitle() => TITLE.text;
     }
 }
