@@ -1,0 +1,55 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. GraveyardKeeper.STRINGS.OPTIONS.MAX_PLANTS_SPAWN.NAME
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.MAX_PLANTS_SPAWN.NAME"
+msgid "The maximum number of Plants planted by {SQUIRREL}\nduring one burial of the corpse."
+msgstr "Максимальное количество растений, посаженных {SQUIRREL}ом\nза одно захоронение трупа."
+
+#. GraveyardKeeper.STRINGS.OPTIONS.MAX_PLANTS_SPAWN.TOOLTIP
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.MAX_PLANTS_SPAWN.TOOLTIP"
+msgid "In any case, {SQUIRREL} will not plant several identical Plants at a time."
+msgstr "В любом случае, {SQUIRREL} не будет сажать несколько одинаковых растений одновременно."
+
+#. GraveyardKeeper.STRINGS.OPTIONS.NON_YIELDING_PLANTS.NAME
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.NON_YIELDING_PLANTS.NAME"
+msgid "Non-Yielding Plants"
+msgstr "Без-урожайные растения"
+
+#. GraveyardKeeper.STRINGS.OPTIONS.NON_YIELDING_PLANTS.TOOLTIP
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.NON_YIELDING_PLANTS.TOOLTIP"
+msgid "{COLDBREATHER}, {OXYFERN} and decorative plants."
+msgstr "{COLDBREATHER}, {OXYFERN} и декоративные растения."
+
+#. GraveyardKeeper.STRINGS.OPTIONS.REGULAR_PLANTS.NAME
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.REGULAR_PLANTS.NAME"
+msgid "Regular Plants"
+msgstr "Обычные растения"
+
+#. GraveyardKeeper.STRINGS.OPTIONS.REGULAR_PLANTS.TOOLTIP
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.REGULAR_PLANTS.TOOLTIP"
+msgid "Most of the Plants that produce crops regularly."
+msgstr "Большинство растений, которые регулярно дают урожай."
+
+#. GraveyardKeeper.STRINGS.OPTIONS.SINGLE_HARVEST_PLANTS.NAME
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.SINGLE_HARVEST_PLANTS.NAME"
+msgid "Single-Harvest Plants"
+msgstr "Растения с одним урожаем"
+
+#. GraveyardKeeper.STRINGS.OPTIONS.SINGLE_HARVEST_PLANTS.TOOLTIP
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.SINGLE_HARVEST_PLANTS.TOOLTIP"
+msgid "{BASICFORAGEPLANT}, etc."
+msgstr "{BASICFORAGEPLANT} и т.п."
+
+#. GraveyardKeeper.STRINGS.OPTIONS.TITLE.NAME
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.TITLE.NAME"
+msgid "Choose the types of Plants with which the {SQUIRREL}\nwill decorate the burial place of the Duplicant's corpse."
+msgstr "Выберите виды растений, которыми {SQUIRREL}\nукрасит место захоронения трупа Дупликанта."
+
+#. GraveyardKeeper.STRINGS.OPTIONS.TITLE.TOOLTIP
+msgctxt "GraveyardKeeper.STRINGS.OPTIONS.TITLE.TOOLTIP"
+msgid "If nothing is selected, the {SQUIRREL} will use the {EVILFLOWER}."
+msgstr "Если ничего не выбрано, {SQUIRREL} будет использовать {EVILFLOWER}."
+

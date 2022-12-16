@@ -1,0 +1,50 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.DESC
+msgctxt "LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.DESC"
+msgid "A Large Telescope allows you to study the depths of space faster and further."
+msgstr ""
+
+#. LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.EFFECT
+msgctxt "LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.EFFECT"
+msgid "\n\nCan be connected to a <link=\"GASCONDUIT\">Gas Pipe</link> to provide assigned Duplicant with <link=\"OXYGEN\">Oxygen</link>."
+msgstr ""
+
+#. LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.NAME
+msgctxt "LargeTelescope.STRINGS.BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.NAME"
+msgid "<link=\"CLUSTERLARGETELESCOPE\">Large Telescope</link>"
+msgstr ""
+
+#. LargeTelescope.STRINGS.OPTIONS.ADD_GLASS.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.ADD_GLASS.NAME"
+msgid "Add Glass to the {ENCLOSED_TELESCOPE}`s construction cost"
+msgstr ""
+
+#. LargeTelescope.STRINGS.OPTIONS.ANALYZE_CLUSTER_RADIUS.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.ANALYZE_CLUSTER_RADIUS.NAME"
+msgid "Scan Radius, hex"
+msgstr ""
+
+#. LargeTelescope.STRINGS.OPTIONS.ANALYZE_CLUSTER_RADIUS.TOOLTIP
+msgctxt "LargeTelescope.STRINGS.OPTIONS.ANALYZE_CLUSTER_RADIUS.TOOLTIP"
+msgid "Unmodded radius = 4, a small Telescope has a radius = 3"
+msgstr ""
+
+#. LargeTelescope.STRINGS.OPTIONS.EFFICIENCY_MULTIPLIER.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.EFFICIENCY_MULTIPLIER.NAME"
+msgid "Scan Workspeed modifier, +X%"
+msgstr ""
+
+#. LargeTelescope.STRINGS.OPTIONS.NOT_REQUIRE_GAS_PIPE.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.NOT_REQUIRE_GAS_PIPE.NAME"
+msgid "Make the Gas Pipe connection requirement optional instead of mandatory"
+msgstr ""
+
+#. LargeTelescope.STRINGS.OPTIONS.PROHIBIT_INSIDE_ROCKET.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.PROHIBIT_INSIDE_ROCKET.NAME"
+msgid "Prohibit the construction of the {ENCLOSED_TELESCOPE} inside a Rocket"
+msgstr ""
+

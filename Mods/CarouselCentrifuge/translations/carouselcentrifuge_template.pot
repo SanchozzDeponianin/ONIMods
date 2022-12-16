@@ -1,0 +1,80 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. CarouselCentrifuge.STRINGS.BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.DESC
+msgctxt "CarouselCentrifuge.STRINGS.BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.DESC"
+msgid "Funny dizzy entertainment.\nSometimes too dizzy.\nBe prepared for unforeseen consequences."
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.EFFECT
+msgctxt "CarouselCentrifuge.STRINGS.BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.EFFECT"
+msgid "Allows Duplicants to ride on a Carousel on their breaks.\n\nIncreases Duplicant <link=\"MORALE\">{Morale}</link>."
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.NAME
+msgctxt "CarouselCentrifuge.STRINGS.BUILDINGS.PREFABS.CAROUSELCENTRIFUGE.NAME"
+msgid "<link=\"CAROUSELCENTRIFUGE\">Carousel</link>"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.NAME
+msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.NAME"
+msgid "Ride on a Carousel"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.TOOLTIP
+msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.TOOLTIP"
+msgid "This Duplicant ride on a Carousel!\n\nLeisure activities increase Duplicants' <style=\"KKeyword\">{Morale}</style>"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NAME
+msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NAME"
+msgid "Dizziness vomiting"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_NAME
+msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_NAME"
+msgid "Unforeseen Consequences"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_TOOLTIP
+msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NOTIFICATION_TOOLTIP"
+msgid "The <b>Mop Tool</b> <b><color=#F44A4A>[M]</b></color> can used to clean up Duplicant-related \"spills\"\n------------------\nThe entertainment was too dizzy. These Duplicantes threw up:"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.TOOLTIP
+msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.TOOLTIP"
+msgid "This Duplicant has unceremoniously hurled as the result of a Dizziness\n------------------\nDuplicant-related \"spills\" can be cleaned up using the <style=\"KKeyword\">Mop Tool</style> <b><color=#F44A4A>[M]</b></color>"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCEPERCENT.NAME
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCEPERCENT.NAME"
+msgid "Chance of <style=\"KKeyword\">Unforeseen consequences</style>"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCEPERCENT.TOOLTIP
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCEPERCENT.TOOLTIP"
+msgid "Set to <style=\"produced\">0</style> to disable <style=\"KKeyword\">Unforeseen consequences</style>"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.ENABLETRAINING.NAME
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.ENABLETRAINING.NAME"
+msgid "Allow training the <style=\"KKeyword\">{SpaceNavigation}</style> attribute"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.ENABLETRAINING.TOOLTIP
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.ENABLETRAINING.TOOLTIP"
+msgid "Only Space Out! DLC"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.MORALEBONUS.NAME
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.MORALEBONUS.NAME"
+msgid "<style=\"KKeyword\">{Morale}</style> bonus"
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.SPECIFICEFFECTDURATION.NAME
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.SPECIFICEFFECTDURATION.NAME"
+msgid "Duration of the <style=\"KKeyword\">Ride on a Carousel</style> effect"
+msgstr ""
+

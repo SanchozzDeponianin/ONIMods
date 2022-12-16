@@ -1,0 +1,50 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. RoverRefueling.STRINGS.BUILDINGS.PREFABS.ROVERREFUELINGSTATION.DESC
+msgctxt "RoverRefueling.STRINGS.BUILDINGS.PREFABS.ROVERREFUELINGSTATION.DESC"
+msgid "Chemical Beer is only for Robots. Duplicants are forbidden to drink!"
+msgstr "Химическое пиво только для роботов. Дупликантам употреблять запрещено!"
+
+#. RoverRefueling.STRINGS.BUILDINGS.PREFABS.ROVERREFUELINGSTATION.EFFECT
+msgctxt "RoverRefueling.STRINGS.BUILDINGS.PREFABS.ROVERREFUELINGSTATION.EFFECT"
+msgid "Here the {ROVER} can recharge its chemical battery with chemical fuel.\n\nThe {ROVER} will only recharge if its battery charge reaches a low value.\n\nHowever, it is impossible to charge a fully discharged battery."
+msgstr "Здесь {ROVER} может подзарядить свою химическую батарею химическим топливом.\n\n{ROVER} будет подзаряжаться, только если заряд его батареи достигнет низкого значения.\n\nОднако полностью разряженную батарею зарядить невозможно."
+
+#. RoverRefueling.STRINGS.BUILDINGS.PREFABS.ROVERREFUELINGSTATION.NAME
+msgctxt "RoverRefueling.STRINGS.BUILDINGS.PREFABS.ROVERREFUELINGSTATION.NAME"
+msgid "<link=\"ROVERREFUELINGSTATION\">{ROVER}'s Recharger</link>"
+msgstr "<link=\"ROVERREFUELINGSTATION\">Зарядная станция {ROVER}а</link>"
+
+#. RoverRefueling.STRINGS.BUILDINGS.PREFABS.ROVERREFUELINGSTATION.REQUIREMENT_TOOLTIP
+msgctxt "RoverRefueling.STRINGS.BUILDINGS.PREFABS.ROVERREFUELINGSTATION.REQUIREMENT_TOOLTIP"
+msgid "Requires approximately <style=\"consumed\">{0}</style> kg of {1} to recharge nearly fully."
+msgstr "Для почти полной зарядки требуется примерно <style=\"consumed\">{0}</style> кг {1}."
+
+#. RoverRefueling.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.ROVER_NEED_REFUELING
+msgctxt "RoverRefueling.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.ROVER_NEED_REFUELING"
+msgid "not a {ROVER}"
+msgstr "не {ROVER}"
+
+#. RoverRefueling.STRINGS.DUPLICANTS.MODIFIERS.SCOUTBOTREFUELING.NAME
+msgctxt "RoverRefueling.STRINGS.DUPLICANTS.MODIFIERS.SCOUTBOTREFUELING.NAME"
+msgid "Charging"
+msgstr "Заряжается"
+
+#. RoverRefueling.STRINGS.DUPLICANTS.MODIFIERS.SCOUTBOTREFUELING.TOOLTIP
+msgctxt "RoverRefueling.STRINGS.DUPLICANTS.MODIFIERS.SCOUTBOTREFUELING.TOOLTIP"
+msgid "{ROVER} is happily charging at <link=\"ROVERREFUELINGSTATION\">{ROVER}'s Recharger</link>.\nmmm... yummy Chemical Beer!"
+msgstr "{ROVER} успешно заряжается от <link=\"ROVERREFUELINGSTATION\">Зарядной станции {ROVER}а</link>.\nммм... вкусное Химическое Пиво!"
+
+#. RoverRefueling.STRINGS.OPTIONS.CHARGE_TIME.NAME
+msgctxt "RoverRefueling.STRINGS.OPTIONS.CHARGE_TIME.NAME"
+msgid "Recharge time, seconds"
+msgstr "Время перезарядки, секунд"
+
+#. RoverRefueling.STRINGS.OPTIONS.FUEL_MASS_PER_CHARGE.NAME
+msgctxt "RoverRefueling.STRINGS.OPTIONS.FUEL_MASS_PER_CHARGE.NAME"
+msgid "Fuel mass per one recharge, kg"
+msgstr "Масса топлива для одной перезарядки, кг"
+
