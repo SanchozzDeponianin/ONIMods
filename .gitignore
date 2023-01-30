@@ -1,5 +1,6 @@
 ##  Ignore Beta and Test Projects, config.json's and libs
 /Mods/DeathReimagined/
+/src/BigRedButton/
 **/Test/
 **/Properties/AssemblyInfo*.cs
 [Cc]onfig.json
