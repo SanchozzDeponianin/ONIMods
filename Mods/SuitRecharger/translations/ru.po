@@ -18,6 +18,11 @@ msgctxt "SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.NAME"
 msgid "<link=\"SUITRECHARGER\">Suit Recharger</link>"
 msgstr "<link=\"SUITRECHARGER\">Заправщик костюмов</link>"
 
+#. SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.CURRENTLY_RECHARGING
+msgctxt "SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.CURRENTLY_RECHARGING"
+msgid "Currently Recharging"
+msgstr "В данный момент перезаряжается"
+
 #. SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ENOUGH_FUEL
 msgctxt "SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ENOUGH_FUEL"
 msgid "{Selected} does not have enough Fuel"

@@ -28,6 +28,7 @@ namespace SuitRecharger
                     public static LocString IS_ENOUGH_OXYGEN = "{Selected} does not have enough Oxygen";
                     public static LocString IS_SUIT_EQUIPPED = "Does not have an equipped Suit";
                     public static LocString IS_SUIT_HAS_ENOUGH_DURABILITY = "Suit is not durable enough";
+                    public static LocString CURRENTLY_RECHARGING = "Currently Recharging";
                 }
             }
         }

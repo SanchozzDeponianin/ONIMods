@@ -46,7 +46,14 @@ namespace SuitRecharger
             }
         };
 
-        // todo: возможно эти прекондиции неоптимальны по быстродействию. нужно обдумать
+        private static bool TryGetAssignableSuit(Equipment equipment, out Assignable assignable)
+        {
+            assignable = null;
+            if (equipment != null)
+                assignable = equipment.GetSlot(Db.Get().AssignableSlots.Suit)?.assignable;
+            return assignable != null;
+        }
+
         // проверка возможности ремонта и что костюм имеет достаточную прочность чтобы не сломаться в процессе зарядки
         private static readonly Chore.Precondition IsSuitHasEnoughDurability = new Chore.Precondition
         {
@@ -55,35 +62,27 @@ namespace SuitRecharger
             sortOrder = 5,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
-                var recharger = (SuitRecharger)data;
-                if (recharger != null)
+                if (data is SuitRecharger recharger && recharger != null
+                    && TryGetAssignableSuit(context.consumerState.equipment, out var assignable)
+                    && assignable is Equippable equippable
+                    && assignable.TryGetComponent<Durability>(out var durability))
                 {
-                    var equippable = context.consumerState.equipment?.GetSlot(Db.Get().AssignableSlots.Suit)?.assignable as Equippable;
-                    if (equippable != null)
+                    float d = durability.GetTrueDurability(context.consumerState.resume);
+                    if (recharger.enableRepair)
                     {
-                        var durability = equippable.GetComponent<Durability>();
-                        if (durability != null)
-                        {
-                            float d = durability.GetTrueDurability(context.consumerState.resume);
-                            if (recharger.enableRepair)
-                            {
-                                repairSuitCost.TryGetValue(equippable.def.Id.ToTag(), out var cost);
-                                float need = cost.amount * (1f - d);
-                                recharger.repairMaterialsAvailable.TryGetValue(cost.material, out float available);
-                                if (need <= available)
-                                    return true;
-                            }
-                            return d >= recharger.durabilityThreshold;
-                        }
+                        repairSuitCost.TryGetValue(equippable.def.Id.ToTag(), out var cost);
+                        float need = cost.amount * (1f - d);
+                        recharger.repairMaterialsAvailable.TryGetValue(cost.material, out float available);
+                        if (need <= available)
+                            return true;
                     }
+                    return d >= recharger.durabilityThreshold;
                 }
                 return true;
             }
         };
 
         // проверка что костюму требуется заправка.
-        // скопировано из SuitLocker.ReturnSuitWorkable
-        // отключена проверка уровня заряда свинцовых костюмов
         private static readonly Chore.Precondition DoesSuitNeedRecharging = new Chore.Precondition
         {
             id = nameof(DoesSuitNeedRecharging),
@@ -92,18 +91,35 @@ namespace SuitRecharger
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
                 bool result = false;
-                var slot = context.consumerState.equipment?.GetSlot(Db.Get().AssignableSlots.Suit);
-                var suit_tank = slot?.assignable?.GetComponent<SuitTank>();
-                if (suit_tank != null)
+                if (TryGetAssignableSuit(context.consumerState.equipment, out var assignable)
+                    && assignable.TryGetComponent<SuitTank>(out var suit_tank))
                 {
                     if (suit_tank.NeedsRecharging())
                         result = true;
                     else
                     {
-                        var jet_suit_tank = slot?.assignable?.GetComponent<JetSuitTank>();
-                        if (jet_suit_tank != null && jet_suit_tank.NeedsRecharging())
+                        if (assignable.TryGetComponent<JetSuitTank>(out var jet_suit_tank) && jet_suit_tank.NeedsRecharging())
                             result = true;
                     }
+                }
+                return result;
+            }
+        };
+
+        // проверка что костюму требуется срочная заправка 
+        private static readonly Chore.Precondition DoesSuitNeedRechargingUrgent = new Chore.Precondition
+        {
+            id = nameof(DoesSuitNeedRechargingUrgent),
+            description = PRECONDITIONS.HAS_URGE,
+            sortOrder = 1,
+            fn = delegate (ref Chore.Precondition.Context context, object data)
+            {
+                bool result = false;
+                if (TryGetAssignableSuit(context.consumerState.equipment, out var assignable)
+                    && assignable.TryGetComponent<SuitTank>(out var suit_tank)
+                    && suit_tank.IsEmpty())
+                {
+                    result = true;
                 }
                 return result;
             }
@@ -118,12 +134,12 @@ namespace SuitRecharger
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
                 bool result = true;
-                var recharger = (SuitRecharger)data;
-                if (recharger != null)
+                if (data is SuitRecharger recharger && recharger != null
+                    && TryGetAssignableSuit(context.consumerState.equipment, out var assignable)
+                    && assignable.TryGetComponent<SuitTank>(out var suit_tank)
+                    && recharger.OxygenAvailable < (suit_tank.capacity - suit_tank.GetTankAmount()))
                 {
-                    var suit_tank = context.consumerState.equipment?.GetSlot(Db.Get().AssignableSlots.Suit)?.assignable?.GetComponent<SuitTank>();
-                    if (suit_tank != null && recharger.OxygenAvailable < (suit_tank.capacity - suit_tank.GetTankAmount()))
-                        result = false;
+                    result = false;
                 }
                 return result;
             }
@@ -139,17 +155,33 @@ namespace SuitRecharger
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
                 bool result = true;
-                var recharger = (SuitRecharger)data;
-                if (recharger != null)
+                if (data is SuitRecharger recharger && recharger != null
+                    && TryGetAssignableSuit(context.consumerState.equipment, out var assignable)
+                    && assignable.TryGetComponent<JetSuitTank>(out var jet_suit_tank)
+                    && recharger.FuelAvailable < (JetSuitTank.FUEL_CAPACITY - jet_suit_tank.amount)
+                    && assignable.TryGetComponent<SuitTank>(out var suit_tank)
+                    && !suit_tank.NeedsRecharging())
                 {
-                    var slot = context.consumerState.equipment?.GetSlot(Db.Get().AssignableSlots.Suit);
-                    var jet_suit_tank = slot?.assignable?.GetComponent<JetSuitTank>();
-                    if (jet_suit_tank != null && recharger.FuelAvailable < (JetSuitTank.FUEL_CAPACITY - jet_suit_tank.amount))
-                    {
-                        var suit_tank = slot?.assignable?.GetComponent<SuitTank>();
-                        if (suit_tank != null && !suit_tank.NeedsRecharging())
-                            result = false;
-                    }
+                    result = false;
+                }
+                return result;
+            }
+        };
+
+        // проверка что заправка не "уже выполняется"
+        private static readonly Chore.Precondition NotCurrentlyRecharging = new Chore.Precondition
+        {
+            id = nameof(NotCurrentlyRecharging),
+            description = CURRENTLY_RECHARGING,
+            sortOrder = 0,
+            fn = delegate (ref Chore.Precondition.Context context, object data)
+            {
+                bool result = true;
+                var currentChore = context.consumerState.choreDriver.GetCurrentChore();
+                if (currentChore != null)
+                {
+                    string id = currentChore.choreType.Id;
+                    result = (id != RecoverBreathRecharge.Id && id != Db.Get().ChoreTypes.Recharge.Id);
                 }
                 return result;
             }
@@ -172,7 +204,7 @@ namespace SuitRecharger
                 id: nameof(RecoverBreathRecharge),
                 parent: db.ChoreTypes,
                 chore_groups: new string[0],
-                urge: RecoverBreath.urge.Id,
+                urge: null, //RecoverBreath.urge.Id,
                 name: RECOVERBREATH.NAME,
                 status_message: RECOVERBREATH.STATUS,
                 tooltip: RECHARGE.TOOLTIP,
@@ -211,12 +243,16 @@ namespace SuitRecharger
 
             public Chore CreateNormalChore(StatesInstance smi)
             {
-                return CreateUseChore(smi, Db.Get().ChoreTypes.Recharge, PriorityScreen.PriorityClass.personalNeeds);
+                var chore = CreateUseChore(smi, Db.Get().ChoreTypes.Recharge, PriorityScreen.PriorityClass.personalNeeds);
+                chore.AddPrecondition(DoesSuitNeedRecharging, null);
+                return chore;
             }
 
             public Chore CreateRecoverBreathChore(StatesInstance smi)
             {
-                return CreateUseChore(smi, RecoverBreathRecharge, PriorityScreen.PriorityClass.compulsory);
+                var chore = CreateUseChore(smi, RecoverBreathRecharge, PriorityScreen.PriorityClass.compulsory);
+                chore.AddPrecondition(DoesSuitNeedRechargingUrgent, null);
+                return chore;
             }
 
             public Chore CreateUseChore(StatesInstance smi, ChoreType choreType, PriorityScreen.PriorityClass priorityClass)
@@ -233,9 +269,9 @@ namespace SuitRecharger
                 smi.activeUseChores.Add(chore);
                 chore.onExit += (exiting_chore) => smi.activeUseChores.Remove(exiting_chore);
                 chore.AddPrecondition(IsSuitEquipped, null);
+                chore.AddPrecondition(NotCurrentlyRecharging);
                 if (durabilityEnabled)  // не проверять если износ отключен в настройках сложности
                     chore.AddPrecondition(IsSuitHasEnoughDurability, smi.master);
-                chore.AddPrecondition(DoesSuitNeedRecharging, null);
                 chore.AddPrecondition(IsEnoughOxygen, smi.master);
                 chore.AddPrecondition(IsEnoughFuel, smi.master);
                 chore.AddPrecondition(ChorePreconditions.instance.IsExclusivelyAvailableWithOtherChores, smi.activeUseChores);
@@ -392,8 +428,11 @@ namespace SuitRecharger
             gasWasteDispenser.invertElementFilter = true;
 
             // создаём метеры
-            oxygenMeter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target", "meter", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[] { "meter_target" });
-            fuelMeter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target_fuel", "meter_fuel", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[] { "meter_target_fuel" });
+            if (TryGetComponent<KBatchedAnimController>(out var kbac))
+            {
+                oxygenMeter = new MeterController(kbac, "meter_target", "meter", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[] { "meter_target" });
+                fuelMeter = new MeterController(kbac, "meter_target_fuel", "meter_fuel", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[] { "meter_target_fuel" });
+            }
 
             Subscribe((int)GameHashes.ConduitConnectionChanged, CheckPipesDelegate);
             Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
@@ -478,8 +517,7 @@ namespace SuitRecharger
 
         private void OnCopySettings(object data)
         {
-            var recharger = ((GameObject)data)?.GetComponent<SuitRecharger>();
-            if (recharger != null)
+            if (data is GameObject go && go != null && go.TryGetComponent<SuitRecharger>(out var recharger))
             {
                 DurabilityThreshold = recharger.durabilityThreshold;
                 EnableRepair = recharger.enableRepair;

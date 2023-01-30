@@ -110,7 +110,8 @@ namespace SuitRecharger
 
         protected override void OnCompleteWork(Worker worker)
         {
-            CleanAndBreakSuit(worker);
+            if (worker != null)
+                CleanAndBreakSuit(worker);
         }
 
         protected override bool OnWorkTick(Worker worker, float dt)
@@ -224,8 +225,7 @@ namespace SuitRecharger
                     {
                         foreach (var go in list)
                             suitTank.storage.Transfer(go, storage, false, true);
-                        var effects = worker?.GetComponent<Effects>();
-                        if (effects != null && effects.HasEffect("SoiledSuit"))
+                        if (worker.TryGetComponent<Effects>(out var effects) && effects.HasEffect("SoiledSuit"))
                             effects.Remove("SoiledSuit");
                     }
                     list.Recycle();
@@ -244,8 +244,8 @@ namespace SuitRecharger
                 }
                 // проверка целостности
                 // если пора ломать, то перекачиваем всё обратно и снимаем
-                var durability = suitTank.GetComponent<Durability>();
-                if (durability != null && durability.IsTrueWornOut(worker?.GetComponent<MinionResume>()))
+                if (suitTank.TryGetComponent<Durability>(out var durability)
+                    && durability.IsTrueWornOut(worker.GetComponent<MinionResume>()))
                 {
                     suitTank.storage.Transfer(storage, suitTank.elementTag, suitTank.capacity, false, true);
                     if (jetSuitTank != null)
@@ -253,7 +253,8 @@ namespace SuitRecharger
                         storage.AddLiquid(SimHashes.Petroleum, jetSuitTank.amount, durability.GetComponent<PrimaryElement>().Temperature, byte.MaxValue, 0, false, true);
                         jetSuitTank.amount = 0f;
                     }
-                    durability.GetComponent<Assignable>()?.Unassign();
+                    if (durability.TryGetComponent<Assignable>(out var assignable))
+                        assignable.Unassign();
                 }
             }
         }
