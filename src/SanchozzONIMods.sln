@@ -90,6 +90,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraveyardKeeper", "Graveyar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigRedButton", "BigRedButton\BigRedButton.csproj", "{959FC97F-3BC6-49A2-8BEA-A03951A52C5F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DontStarvePuft", "DontStarvePuft\DontStarvePuft.csproj", "{C06A1AF0-6F07-4EC1-9CBF-8A5DCBFD9FC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MainlineSteam = Debug|MainlineSteam
@@ -378,6 +380,14 @@ Global
 		{959FC97F-3BC6-49A2-8BEA-A03951A52C5F}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{959FC97F-3BC6-49A2-8BEA-A03951A52C5F}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{959FC97F-3BC6-49A2-8BEA-A03951A52C5F}.Release|StableBackup.Build.0 = Release|StableBackup
+		{C06A1AF0-6F07-4EC1-9CBF-8A5DCBFD9FC9}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
+		{C06A1AF0-6F07-4EC1-9CBF-8A5DCBFD9FC9}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
+		{C06A1AF0-6F07-4EC1-9CBF-8A5DCBFD9FC9}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
+		{C06A1AF0-6F07-4EC1-9CBF-8A5DCBFD9FC9}.Debug|StableBackup.Build.0 = Debug|StableBackup
+		{C06A1AF0-6F07-4EC1-9CBF-8A5DCBFD9FC9}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
+		{C06A1AF0-6F07-4EC1-9CBF-8A5DCBFD9FC9}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
+		{C06A1AF0-6F07-4EC1-9CBF-8A5DCBFD9FC9}.Release|StableBackup.ActiveCfg = Release|StableBackup
+		{C06A1AF0-6F07-4EC1-9CBF-8A5DCBFD9FC9}.Release|StableBackup.Build.0 = Release|StableBackup
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
