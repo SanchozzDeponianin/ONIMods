@@ -3,7 +3,6 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using TUNING;
 using HarmonyLib;
 #if USESPLIB
 using PeterHan.PLib.Core;
@@ -39,9 +38,7 @@ namespace SanchozzONIMods.Lib
             get
             {
                 if (_modinfo == null)
-                {
                     _modinfo = new ModInfo();
-                }
                 return _modinfo;
             }
         }
@@ -49,53 +46,11 @@ namespace SanchozzONIMods.Lib
         // логирование со стактрасом
         public static void LogExcWarn(Exception thrown)
         {
-            string format = "[{0}] {1} {2} {3}";
-            object[] array = new object[4];
-            Assembly callingAssembly = Assembly.GetCallingAssembly();
-            object obj;
-            if (callingAssembly == null)
-            {
-                obj = null;
-            }
-            else
-            {
-                AssemblyName name = callingAssembly.GetName();
-                obj = (name?.Name);
-            }
-            array[0] = (obj ?? "?");
-            array[1] = thrown.GetType();
-            array[2] = thrown.Message;
-            array[3] = thrown.StackTrace;
-            Debug.LogWarningFormat(format, array);
-        }
-
-
-        // добавляем постройки в меню
-        [Obsolete("need to replace it to 'ModUtil.AddBuildingToPlanScreen'", false)]
-        public static void AddBuildingToPlanScreen(HashedString category, string buildingId, string subcategoryID = "uncategorized", string addAfterBuildingId = null)
-        {
-            int index = BUILDINGS.PLANORDER.FindIndex(x => x.category == category);
-            if (index == -1)
-            {
-                Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{category}' category in the building menu.");
-                return;
-            }
-            var planOrderList = BUILDINGS.PLANORDER[index].buildingAndSubcategoryData;
-            if (planOrderList == null)
-            {
-                Debug.LogWarning($"{modInfo.assemblyName}: Could not add '{buildingId}' to the building menu.");
-                return;
-            }
-            var item = new KeyValuePair<string, string>(buildingId, subcategoryID);
-            int neighborIdx = (addAfterBuildingId == null) ? -1 : planOrderList.FindIndex(x => x.Key == addAfterBuildingId);
-            if (neighborIdx != -1)
-                planOrderList.Insert(neighborIdx + 1, item);
-            else
-                planOrderList.Add(item);
+            Debug.LogWarningFormat("[{0}] {1} {2}\n{3}", new object[4] { (Assembly.GetCallingAssembly()?.GetName()?.Name) ?? "?",
+                thrown.GetType(), thrown.Message, thrown.StackTrace });
         }
 
         // добавляем постройки в технологии
-        // новая ванилька и длц
         public static void AddBuildingToTechnology(string tech, params string[] buildingIds)
         {
             var targetTech = Db.Get().Techs.TryGet(tech);
@@ -309,5 +264,84 @@ namespace SanchozzONIMods.Lib
                 ReplaceAllLocStringTextByDictionary(nestedType, replacementDictionary);
             }
         }
+    }
+
+    public static class BUILD_CATEGORY
+    {
+        public const string Base = nameof(Base);
+        public const string Oxygen = nameof(Oxygen);
+        public const string Power = nameof(Power);
+        public const string Food = nameof(Food);
+        public const string Plumbing = nameof(Plumbing);
+        public const string HVAC = nameof(HVAC);
+        public const string Refining = nameof(Refining);
+        public const string Medical = nameof(Medical);
+        public const string Furniture = nameof(Furniture);
+        public const string Equipment = nameof(Equipment);
+        public const string Utilities = nameof(Utilities);
+        public const string Automation = nameof(Automation);
+        public const string Conveyance = nameof(Conveyance);
+        public const string Rocketry = nameof(Rocketry);
+        public const string HEP = nameof(HEP);
+    }
+
+    public static class BUILD_SUBCATEGORY
+    {
+        public const string UNCATEGORIZED = "uncategorized";
+        public const string ladders = nameof(ladders);
+        public const string tiles = nameof(tiles);
+        public const string printingpods = nameof(printingpods);
+        public const string doors = nameof(doors);
+        public const string storage = nameof(storage);
+        public const string transport = nameof(transport);
+        public const string producers = nameof(producers);
+        public const string scrubbers = nameof(scrubbers);
+        public const string generators = nameof(generators);
+        public const string wires = nameof(wires);
+        public const string batteries = nameof(batteries);
+        public const string powercontrol = nameof(powercontrol);
+        public const string switches = nameof(switches);
+        public const string cooking = nameof(cooking);
+        public const string farming = nameof(farming);
+        public const string ranching = nameof(ranching);
+        public const string washroom = nameof(washroom);
+        public const string pipes = nameof(pipes);
+        public const string pumps = nameof(pumps);
+        public const string valves = nameof(valves);
+        public const string sensors = nameof(sensors);
+        public const string buildmenuports = nameof(buildmenuports);
+        public const string materials = nameof(materials);
+        public const string oil = nameof(oil);
+        public const string advanced = nameof(advanced);
+        public const string hygiene = nameof(hygiene);
+        public const string medical = nameof(medical);
+        public const string wellness = nameof(wellness);
+        public const string beds = nameof(beds);
+        public const string lights = nameof(lights);
+        public const string dining = nameof(dining);
+        public const string recreation = nameof(recreation);
+        public const string decor = nameof(decor);
+        public const string research = nameof(research);
+        public const string archaeology = nameof(archaeology);
+        public const string industrialstation = nameof(industrialstation);
+        public const string manufacturing = nameof(manufacturing);
+        public const string equipment = nameof(equipment);
+        public const string temperature = nameof(temperature);
+        public const string sanitation = nameof(sanitation);
+        public const string logicmanager = nameof(logicmanager);
+        public const string logicaudio = nameof(logicaudio);
+        public const string logicgates = nameof(logicgates);
+        public const string transmissions = nameof(transmissions);
+        public const string conveyancestructures = nameof(conveyancestructures);
+        public const string automated = nameof(automated);
+        public const string telescopes = nameof(telescopes);
+        public const string rocketstructures = nameof(rocketstructures);
+        public const string rocketnav = nameof(rocketnav);
+        public const string engines = nameof(engines);
+        public const string fuel_and_oxidizer = "fuel and oxidizer";
+        public const string cargo = nameof(cargo);
+        public const string utility = nameof(utility);
+        public const string command = nameof(command);
+        public const string fittings = nameof(fittings);
     }
 }

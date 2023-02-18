@@ -30,7 +30,7 @@ namespace CarouselCentrifuge
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuildingAndEffects()
         {
-            ModUtil.AddBuildingToPlanScreen("Furniture", CarouselCentrifugeConfig.ID, "recreation", EspressoMachineConfig.ID);
+            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Furniture, CarouselCentrifugeConfig.ID, BUILD_SUBCATEGORY.recreation, EspressoMachineConfig.ID);
             string requiredTech = DlcManager.IsExpansion1Active() ? "SpaceProgram" : "ArtificialFriends";
             Utils.AddBuildingToTechnology(requiredTech, CarouselCentrifugeConfig.ID);
 

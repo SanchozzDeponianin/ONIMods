@@ -30,7 +30,7 @@ namespace RoverRefueling
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()
         {
-            ModUtil.AddBuildingToPlanScreen("Utilities", RoverRefuelingStationConfig.ID, "other utilities", SweepBotStationConfig.ID);
+            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Utilities, RoverRefuelingStationConfig.ID, BUILD_SUBCATEGORY.automated, SweepBotStationConfig.ID);
             Utils.AddBuildingToTechnology("ArtificialFriends", RoverRefuelingStationConfig.ID);
             var db = Db.Get();
             var rate = ROBOTS.SCOUTBOT.BATTERY_CAPACITY / RoverRefuelingOptions.Instance.charge_time;

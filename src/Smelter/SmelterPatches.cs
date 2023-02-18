@@ -30,7 +30,7 @@ namespace Smelter
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuilding()
         {
-            ModUtil.AddBuildingToPlanScreen("Refining", SmelterConfig.ID, "materials", KilnConfig.ID);
+            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Refining, SmelterConfig.ID, BUILD_SUBCATEGORY.materials, KilnConfig.ID);
             Utils.AddBuildingToTechnology("BasicRefinement", SmelterConfig.ID);
         }
 

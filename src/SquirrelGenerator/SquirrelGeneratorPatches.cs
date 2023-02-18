@@ -32,7 +32,7 @@ namespace SquirrelGenerator
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuilding()
         {
-            ModUtil.AddBuildingToPlanScreen("Power", SquirrelGeneratorConfig.ID, "generators", ManualGeneratorConfig.ID);
+            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Power, SquirrelGeneratorConfig.ID, BUILD_SUBCATEGORY.generators, ManualGeneratorConfig.ID);
             Utils.AddBuildingToTechnology("Ranching", SquirrelGeneratorConfig.ID);
         }
 

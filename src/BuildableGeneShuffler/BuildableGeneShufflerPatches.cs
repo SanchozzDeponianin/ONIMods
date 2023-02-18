@@ -32,7 +32,7 @@ namespace BuildableGeneShuffler
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuilding()
         {
-            ModUtil.AddBuildingToPlanScreen("Medical", BuildableGeneShufflerConfig.ID, "wellness");
+            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Medical, BuildableGeneShufflerConfig.ID, BUILD_SUBCATEGORY.wellness);
             Utils.AddBuildingToTechnology("MedicineIV", BuildableGeneShufflerConfig.ID);
             PGameUtils.CopySoundsToAnim(BuildableGeneShufflerConfig.anim, "geneshuffler_kanim");
             // создаём собственный тип поручения, который имитирует "Use Neural Vacillator"
