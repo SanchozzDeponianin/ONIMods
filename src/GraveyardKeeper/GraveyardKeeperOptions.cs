@@ -5,7 +5,7 @@ using PeterHan.PLib.Options;
 namespace GraveyardKeeper
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     internal sealed class GraveyardKeeperOptions : BaseOptions<GraveyardKeeperOptions>
     {
         [JsonIgnore]

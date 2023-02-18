@@ -21,12 +21,12 @@ namespace ExoticSpices
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal class ExoticSpicesOptions : BaseOptions<ExoticSpicesOptions>
+    internal sealed class ExoticSpicesOptions : BaseOptions<ExoticSpicesOptions>
     {
         [JsonObject(MemberSerialization.OptIn)]
-        public class PhosphoRufusSpice
+        public sealed class PhosphoRufusSpice
         {
             [JsonProperty]
             [Option]
@@ -43,7 +43,7 @@ namespace ExoticSpices
         }
 
         [JsonObject(MemberSerialization.OptIn)]
-        public class GassyMooSpice
+        public sealed class GassyMooSpice
         {
             [JsonProperty]
             [Option]
@@ -65,7 +65,7 @@ namespace ExoticSpices
         }
 
         [JsonObject(MemberSerialization.OptIn)]
-        public class ZombieSpice
+        public sealed class ZombieSpice
         {
             [JsonProperty]
             [Option]

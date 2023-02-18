@@ -5,9 +5,9 @@ using PeterHan.PLib.Options;
 namespace Hydrocactus
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal class HydrocactusOptions : BaseOptions<HydrocactusOptions>
+    internal sealed class HydrocactusOptions : BaseOptions<HydrocactusOptions>
     {
         [JsonProperty]
         [Option(Format = "F0")]

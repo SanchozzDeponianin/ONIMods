@@ -5,8 +5,8 @@ using PeterHan.PLib.Options;
 namespace ArtifactCarePackages
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
-    internal class ArtifactCarePackageOptions : BaseOptions<ArtifactCarePackageOptions>
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
+    internal sealed class ArtifactCarePackageOptions : BaseOptions<ArtifactCarePackageOptions>
     {
         [JsonProperty]
         [Option]

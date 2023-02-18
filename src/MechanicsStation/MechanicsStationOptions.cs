@@ -7,8 +7,8 @@ using static MechanicsStation.MechanicsStationAssets;
 namespace MechanicsStation
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
-    internal class MechanicsStationOptions : BaseOptions<MechanicsStationOptions>
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
+    internal sealed class MechanicsStationOptions : BaseOptions<MechanicsStationOptions>
     {
         [JsonProperty]
         [Option(Format = "F0")]

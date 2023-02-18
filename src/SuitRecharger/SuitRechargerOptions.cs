@@ -5,7 +5,7 @@ using PeterHan.PLib.Options;
 namespace SuitRecharger
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
     internal sealed class SuitRechargerOptions : BaseOptions<SuitRechargerOptions>
     {

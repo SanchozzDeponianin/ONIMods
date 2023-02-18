@@ -5,7 +5,7 @@ using PeterHan.PLib.Options;
 namespace ReBuildableAETN
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
     internal class ReBuildableAETNOptions : BaseOptions<ReBuildableAETNOptions>
     {

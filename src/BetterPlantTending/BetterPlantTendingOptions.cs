@@ -7,8 +7,8 @@ using static BetterPlantTending.BetterPlantTendingAssets;
 namespace BetterPlantTending
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
-    internal class BetterPlantTendingOptions : BaseOptions<BetterPlantTendingOptions>
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
+    internal sealed class BetterPlantTendingOptions : BaseOptions<BetterPlantTendingOptions>
     {
         // основные настройки
         [JsonProperty]
@@ -70,7 +70,7 @@ namespace BetterPlantTending
 
         // шансы доп семян
         [JsonObject(MemberSerialization.OptIn)]
-        public class ExtraSeeds
+        public sealed class ExtraSeeds
         {
             [JsonProperty]
             [Option(Format = "F2")]

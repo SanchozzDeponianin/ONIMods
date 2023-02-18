@@ -5,7 +5,7 @@ using PeterHan.PLib.Options;
 namespace NoManualDelivery
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
     internal sealed class NoManualDeliveryOptions : BaseOptions<NoManualDeliveryOptions>
     {

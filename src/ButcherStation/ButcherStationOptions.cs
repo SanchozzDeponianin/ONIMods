@@ -5,9 +5,9 @@ using PeterHan.PLib.Options;
 namespace ButcherStation
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    public class ButcherStationOptions : BaseOptions<ButcherStationOptions>
+    internal sealed class ButcherStationOptions : BaseOptions<ButcherStationOptions>
     {
         [JsonProperty]
         [Option(Format = "F0")]

@@ -5,7 +5,7 @@ using PeterHan.PLib.Options;
 namespace LargeTelescope
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
     internal sealed class LargeTelescopeOptions : BaseOptions<LargeTelescopeOptions>
     {

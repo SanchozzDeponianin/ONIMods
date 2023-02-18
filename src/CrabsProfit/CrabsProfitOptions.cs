@@ -45,7 +45,7 @@ namespace CrabsProfit
     }
 
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
     internal sealed class CrabsProfitOptions : BaseOptions<CrabsProfitOptions>
     {

@@ -6,8 +6,9 @@ using PeterHan.PLib.Options;
 namespace BuildableGeneShuffler
 {
     [JsonObject(MemberSerialization.OptIn)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    public class BuildableGeneShufflerOptions : BaseOptions<BuildableGeneShufflerOptions>
+    internal sealed class BuildableGeneShufflerOptions : BaseOptions<BuildableGeneShufflerOptions>
     {
         [JsonProperty]
         [Option(Format = "F0")]

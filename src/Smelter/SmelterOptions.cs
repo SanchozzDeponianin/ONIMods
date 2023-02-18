@@ -5,12 +5,12 @@ using PeterHan.PLib.Options;
 namespace Smelter
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal class SmelterOptions : BaseOptions<SmelterOptions>
+    internal sealed class SmelterOptions : BaseOptions<SmelterOptions>
     {
         [JsonObject(MemberSerialization.OptIn)]
-        public class Recipes
+        public sealed class Recipes
         {
             [JsonProperty]
             [Option]
@@ -38,7 +38,7 @@ namespace Smelter
         public Recipes recipes { get; set; } = new Recipes();
 
         [JsonObject(MemberSerialization.OptIn)]
-        public class Features
+        public sealed class Features
         {
             [JsonProperty]
             [Option]

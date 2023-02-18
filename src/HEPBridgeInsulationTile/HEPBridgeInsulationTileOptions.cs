@@ -5,9 +5,9 @@ using PeterHan.PLib.Options;
 namespace HEPBridgeInsulationTile
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    public class HEPBridgeInsulationTileOptions : BaseOptions<HEPBridgeInsulationTileOptions>
+    internal sealed class HEPBridgeInsulationTileOptions : BaseOptions<HEPBridgeInsulationTileOptions>
     {
         public enum Research
         {

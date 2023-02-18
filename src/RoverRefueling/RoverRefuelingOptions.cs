@@ -5,9 +5,9 @@ using PeterHan.PLib.Options;
 namespace RoverRefueling
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal class RoverRefuelingOptions : BaseOptions<RoverRefuelingOptions>
+    internal sealed class RoverRefuelingOptions : BaseOptions<RoverRefuelingOptions>
     {
         [JsonProperty]
         [Option]

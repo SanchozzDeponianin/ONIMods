@@ -7,9 +7,9 @@ using PeterHan.PLib.Options;
 namespace SquirrelGenerator
 {
     [JsonObject(MemberSerialization.OptIn)]
-    [ConfigFile(IndentOutput: true)]
+    [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal class SquirrelGeneratorOptions : BaseOptions<SquirrelGeneratorOptions>
+    internal sealed class SquirrelGeneratorOptions : BaseOptions<SquirrelGeneratorOptions>
     {
         [JsonProperty]
         [Option]
