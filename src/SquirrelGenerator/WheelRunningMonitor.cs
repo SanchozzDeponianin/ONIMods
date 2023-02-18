@@ -54,9 +54,8 @@ namespace SquirrelGenerator
                 int mincost = MAX_NAVIGATE_DISTANCE;
                 foreach (ScenePartitionerEntry item in pooledList)
                 {
-                    var squirrelGenerator = (item.obj as KMonoBehaviour).GetComponent<SquirrelGenerator>();
-                    if (squirrelGenerator != null && squirrelGenerator.IsOperational
-                        && !squirrelGenerator.HasTag(GameTags.Creatures.ReservedByCreature))
+                    if ((item.obj as KMonoBehaviour).TryGetComponent<SquirrelGenerator>(out var squirrelGenerator)
+                        && squirrelGenerator.IsOperational && !squirrelGenerator.HasTag(GameTags.Creatures.ReservedByCreature))
                     {
                         int cost = master.navigator.GetNavigationCost(Grid.PosToCell(squirrelGenerator));
                         if (cost != -1 && cost < mincost)

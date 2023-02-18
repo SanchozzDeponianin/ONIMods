@@ -28,19 +28,23 @@ namespace SquirrelGenerator
             public override void InitializeStates(out BaseState default_state)
             {
                 default_state = off;
-                //serializable = true;
-                off.EventTransition(GameHashes.OperationalChanged, on, (Instance smi) => smi.master.operational.IsOperational)
+                off
+                    .EventTransition(GameHashes.OperationalChanged, on, smi => smi.master.operational.IsOperational)
                     .PlayAnim("off");
-                on.EventTransition(GameHashes.OperationalChanged, off, (Instance smi) => !smi.master.operational.IsOperational)
-                    .EventTransition(GameHashes.ActiveChanged, working.pre, (Instance smi) => smi.master.operational.IsActive)
+                on
+                    .EventTransition(GameHashes.OperationalChanged, off, smi => !smi.master.operational.IsOperational)
+                    .EventTransition(GameHashes.ActiveChanged, working.pre, smi => smi.master.operational.IsActive)
                     .PlayAnim("on");
-                working.DefaultState(working.pre);
-                working.pre.PlayAnim("working_pre")
+                working
+                    .DefaultState(working.pre);
+                working.pre
+                    .PlayAnim("working_pre")
                     .OnAnimQueueComplete(working.loop);
-                working.loop.PlayAnim("working_loop", KAnim.PlayMode.Loop)
-                    .EventTransition(GameHashes.ActiveChanged, working.pst, (Instance smi) => masterTarget.Get(smi) != null &&
-                    !smi.master.operational.IsActive);
-                working.pst.PlayAnim("working_pst")
+                working.loop
+                    .PlayAnim("working_loop", KAnim.PlayMode.Loop)
+                    .EventTransition(GameHashes.ActiveChanged, working.pst, smi => !smi.isMasterNull && !smi.master.operational.IsActive);
+                working.pst
+                    .PlayAnim("working_pst")
                     .OnAnimQueueComplete(off);
             }
         }
@@ -61,15 +65,17 @@ namespace SquirrelGenerator
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
-            activeWattageStatusItem = new StatusItem("WATTAGE", "BUILDING", "", StatusItem.IconType.Info, NotificationType.Neutral, false, OverlayModes.Power.ID)
+            if (activeWattageStatusItem == null)
             {
-                resolveStringCallback = delegate (string str, object data)
+                activeWattageStatusItem = new StatusItem("WATTAGE", "BUILDING", "", StatusItem.IconType.Info, NotificationType.Neutral, false, OverlayModes.Power.ID)
                 {
-                    var generator = (SquirrelGenerator)data;
-                    str = str.Replace("{Wattage}", GameUtil.GetFormattedWattage(generator.WattageRating, GameUtil.WattageFormatterUnit.Automatic, true));
-                    return str;
-                }
-            };
+                    resolveStringCallback = delegate (string str, object data)
+                    {
+                        var generator = (SquirrelGenerator)data;
+                        return str.Replace("{Wattage}", GameUtil.GetFormattedWattage(generator.WattageRating, GameUtil.WattageFormatterUnit.Automatic, true));
+                    }
+                };
+            }
         }
 
         protected override void OnSpawn()
