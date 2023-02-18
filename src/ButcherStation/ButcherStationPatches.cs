@@ -81,7 +81,7 @@ namespace ButcherStation
                 {
                     if (inst.GetDef<RanchableMonitor.Def>() != null)
                     {
-                        var prefabID = inst.GetComponent<KPrefabID>();
+                        inst.TryGetComponent<KPrefabID>(out var prefabID);
                         Tag creatureEligibleTag = prefabID.HasTag(GameTags.SwimmingCreature) ? ButcherStation.FisherableCreature : ButcherStation.ButcherableCreature;
                         prefabID.AddTag(creatureEligibleTag);
                         DiscoveredResources.Instance.Discover(prefabID.PrefabTag, creatureEligibleTag);
@@ -147,8 +147,7 @@ namespace ButcherStation
         {
             private static List<KPrefabID> GetOrderedCreatureList(List<KPrefabID> creatures, RanchStation.Instance smi)
             {
-                var butcherStation = smi.GetComponent<ButcherStation>();
-                if (butcherStation != null)
+                if (smi.gameObject.TryGetComponent<ButcherStation>(out var butcherStation))
                 {
                     butcherStation.RefreshCreatures();
                     return butcherStation.CachedCreatures;
@@ -296,14 +295,17 @@ namespace ButcherStation
 
             private static void OnWorkableEvent(Workable workable, Workable.WorkableEvent @event)
             {
-                switch (@event)
+                if (workable != null && workable.TryGetComponent<Operational>(out var operational))
                 {
-                    case Workable.WorkableEvent.WorkStarted:
-                        workable?.GetComponent<Operational>()?.SetActive(true);
-                        break;
-                    case Workable.WorkableEvent.WorkStopped:
-                        workable?.GetComponent<Operational>()?.SetActive(false);
-                        break;
+                    switch (@event)
+                    {
+                        case Workable.WorkableEvent.WorkStarted:
+                            operational.SetActive(true);
+                            break;
+                        case Workable.WorkableEvent.WorkStopped:
+                            operational.SetActive(false);
+                            break;
+                    }
                 }
             }
         }

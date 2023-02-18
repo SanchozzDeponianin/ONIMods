@@ -131,12 +131,14 @@ namespace Smelter
             SymbolOverrideControllerUtil.AddToPrefab(go);
             go.GetComponent<KPrefabID>().prefabSpawnFn += delegate (GameObject gameObject)
             {
-                var workable = gameObject.GetComponent<ComplexFabricatorWorkable>();
-                workable.WorkerStatusItem = Db.Get().DuplicantStatusItems.Processing;
-                workable.AttributeConverter = Db.Get().AttributeConverters.MachinerySpeed;
-                workable.AttributeExperienceMultiplier = DUPLICANTSTATS.ATTRIBUTE_LEVELING.PART_DAY_EXPERIENCE;
-                workable.SkillExperienceSkillGroup = Db.Get().SkillGroups.Technicals.Id;
-                workable.SkillExperienceMultiplier = SKILLS.PART_DAY_EXPERIENCE;
+                if (gameObject.TryGetComponent<ComplexFabricatorWorkable>(out var workable))
+                {
+                    workable.WorkerStatusItem = Db.Get().DuplicantStatusItems.Processing;
+                    workable.AttributeConverter = Db.Get().AttributeConverters.MachinerySpeed;
+                    workable.AttributeExperienceMultiplier = DUPLICANTSTATS.ATTRIBUTE_LEVELING.PART_DAY_EXPERIENCE;
+                    workable.SkillExperienceSkillGroup = Db.Get().SkillGroups.Technicals.Id;
+                    workable.SkillExperienceMultiplier = SKILLS.PART_DAY_EXPERIENCE;
+                }
             };
         }
 

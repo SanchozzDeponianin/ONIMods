@@ -116,9 +116,9 @@ namespace NoManualDelivery
                 {
                     if (
                         BuildingToMakeAutomatable.Contains(def.PrefabID)
-                        || (go.GetComponent<ManualDeliveryKG>() != null && (go.GetComponent<ElementConverter>() != null || go.GetComponent<EnergyGenerator>() != null) && go.GetComponent<ResearchCenter>() == null)
-                        || (go.GetComponent<ComplexFabricatorWorkable>() != null)
-                        || (go.GetComponent<TinkerStation>() != null)
+                        || (go.TryGetComponent<ManualDeliveryKG>(out _) && (go.TryGetComponent<ElementConverter>(out _) || go.TryGetComponent<EnergyGenerator>(out _)) && !go.TryGetComponent<ResearchCenter>(out _))
+                        || (go.TryGetComponent<ComplexFabricatorWorkable>(out _))
+                        || (go.TryGetComponent<TinkerStation>(out _))
                         )
                     {
                         go.AddOrGet<Automatable2>();
@@ -224,21 +224,22 @@ namespace NoManualDelivery
 
         private static void FixSweepBotStationStorage(Storage sweepStorage)
         {
-            bool automationOnly = (sweepStorage?.automatable?.GetAutomationOnly()) ?? false;
+            bool automationOnly = (sweepStorage.automatable?.GetAutomationOnly()) ?? false;
             for (int i = 0; i < sweepStorage.Count; i++)
             {
-                var clearable = sweepStorage[i].GetComponent<Clearable>();
-                if (automationOnly)
-                    clearable.CancelClearing();
-                else
-                    clearable.MarkForClear(false, true);
+                if (sweepStorage[i].TryGetComponent<Clearable>(out var clearable))
+                {
+                    if (automationOnly)
+                        clearable.CancelClearing();
+                    else
+                        clearable.MarkForClear(false, true);
+                }
             }
         }
 
         private static void UpdateSweepBotStationStorage(KMonoBehaviour kMonoBehaviour)
         {
-            var sweepBotStation = kMonoBehaviour.GetComponent<SweepBotStation>();
-            if (sweepBotStation != null)
+            if (kMonoBehaviour.TryGetComponent<SweepBotStation>(out var sweepBotStation))
             {
                 var storage = SWEEP_STORAGE.Get(sweepBotStation);
                 if (storage != null)

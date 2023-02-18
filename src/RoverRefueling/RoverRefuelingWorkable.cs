@@ -41,9 +41,8 @@ namespace RoverRefueling
         protected override void OnStartWork(Worker worker)
         {
             battery = Db.Get().Amounts.InternalChemicalBattery.Lookup(worker);
-            primaryElement = worker.GetComponent<PrimaryElement>();
-            var effects = worker.GetComponent<Effects>();
-            if (effects != null && !effects.HasEffect(RoverRefuelingPatches.RefuelingEffect))
+            worker.TryGetComponent<PrimaryElement>(out primaryElement);
+            if (worker.TryGetComponent<Effects>(out var effects) && !effects.HasEffect(RoverRefuelingPatches.RefuelingEffect))
                 effects.Add(RoverRefuelingPatches.RefuelingEffect, false);
         }
 
@@ -51,8 +50,7 @@ namespace RoverRefueling
         {
             battery = null;
             primaryElement = null;
-            var effects = worker.GetComponent<Effects>();
-            if (effects != null && effects.HasEffect(RoverRefuelingPatches.RefuelingEffect))
+            if (worker.TryGetComponent<Effects>(out var effects) && effects.HasEffect(RoverRefuelingPatches.RefuelingEffect))
                 effects.Remove(RoverRefuelingPatches.RefuelingEffect);
         }
 

@@ -74,8 +74,7 @@ namespace BuildableGeneShuffler
             {
                 if (__instance != null && !destroyed.Get(__instance))
                 {
-                    var geneShuffler = __instance.GetComponent<GeneShuffler>();
-                    if (geneShuffler != null)
+                    if (__instance.TryGetComponent<GeneShuffler>(out var geneShuffler))
                     {
                         // если калибратор не использован - нужно дропнуть зарядник
                         if (!geneShuffler.IsConsumed)
@@ -84,7 +83,8 @@ namespace BuildableGeneShuffler
                             Scenario.SpawnPrefab(Grid.PosToCell(__instance), dropOffset.x, dropOffset.y, GeneShufflerRechargeConfig.ID, Grid.SceneLayer.Front).SetActive(true);
                             PopFXManager.Instance.SpawnFX(PopFXManager.Instance.sprite_Plus, Assets.GetPrefab(GeneShufflerRechargeConfig.ID.ToTag()).GetProperName(), __instance.transform, 1.5f, false);
                         }
-                        __instance.GetComponent<BuildedGeneShuffler>()?.SpawnItemsFromConstruction();
+                        if (__instance.TryGetComponent<BuildedGeneShuffler>(out var builded))
+                            builded.SpawnItemsFromConstruction();
                     }
                 }
             }
@@ -98,7 +98,7 @@ namespace BuildableGeneShuffler
         {
             private static float[] InjectMass(float[] mass, Deconstructable deconstructable)
             {
-                return deconstructable.GetComponent<BuildedGeneShuffler>()?.constructionMass ?? mass;
+                return deconstructable.TryGetComponent<BuildedGeneShuffler>(out var shuffler) ? shuffler.constructionMass : mass;
             }
             /*
             	else

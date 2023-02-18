@@ -35,15 +35,15 @@ namespace MechanicsStation
         private void OnStorageChange(object data)
         {
             var ore = storage.FindFirst(MATERIAL_FOR_TINKER);
-            if (ore != null)
+            if (ore != null && ore.TryGetComponent<KBatchedAnimController>(out var ore_kbac))
             {
-                var oreAnimFile = ore.GetComponent<KBatchedAnimController>().CurrentAnim;
-                var oreAnimSymbol = oreAnimFile.animFile.build.symbols[0];
+                var oreAnimSymbol = ore_kbac.CurrentAnim.animFile.build.symbols[0];
                 soc.AddSymbolOverride(oreSymbolHash, oreAnimSymbol, 5);
                 kbac.SetSymbolVisiblity(oreSymbolHash, true);
             }
             else
             {
+                soc.RemoveSymbolOverride(oreSymbolHash, 5);
                 kbac.SetSymbolVisiblity(oreSymbolHash, false);
             }
         }

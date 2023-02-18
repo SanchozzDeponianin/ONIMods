@@ -120,8 +120,8 @@ namespace ButcherStation
 
         private void OnCopySettings(object data)
         {
-            var butcherStation = ((GameObject)data)?.GetComponent<ButcherStation>();
-            if (butcherStation != null)
+            var go = (GameObject)data;
+            if (go != null && go.TryGetComponent<ButcherStation>(out var butcherStation))
             {
                 creatureLimit = butcherStation.creatureLimit;
                 ageButchThresold = butcherStation.ageButchThresold;
@@ -163,11 +163,9 @@ namespace ButcherStation
             {
                 if (!creature.HasAnyTags(CreatureNotEligibleTags))
                 {
-                    if (not_count_babies)
+                    if (not_count_babies && creature.TryGetComponent<Effects>(out var effects) && effects.HasEffect("IsABaby"))
                     {
-                        var effects = creature.GetComponent<Effects>();
-                        if (effects != null && effects.HasEffect("IsABaby"))
-                            continue;
+                        continue;
                     }
                     storedCreatureCount++;
                 }
@@ -184,7 +182,7 @@ namespace ButcherStation
                     .Where(creature => creature != null && creature.gameObject != null)
                     .OrderByDescending(delegate (KPrefabID creature)
                     {
-                        if (!treeFilterable?.ContainsTag(creature.PrefabTag) ?? false)
+                        if (!treeFilterable.ContainsTag(creature.PrefabTag))
                             return 1f;
                         var age = Age.Lookup(creature);
                         if (age == null)
@@ -198,10 +196,10 @@ namespace ButcherStation
 
         public bool IsCreatureEligibleToBeButched(GameObject creature_go)
         {
-            var kPrefabID = creature_go.GetComponent<KPrefabID>();
+            creature_go.TryGetComponent<KPrefabID>(out var kPrefabID);
             if (!kPrefabID.HasTag(creatureEligibleTag) || kPrefabID.HasAnyTags(CreatureNotEligibleTags))
                 return false;
-            bool unSelected = !treeFilterable?.ContainsTag(kPrefabID.PrefabTag) ?? false;
+            bool unSelected = !treeFilterable.ContainsTag(kPrefabID.PrefabTag);
             if (unSelected && wrangleUnSelected)
                 return true;
             if (!unSelected && wrangleSurplus && storedCreatureCount > creatureLimit)
@@ -215,6 +213,13 @@ namespace ButcherStation
             return false;
         }
 
+        public static bool IsCreatureEligibleToBeButchedCB(GameObject creature_go, RanchStation.Instance ranch_station_smi)
+        {
+            return !ranch_station_smi.IsNullOrStopped()
+                && ranch_station_smi.gameObject.TryGetComponent<ButcherStation>(out var butcherStation)
+                    && butcherStation.IsCreatureEligibleToBeButched(creature_go);
+        }
+
         public static void ButchCreature(GameObject creature_go, bool moveCreatureToButcherStation = false)
         {
             bool kill = true;
@@ -226,18 +231,17 @@ namespace ButcherStation
                     int cell = Grid.PosToCell(targetRanchStation.transform.GetPosition());
                     creature_go.transform.SetPosition(Grid.CellToPosCCC(cell, Grid.SceneLayer.Creatures));
                 }
-                var extraMeatSpawner = creature_go.GetComponent<ExtraMeatSpawner>();
-                if (extraMeatSpawner != null)
+                if (creature_go.TryGetComponent<ExtraMeatSpawner>(out var extraMeatSpawner))
                 {
                     var smi = targetRanchStation.GetSMI<RancherChore.RancherChoreStates.Instance>();
                     var rancher = smi.sm.rancher.Get(smi);
                     extraMeatSpawner.dropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
                 }
-                var butcherStation = targetRanchStation.GetComponent<ButcherStation>();
-                if (butcherStation != null && butcherStation.leaveAlive)
+                if (targetRanchStation.gameObject.TryGetComponent<ButcherStation>(out var butcherStation) && butcherStation.leaveAlive)
                 {
-                    creature_go.GetComponent<Baggable>()?.SetWrangled();
                     kill = false;
+                    if (creature_go.TryGetComponent<Baggable>(out var baggable))
+                        baggable.SetWrangled();
                 }
             }
             if (kill)

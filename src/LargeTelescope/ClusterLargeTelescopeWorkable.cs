@@ -90,23 +90,20 @@ namespace LargeTelescope
         // сделано не как у клеев, чтобы исправить эксплоит и баг со снятием костюма.
         private void OverrideGasProvider(Worker worker)
         {
-            worker?.GetComponent<OxygenBreather>()?.SetGasProvider(this);
+            if (worker != null && worker.TryGetComponent<OxygenBreather>(out var breather))
+                breather.SetGasProvider(this);
         }
 
         private void RestoreGasProvider(Worker worker)
         {
-            if (worker != null)
+            if (worker != null && worker.TryGetComponent<OxygenBreather>(out var breather) && ReferenceEquals(this, breather.GetGasProvider()))
             {
-                var breather = worker.GetComponent<OxygenBreather>();
-                if (breather != null && ReferenceEquals(this, breather.GetGasProvider()))
-                {
-                    var suitTank = worker.GetComponent<MinionIdentity>()?.GetEquipment()?
-                        .GetSlot(Db.Get().AssignableSlots.Suit)?.assignable?.GetComponent<SuitTank>();
-                    if (suitTank != null && !suitTank.IsEmpty())
-                        breather.SetGasProvider(suitTank);
-                    else
-                        breather.SetGasProvider(new GasBreatherFromWorldProvider());
-                }
+                var suitTank = worker.GetComponent<MinionIdentity>()?.GetEquipment()?
+                    .GetSlot(Db.Get().AssignableSlots.Suit)?.assignable?.GetComponent<SuitTank>();
+                if (suitTank != null && !suitTank.IsEmpty())
+                    breather.SetGasProvider(suitTank);
+                else
+                    breather.SetGasProvider(new GasBreatherFromWorldProvider());
             }
         }
     }

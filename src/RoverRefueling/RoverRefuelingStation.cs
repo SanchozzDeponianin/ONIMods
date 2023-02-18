@@ -148,8 +148,9 @@ namespace RoverRefueling
             Subscribe((int)GameHashes.ConduitConnectionChanged, CheckPipeDelegate);
             Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
             smi.StartSM();
-            fuel_meter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_oxygen_target", "meter_oxygen", Meter.Offset.Infront, Grid.SceneLayer.BuildingFront, new string[] { "meter_oxygen_target" });
-            progress_meter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_resources_target", "meter_resources", Meter.Offset.Behind, Grid.SceneLayer.BuildingBack, new string[] { "meter_resources_target" });
+            var kbac = GetComponent<KBatchedAnimController>();
+            fuel_meter = new MeterController(kbac, "meter_oxygen_target", "meter_oxygen", Meter.Offset.Infront, Grid.SceneLayer.BuildingFront, new string[] { "meter_oxygen_target" });
+            progress_meter = new MeterController(kbac, "meter_resources_target", "meter_resources", Meter.Offset.Behind, Grid.SceneLayer.BuildingBack, new string[] { "meter_resources_target" });
             RefreshMeter();
         }
 

@@ -93,15 +93,11 @@ namespace CarouselCentrifuge
         {
             base.OnCompleteWork(worker);
             bool flag = (Random.Range(0f, 100f) > vomitChancePercent);
-
-            var effects = worker.GetComponent<Effects>();
-            if (effects != null)
+            if (worker.TryGetComponent<Effects>(out var effects))
             {
                 effects.Add(trackingEffectName, true);
                 if (flag) effects.Add(specificEffectName, true);
-
-                var chore_provider = worker.GetComponent<ChoreProvider>();
-                if (chore_provider != null)
+                if (worker.TryGetComponent<ChoreProvider>(out var chore_provider))
                 {
                     if (flag)
                     {
@@ -146,15 +142,17 @@ namespace CarouselCentrifuge
         public bool GetWorkerPriority(Worker worker, out int priority)
         {
             priority = basePriority;
-            var effects = worker.GetComponent<Effects>();
-            if (effects.HasEffect(trackingEffectName))
+            if (worker.TryGetComponent<Effects>(out var effects))
             {
-                priority = 0;
-                return false;
-            }
-            if (effects.HasEffect(specificEffectName))
-            {
-                priority = RELAXATION.PRIORITY.RECENTLY_USED;
+                if (effects.HasEffect(trackingEffectName))
+                {
+                    priority = 0;
+                    return false;
+                }
+                if (effects.HasEffect(specificEffectName))
+                {
+                    priority = RELAXATION.PRIORITY.RECENTLY_USED;
+                }
             }
             return true;
         }

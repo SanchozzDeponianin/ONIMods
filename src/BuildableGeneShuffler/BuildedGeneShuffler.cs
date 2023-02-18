@@ -46,7 +46,7 @@ namespace BuildableGeneShuffler
                         Link.Set(layering, null);
                     }
                 }
-                GetComponent<KBatchedAnimController>().SwapAnims(new KAnimFile[] { Assets.GetAnim(BuildableGeneShufflerConfig.anim) });
+                kbac.SwapAnims(new KAnimFile[] { Assets.GetAnim(BuildableGeneShufflerConfig.anim) });
             }
         }
 
@@ -55,8 +55,7 @@ namespace BuildableGeneShuffler
             if (isBuilded && !destroyed)
             {
                 destroyed = true;
-                var deconstructable = GetComponent<Deconstructable>();
-                if (deconstructable != null)
+                if (TryGetComponent<Deconstructable>(out var deconstructable))
                 {
                     deconstructable.allowDeconstruction = true;
                     deconstructable.SpawnItemsFromConstruction();

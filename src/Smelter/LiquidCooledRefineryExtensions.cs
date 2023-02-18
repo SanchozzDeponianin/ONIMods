@@ -26,10 +26,12 @@ namespace Smelter
             @this.outStorage.Find(@this.coolantTag, pooledList);
             foreach (GameObject gameObject in pooledList)
             {
-                var primaryElement = gameObject.GetComponent<PrimaryElement>();
-                if (primaryElement.Temperature > primaryElement.Element.highTemp)
+                if (gameObject.TryGetComponent<PrimaryElement>(out var primaryElement)
+                    && primaryElement.Temperature > primaryElement.Element.highTemp)
                 {
-                    @this.outStorage.Drop(gameObject)?.GetComponent<Dumpable>()?.Dump(position);
+                    @this.outStorage.Drop(gameObject);
+                    if (gameObject.TryGetComponent<Dumpable>(out var dumpable))
+                        dumpable.Dump(position);
                 }
             }
             pooledList.Recycle();
@@ -48,7 +50,7 @@ namespace Smelter
             float remaining_mass = @this.minCoolantMass;
             foreach (GameObject gameObject in pooledList)
             {
-                var pickupable = gameObject.GetComponent<Pickupable>();
+                gameObject.TryGetComponent<Pickupable>(out var pickupable);
                 var primaryElement = pickupable.PrimaryElement;
                 float mass = primaryElement.Mass;
                 float temperatureDelta = @this.CalculateTemperatureDelta(primaryElement, energyDelta);

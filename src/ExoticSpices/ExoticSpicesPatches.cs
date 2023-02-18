@@ -144,7 +144,7 @@ namespace ExoticSpices
         {
             private static void Postfix(Worker worker)
             {
-                if (worker.GetComponent<Effects>().HasEffect(GASSY_MOO_SPICE))
+                if (worker.TryGetComponent<Effects>(out var effects) && effects.HasEffect(GASSY_MOO_SPICE))
                     CreateEmoteChore(worker, ButtScratchEmote, 0.75f);
             }
         }
@@ -155,7 +155,7 @@ namespace ExoticSpices
         {
             private static void Postfix(Flatulence __instance)
             {
-                if (__instance.GetComponent<Effects>().HasEffect(GASSY_MOO_SPICE))
+                if (__instance.TryGetComponent<Effects>(out var effects) && effects.HasEffect(GASSY_MOO_SPICE))
                 {
                     var smi = __instance.GetSMI<StaminaMonitor.Instance>();
                     if (!smi.IsNullOrStopped() && !smi.IsSleeping())
@@ -165,13 +165,11 @@ namespace ExoticSpices
 
             private static float GetEmitMass(GameObject flatulent, out SimHashes emit_element)
             {
-                var effects = flatulent.GetComponent<Effects>();
-                if (effects != null && effects.HasEffect(GASSY_MOO_SPICE))
+                if (flatulent.TryGetComponent<Effects>(out var effects) && effects.HasEffect(GASSY_MOO_SPICE))
                 {
                     emit_element = GassyMooSpiceEmitElement;
                     float mass = GassyMooSpiceEmitMass;
-                    var traits = flatulent.GetComponent<Traits>();
-                    if (traits != null && traits.HasTrait(FLATULENCE))
+                    if (flatulent.TryGetComponent<Traits>(out var traits) && traits.HasTrait(FLATULENCE))
                     {
                         emit_element = SimHashes.Methane;
                         mass = (2f * mass) + TUNING.TRAITS.FLATULENCE_EMIT_MASS;

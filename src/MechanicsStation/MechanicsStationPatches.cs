@@ -30,7 +30,7 @@ namespace MechanicsStation
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuildingAndModifiers()
         {
-            ModUtil.AddBuildingToPlanScreen("Equipment", MechanicsStationConfig.ID, "work stations", PowerControlStationConfig.ID);
+            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, MechanicsStationConfig.ID, BUILD_SUBCATEGORY.industrialstation, PowerControlStationConfig.ID);
             Utils.AddBuildingToTechnology("RefinedObjects", MechanicsStationConfig.ID);
             Init();
         }
@@ -122,23 +122,28 @@ namespace MechanicsStation
                 if (go != null)
                 {
                     // перерабатывающие постройки, требующие искричество
-                    if (def.RequiresPowerInput && go.GetComponent<ElementConverter>() != null && !BuildingWithElementConverterStopList.Contains(def.PrefabID))
+                    if (def.RequiresPowerInput && go.TryGetComponent<ElementConverter>(out _) && !BuildingWithElementConverterStopList.Contains(def.PrefabID))
                     {
                         MakeMachineTinkerableSave(go);
                         // увеличить всасывание (впервую очередь для скруббера)
-                        // увеличить ёмкость потребления из трубы
-                        if (go.GetComponent<ConduitConsumer>() != null || go.GetComponent<PassiveElementConsumer>() != null)
+                        float multiplier = BASE_SPEED_VALUE + (MechanicsStationOptions.Instance.machinery_speed_modifier / 100);
+                        var kPrefabID = go.GetComponent<KPrefabID>();
+                        if (go.TryGetComponent<PassiveElementConsumer>(out _))
                         {
-                            go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject prefab)
+                            kPrefabID.prefabInitFn += delegate (GameObject prefab)
                             {
-                                float multiplier = BASE_SPEED_VALUE + (MechanicsStationOptions.Instance.machinery_speed_modifier / 100);
-                                var elementConsumer = prefab.GetComponent<PassiveElementConsumer>();
-                                if (elementConsumer != null)
+                                if (prefab.TryGetComponent<PassiveElementConsumer>(out var elementConsumer))
                                 {
                                     elementConsumer.consumptionRate *= multiplier;
                                     elementConsumer.capacityKG *= multiplier;
                                 }
-
+                            };
+                        }
+                        // увеличить ёмкость потребления из трубы
+                        if (go.TryGetComponent<ConduitConsumer>(out _))
+                        {
+                            kPrefabID.prefabInitFn += delegate (GameObject prefab)
+                            {
                                 foreach (var conduitConsumer in prefab.GetComponents<ConduitConsumer>())
                                 {
                                     if (conduitConsumer != null)
@@ -149,7 +154,6 @@ namespace MechanicsStation
                                 }
                             };
                         }
-
                         // скважина
                         if (def.PrefabID == OilWellCapConfig.ID)
                         {
@@ -159,15 +163,14 @@ namespace MechanicsStation
                         if (def.PrefabID == FertilizerMakerConfig.ID)
                         {
                             go.AddOrGet<TinkerableFertilizerMaker>();
-                            var buildingElementEmitter = go.GetComponent<BuildingElementEmitter>();
-                            if (buildingElementEmitter != null)
+                            if (go.TryGetComponent<BuildingElementEmitter>(out var buildingElementEmitter))
                             {
                                 TinkerableFertilizerMaker.base_methane_production_rate = buildingElementEmitter.emitRate;
                             }
                         }
                     }
                     // фабрикаторы
-                    else if (go.GetComponent<ComplexFabricatorWorkable>() != null && !BuildingWithComplexFabricatorWorkableStopList.Contains(def.PrefabID))
+                    else if (go.TryGetComponent<ComplexFabricatorWorkable>(out _) && !BuildingWithComplexFabricatorWorkableStopList.Contains(def.PrefabID))
                     {
                         MakeMachineTinkerableSave(go);
                         go.AddOrGet<TinkerableWorkable>();
@@ -188,8 +191,7 @@ namespace MechanicsStation
         {
             private static void Postfix(Workable __instance, ref float __result)
             {
-                var tinkerableWorkable = __instance.GetComponent<TinkerableWorkable>();
-                if (tinkerableWorkable != null)
+                if (__instance.TryGetComponent<TinkerableWorkable>(out var tinkerableWorkable))
                 {
                     __result *= tinkerableWorkable.GetCraftingSpeedMultiplier();
                 }
@@ -202,8 +204,7 @@ namespace MechanicsStation
         {
             private static void Prefix(OilWellCap __instance, ref float dt)
             {
-                var tinkerableWorkable = __instance.GetComponent<TinkerableWorkable>();
-                if (tinkerableWorkable != null)
+                if (__instance.TryGetComponent<TinkerableWorkable>(out var tinkerableWorkable))
                 {
                     dt *= tinkerableWorkable.GetMachinerySpeedMultiplier();
                 }

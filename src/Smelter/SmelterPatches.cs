@@ -79,7 +79,7 @@ namespace Smelter
 
         // газообразные продукты нужно выпускать в атмосферу
         // ограничимся только теми постройкаи куда мы добавили такие рецепты
-        private static List<string> fabricators = new List<string>() { SmelterConfig.ID, MetalRefineryConfig.ID, KilnConfig.ID };
+        private static readonly List<string> fabricators = new List<string>() { SmelterConfig.ID, MetalRefineryConfig.ID, KilnConfig.ID };
 
         [HarmonyPatch(typeof(ComplexFabricator), "SpawnOrderProduct")]
         private static class ComplexFabricator_SpawnOrderProduct
@@ -90,10 +90,9 @@ namespace Smelter
                 {
                     foreach (GameObject gameObject in __result)
                     {
-                        if (gameObject?.GetComponent<PrimaryElement>().Element.IsGas ?? false)
-                        {
-                            gameObject.GetComponent<Dumpable>()?.Dump();
-                        }
+                        if (gameObject.TryGetComponent<PrimaryElement>(out var primaryElement) && primaryElement.Element.IsGas
+                            && gameObject.TryGetComponent<Dumpable>(out var dumpable))
+                            dumpable.Dump();
                     }
                 }
             }

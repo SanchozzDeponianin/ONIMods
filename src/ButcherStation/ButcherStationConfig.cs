@@ -61,11 +61,7 @@ namespace ButcherStation
         public override void DoPostConfigureComplete(GameObject go)
         {
             var def = go.AddOrGetDef<RanchStation.Def>();
-            def.IsCritterEligibleToBeRanchedCb = (creature_go, ranch_station_smi) =>
-            {
-                var butcherStation = ranch_station_smi.GetComponent<ButcherStation>();
-                return butcherStation?.IsCreatureEligibleToBeButched(creature_go) ?? false;
-            };
+            def.IsCritterEligibleToBeRanchedCb = ButcherStation.IsCreatureEligibleToBeButchedCB;
             def.OnRanchCompleteCb = (creature_go) => ButcherStation.ButchCreature(creature_go);
             //def.GetTargetRanchCell = (smi) =>;
             def.RancherInteractAnim = "anim_interacts_shearingstation_kanim";

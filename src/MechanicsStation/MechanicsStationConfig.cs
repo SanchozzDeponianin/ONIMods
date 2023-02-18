@@ -65,11 +65,13 @@ namespace MechanicsStation
             Prioritizable.AddRef(go);
             go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject gameObject)
             {
-                var component = gameObject.GetComponent<TinkerStation>();
-                component.AttributeConverter = Db.Get().AttributeConverters.MachinerySpeed;
-                component.AttributeExperienceMultiplier = DUPLICANTSTATS.ATTRIBUTE_LEVELING.MOST_DAY_EXPERIENCE;
-                component.SkillExperienceSkillGroup = Db.Get().SkillGroups.Technicals.Id;
-                component.SkillExperienceMultiplier = SKILLS.MOST_DAY_EXPERIENCE;
+                if (gameObject.TryGetComponent<TinkerStation>(out var component))
+                {
+                    component.AttributeConverter = Db.Get().AttributeConverters.MachinerySpeed;
+                    component.AttributeExperienceMultiplier = DUPLICANTSTATS.ATTRIBUTE_LEVELING.MOST_DAY_EXPERIENCE;
+                    component.SkillExperienceSkillGroup = Db.Get().SkillGroups.Technicals.Id;
+                    component.SkillExperienceMultiplier = SKILLS.MOST_DAY_EXPERIENCE;
+                }
             };
             SymbolOverrideControllerUtil.AddToPrefab(go);
             go.AddOrGet<MechanicsStation>();

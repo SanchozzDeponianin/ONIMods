@@ -159,8 +159,7 @@ namespace MechanicsStation
             // а это для корректного изменения времени работы после изменения в настройках
             go.GetComponent<KPrefabID>().prefabSpawnFn += delegate (GameObject prefab)
             {
-                var _tinkerable = prefab.GetComponent<Tinkerable>();
-                if (_tinkerable != null)
+                if (prefab.TryGetComponent<Tinkerable>(out var _tinkerable))
                 {
                     _tinkerable.workTime = MechanicsStationOptions.Instance.machine_tinkerable_worktime;
                     _tinkerable.WorkTimeRemaining = Mathf.Min(_tinkerable.WorkTimeRemaining, _tinkerable.workTime);

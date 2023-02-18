@@ -234,7 +234,7 @@ namespace Smelter
             outStorage.Find(coolantTag, pooledList);
             foreach (GameObject gameObject in pooledList)
             {
-                var primaryElement = gameObject.GetComponent<PrimaryElement>();
+                gameObject.TryGetComponent<PrimaryElement>(out var primaryElement);
                 float mass = primaryElement.Mass;
                 float temperatureDelta = this.CalculateTemperatureDelta(primaryElement, energyDelta);
                 if (mass > 0 && (primaryElement.Temperature + temperatureDelta < primaryElement.Element.highTemp))
@@ -268,8 +268,8 @@ namespace Smelter
             var results = base.SpawnOrderProduct(recipe);
             foreach (var result in results)
             {
-                var primaryElement = result?.GetComponent<PrimaryElement>();
-                if (primaryElement != null && primaryElement.Temperature >= primaryElement.Element.highTemp)
+                if (result.TryGetComponent<PrimaryElement>(out var primaryElement)
+                    && primaryElement.Temperature >= primaryElement.Element.highTemp)
                     primaryElement.Temperature = primaryElement.Element.highTemp - SimMessages.STATE_TRANSITION_TEMPERATURE_BUFER;
             }
             operational.SetActive(false, false);
