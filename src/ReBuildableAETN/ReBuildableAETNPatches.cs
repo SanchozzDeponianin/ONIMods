@@ -23,10 +23,7 @@ namespace ReBuildableAETN
             base.OnLoad(harmony);
             PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(GetType());
-            if (DlcManager.IsExpansion1Active())
-                new POptions().RegisterOptions(this, typeof(ReBuildableAETNSpaceOutOptions));
-            else
-                new POptions().RegisterOptions(this, typeof(ReBuildableAETNVanillaOptions));
+            new POptions().RegisterOptions(this, typeof(ReBuildableAETNOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -72,6 +69,7 @@ namespace ReBuildableAETN
         {
             private static void Postfix(ref BuildingDef __result)
             {
+                __result.ShowInBuildMenu = true;
                 __result.ViewMode = OverlayModes.GasConduits.ID;
                 __result.MaterialCategory = MATERIALS.REFINED_METALS.AddItem(MaterialBuildingTag.Name).ToArray();
                 __result.Mass = __result.Mass.AddItem(2).ToArray();

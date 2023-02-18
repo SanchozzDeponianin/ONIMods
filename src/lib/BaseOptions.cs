@@ -1,4 +1,5 @@
-﻿using PeterHan.PLib.Options;
+﻿using System.IO;
+using PeterHan.PLib.Options;
 
 namespace SanchozzONIMods.Lib
 {
@@ -20,7 +21,10 @@ namespace SanchozzONIMods.Lib
 
         public static void Reload()
         {
-            instance = POptions.ReadSettings<Options>() ?? new Options();
+            instance = null;
+            if (File.Exists(POptions.GetConfigFilePath(typeof(Option))))
+                instance = POptions.ReadSettings<Options>();
+            instance = instance ?? new Options();
             ClampAndRound(instance);
         }
 
