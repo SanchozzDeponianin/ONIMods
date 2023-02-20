@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 using TUNING;
+using HarmonyLib;
 using SanchozzONIMods.Shared;
 
 namespace SuitRecharger
@@ -129,17 +130,20 @@ namespace SuitRecharger
                         var fabricator = Assets.GetPrefab(recipe.fabricators[0]);
                         cost.energy = (fabricator.GetComponent<Building>()?.Def.EnergyConsumptionWhenActive ?? 0f) * recipe.time;
                     }
-                    SuitRecharger.repairSuitCost[suit] = cost;
+                    if (!SuitRecharger.repairSuitCost.ContainsKey(suit))
+                        SuitRecharger.repairSuitCost[suit] = new SuitRecharger.RepairSuitCost[0];
+                    SuitRecharger.repairSuitCost[suit] = SuitRecharger.repairSuitCost[suit].AddToArray(cost);
                 }
             }
             // доставкa материалов для ремонта
             const float refill = 0.2f;
             var go = Assets.GetPrefab(ID);
             var storage = go.AddOrGet<Storage>();
-            var materials = SuitRecharger.repairSuitCost.Values.Select(cost => cost.material).Distinct();
-            foreach (var material in materials)
+            var all_costs = SuitRecharger.repairSuitCost.Values.SelectMany(x => x);
+            SuitRecharger.repairMaterials = all_costs.Select(cost => cost.material).Where(tag => tag.IsValid).Distinct().ToList();
+            foreach (var material in SuitRecharger.repairMaterials)
             {
-                var amount = SuitRecharger.repairSuitCost.Values.Where(cost => cost.material == material).Select(cost => cost.amount).Max();
+                var amount = all_costs.Where(cost => cost.material == material).Select(cost => cost.amount).Max();
                 AddManualDeliveryKG(go, material, amount / refill, refill, false).SetStorage(storage);
             }
         }

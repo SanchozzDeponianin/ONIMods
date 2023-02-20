@@ -32,7 +32,8 @@ namespace SuitRecharger
             public float amount;
             public float energy;
         }
-        public static Dictionary<Tag, RepairSuitCost> repairSuitCost = new Dictionary<Tag, RepairSuitCost>();
+        internal static Dictionary<Tag, RepairSuitCost[]> repairSuitCost = new Dictionary<Tag, RepairSuitCost[]>();
+        internal static List<Tag> repairMaterials = new List<Tag>();
 
         // проверка что костюм действительно надет
         private static readonly Chore.Precondition IsSuitEquipped = new Chore.Precondition
@@ -68,13 +69,15 @@ namespace SuitRecharger
                     && assignable.TryGetComponent<Durability>(out var durability))
                 {
                     float d = durability.GetTrueDurability(context.consumerState.resume);
-                    if (recharger.enableRepair)
+                    if (recharger.enableRepair && repairSuitCost.TryGetValue(equippable.def.Id.ToTag(), out var costs))
                     {
-                        repairSuitCost.TryGetValue(equippable.def.Id.ToTag(), out var cost);
-                        float need = cost.amount * (1f - d);
-                        recharger.repairMaterialsAvailable.TryGetValue(cost.material, out float available);
-                        if (need <= available)
-                            return true;
+                        foreach (var cost in costs)
+                        {
+                            float need = cost.amount * (1f - d);
+                            recharger.repairMaterialsAvailable.TryGetValue(cost.material, out float available);
+                            if (need <= available)
+                                return true;
+                        }
                     }
                     return d >= recharger.durabilityThreshold;
                 }
@@ -347,8 +350,7 @@ namespace SuitRecharger
 
         public float OxygenAvailable { get; private set; }
         public float FuelAvailable { get; private set; }
-        private List<Tag> repairMaterials = new List<Tag>();
-        private Dictionary<Tag, float> repairMaterialsAvailable = new Dictionary<Tag, float>();
+        public Dictionary<Tag, float> repairMaterialsAvailable { get; private set; } = new Dictionary<Tag, float>();
 
         static internal void CheckDifficultySetting()
         {
@@ -440,8 +442,7 @@ namespace SuitRecharger
             Game.Instance.liquidConduitFlow.AddConduitUpdater(OnLiquidConduitUpdate, ConduitFlowPriority.Default);
             Game.Instance.gasConduitFlow.AddConduitUpdater(OnGasConduitUpdate, ConduitFlowPriority.Default);
 
-            repairSuitCost.Values.Select(cost => cost.material).Distinct()
-                .Do(tag => { repairMaterials.Add(tag); repairMaterialsAvailable[tag] = 0f; });
+            repairMaterials.Do(tag => { repairMaterialsAvailable[tag] = 0f; });
             OnStorageChange();
             UpdateDeliveryComponents();
             smi.StartSM();

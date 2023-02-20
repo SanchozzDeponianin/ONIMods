@@ -69,15 +69,30 @@ namespace SuitRecharger
         protected override void OnStartWork(Worker worker)
         {
             SetWorkTime(float.PositiveInfinity);
+            repairCost = default;
             var suit = worker.GetComponent<MinionIdentity>().GetEquipment().GetAssignable(Db.Get().AssignableSlots.Suit);
             if (suit != null)
             {
-                suitTank = suit.GetComponent<SuitTank>();
-                jetSuitTank = suit.GetComponent<JetSuitTank>();
-                leadSuitTank = suit.GetComponent<LeadSuitTank>();
-                durability = suit.GetComponent<Durability>();
+                suit.TryGetComponent<SuitTank>(out suitTank);
+                suit.TryGetComponent<JetSuitTank>(out jetSuitTank);
+                suit.TryGetComponent<LeadSuitTank>(out leadSuitTank);
+                suit.TryGetComponent<Durability>(out durability);
                 durability.ApplyEquippedDurability(worker.GetComponent<MinionResume>());
-                SuitRecharger.repairSuitCost.TryGetValue(suit.PrefabID(), out repairCost);
+                // если есть несколько материалов подходящих для ремонта
+                // берём тот которого больше в наличии
+                float max = -1f;
+                if (SuitRecharger.repairSuitCost.TryGetValue(suit.PrefabID(), out var costs))
+                {
+                    foreach (var cost in costs)
+                    {
+                        recharger.repairMaterialsAvailable.TryGetValue(cost.material, out float available);
+                        if (available > max)
+                        {
+                            repairCost = cost;
+                            max = available;
+                        }
+                    }
+                }
             }
             energyConsumer.BaseWattageRating = energyConsumer.WattsNeededWhenActive;
             operational.SetActive(true, false);
