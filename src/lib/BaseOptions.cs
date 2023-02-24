@@ -21,10 +21,10 @@ namespace SanchozzONIMods.Lib
 
         public static void Reload()
         {
-            instance = null;
-            if (File.Exists(POptions.GetConfigFilePath(typeof(Option))))
-                instance = POptions.ReadSettings<Options>();
-            instance = instance ?? new Options();
+            if (File.Exists(POptions.GetConfigFilePath(typeof(Options))))
+                instance = POptions.ReadSettings<Options>() ?? new Options();
+            else
+                instance = new Options();
             ClampAndRound(instance);
         }
 

@@ -90,23 +90,6 @@ namespace BetterPlantTending
             }
         }
 
-#if false
-        // todo: нужно перепроверить это!
-        // фикс для элементконсумера, чтобы статуситем не исчезал после обновления
-        [HarmonyPatch(typeof(ElementConsumer), "UpdateStatusItem")]
-        private static class ElementConsumer_UpdateStatusItem
-        {
-            private static void Prefix(ElementConsumer __instance, ref System.Guid ___statusHandle, KSelectable ___selectable)
-            {
-                if (__instance.showInStatusPanel && ___statusHandle != System.Guid.Empty)
-                {
-                    ___selectable.RemoveStatusItem(___statusHandle);
-                    ___statusHandle = System.Guid.Empty;
-                }
-            }
-        }
-#endif
-
         // деревянное дерево
         // в ванили отдельные ветки не будут убобрять после загрузки сейва
         // так как до них не доходит событие OnUpdateRoom
