@@ -16,22 +16,17 @@
   <PropertyGroup>
     <Title>Varicoloured Balloons</Title>
     <Description>Adds more different colors and variations of balloons.</Description>
-    <ModVersion>1.2.4</ModVersion>
+    <ModVersion>2.0.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\lib\BaseOptions.cs">
-      <Link>BaseOptions.cs</Link>
-    </Compile>
     <Compile Include="..\lib\TranspilerUtils.cs">
       <Link>TranspilerUtils.cs</Link>
     </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
-    <Compile Include="STRINGS.cs" />
-    <Compile Include="VaricolouredBalloonsHelper.cs" />
-    <Compile Include="VaricolouredBalloonsOptions.cs" />
+    <Compile Include="ModdedEquippableBalloon.cs" />
     <Compile Include="VaricolouredBalloonsPatches.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

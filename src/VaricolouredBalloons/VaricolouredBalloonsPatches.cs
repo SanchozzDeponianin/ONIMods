@@ -1,346 +1,155 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using Klei.AI;
-using TUNING;
+using Database;
 using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
-using PeterHan.PLib.Detours;
-using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
 
 namespace VaricolouredBalloons
 {
-    internal sealed class VaricolouredBalloonsPatches : KMod.UserMod2
+    public sealed class VaricolouredBalloonsPatches : KMod.UserMod2
     {
-        private const string HasBalloon = "HasBalloon";
-
-        private static readonly IDetouredField<GetBalloonWorkable, BalloonArtistChore.StatesInstance> BALLOONARTIST = PDetours.DetourField<GetBalloonWorkable, BalloonArtistChore.StatesInstance>("balloonArtist");
-
         public override void OnLoad(Harmony harmony)
         {
             base.OnLoad(harmony);
             PUtil.InitLibrary(true);
             new PPatchManager(harmony).RegisterPatchClass(typeof(VaricolouredBalloonsPatches));
-            new POptions().RegisterOptions(this, typeof(VaricolouredBalloonsOptions));
         }
 
-        [PLibMethod(RunAt.BeforeDbInit)]
-        private static void BeforeDbInit()
+        private static readonly BalloonArtistFacadeType Varicoloured = (BalloonArtistFacadeType)Hash.SDBMLower(nameof(Varicoloured));
+        private static readonly List<BalloonOverrideSymbolIter> BalloonOverrides = new List<BalloonOverrideSymbolIter>();
+        public static ReadOnlyCollection<BalloonArtistFacadeResource> MyBalloons { get; private set; }
+
+        private static BalloonArtistFacadeResource MakeBalloon(string id, string animFile, BalloonArtistFacadeType type)
         {
-            Utils.InitLocalization(typeof(STRINGS));
-            VaricolouredBalloonsHelper.InitializeAnims();
+            return new BalloonArtistFacadeResource(id, string.Empty, string.Empty, PermitRarity.Universal, animFile, type);
         }
 
-        [PLibMethod(RunAt.OnStartGame)]
-        private static void OnStartGame()
+        [PLibMethod(RunAt.AfterDbInit)]
+        private static void AfterDbInit()
         {
-            VaricolouredBalloonsOptions.Reload();
-            EquippableBalloon_OnSpawn.HasBalloonDuration = Db.Get().effects.Get(HasBalloon).duration;
-        }
-
-        [HarmonyPatch(typeof(MinionConfig), nameof(MinionConfig.CreatePrefab))]
-        private static class MinionConfig_CreatePrefab
-        {
-            private static void Postfix(GameObject __result)
+            var myBalloons = new List<BalloonArtistFacadeResource>();
+            myBalloons.Add(MakeBalloon("VBalloonOrangeLongSparkles", "varicoloured_balloon_orange_kanim", BalloonArtistFacadeType.ThreeSet));
+            myBalloons.Add(MakeBalloon("VBalloonBabyPuftMutant", "varicoloured_balloon_puft_mutant_kanim", Varicoloured));
+            MyBalloons = myBalloons.AsReadOnly();
+            var unlocked = Db.Get().Permits.BalloonArtistFacades.resources.Where(facade => facade.IsUnlocked()).ToList();
+            unlocked.AddRange(myBalloons);
+            foreach (var facade in unlocked)
             {
-                __result.AddOrGet<VaricolouredBalloonsHelper>();
-            }
-        }
-
-        // артист:
-
-        // рандомим индекс символа когда артист начинает раздачу
-        // применяем подмену символа анимации в начале каждой итерации
-        [HarmonyPatch(typeof(BalloonArtistChore.States), nameof(BalloonArtistChore.States.InitializeStates))]
-        private static class BalloonArtistChore_States_InitializeStates
-        {
-            private static void Postfix(BalloonArtistChore.States __instance)
-            {
-                __instance.balloonStand.Enter((BalloonArtistChore.StatesInstance smi) => smi.GetComponent<VaricolouredBalloonsHelper>()?.RandomizeArtistBalloonSymbolIdx());
-                __instance.balloonStand.idle.Enter((BalloonArtistChore.StatesInstance smi) =>
+                var iter = facade.GetSymbolIter();
+                for (int i = 0; i < facade.balloonOverrideSymbolIDs.Length; i++)
                 {
-                    var artist = smi.GetComponent<VaricolouredBalloonsHelper>();
-                    if (artist != null)
-                    {
-                        artist.ApplySymbolOverrideByIdx(artist.ArtistBalloonSymbolIdx);
-                    }
-                });
-            }
-        }
-
-        // получатель:
-
-        // внедряем перехватчик "задание 'получить баллон' начато"
-        [HarmonyPatch(typeof(BalloonStandConfig), nameof(BalloonStandConfig.OnSpawn))]
-        private static class BalloonStandConfig_OnSpawn
-        {
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
-            {
-                return TranspilerUtils.Wrap(instructions, original, TranspilerInjectOnBeginChoreAction);
-            }
-        }
-
-        [HarmonyPatch(typeof(BalloonStandConfig), "MakeNewBalloonChore")]
-        private static class BalloonStandConfig_MakeNewBalloonChore
-        {
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
-            {
-                return TranspilerUtils.Wrap(instructions, original, TranspilerInjectOnBeginChoreAction);
-            }
-
-            // когда "задание 'получить баллон' завершено" - рандомим новый индекс для артиста
-            private static void Postfix(Chore chore)
-            {
-                var balloonWorkable = chore.target?.GetComponent<GetBalloonWorkable>();
-                if (balloonWorkable != null)
-                {
-                    BALLOONARTIST.Get(balloonWorkable)?.GetComponent<VaricolouredBalloonsHelper>()?.RandomizeArtistBalloonSymbolIdx();
+                    // добавляем несколько раз пропорционально количеству вариаций в одном ресурсе, чтобы при выборе рандома все они были равновероятны
+                    BalloonOverrides.Add(iter);
                 }
             }
         }
 
-        // перехватываем "задание 'получить баллон' начато"
-        // вытаскиваем индекс из артиста, запихиваем его в получателя, и применяем подмену символа анимации 
-        // уничтожаем предыдущий FX-объект баллона если он есть
-        private static void OnBeginGetBalloonChore(Chore chore)
+        // загрузка самопальных балонов, подхватываем все символы называющиеся на "body"
+        [HarmonyPatch(typeof(BalloonArtistFacadeResource), "GetBalloonOverrideSymbolIDs")]
+        private static class BalloonArtistFacadeResource_GetBalloonOverrideSymbolIDs
         {
-            var balloonWorkable = chore.target?.GetComponent<GetBalloonWorkable>();
-            if (balloonWorkable != null)
+            private static bool Prefix(BalloonArtistFacadeResource __instance, BalloonArtistFacadeType ___balloonFacadeType, ref string[] __result)
             {
-                uint idx = BALLOONARTIST.Get(balloonWorkable)?.GetComponent<VaricolouredBalloonsHelper>()?.ArtistBalloonSymbolIdx ?? 0;
-                var receiver = chore.driver?.GetComponent<VaricolouredBalloonsHelper>();
-                if (receiver != null)
+                if (___balloonFacadeType == Varicoloured)
                 {
-                    receiver.ReceiverBalloonSymbolIdx = idx;
-                    receiver.ApplySymbolOverrideByIdx(idx);
-                    if (receiver.fx != null)
-                    {
-                        receiver.fx.StopSM("Unequipped");
-                        receiver.fx = null;
-                    }
+                    __result = __instance.AnimFile.GetData().build.symbols
+                        .Select(symbol => HashCache.Get().Get(symbol.hash))
+                        .Where(name => !string.IsNullOrEmpty(name) && name.StartsWith("body"))
+                        .ToArray();
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        // рандомизируем артиста если у его дефолтный скин
+        [HarmonyPatch(typeof(BalloonOverrideSymbolIter), nameof(BalloonOverrideSymbolIter.Next))]
+        private static class BalloonOverrideSymbolIter_Next
+        {
+            private static void Postfix(ref BalloonOverrideSymbol ___current, ref BalloonOverrideSymbol __result)
+            {
+                if (__result.animFile.IsNone())
+                {
+                    var index = UnityEngine.Random.Range(0, 1 + BalloonOverrides.Count);
+                    if (index < BalloonOverrides.Count)
+                        __result = BalloonOverrides[index].Next();
+                    else
+                        __result = default;
+                    ___current = __result;
                 }
             }
         }
 
-        // внедряем перехватчик "задание 'получить баллон' начато"
-        /*
-            WorkChore<GetBalloonWorkable> workChore = new WorkChore<GetBalloonWorkable>(mnogo blablabla);
-        +++ workChore.onBegin += VaricolouredBalloonsPatches.OnBeginGetBalloonChore;
-        */
-        
-        private static readonly IDetouredField<Chore, Action<Chore>> ON_BEGIN = PDetours.DetourFieldLazy<Chore, Action<Chore>>("onBegin");
-        private static void InjectOnBeginChoreAction(Chore chore)
+        // носимый шарег:
+        [HarmonyPatch(typeof(EquippableBalloonConfig), nameof(EquippableBalloonConfig.DoPostConfigure))]
+        private static class EquippableBalloonConfig_DoPostConfigure
         {
-            if (chore != null)
+            private static void Postfix(GameObject go)
             {
-                ON_BEGIN.Set(chore, (Action<Chore>)Delegate.Combine(ON_BEGIN.Get(chore), new Action<Chore>(OnBeginGetBalloonChore)));
+                go.AddOrGet<ModdedEquippableBalloon>();
             }
         }
 
-        private static bool TranspilerInjectOnBeginChoreAction(List<CodeInstruction> instructions)
+        // избегаем записи в сейф ид моддовых анимаций
+        [HarmonyPatch(typeof(EquippableBalloon), nameof(EquippableBalloon.SetBalloonOverride))]
+        private static class EquippableBalloon_SetBalloonOverride
         {
-            var workChore = typeof(WorkChore<GetBalloonWorkable>).GetConstructors().FirstOrDefault();
-            var inject = typeof(VaricolouredBalloonsPatches)
-                .GetMethodSafe(nameof(VaricolouredBalloonsPatches.InjectOnBeginChoreAction), true, PPatchTools.AnyArguments);
-            if (workChore != null && inject != null)
+            private static void Prefix(EquippableBalloon __instance, ref BalloonOverrideSymbol balloonOverride)
             {
-                for (int i = 0; i < instructions.Count; i++)
+                if (balloonOverride.animFile.IsSome()
+                    && Assets.ModLoadedKAnims.Contains(balloonOverride.animFile.Unwrap())
+                    && __instance.TryGetComponent<ModdedEquippableBalloon>(out var moddedBalloon))
                 {
-                    if (instructions[i].Is(OpCodes.Newobj, workChore))
-                    {
-                        i++;
-                        if (instructions[i].IsStloc())
-                        {
-                            var ldloc_workChore = TranspilerUtils.GetMatchingLoadInstruction(instructions[i]);
-                            instructions.Insert(++i, ldloc_workChore);
-                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, inject));
-                            return true;
-                        }
-                    }
+                    moddedBalloon.facadeAnim = balloonOverride.animFileID;
+                    moddedBalloon.symbolID = balloonOverride.animFileSymbolID;
+                    balloonOverride = default;
                 }
             }
-            return false;
         }
 
-        // сам носимый баллон:
-
-        // внедряем в FX-объект баллона контроллер подмены анимации
-        // вытаскиваем индекс из носителя и применяем подмену символа анимации
-        // запоминаем ссылку на новый FX-объект 
-        private static void ApplySymbolOverrideBalloonFX(BalloonFX.Instance smi, KBatchedAnimController kbac)
+        // восстанавливаем ид моддовых анимаций при применении
+        [HarmonyPatch(typeof(EquippableBalloon), nameof(EquippableBalloon.ApplyBalloonOverrideToBalloonFx))]
+        private static class EquippableBalloon_ApplyBalloonOverrideToBalloonFx
         {
-            kbac.usingNewSymbolOverrideSystem = true;
-            var symbolOverrideController = SymbolOverrideControllerUtil.AddToPrefab(kbac.gameObject);
-            var receiver = smi.master.GetComponent<VaricolouredBalloonsHelper>();
-            if (receiver != null)
+            private static BalloonOverrideSymbol RestoreBalloonOverride(BalloonOverrideSymbol @override, EquippableBalloon balloon)
             {
-                receiver.fx = smi;
-                VaricolouredBalloonsHelper.ApplySymbolOverrideByIdx(symbolOverrideController, receiver.ReceiverBalloonSymbolIdx);
+                if (@override.animFile.IsNone()
+                    && balloon.TryGetComponent<ModdedEquippableBalloon>(out var moddedBalloon)
+                    && !string.IsNullOrEmpty(moddedBalloon.facadeAnim)
+                    && !string.IsNullOrEmpty(moddedBalloon.symbolID))
+                {
+                    return new BalloonOverrideSymbol(moddedBalloon.facadeAnim, moddedBalloon.symbolID);
+                }
+                return @override;
             }
-        }
-
-        // внедряем перехватчик создания нового FX-объекта баллона
-        /*
-            public Instance(IStateMachineTarget master) : base(master)
-		    {
-			    KBatchedAnimController kBatchedAnimController = FXHelpers.CreateEffect("balloon_anim_kanim", master.gameObject.transform.GetPosition() + new Vector3(0f, 0.3f, 1f), master.transform, true, Grid.SceneLayer.Creatures, false);
-			    base.sm.fx.Set(kBatchedAnimController.gameObject, base.smi);
-			    kBatchedAnimController.GetComponent<KBatchedAnimController>().defaultAnim = "idle_default";
-			    master.GetComponent<KBatchedAnimController>().GetSynchronizer().Add(kBatchedAnimController.GetComponent<KBatchedAnimController>());
-        +++     VaricolouredBalloonsPatches.ApplySymbolOverrideBalloonFX(this, kBatchedAnimController);
-		    }
-        */
-        [HarmonyPatch(typeof(BalloonFX.Instance), MethodType.Constructor, new Type[] { typeof(IStateMachineTarget) })]
-        private static class BalloonFX_Instance_Constructor
-        {
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
                 return TranspilerUtils.Wrap(instructions, original, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions)
             {
-                var createEffect = typeof(FXHelpers).GetMethodSafe(nameof(FXHelpers.CreateEffect), true, PPatchTools.AnyArguments);
-                var applysymboloverrideballoonfx = typeof(VaricolouredBalloonsPatches)
-                    .GetMethodSafe(nameof(VaricolouredBalloonsPatches.ApplySymbolOverrideBalloonFX), true, PPatchTools.AnyArguments);
-                if (createEffect != null && applysymboloverrideballoonfx != null)
+                var constructor = typeof(BalloonOverrideSymbol).GetConstructor(new Type[] { typeof(string), typeof(string) });
+                var restore = typeof(EquippableBalloon_ApplyBalloonOverrideToBalloonFx).GetMethodSafe(nameof(RestoreBalloonOverride), true, PPatchTools.AnyArguments);
+                if (constructor != null && restore != null)
                 {
-                    CodeInstruction ldloc_kbac = null;
                     for (int i = 0; i < instructions.Count; i++)
                     {
-                        if (instructions[i].Calls(createEffect) && instructions[i + 1].IsStloc())
+                        if (instructions[i].Is(OpCodes.Newobj, constructor))
                         {
-                            ldloc_kbac = TranspilerUtils.GetMatchingLoadInstruction(instructions[i + 1]);
-                            continue;
-                        }
-                        if (ldloc_kbac != null && instructions[i].opcode == OpCodes.Ret)
-                        {
-                            instructions.Insert(i++, new CodeInstruction(OpCodes.Ldarg_0));
-                            instructions.Insert(i++, ldloc_kbac);
-                            instructions.Insert(i++, new CodeInstruction(OpCodes.Call, applysymboloverrideballoonfx));
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, restore));
                             return true;
                         }
                     }
                 }
                 return false;
-            }
-        }
-
-        // обработка косяка в базовой игре
-        // когда пришло время разэкипировки баллона, в зависимости от настроек:
-        // либо уничтожаем FX-объект баллона
-        // либо не трогаем его и превращаем баг в фичу
-        // а также обнуляем ссылку на FX-объект в классе конфига, во избежание конфликтов.
-        [HarmonyPatch(typeof(EquippableBalloonConfig), "OnUnequipBalloon")]
-        private static class EquippableBalloonConfig_OnUnequipBalloon
-        {
-            private static void Prefix(ref BalloonFX.Instance ___fx)
-            {
-                ___fx = null;
-            }
-
-            private static KMonoBehaviour DestroyFX(KMonoBehaviour target)
-            {
-                if (VaricolouredBalloonsOptions.Instance.DestroyFXAfterEffectExpired && target != null
-                    && target.TryGetComponent<VaricolouredBalloonsHelper>(out var carrier) && carrier.fx != null)
-                {
-                    carrier.fx.StopSM("Unequipped");
-                    carrier.fx = null;
-                }
-                return target;
-            }
-            /*
-                var minionAssignablesProxy = soleOwner.GetComponent<MinionAssignablesProxy>();
-                if (!minionAssignablesProxy.target.IsNullOrDestroyed())
-                {
-            +++     DestroyFX(minionAssignablesProxy.target as KMonoBehaviour);
-                    var effects = (minionAssignablesProxy.target as KMonoBehaviour).GetComponent<Effects>();
-                    if (effects != null)
-                        effects.Remove("HasBalloon");
-                }
-            */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
-            {
-                return TranspilerUtils.Wrap(instructions, original, transpiler);
-            }
-            private static bool transpiler(List<CodeInstruction> instructions)
-            {
-                var get_target = typeof(MinionAssignablesProxy)
-                    .GetPropertySafe<IAssignableIdentity>(nameof(MinionAssignablesProxy.target), false)?.GetGetMethod(true);
-                var typeKMonoBehaviour = typeof(KMonoBehaviour);
-                var destroyFX = typeof(EquippableBalloonConfig_OnUnequipBalloon)
-                    .GetMethodSafe(nameof(DestroyFX), true, PPatchTools.AnyArguments);
-                if (get_target != null && typeKMonoBehaviour != null && destroyFX != null)
-                {
-                    for (int i = 0; i < instructions.Count; i++)
-                    {
-                        if (instructions[i].Calls(get_target))
-                        {
-                            i++;
-                            if (instructions[i].Is(OpCodes.Isinst, typeKMonoBehaviour))
-                            {
-                                instructions.Insert(++i, new CodeInstruction(OpCodes.Call, destroyFX));
-                                return true;
-                            }
-                        }
-                    }
-                }
-                return false;
-            }
-        }
-
-        // исправление второго косяка в базовой игре
-        // фактическое время разэкипировки баллона вдвое меньше длительности эффекта, так что эффект исчезает преждевременно
-        // также при загрузке сейва эффект вешается с полным сроком, и исчезает преждевременно еще быстрее
-        // корректируем длительность эффекта до актуального значения
-        // опционально корректируем время разэкипировки баллона, чтобы соответствовало заявленной длительности эффекта
-        [HarmonyPatch(typeof(EquippableBalloon), "OnSpawn")]
-        private static class EquippableBalloon_OnSpawn
-        {
-            /*
-                base.OnSpawn();
-	        --- smi.transitionTime = GameClock.Instance.GetTime() + TRAITS.JOY_REACTIONS.JOY_REACTION_DURATION;
-            +++ smi.transitionTime = GameClock.Instance.GetTime() + FixJoyReactionDuration(TRAITS.JOY_REACTIONS.JOY_REACTION_DURATION);
-	            smi.StartSM();
-            */
-            public static float HasBalloonDuration;
-            private static float FixJoyReactionDuration(float duration)
-            {
-                return VaricolouredBalloonsOptions.Instance.FixEffectDuration ? HasBalloonDuration : duration;
-            }
-
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
-            {
-                return TranspilerUtils.Wrap(instructions, original, transpiler);
-            }
-            private static bool transpiler(List<CodeInstruction> instructions)
-            {
-                var Duration = typeof(TRAITS.JOY_REACTIONS).GetFieldSafe(nameof(TRAITS.JOY_REACTIONS.JOY_REACTION_DURATION), true);
-                var FixDuration = typeof(EquippableBalloon_OnSpawn).GetMethodSafe(nameof(FixJoyReactionDuration), true, PPatchTools.AnyArguments);
-                if (Duration != null && FixDuration != null)
-                {
-                    for (int i = 0; i < instructions.Count; i++)
-                    {
-                        if (instructions[i].LoadsField(Duration))
-                        {
-                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, FixDuration));
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            }
-
-            private static void Postfix(EquippableBalloon __instance)
-            {
-                var effect = (__instance?.GetComponent<Equippable>()?.assignee?.GetSoleOwner()?
-                    .GetComponent<MinionAssignablesProxy>()?.target as KMonoBehaviour)?.GetComponent<Effects>()?.Get(HasBalloon);
-                if (effect != null)
-                    effect.timeRemaining = __instance.smi.transitionTime - GameClock.Instance.GetTime();
             }
         }
     }

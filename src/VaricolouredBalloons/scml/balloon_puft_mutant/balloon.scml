@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="r10">
+    <folder id="0">
+        <file id="0" name="body_alp_baby_puft_0.png" width="101" height="124" pivot_x="0.49505" pivot_y="0.16129"/>
+        <file id="1" name="body_anti_baby_puft_0.png" width="101" height="124" pivot_x="0.50495" pivot_y="0.153226"/>
+        <file id="2" name="body_com_baby_puft_0.png" width="101" height="124" pivot_x="0.50495" pivot_y="0.169355"/>
+    </folder>
+    <entity id="0" name="balloon">
+        <animation id="0" name="NewAnimation" length="1000" interval="100">
+            <mainline>
+                <key id="0"/>
+            </mainline>
+        </animation>
+    </entity>
+</spriter_data>
