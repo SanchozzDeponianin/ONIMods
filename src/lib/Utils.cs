@@ -43,6 +43,23 @@ namespace SanchozzONIMods.Lib
             }
         }
 
+        // вычисляем значение Action.NumActions определенную в Assembly-CSharp-firstpass
+        // напрямую использовать Action.NumActions может выйти боком 
+        // если клей изменят enum а мод был не перекомпилирован
+        public static Action MaxAction { get; }
+        static Utils()
+        {
+            if (!Enum.TryParse(nameof(Action.NumActions), out Action limit))
+            {
+                var actions = Enum.GetValues(typeof(Action));
+                if (actions.Length > 0)
+                    limit = (Action)actions.GetValue(actions.Length - 1);
+                else
+                    limit = Action.NumActions;
+            }
+            MaxAction = limit;
+        }
+
         // логирование со стактрасом
         public static void LogExcWarn(Exception thrown)
         {

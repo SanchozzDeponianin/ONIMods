@@ -62,12 +62,12 @@ namespace SandboxMutantPlant
             {
                 if (mutant.IsOriginal || mutant.HasTag(GameTags.Seed) || mutant.HasTag(GameTags.CropSeed))
                 {
-                    var binfo = new KIconButtonMenu.ButtonInfo("action_select_research", MUTATOR.NAME, new System.Action(mutant.Mutator), Action.NumActions, null, null, null, MUTATOR.TOOLTIP, true);
+                    var binfo = new KIconButtonMenu.ButtonInfo("action_select_research", MUTATOR.NAME, mutant.Mutator, Utils.MaxAction, null, null, null, MUTATOR.TOOLTIP, true);
                     Game.Instance.userMenu.AddButton(mutant.gameObject, binfo, 1f);
                 }
                 if (!mutant.IsOriginal && !mutant.IsIdentified)
                 {
-                    var binfo = new KIconButtonMenu.ButtonInfo("action_select_research", IDENTIFY_MUTATION.NAME, new System.Action(mutant.IdentifyMutation), Action.NumActions, null, null, null, IDENTIFY_MUTATION.TOOLTIP, true);
+                    var binfo = new KIconButtonMenu.ButtonInfo("action_select_research", IDENTIFY_MUTATION.NAME, mutant.IdentifyMutation, Utils.MaxAction, null, null, null, IDENTIFY_MUTATION.TOOLTIP, true);
                     Game.Instance.userMenu.AddButton(mutant.gameObject, binfo, 1f);
                 }
             }
