@@ -99,7 +99,6 @@ namespace Smelter
 
             var workable = go.AddOrGet<SmelterWorkable>();
             workable.overrideAnims = new KAnimFile[] { Assets.GetAnim("anim_interacts_smelter_kanim") };
-            workable.AnimOffset = Vector3.left;
 
             ConduitConsumer conduitConsumer = go.AddOrGet<ConduitConsumer>();
             conduitConsumer.capacityTag = GameTags.Liquid;

@@ -103,7 +103,14 @@ namespace SanchozzONIMods.Lib
         public static void InitLocalization(Type locstring_tree_root, bool writeStringsTemplate = false)
         {
             // регистрируемся
-            Localization.RegisterForTranslation(locstring_tree_root);
+            //Localization.RegisterForTranslation(locstring_tree_root);
+            // мудилы понадобавляли нестатичные LocString куда попало. например в ComplexFabricator.
+            // если у нас есть унаследованый класс, то Localization.RegisterForTranslation будет крашиться.
+            // сокращенный аналог:
+            //Localization.AddAssembly(locstring_tree_root.Namespace, locstring_tree_root.Assembly);
+            AccessTools.Method(typeof(Localization), "AddAssembly", new Type[] {typeof(string), typeof(Assembly) })
+                ?.Invoke(null, new object[] { locstring_tree_root.Namespace, locstring_tree_root.Assembly });
+            LocString.CreateLocStringKeys(locstring_tree_root, locstring_tree_root.Namespace + ".");
 
             if (writeStringsTemplate)  // для записи шаблона
             {
@@ -143,14 +150,8 @@ namespace SanchozzONIMods.Lib
             }
 
             // выполняем замену если нужно. тип должен содержать статичный метод "DoReplacement"
-            MethodInfo methodInfo = AccessTools.Method(locstring_tree_root, "DoReplacement", new Type[0]);
-            if (methodInfo != null)
-            {
-                methodInfo.Invoke(null, null);
-            }
-            // дополнительно создаем ключи. обычно и без этого работает, но не всегда.
-            // нужно для опций.
-            //LocString.CreateLocStringKeys(locstring_tree_root, locstring_tree_root.Namespace + ".");
+            AccessTools.Method(locstring_tree_root, "DoReplacement", new Type[0])
+                ?.Invoke(null, null);
 
             // дополнительно создаем ключи специально для опций.
             // ключи должны получиться в формате 

@@ -203,6 +203,8 @@ namespace ReBuildableAETN
 
         public int ButtonSideScreenSortOrder() => 20;
 
+        public int HorizontalGroupID() => -1;
+
         public void SetButtonTextOverride(ButtonMenuTextOverride textOverride) { }
     }
 }

@@ -25,8 +25,8 @@ namespace NoManualDelivery
             // хак для того чтобы разрешить руке хватать бутылки
             if (NoManualDeliveryOptions.Instance.AllowTransferArmPickupGasLiquid)
             {
-                SolidTransferArm.tagBits = new TagBits(STORAGEFILTERS.NOT_EDIBLE_SOLIDS.Concat(STORAGEFILTERS.FOOD)
-                    .Concat(STORAGEFILTERS.PAYLOADS).Concat(STORAGEFILTERS.GASES).Concat(STORAGEFILTERS.LIQUIDS).ToArray());
+                STORAGEFILTERS.SOLID_TRANSFER_ARM_CONVEYABLE = STORAGEFILTERS.SOLID_TRANSFER_ARM_CONVEYABLE
+                    .Concat(STORAGEFILTERS.GASES).Concat(STORAGEFILTERS.LIQUIDS).ToArray();
                 BuildingToMakeAutomatable.AddRange(BuildingToMakeAutomatableWithTransferArmPickupGasLiquid);
             }
 
