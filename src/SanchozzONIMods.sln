@@ -92,6 +92,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigRedButton", "BigRedButto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DontStarvePuft", "DontStarvePuft\DontStarvePuft.csproj", "{C06A1AF0-6F07-4EC1-9CBF-8A5DCBFD9FC9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AthleticsGenerator", "AthleticsGenerator\AthleticsGenerator.csproj", "{2D7FC51B-45C7-40ED-9233-D7089DD17B49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MainlineSteam = Debug|MainlineSteam
@@ -388,6 +390,14 @@ Global
 		{C06A1AF0-6F07-4EC1-9CBF-8A5DCBFD9FC9}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{C06A1AF0-6F07-4EC1-9CBF-8A5DCBFD9FC9}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{C06A1AF0-6F07-4EC1-9CBF-8A5DCBFD9FC9}.Release|StableBackup.Build.0 = Release|StableBackup
+		{2D7FC51B-45C7-40ED-9233-D7089DD17B49}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
+		{2D7FC51B-45C7-40ED-9233-D7089DD17B49}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
+		{2D7FC51B-45C7-40ED-9233-D7089DD17B49}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
+		{2D7FC51B-45C7-40ED-9233-D7089DD17B49}.Debug|StableBackup.Build.0 = Debug|StableBackup
+		{2D7FC51B-45C7-40ED-9233-D7089DD17B49}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
+		{2D7FC51B-45C7-40ED-9233-D7089DD17B49}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
+		{2D7FC51B-45C7-40ED-9233-D7089DD17B49}.Release|StableBackup.ActiveCfg = Release|StableBackup
+		{2D7FC51B-45C7-40ED-9233-D7089DD17B49}.Release|StableBackup.Build.0 = Release|StableBackup
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

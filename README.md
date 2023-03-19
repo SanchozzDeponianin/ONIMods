@@ -43,6 +43,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 |  **Name**  |  **Description**  |  **Vanilla**  |  **Spaced Out! DLC**  |
 | :--------: | :---------------: | :-----------: | :-------------------: |
 | [Artifacts in Care Packages](https://steamcommunity.com/sharedfiles/filedetails/?id=2455735197) | Allows to get Artifacts in Care Packages | Yes | Yes
+| [Athletic Manual Generator](https://steamcommunity.com/sharedfiles/filedetails/?id=2949194697) | Now the Manual Generator produces more energy the higher the level of the Duplicant's Athletics attribute | Yes | Yes |
 | [Attribute-based Workshop Restrictions](https://steamcommunity.com/sharedfiles/filedetails/?id=2829258387) | You can more flexibly control which Buildings are allowed to Duplicants, depending on the level of their Attributes. | Yes | Yes |
 | [Better Farming Effects and Tweaks](https://steamcommunity.com/sharedfiles/filedetails/?id=2778941969) | Provides a number of improvements for how your Farmers, Worms and Beetles take care of plants, including seed propagation of non-yielding plants | Yes | Yes |
 | [Configurable Automation-controlled Doors](https://steamcommunity.com/sharedfiles/filedetails/?id=2820163949) | Allows you to select, for each Door individually, the desired state with a green / red automation signal, including the "Auto" state. | Yes | Yes |

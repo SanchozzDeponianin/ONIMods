@@ -1,0 +1,20 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. AthleticsGenerator.STRINGS.DUPLICANTS.ATTRIBUTES.ATHLETICS.POWERMODIFIER
+msgctxt "AthleticsGenerator.STRINGS.DUPLICANTS.ATTRIBUTES.ATHLETICS.POWERMODIFIER"
+msgid "{0} Manual Generator Power"
+msgstr "Мощность Ручного генератора: {0}"
+
+#. AthleticsGenerator.STRINGS.OPTIONS.ENABLE_METER.NAME
+msgctxt "AthleticsGenerator.STRINGS.OPTIONS.ENABLE_METER.NAME"
+msgid "Enable Wattage meter"
+msgstr "Включить измеритель мощности"
+
+#. AthleticsGenerator.STRINGS.OPTIONS.WATTS_PER_LEVEL.NAME
+msgctxt "AthleticsGenerator.STRINGS.OPTIONS.WATTS_PER_LEVEL.NAME"
+msgid "+X Wattage per Athletics attribute level"
+msgstr "Мощность +X за уровень атрибута Атлетики"
+
