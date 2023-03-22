@@ -94,6 +94,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DontStarvePuft", "DontStarv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AthleticsGenerator", "AthleticsGenerator\AthleticsGenerator.csproj", "{2D7FC51B-45C7-40ED-9233-D7089DD17B49}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrangleCarry", "WrangleCarry\WrangleCarry.csproj", "{EE935859-2390-46E6-85C4-59CA917A3FF7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MainlineSteam = Debug|MainlineSteam
@@ -398,6 +400,14 @@ Global
 		{2D7FC51B-45C7-40ED-9233-D7089DD17B49}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{2D7FC51B-45C7-40ED-9233-D7089DD17B49}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{2D7FC51B-45C7-40ED-9233-D7089DD17B49}.Release|StableBackup.Build.0 = Release|StableBackup
+		{EE935859-2390-46E6-85C4-59CA917A3FF7}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
+		{EE935859-2390-46E6-85C4-59CA917A3FF7}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
+		{EE935859-2390-46E6-85C4-59CA917A3FF7}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
+		{EE935859-2390-46E6-85C4-59CA917A3FF7}.Debug|StableBackup.Build.0 = Debug|StableBackup
+		{EE935859-2390-46E6-85C4-59CA917A3FF7}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
+		{EE935859-2390-46E6-85C4-59CA917A3FF7}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
+		{EE935859-2390-46E6-85C4-59CA917A3FF7}.Release|StableBackup.ActiveCfg = Release|StableBackup
+		{EE935859-2390-46E6-85C4-59CA917A3FF7}.Release|StableBackup.Build.0 = Release|StableBackup
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

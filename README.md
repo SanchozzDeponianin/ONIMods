@@ -61,6 +61,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Varicoloured Balloons](https://steamcommunity.com/sharedfiles/filedetails/?id=2293939893) | Adds more different colors and variations of balloons. | Yes | Yes 
 | [Where's My Loot?](https://steamcommunity.com/sharedfiles/filedetails/?id=2670041100) | Allows you to get the expected loot from objects that have not been inspected but have been demolished. | Yes | Yes |
 | [Worn Suit doesn't drop Canister](https://steamcommunity.com/sharedfiles/filedetails/?id=2679005270) | Discharges Worn Suits when unequipping so they don't drop the Canisters. Oxygen and Kerosene are returned to the Suit Dock for later reuse. | Yes | Yes |
+| [Wrangle & Carry](https://steamcommunity.com/sharedfiles/filedetails/?id=2950117755) | Eliminates the lag between the moment when the Rancher caught the Creature, and the moment when the Creature became available for transportation. Allows the Rancher to immediately carry the Creature to the Delivery Point. | Yes | Yes |
 <!--| []() |  | No | Yes | -->
 
 # Special thanks to
