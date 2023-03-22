@@ -8,6 +8,11 @@ msgctxt "AthleticsGenerator.STRINGS.DUPLICANTS.ATTRIBUTES.ATHLETICS.POWERMODIFIE
 msgid "{0} Manual Generator Power"
 msgstr "Мощность Ручного генератора: {0}"
 
+#. AthleticsGenerator.STRINGS.OPTIONS.ENABLE_LIGHT.NAME
+msgctxt "AthleticsGenerator.STRINGS.OPTIONS.ENABLE_LIGHT.NAME"
+msgid "Enable Wattage meter light"
+msgstr "Включить лампочку измерителя мощности"
+
 #. AthleticsGenerator.STRINGS.OPTIONS.ENABLE_METER.NAME
 msgctxt "AthleticsGenerator.STRINGS.OPTIONS.ENABLE_METER.NAME"
 msgid "Enable Wattage meter"

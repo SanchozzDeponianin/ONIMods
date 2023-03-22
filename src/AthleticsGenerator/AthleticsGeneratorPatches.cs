@@ -35,6 +35,20 @@ namespace AthleticsGenerator
                 AthleticsGeneratorOptions.Instance.watts_per_level, 0f, formatter, DlcManager.AVAILABLE_ALL_VERSIONS);
         }
 
+        [HarmonyPatch(typeof(ManualGeneratorConfig), nameof(ManualGeneratorConfig.CreateBuildingDef))]
+        private static class ManualGeneratorConfig_CreateBuildingDef
+        {
+            private static void Postfix(BuildingDef __result)
+            {
+                if (AthleticsGeneratorOptions.Instance.enable_meter)
+                {
+                    var kanim = AthleticsGeneratorOptions.Instance.enable_light ? "generatormanual_meter_light_kanim" : "generatormanual_meter_kanim";
+                    PGameUtils.CopySoundsToAnim(kanim, "generatormanual_kanim");
+                    __result.AnimFiles[0] = Assets.GetAnim(kanim);
+                }
+            }
+        }
+
         [HarmonyPatch(typeof(ManualGeneratorConfig), nameof(ManualGeneratorConfig.DoPostConfigureComplete))]
         private static class ManualGeneratorConfig_DoPostConfigureComplete
         {

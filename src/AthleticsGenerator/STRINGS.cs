@@ -15,6 +15,10 @@
 
         public class OPTIONS
         {
+            public class ENABLE_LIGHT
+            {
+                public static LocString NAME = "Enable Wattage meter light";
+            }
             public class ENABLE_METER
             {
                 public static LocString NAME = "Enable Wattage meter";

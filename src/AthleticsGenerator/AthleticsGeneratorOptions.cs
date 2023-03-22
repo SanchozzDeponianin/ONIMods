@@ -17,5 +17,9 @@ namespace AthleticsGenerator
         [JsonProperty]
         [Option]
         public bool enable_meter { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool enable_light { get; set; } = true;
     }
 }
