@@ -103,14 +103,7 @@ namespace SanchozzONIMods.Lib
         public static void InitLocalization(Type locstring_tree_root, bool writeStringsTemplate = false)
         {
             // регистрируемся
-            //Localization.RegisterForTranslation(locstring_tree_root);
-            // мудилы понадобавляли нестатичные LocString куда попало. например в ComplexFabricator.
-            // если у нас есть унаследованый класс, то Localization.RegisterForTranslation будет крашиться.
-            // сокращенный аналог:
-            //Localization.AddAssembly(locstring_tree_root.Namespace, locstring_tree_root.Assembly);
-            AccessTools.Method(typeof(Localization), "AddAssembly", new Type[] {typeof(string), typeof(Assembly) })
-                ?.Invoke(null, new object[] { locstring_tree_root.Namespace, locstring_tree_root.Assembly });
-            LocString.CreateLocStringKeys(locstring_tree_root, locstring_tree_root.Namespace + ".");
+            Localization.RegisterForTranslation(locstring_tree_root);
 
             if (writeStringsTemplate)  // для записи шаблона
             {
