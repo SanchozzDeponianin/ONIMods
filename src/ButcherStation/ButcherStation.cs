@@ -246,6 +246,15 @@ namespace ButcherStation
             }
             if (kill)
                 creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);
+            if (creature_go.TryGetComponent<CreatureBrain>(out var brain))
+                GameScheduler.Instance.ScheduleNextFrame(null, ForceUpdateBrain, brain);
+        }
+
+        private static void ForceUpdateBrain(object data)
+        {
+            var brain = data as CreatureBrain;
+            if (brain != null && brain.IsRunning())
+                brain.UpdateBrain();
         }
     }
 }
