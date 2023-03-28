@@ -46,8 +46,15 @@ namespace SquirrelGenerator
                 {
                     __result.AddOrGet<WheelRunningMonitor>();
                 }
+#if DEBUG
+                Debug.Log($"{__result.PrefabID()} ChoreTable !!!");
+                Debug.Log("id\tpriority\tinterrupt_priority");
+                var entries = Traverse.Create(__result.GetComponent<ChoreConsumer>().choreTable).Field<ChoreTable.Entry[]>("entries").Value;
+                foreach (var entry in entries)
+                    Debug.Log($"{entry.choreType.Id}\t{entry.choreType.priority}\t{entry.choreType.interruptPriority}");
+#endif
             }
-
+            // внедряем новое поведение так чтобы оно могло быть прервано другими типичными беличими делами
             /*
             ChoreTable.Builder chore_table = new ChoreTable.Builder().Add(new DeathStates.Def()).Add(new AnimInterruptStates.Def())
                 <блаблабла>
@@ -85,6 +92,27 @@ namespace SquirrelGenerator
                     }
                 }
                 return false;
+            }
+        }
+
+        // задача поиска и посадки семян в любом случае, даже если нет подходящих семян
+        // начинает выполняться и хочет прервать бег в колесе
+        // добавляем проверку - нет семян -> белка хочет бегать сразу, без паузы
+        // математически это не совсем правильно, но задача поиска семян достаточно редкая, так что сойдёт
+        [HarmonyPatch(typeof(SeedPlantingStates), nameof(SeedPlantingStates.InitializeStates))]
+        private static class SeedPlantingStates_InitializeStates
+        {
+            private static void Postfix(SeedPlantingStates __instance)
+            {
+                __instance.findSeed.Exit(CheckSeed);
+            }
+            private static void CheckSeed(SeedPlantingStates.Instance smi)
+            {
+                if (smi.targetSeed == null)
+                {
+                    smi.GetSMI<WheelRunningMonitor.StatesInstance>()?.SetSearchTimeImmediately();
+                    WheelRunningStates.ScheduleUpdateBrain(smi);
+                }
             }
         }
 

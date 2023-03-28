@@ -64,6 +64,7 @@ namespace SquirrelGenerator
             public State pre;
             public State loop;
             public State pst;
+            public State pst_interrupt;
         }
 
 #pragma warning disable CS0649
@@ -103,13 +104,12 @@ namespace SquirrelGenerator
             }
             default_state = moving;
 
-            root.Enter(smi =>
-               {
-                   if (!ReserveWheel(smi))
-                   {
-                       smi.GoTo((BaseState)null);
-                   }
-               })
+            root
+                .Enter(smi =>
+                {
+                    if (!ReserveWheel(smi))
+                        smi.GoTo((BaseState)null);
+                })
                 .Exit(UnreserveWheel)
                 .BehaviourComplete(WantsToWheelRunning, true);
 
@@ -142,6 +142,9 @@ namespace SquirrelGenerator
                 .DefaultState(running.pre)
                 .OnTargetLost(target, running.pst)
                 .EventTransition(GameHashes.OperationalChanged, smi => smi.TargetWheel, running.pst, smi => !smi.TargetWheel.IsOperational)
+                // чтобы отыграть завершающую анимацию когда чору хочет прервать другая чора
+                .ToggleTag(GameTags.PerformingWorkRequest)
+                .EventTransition(GameHashes.ChoreInterrupt, running.pst_interrupt)
                 .ToggleEffect(smi => RunInWheelEffect)
                 .Enter(smi => smi.TargetWheel?.SetProductiveness(smi.Productiveness))
                 .Exit(smi => smi.TargetWheel?.SetProductiveness(0));
@@ -151,23 +154,23 @@ namespace SquirrelGenerator
                 .OnAnimQueueComplete(running.loop);
 
             running.loop
-                .Enter("apply offset anim", smi =>
-                    {
-                        smi.Get<Facing>().SetFacing(false);
-                        smi.kbac.Offset += smi.def.workAnimOffset;
-                        smi.kbac.PlaySpeedMultiplier = smi.def.workAnimSpeedMultiplier;
-                    })
+                .Enter(StartRunning)
                 .QueueAnim("floor_floor_1_0_loop", true, null)
                 .Transition(running.pst, Update, UpdateRate.SIM_1000ms)
-                .Exit("restore offset anim", smi =>
-                    {
-                        smi.kbac.Offset -= smi.def.workAnimOffset;
-                        smi.kbac.PlaySpeedMultiplier = 1f;
-                    });
+                .Exit(StopRunning);
 
             running.pst
                 .PlayAnim("rummage_pst")
+                .QueueAnim("queue_loop")
                 .OnAnimQueueComplete(null);
+
+            // если мы препятствовали прерыванию другой чорой
+            // в конце надо обновить моск
+            running.pst_interrupt
+                .ToggleTag(GameTags.PreventChoreInterruption)
+                .PlayAnim("rummage_pst")
+                .OnAnimQueueComplete(null)
+                .Exit(ScheduleUpdateBrain);
         }
 
         private static bool ReserveWheel(Instance smi)
@@ -202,6 +205,34 @@ namespace SquirrelGenerator
         {
             smi.TargetWheel?.SetProductiveness(smi.Productiveness);
             return smi.Productiveness <= 0f || smi.effects.HasEffect("Unhappy");
+        }
+
+        private static void StartRunning(Instance smi)
+        {
+            smi.Get<Facing>().SetFacing(false);
+            smi.kbac.Offset += smi.def.workAnimOffset;
+            smi.kbac.PlaySpeedMultiplier = smi.def.workAnimSpeedMultiplier;
+            smi.kbac.SetSceneLayer(Grid.SceneLayer.BuildingUse);
+        }
+
+        private static void StopRunning(Instance smi)
+        {
+            smi.kbac.Offset -= smi.def.workAnimOffset;
+            smi.kbac.PlaySpeedMultiplier = 1f;
+            smi.kbac.SetSceneLayer(Grid.SceneLayer.Creatures);
+        }
+
+        internal static void ScheduleUpdateBrain(StateMachine.Instance smi)
+        {
+            if (smi.gameObject.TryGetComponent<CreatureBrain>(out var brain))
+                GameScheduler.Instance.ScheduleNextFrame(null, ForceUpdateBrain, brain);
+        }
+
+        internal static void ForceUpdateBrain(object data)
+        {
+            var brain = data as CreatureBrain;
+            if (brain != null && brain.IsRunning())
+                brain.UpdateBrain();
         }
     }
 }

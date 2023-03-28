@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.Serialization;
+using UnityEngine;
 using Klei.AI;
 using KSerialization;
 
@@ -10,7 +11,6 @@ namespace SquirrelGenerator
         public const int SEARCH_WHEEL_RADIUS = 25;
         public const int SEARCH_MIN_INTERVAL = 15;
         public const int SEARCH_MAX_INTERVAL = 30;
-        private const int SEARCH_RESUME_INTERVAL = 1;
         private const int MAX_NAVIGATE_DISTANCE = 200;
 
         public class StatesInstance : GameStateMachine<States, StatesInstance, WheelRunningMonitor>.GameInstance
@@ -21,7 +21,7 @@ namespace SquirrelGenerator
             public StatesInstance(WheelRunningMonitor master) : base(master)
             {
                 if (master.shouldResumeRun)
-                    nextSearchTime = Time.time + SEARCH_RESUME_INTERVAL;
+                    nextSearchTime = Time.time + 6 * UpdateManager.SecondsPerSimTick;
                 else
                     RefreshSearchTime();
             }
@@ -29,6 +29,11 @@ namespace SquirrelGenerator
             public void RefreshSearchTime()
             {
                 nextSearchTime = Time.time + Mathf.Lerp(SquirrelGeneratorOptions.Instance.SearchMinInterval, SquirrelGeneratorOptions.Instance.SearchMaxInterval, Random.value);
+            }
+
+            public void SetSearchTimeImmediately()
+            {
+                nextSearchTime = Time.time;
             }
 
             public bool ShouldRunInWheel()
@@ -50,14 +55,13 @@ namespace SquirrelGenerator
                 var pooledList = ListPool<ScenePartitionerEntry, GameScenePartitioner>.Allocate();
                 var extents = new Extents(Grid.PosToCell(master.transform.GetPosition()), SquirrelGeneratorOptions.Instance.SearchWheelRadius);
                 GameScenePartitioner.Instance.GatherEntries(extents, GameScenePartitioner.Instance.completeBuildings, pooledList);
-
                 int mincost = MAX_NAVIGATE_DISTANCE;
                 foreach (ScenePartitionerEntry item in pooledList)
                 {
                     if ((item.obj as KMonoBehaviour).TryGetComponent<SquirrelGenerator>(out var squirrelGenerator)
                         && squirrelGenerator.IsOperational && !squirrelGenerator.HasTag(GameTags.Creatures.ReservedByCreature))
                     {
-                        int cost = master.navigator.GetNavigationCost(Grid.PosToCell(squirrelGenerator));
+                        int cost = master.navigator.GetNavigationCost(squirrelGenerator.RunningCell);
                         if (cost != -1 && cost < mincost)
                         {
                             mincost = cost;
@@ -65,15 +69,12 @@ namespace SquirrelGenerator
                         }
                     }
                 }
-
                 pooledList.Recycle();
-                master.shouldResumeRun = TargetWheel != null;
             }
 
             public void OnRunningComplete()
             {
                 TargetWheel = null;
-                master.shouldResumeRun = false;
                 RefreshSearchTime();
             }
         }
@@ -101,7 +102,16 @@ namespace SquirrelGenerator
         protected override void OnSpawn()
         {
             base.OnSpawn();
+            GetComponent<KBatchedAnimController>().SetSceneLayer(Grid.SceneLayer.Creatures);
             smi.StartSM();
+            if (shouldResumeRun && TryGetComponent<CreatureBrain>(out var brain))
+                GameScheduler.Instance.Schedule(null, Random.Range(6f, 20f) * UpdateManager.SecondsPerSimTick, WheelRunningStates.ForceUpdateBrain, brain);
+        }
+
+        [OnSerializing]
+        private void OnSerializing()
+        {
+            shouldResumeRun = this.HasTag(GameTags.PerformingWorkRequest);
         }
     }
 }

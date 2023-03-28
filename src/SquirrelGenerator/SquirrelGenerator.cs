@@ -94,13 +94,7 @@ namespace SquirrelGenerator
 
         private void CreateMeter()
         {
-            meter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target", "meter", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[]
-                {
-                "meter_target",
-                "meter_fill",
-                "meter_frame",
-                "meter_OL"
-                });
+            meter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target", "meter", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, "meter_target", "meter_fill", "meter_frame", "meter_light", "meter_tubing");
         }
 
         public override void EnergySim200ms(float dt)
