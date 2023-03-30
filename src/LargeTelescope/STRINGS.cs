@@ -8,18 +8,7 @@ namespace LargeTelescope
     public class STRINGS
     {
         private const string ENCLOSED_TELESCOPE = "{ENCLOSED_TELESCOPE}";
-        public class BUILDINGS
-        {
-            public class PREFABS
-            {
-                public class CLUSTERLARGETELESCOPE
-                {
-                    public static LocString NAME = UI.FormatAsLink("Large Telescope", "CLUSTERLARGETELESCOPE");
-                    public static LocString DESC = "A Large Telescope allows you to study the depths of space faster and further.";
-                    public static LocString EFFECT = $"\n\nCan be connected to a {UI.FormatAsLink("Gas Pipe", "GASCONDUIT")} to provide assigned Duplicant with {UI.FormatAsLink("Oxygen", "OXYGEN")}.";
-                }
-            }
-        }
+        private const string VANILLA_TELESCOPE = "{VANILLA_TELESCOPE}";
 
         public class OPTIONS
         {
@@ -34,7 +23,11 @@ namespace LargeTelescope
             }
             public class ADD_GLASS
             {
-                public static LocString NAME = $"Add Glass to the {ENCLOSED_TELESCOPE}`s construction cost";
+                public static LocString NAME = $"Add Glass to the construction cost of the {ENCLOSED_TELESCOPE}";
+            }
+            public class VANILLA_ADD_GLASS
+            {
+                public static LocString NAME = $"Add Glass to the construction cost of the {VANILLA_TELESCOPE}";
             }
             public class NOT_REQUIRE_GAS_PIPE
             {
@@ -48,10 +41,9 @@ namespace LargeTelescope
 
         internal static void DoReplacement()
         {
-            BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.EFFECT = CLUSTERTELESCOPE.EFFECT + BUILDINGS.PREFABS.CLUSTERLARGETELESCOPE.EFFECT;
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), new Dictionary<string, string>
-                { { ENCLOSED_TELESCOPE, CLUSTERTELESCOPEENCLOSED.NAME } });
-            LocString.CreateLocStringKeys(typeof(BUILDINGS));
+                { { ENCLOSED_TELESCOPE, CLUSTERTELESCOPEENCLOSED.NAME },
+                  { VANILLA_TELESCOPE, TELESCOPE.NAME} });
         }
     }
 }

@@ -16,8 +16,7 @@
   <PropertyGroup>
     <Title>Enclosed Telescope Tune-Up</Title>
     <Description>Tuning of a Enclosed Telescope: increased the radius and scanning speed, adjusted requirements, some improvements and bug fixes.</Description>
-    <ModVersion>2.0.5</ModVersion>
-    <SupportedContent>EXPANSION1_ID</SupportedContent>
+    <ModVersion>2.1.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
@@ -30,8 +29,7 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
-    <Compile Include="ClusterLargeTelescopeWorkable.cs" />
-    <Compile Include="ClusterLargeTelescopeConfig.cs" />
+    <Compile Include="TelescopeGasProvider.cs" />
     <Compile Include="STRINGS.cs" />
     <Compile Include="LargeTelescopeOptions.cs" />
     <Compile Include="LargeTelescopePatches.cs" />
