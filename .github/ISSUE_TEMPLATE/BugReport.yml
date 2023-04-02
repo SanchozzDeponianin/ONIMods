@@ -13,7 +13,10 @@ body:
     id: bug-description
     attributes:
       label: Description of the bug/crash
-      description: Tell me what bug you encountered and what happens instead of the expected behavior. Tell me if you have the Spaced Out! DLC installed, and if you are using any of the public preview branches. Are you using a local mod copy or Steam subscription?
+      description: |
+        Tell me what bug you encountered and what happens instead of the expected behavior.
+        Tell me if you have the Spaced Out! DLC installed, and if you are using any of the public preview branches.
+        Are you using a local mod copy or Steam subscription ?
     validations:
       required: true
   - type: textarea
@@ -41,6 +44,8 @@ body:
           ~/Library/Logs/Klei/Oxygen Not Included/Player.log
         on Linux:
           ~/.config/unity3d/Klei/Oxygen Not Included/Player.log
-      placeholder: Click in here to enable drag and drop and to either use that or the built in file selector by clicking the bottom bar afterwards. Then add your log file here. Please do not copypaste the contents of the log file into here as raw text. Just add it as an attachment.
+      placeholder: |
+        Click in here to enable drag and drop and to either use that or the built in file selector by clicking the bottom bar afterwards. Then add your log file here.
+        Please do not copypaste the contents of the log file into here as raw text. Just add it as an attachment.
     validations:
       required: true
