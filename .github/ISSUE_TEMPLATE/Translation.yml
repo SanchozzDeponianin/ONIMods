@@ -1,0 +1,55 @@
+name: Mod Translation
+description: Hand in translation files for mods.
+title: "[Translation]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing to this mod
+  - type: dropdown
+    id: mod
+    attributes:
+      label: What mod is that translation for?
+      multiple: false
+      options:
+        - Aquatic Farm
+        - Artifacts in Care Packages
+        - Athletic Manual Generator
+        - Better Farming Effects and Tweaks
+        - Buildable Neural Vacillator
+        - "Butcher & Fishing Stations"
+        - Carousel
+        - Configurable Automation-controlled Doors
+        - Crabs Profit
+        - Enclosed Telescope Tune-Up
+        - Festive Halloween Spices
+        - Graveyard Keeper
+        - Hydrocactus
+        - Insulated Radbolt Joint Plate
+        - Mechanics Station
+        - No Manual Delivery
+        - Rebuildable AETN
+        - Relic Hunter
+        - "Rover's Recharger"
+        - "Sandbox: Mutant Plants"
+        - Smelter
+        - Squirrel Wheel
+        - Suit Recharger
+        - Not listed (use textfield below)
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Comments
+      placeholder: If you want to add any comments
+  - type: textarea
+    id: translationFile
+    attributes:
+      label: translation file
+      description: |
+        Add your translation file here (***.po file), you probably need to zip it.  
+      placeholder: Click in here to enable drag and drop and to either use that or the built in file selector by clicking the bottom bar afterwards. Then add your log file here
+    validations:
+      required: true
