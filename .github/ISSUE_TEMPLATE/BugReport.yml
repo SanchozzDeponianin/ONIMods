@@ -1,0 +1,46 @@
+name: Bug/Crash Report
+description: Open an issue here
+title: "[Issue]: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report.
+        But before sending a bug report, first make sure that your game really uses the latest version of the mod.
+        Use the [Mod Updater](https://steamcommunity.com/sharedfiles/filedetails/?id=2018291283) to force the game to update mods.
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Description of the bug/crash
+      description: Tell me what bug you encountered and what happens instead of the expected behavior. Tell me if you have the Spaced Out! DLC installed, and if you are using any of the public preview branches. Are you using a local mod copy or Steam subscription?
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps To Reproduce
+      description: Provide an unambiguous set of steps to reproduce this bug.
+      placeholder: Please write the steps in a list form
+    validations:
+      required: true
+  - type: textarea
+    id: player-log
+    attributes:
+      label: Player.log
+      description: |
+        Add the file "Player.log" that contains the crash/bug.
+        The Message shown during a crash is NOT a log and not very helpful. 
+        Add the log file by either dragging it into the text field below or attach it 
+        via the file selector that opens when you click the prompt at the bottom of the text field.
+
+        You find your log file under the following path:
+        on Windows:
+          C:\Users\%username%\AppData\LocalLow\Klei\Oxygen Not Included\Player.log
+        on Mac:
+          ~/Library/Logs/Klei/Oxygen Not Included/Player.log
+        on Linux:
+          ~/.config/unity3d/Klei/Oxygen Not Included/Player.log
+      placeholder: Click in here to enable drag and drop and to either use that or the built in file selector by clicking the bottom bar afterwards. Then add your log file here. Please do not copypaste the contents of the log file into here as raw text. Just add it as an attachment.
+    validations:
+      required: true
