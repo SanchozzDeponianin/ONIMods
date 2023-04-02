@@ -8,15 +8,14 @@ namespace ButcherStation
         private static readonly EventSystem.IntraObjectHandler<FishingStationGuide> OnOperationalChangedDelegate =
             new EventSystem.IntraObjectHandler<FishingStationGuide>((component, data) => component.OnOperationalChanged(data));
 
-        static readonly int MinDepth = 1;
-        static readonly int MaxDepth = 5;
+        private const int MinDepth = 1;
+        private const int MaxDepth = 5;
         private int previousDepth = -1;
         private bool previousWaterFound = false;
+        public int TargetRanchCell { get; private set; } = Grid.InvalidCell;
 
         public enum GuideType { Preview, UnderConstruction, Complete }
         public GuideType type;
-
-        public bool occupyTiles = false;
 
         private string lineAnim;
         private KAnim.PlayMode playMode;
@@ -155,6 +154,11 @@ namespace ButcherStation
                 previousDepth = depth;
                 previousWaterFound = waterFound;
             }
+            if (type == GuideType.Complete)
+            {
+                int cell = (depth > 0) ? Grid.OffsetCell(Grid.CellBelow(Grid.PosToCell(this)), 0, -depth) : Grid.InvalidCell;
+                TargetRanchCell = Grid.IsValidCell(cell) ? cell : Grid.InvalidCell;
+            }
         }
 
         public void RenderEveryTick(float dt)
@@ -187,7 +191,7 @@ namespace ButcherStation
             }
         }
 
-        public static int GetDepthAvailable(GameObject go, out bool waterFound)
+        private static int GetDepthAvailable(GameObject go, out bool waterFound)
         {
             int root_cell = Grid.CellBelow(Grid.PosToCell(go));
             int depth = 0;
@@ -197,10 +201,10 @@ namespace ButcherStation
             {
                 int cell = Grid.OffsetCell(root_cell, 0, -i);
                 // todo: если не будет резервации тайлов - нужно подумать по поводу занятости места другими постройками
-                if (!Grid.IsValidCell(cell) || Grid.Solid[cell] ||
-                    (Grid.ObjectLayers[(int)ObjectLayer.Building].ContainsKey(cell)
-                    && !(Grid.ObjectLayers[(int)ObjectLayer.Building][cell] == null)
-                    && !(Grid.ObjectLayers[(int)ObjectLayer.Building][cell] == go)))
+                if (!Grid.IsValidCell(cell) || Grid.Solid[cell])
+                    break;
+                var gmo = Grid.Objects[cell, (int)ObjectLayer.Building];
+                if (gmo != null && gmo != go)
                     break;
                 depth = i;
                 if (depth > MinDepth && Grid.IsSubstantialLiquid(cell))

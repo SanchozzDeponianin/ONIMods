@@ -87,13 +87,8 @@ namespace ButcherStation
             def.OnRanchCompleteCb = (creature_go) => ButcherStation.ButchCreature(creature_go, true);
             def.GetTargetRanchCell = (smi) =>
             {
-                if (!smi.IsNullOrStopped())
-                {
-                    int cell = Grid.CellBelow(Grid.PosToCell(smi.transform.GetPosition()));
-                    cell = Grid.OffsetCell(cell, 0, -FishingStationGuide.GetDepthAvailable(smi.gameObject, out _));
-                    if (Grid.IsValidCell(cell))
-                        return cell;
-                }
+                if (!smi.IsNullOrStopped() && smi.gameObject.TryGetComponent<FishingStationGuide>(out var fishingStation))
+                    return fishingStation.TargetRanchCell;
                 return Grid.InvalidCell;
             };
             def.RancherInteractAnim = "anim_interacts_fishingstation_kanim";

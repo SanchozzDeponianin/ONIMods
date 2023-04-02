@@ -184,24 +184,45 @@ namespace ButcherStation
 
         // хак, чтобы рыбалка работала, 
         // при проверке допустимости жеготного сравнивать его пещеру с пещерой точки призыва, а не комнатой самой постройки
-        [HarmonyPatch(typeof(RanchStation.Instance), "CanRanchableBeRanchedAtRanchStation")]
+        [HarmonyPatch]
         private static class RanchStation_CanRanchableBeRanchedAtRanchStation
         {
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                var smi_type = typeof(RanchStation.Instance);
+                var CanBeRanched = smi_type.GetMethodSafe("CanRanchableBeRanchedAtRanchStation", false, typeof(RanchableMonitor.Instance));
+                if (CanBeRanched != null)
+                    yield return CanBeRanched;
+                else
+                    PUtil.LogWarning("Method not found 'RanchStation.Instance.CanRanchableBeRanchedAtRanchStation'");
+                var GetCavityInfo = smi_type.GetMethodSafe(nameof(RanchStation.Instance.GetCavityInfo), false);
+                if (GetCavityInfo != null)
+                    yield return GetCavityInfo;
+                else
+                    PUtil.LogWarning("Method not found 'RanchStation.Instance.GetCavityInfo'");
+            }
             private static CavityInfo GetFishingCavity(CavityInfo cavity, RanchStation.Instance smi)
             {
-                if (smi.PrefabID() == FishingStationConfig.ID)
+                if (!smi.IsNullOrStopped() && smi.gameObject.TryGetComponent<FishingStationGuide>(out var fishingStation))
                 {
-                    return Game.Instance.roomProber.GetCavityForCell(smi.def.GetTargetRanchCell(smi));
+                    return Game.Instance.roomProber.GetCavityForCell(fishingStation.TargetRanchCell);
                 }
                 return cavity;
             }
-            /*
+            /*  RanchStation.Instance.CanRanchableBeRanchedAtRanchStation:
+
                 int cell = Grid.PosToCell(ranchable.transform.GetPosition());
 				var cavityForCell = Game.Instance.roomProber.GetCavityForCell(cell);
 				bool flag = cavityForCell == null 
             ---     || cavityForCell != this.ranch.cavity;
             +++     || cavityForCell != GetFishingCavity(this.ranch.cavity, this);
+
+                RanchStation.Instance.GetCavityInfo:
+
+            --- return this.ranch.cavity;
+            +++ return GetFishingCavity(this.ranch.cavity, this);
             */
+
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
                 return TranspilerUtils.Wrap(instructions, original, transpiler);
@@ -240,6 +261,21 @@ namespace ButcherStation
             }
         }
 
+        // тоже косметика - чтобы рыба могла переместиться в место ожидания очереди
+        [HarmonyPatch(typeof(RanchStation.Instance), nameof(RanchStation.Instance.StationExtents), MethodType.Getter)]
+        private static class RanchStation_Instance_StationExtents
+        {
+            private static void Postfix(RanchStation.Instance __instance, ref Extents __result)
+            {
+                if (!__instance.IsNullOrStopped() && __instance.gameObject.TryGetComponent<FishingStationGuide>(out var fishingStation)
+                    && Grid.IsValidCell(fishingStation.TargetRanchCell))
+                {
+                    Grid.CellToXY(fishingStation.TargetRanchCell, out _, out int y);
+                    __result.y = y;
+                }
+            }
+        }
+
         // чисто косметика - подмена анимации пойманого жеготного - ради отловленной живой рыбы
         [HarmonyPatch(typeof(BaggedStates), nameof(BaggedStates.InitializeStates))]
         private static class BaggedStates_InitializeStates
@@ -274,8 +310,8 @@ namespace ButcherStation
         }
 
         // для замены максимума жеготных
-        [HarmonyPatch(typeof(CreatureDeliveryPoint), "IUserControlledCapacity.get_MaxCapacity")]
-        private static class CreatureDeliveryPoint_get_MaxCapacity
+        [HarmonyPatch(typeof(CreatureDeliveryPoint), "IUserControlledCapacity.MaxCapacity", MethodType.Getter)]
+        private static class CreatureDeliveryPoint_MaxCapacity
         {
             private static bool Prefix(ref float __result)
             {
