@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Klei.CustomSettings;
 using KSerialization;
 using TUNING;
@@ -475,6 +474,7 @@ namespace SuitRecharger
             consumer.consumptionRate = inputType == ConduitType.Gas ? ConduitFlow.MAX_GAS_MASS : ConduitFlow.MAX_LIQUID_MASS;
             consumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
             consumer.forceAlwaysSatisfied = true;
+            consumer.OperatingRequirement = Operational.State.Functional;
             consumer.storage = storage;
             var networkManager = Conduit.GetNetworkManager(inputType);
             flowNetworkItem = new FlowUtilityNetwork.NetworkItem(inputType, Endpoint.Sink, inputCell, gameObject);

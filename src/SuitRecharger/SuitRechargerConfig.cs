@@ -51,6 +51,7 @@ namespace SuitRecharger
             o2_consumer.capacityTag = GameTags.Oxygen;
             o2_consumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
             o2_consumer.forceAlwaysSatisfied = true;
+            o2_consumer.OperatingRequirement = Operational.State.Functional;
             o2_consumer.capacityKG = O2_CAPACITY;
 
             var storage = go.AddOrGet<Storage>();
@@ -76,6 +77,7 @@ namespace SuitRecharger
             recharger.gasWastePortInfo = gasWasteOutputPort;
 
             go.AddOrGet<CopyBuildingSettings>();
+            go.AddOrGetDef<RocketUsageRestriction.Def>().initialControlledStateWhenBuilt = false;
         }
 
         private ManualDeliveryKG AddManualDeliveryKG(GameObject go, Tag requestedTag, float capacity, float refill = 0.75f, bool allowPause = true)
