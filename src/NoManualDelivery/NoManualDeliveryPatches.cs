@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
@@ -52,6 +53,7 @@ namespace NoManualDelivery
             ObjectDispenserConfig.ID,
             RationBoxConfig.ID,
             RefrigeratorConfig.ID,
+            DiningTableConfig.ID,
             OuthouseConfig.ID,
             FarmTileConfig.ID,
             HydroponicFarmConfig.ID,
@@ -65,6 +67,8 @@ namespace NoManualDelivery
             ResearchCenterConfig.ID,
             SweepBotStationConfig.ID,
             SpiceGrinderConfig.ID,
+            GeoTunerConfig.ID,
+            MissileLauncherConfig.ID,
             // из ДЛЦ:
             UraniumCentrifugeConfig.ID,
             NuclearReactorConfig.ID,
@@ -212,6 +216,17 @@ namespace NoManualDelivery
                         break;
                     }
                 }
+            }
+        }
+
+        [HarmonyPatch(typeof(SideScreenContent), nameof(SideScreenContent.GetSideScreenSortOrder))]
+        private static class SideScreenContent_GetSideScreenSortOrder
+        {
+            private static bool Prepare() => Environment.OSVersion.Platform.Equals(PlatformID.Win32NT);
+            private static void Postfix(SideScreenContent __instance, ref int __result)
+            {
+                if (__instance is AutomatableSideScreen)
+                    __result = -10;
             }
         }
 
