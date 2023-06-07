@@ -84,7 +84,7 @@ namespace BuildableGeneShuffler
                             PopFXManager.Instance.SpawnFX(PopFXManager.Instance.sprite_Plus, Assets.GetPrefab(GeneShufflerRechargeConfig.ID.ToTag()).GetProperName(), __instance.transform, 1.5f, false);
                         }
                         if (__instance.TryGetComponent<BuildedGeneShuffler>(out var builded))
-                            builded.SpawnItemsFromConstruction();
+                            builded.SpawnItemsFromConstruction(__instance.worker);
                     }
                 }
             }
@@ -93,7 +93,7 @@ namespace BuildableGeneShuffler
         // патчим массу строительных материалов для возврата при разрушении
         // немного хакновато, и затрагивает все постройки, но ладно
         // просто лень городить собственный спавн всех материалов
-        [HarmonyPatch(typeof(Deconstructable), nameof(Deconstructable.SpawnItemsFromConstruction), typeof(float), typeof(byte), typeof(int))]
+        [HarmonyPatch(typeof(Deconstructable), nameof(Deconstructable.SpawnItemsFromConstruction), typeof(float), typeof(byte), typeof(int), typeof(Worker))]
         private static class Deconstructable_SpawnItemsFromConstruction
         {
             private static float[] InjectMass(float[] mass, Deconstructable deconstructable)

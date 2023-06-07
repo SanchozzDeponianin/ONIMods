@@ -104,5 +104,6 @@ namespace LargeTelescope
         public void OnSetOxygenBreather(OxygenBreather oxygen_breather) => oxygenBreather = oxygen_breather;
         public bool ShouldEmitCO2() => false;
         public bool ShouldStoreCO2() => false;
+        public virtual bool IsLowOxygen() => IsEmpty;
     }
 }

@@ -6,7 +6,7 @@ namespace RoverRefueling
     {
         public const string ID = "WhirlPoolFx";
 
-        GameObject IEntityConfig.CreatePrefab()
+        public GameObject CreatePrefab()
         {
             var go = EntityTemplates.CreateEntity(ID, ID, false);
             var kbac = go.AddOrGet<KBatchedAnimController>();
@@ -21,8 +21,8 @@ namespace RoverRefueling
             return go;
         }
 
-        string[] IEntityConfig.GetDlcIds() => DlcManager.AVAILABLE_ALL_VERSIONS;
-        void IEntityConfig.OnPrefabInit(GameObject inst) { }
-        void IEntityConfig.OnSpawn(GameObject inst) { }
+        public string[] GetDlcIds() => DlcManager.AVAILABLE_ALL_VERSIONS;
+        public void OnPrefabInit(GameObject inst) { }
+        public void OnSpawn(GameObject inst) { }
     }
 }

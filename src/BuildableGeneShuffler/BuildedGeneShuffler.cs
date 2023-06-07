@@ -50,7 +50,7 @@ namespace BuildableGeneShuffler
             }
         }
 
-        public void SpawnItemsFromConstruction()
+        public void SpawnItemsFromConstruction(Worker chore_worker)
         {
             if (isBuilded && !destroyed)
             {
@@ -58,7 +58,7 @@ namespace BuildableGeneShuffler
                 if (TryGetComponent<Deconstructable>(out var deconstructable))
                 {
                     deconstructable.allowDeconstruction = true;
-                    deconstructable.SpawnItemsFromConstruction();
+                    deconstructable.SpawnItemsFromConstruction(chore_worker);
                 }
             }
         }

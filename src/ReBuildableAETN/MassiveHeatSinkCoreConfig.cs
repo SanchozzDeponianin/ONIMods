@@ -40,8 +40,7 @@ namespace ReBuildableAETN
                 });
 
             // это частично спокировано из ArtifactConfig.CreateArtifact, надо поглядывать если что то поменяют
-            var occupyArea = go.AddOrGet<OccupyArea>();
-            occupyArea.OccupiedCellsOffsets = EntityTemplates.GenerateOffsets(1, 1);
+            go.AddOrGet<OccupyArea>().SetCellOffsets(EntityTemplates.GenerateOffsets(1, 1));
             var decorProvider = go.AddOrGet<DecorProvider>();
             decorProvider.SetValues(TIER_CORE.decorValues);
             decorProvider.overrideName = STRINGS.ITEMS.MASSIVE_HEATSINK_CORE.NAME;
