@@ -72,12 +72,14 @@ namespace ButcherStation
 
         public override void DoPostConfigurePreview(BuildingDef def, GameObject go)
         {
-            go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.Preview;
+            //go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.Preview;
+            AddVisualizer(go);
         }
 
         public override void DoPostConfigureUnderConstruction(GameObject go)
         {
             go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.UnderConstruction;
+            AddVisualizer(go);
         }
 
         public override void DoPostConfigureComplete(GameObject go)
@@ -99,6 +101,19 @@ namespace ButcherStation
             go.AddOrGet<SkillPerkMissingComplainer>().requiredSkillPerk = Db.Get().SkillPerks.CanWrangleCreatures.Id;
             Prioritizable.AddRef(go);
             go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.Complete;
+            AddVisualizer(go);
+        }
+
+        private static void AddVisualizer(GameObject go)
+        {
+            var visualizer = go.AddOrGet<RangeVisualizer>();
+            visualizer.OriginOffset = new Vector2I(0, -1);
+            visualizer.RangeMin.x = 0;
+            visualizer.RangeMin.y = -FishingStationGuide.MaxDepth;
+            visualizer.RangeMax.x = 0;
+            visualizer.RangeMax.y = -FishingStationGuide.MinDepth;
+            go.GetComponent<KPrefabID>().instantiateFn += gmo =>
+                gmo.GetComponent<RangeVisualizer>().BlockingCb = FishingStationGuide.IsCellBlockedCB;
         }
     }
 }

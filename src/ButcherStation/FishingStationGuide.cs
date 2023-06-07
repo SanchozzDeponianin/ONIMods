@@ -3,13 +3,13 @@
 namespace ButcherStation
 {
     [SkipSaveFileSerialization]
-    public class FishingStationGuide : KMonoBehaviour, IRenderEveryTick, ISim1000ms
+    public class FishingStationGuide : KMonoBehaviour, /*IRenderEveryTick,*/ ISim1000ms
     {
         private static readonly EventSystem.IntraObjectHandler<FishingStationGuide> OnOperationalChangedDelegate =
             new EventSystem.IntraObjectHandler<FishingStationGuide>((component, data) => component.OnOperationalChanged(data));
 
-        private const int MinDepth = 1;
-        private const int MaxDepth = 5;
+        public const int MinDepth = 1;
+        public const int MaxDepth = 5;
         private int previousDepth = -1;
         private bool previousWaterFound = false;
         public int TargetRanchCell { get; private set; } = Grid.InvalidCell;
@@ -72,7 +72,7 @@ namespace ButcherStation
 
         protected override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
+            Unsubscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate, true);
             base.OnCleanUp();
         }
 
@@ -139,12 +139,6 @@ namespace ButcherStation
                 }
                 if (type != GuideType.Preview)
                 {
-                    // todo: пока выключил резервацию тайлов. тк создает неопределенное поведение,
-                    // если сделать работу в разных типах комнатах для совместимости с "роом эхпандед"
-                    // надо подумать
-#if false
-                    OccupyArea(depth);
-#endif
                     if (kSelectable != null)
                     {
                         kSelectable.ToggleStatusItem(statusItemNoDepth, depth <= 0);
@@ -173,24 +167,6 @@ namespace ButcherStation
                 RefreshDepth();
         }
 
-        private void OccupyArea(int depth)
-        {
-            int root_cell = Grid.CellBelow(Grid.PosToCell(transform.GetPosition()));
-            for (int i = MinDepth; i <= MaxDepth; i++)
-            {
-                int cell = Grid.OffsetCell(root_cell, 0, -i);
-                if (i <= depth)
-                {
-                    Grid.ObjectLayers[(int)ObjectLayer.Building][cell] = gameObject;
-                }
-                else if (Grid.ObjectLayers[(int)ObjectLayer.Building].ContainsKey(cell)
-                    && Grid.ObjectLayers[(int)ObjectLayer.Building][cell] == gameObject)
-                {
-                    Grid.ObjectLayers[(int)ObjectLayer.Building][cell] = null;
-                }
-            }
-        }
-
         private static int GetDepthAvailable(GameObject go, out bool waterFound)
         {
             int root_cell = Grid.CellBelow(Grid.PosToCell(go));
@@ -200,11 +176,7 @@ namespace ButcherStation
             for (int i = MinDepth; i <= MaxDepth; i++)
             {
                 int cell = Grid.OffsetCell(root_cell, 0, -i);
-                // todo: если не будет резервации тайлов - нужно подумать по поводу занятости места другими постройками
-                if (!Grid.IsValidCell(cell) || Grid.Solid[cell])
-                    break;
-                var gmo = Grid.Objects[cell, (int)ObjectLayer.Building];
-                if (gmo != null && gmo != go)
+                if (IsCellBlockedCB(cell))
                     break;
                 depth = i;
                 if (depth > MinDepth && Grid.IsSubstantialLiquid(cell))
@@ -216,6 +188,11 @@ namespace ButcherStation
             if (depth <= MinDepth)
                 depth = 0;
             return waterFound ? depthWithWater : depth;
+        }
+
+        public static bool IsCellBlockedCB(int cell)
+        {
+            return !Grid.IsValidCell(cell) || Grid.Solid[cell] || Grid.Objects[cell, (int)ObjectLayer.Building] != null;
         }
     }
 }
