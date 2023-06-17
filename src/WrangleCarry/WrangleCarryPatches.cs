@@ -2,11 +2,18 @@
 using System.Reflection;
 using Database;
 using HarmonyLib;
+using SanchozzONIMods.Lib;
 
 namespace WrangleCarry
 {
     internal sealed class WrangleCarryPatches : KMod.UserMod2
     {
+        public override void OnLoad(Harmony harmony)
+        {
+            Utils.LogModVersion();
+            base.OnLoad(harmony);
+        }
+
         // сделать перенос жеготных равноприоритетным с поимкой
         // однако врядли сильно поможет в случае отлова нескольких жеготных одновременно
         // так как есть ещё учёт стоимости пути, а задача переноса инициируется точкой доставки а не самим жеготным

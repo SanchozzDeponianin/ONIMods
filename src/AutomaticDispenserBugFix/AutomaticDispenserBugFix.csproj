@@ -19,6 +19,9 @@
     <ModVersion>1.1.0</ModVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\lib\Utils.cs">
+      <Link>Utils.cs</Link>
+    </Compile>
     <Compile Include="AutomaticDispenserBugFix.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

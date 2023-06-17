@@ -23,8 +23,8 @@ namespace ButcherStation
         public override void OnLoad(Harmony harmony)
         {
             ButcherStationPatches.harmony = harmony;
-            base.OnLoad(harmony);
             PUtil.InitLibrary();
+            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(ButcherStationPatches));
             new POptions().RegisterOptions(this, typeof(ButcherStationOptions));
         }

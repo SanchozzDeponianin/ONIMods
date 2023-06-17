@@ -12,6 +12,12 @@ namespace SandboxMutantPlant
             OnRefreshUserMenu(component);
         });
 
+        public override void OnLoad(Harmony harmony)
+        {
+            Utils.LogModVersion();
+            base.OnLoad(harmony);
+        }
+
         [HarmonyPatch(typeof(Localization), nameof(Localization.Initialize))]
         internal static class Localization_Initialize
         {
@@ -22,7 +28,7 @@ namespace SandboxMutantPlant
         }
 
         // при включении песочницы обновляем кнопки в боковом экране
-        [HarmonyPatch(typeof(Game), "set_SandboxModeActive")]
+        [HarmonyPatch(typeof(Game), nameof(Game.SandboxModeActive), MethodType.Setter)]
         public static class Game_set_SandboxModeActive
         {
             public static void Postfix()

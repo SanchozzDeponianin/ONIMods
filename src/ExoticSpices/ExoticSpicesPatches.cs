@@ -18,8 +18,8 @@ namespace ExoticSpices
     {
         public override void OnLoad(Harmony harmony)
         {
-            base.OnLoad(harmony);
             PUtil.InitLibrary();
+            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(ExoticSpicesPatches));
             new POptions().RegisterOptions(this, typeof(ExoticSpicesOptions));
             new KAnimGroupManager().RegisterInteractAnims(ANIM_IDLE_ZOMBIE, ANIM_LOCO_ZOMBIE, ANIM_LOCO_WALK_ZOMBIE, ANIM_REACT_BUTT_SCRATCH);

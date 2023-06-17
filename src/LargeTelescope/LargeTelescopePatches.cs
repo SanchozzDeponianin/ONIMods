@@ -17,9 +17,9 @@ namespace LargeTelescope
     {
         public override void OnLoad(Harmony harmony)
         {
+            PUtil.InitLibrary();
             LargeTelescopeOptions.Reload();
             base.OnLoad(harmony);
-            PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(typeof(LargeTelescopePatches));
             new POptions().RegisterOptions(this, typeof(LargeTelescopeOptions));
         }

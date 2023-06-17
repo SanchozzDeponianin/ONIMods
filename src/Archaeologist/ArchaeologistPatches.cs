@@ -11,6 +11,12 @@ namespace Archaeologist
     {
         private const string Archaeologist = "Archaeologist";
 
+        public override void OnLoad(Harmony harmony)
+        {
+            Utils.LogModVersion();
+            base.OnLoad(harmony);
+        }
+
         [HarmonyPatch(typeof(Db), nameof(Db.Initialize))]
         internal static class Db_Initialize
         {

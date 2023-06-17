@@ -20,6 +20,7 @@ namespace SanchozzONIMods.Lib
             public readonly string langDirectory;
             public readonly string spritesDirectory;
             public readonly string version;
+            public readonly string fileVersion;
             public ModInfo()
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
@@ -28,6 +29,14 @@ namespace SanchozzONIMods.Lib
                 langDirectory = Path.Combine(rootDirectory, "translations");
                 spritesDirectory = Path.Combine(rootDirectory, "sprites");
                 version = assembly.GetName().Version.ToString();
+                fileVersion = null;
+                var attrs = assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), true);
+                if (attrs != null && attrs.Length > 0)
+                {
+                    var assemblyFileVersion = (AssemblyFileVersionAttribute)attrs[0];
+                    if (assemblyFileVersion != null)
+                        fileVersion = assemblyFileVersion.Version;
+                }
             }
         }
 
@@ -41,6 +50,11 @@ namespace SanchozzONIMods.Lib
                     _modinfo = new ModInfo();
                 return _modinfo;
             }
+        }
+
+        public static void LogModVersion()
+        {
+            Debug.LogFormat("Mod {0} initialized, version {1}", modInfo.assemblyName, modInfo.fileVersion ?? "Unknown");
         }
 
         // вычисляем значение Action.NumActions определенную в Assembly-CSharp-firstpass
@@ -63,8 +77,8 @@ namespace SanchozzONIMods.Lib
         // логирование со стактрасом
         public static void LogExcWarn(Exception thrown)
         {
-            Debug.LogWarningFormat("[{0}] {1} {2}\n{3}", new object[4] { (Assembly.GetCallingAssembly()?.GetName()?.Name) ?? "?",
-                thrown.GetType(), thrown.Message, thrown.StackTrace });
+            Debug.LogWarningFormat("[{0}] {1} {2}\n{3}", (Assembly.GetCallingAssembly()?.GetName()?.Name) ?? "?",
+                thrown.GetType(), thrown.Message, thrown.StackTrace);
         }
 
         // добавляем постройки в технологии

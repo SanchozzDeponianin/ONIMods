@@ -16,8 +16,8 @@ namespace WornSuitDischarge
     {
         public override void OnLoad(Harmony harmony)
         {
-            base.OnLoad(harmony);
             PUtil.InitLibrary();
+            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(WornSuitDischargePatches));
         }
 

@@ -19,6 +19,9 @@
     <Author>ricvail, Sanchozz</Author>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\lib\Utils.cs">
+      <Link>Utils.cs</Link>
+    </Compile>
     <Compile Include="EatEveryDayPatches.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

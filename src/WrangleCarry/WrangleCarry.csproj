@@ -20,6 +20,9 @@
     <UsesPLib>false</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\lib\Utils.cs">
+      <Link>Utils.cs</Link>
+    </Compile>
     <Compile Include="WrangleCarryPatches.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

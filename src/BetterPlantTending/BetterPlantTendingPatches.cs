@@ -20,8 +20,8 @@ namespace BetterPlantTending
     {
         public override void OnLoad(Harmony harmony)
         {
-            base.OnLoad(harmony);
             PUtil.InitLibrary();
+            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(BetterPlantTendingPatches));
             new POptions().RegisterOptions(this, typeof(BetterPlantTendingOptions));
         }

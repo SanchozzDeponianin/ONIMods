@@ -20,6 +20,9 @@
     <SupportedContent>VANILLA_ID</SupportedContent>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\lib\Utils.cs">
+      <Link>Utils.cs</Link>
+    </Compile>
     <Compile Include="TweakedBiologicalCargoBay.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

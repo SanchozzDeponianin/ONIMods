@@ -16,8 +16,8 @@ namespace SuitRecharger
     {
         public override void OnLoad(Harmony harmony)
         {
-            base.OnLoad(harmony);
             PUtil.InitLibrary();
+            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(SuitRechargerPatches));
             new POptions().RegisterOptions(this, typeof(SuitRechargerOptions));
         }

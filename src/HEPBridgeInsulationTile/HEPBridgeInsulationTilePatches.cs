@@ -11,8 +11,8 @@ namespace HEPBridgeInsulationTile
     {
         public override void OnLoad(Harmony harmony)
         {
-            base.OnLoad(harmony);
             PUtil.InitLibrary();
+            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(HEPBridgeInsulationTilePatches));
             new POptions().RegisterOptions(this, typeof(HEPBridgeInsulationTileOptions));
         }

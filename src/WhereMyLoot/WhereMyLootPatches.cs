@@ -13,8 +13,8 @@ namespace WhereMyLoot
     {
         public override void OnLoad(Harmony harmony)
         {
-            base.OnLoad(harmony);
             PUtil.InitLibrary(true);
+            base.OnLoad(harmony);
         }
 
         [HarmonyPatch(typeof(Demolishable), "TriggerDestroy")]

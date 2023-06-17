@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using SanchozzONIMods.Lib;
 
 namespace EatEveryDay
 {
@@ -6,7 +7,13 @@ namespace EatEveryDay
 	// https://steamcommunity.com/sharedfiles/filedetails/?id=2107702766 
 	public sealed class EatEveryDayPatches : KMod.UserMod2
 	{
-		[HarmonyPatch(typeof(CalorieMonitor.Instance), nameof(CalorieMonitor.Instance.IsHungry))]
+        public override void OnLoad(Harmony harmony)
+        {
+			Utils.LogModVersion();
+            base.OnLoad(harmony);
+        }
+
+        [HarmonyPatch(typeof(CalorieMonitor.Instance), nameof(CalorieMonitor.Instance.IsHungry))]
 		public static class CalorieMonitor_Instance_IsHungry
 		{
 			public static void Postfix(CalorieMonitor.Instance __instance, ref bool __result)

@@ -19,9 +19,9 @@ namespace ReBuildableAETN
     {
         public override void OnLoad(Harmony harmony)
         {
+            PUtil.InitLibrary();
             ReBuildableAETNOptions.Reload();
             base.OnLoad(harmony);
-            PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(GetType());
             new POptions().RegisterOptions(this, typeof(ReBuildableAETNOptions));
         }

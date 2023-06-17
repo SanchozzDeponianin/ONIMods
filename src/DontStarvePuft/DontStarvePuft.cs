@@ -1,11 +1,18 @@
 ﻿using HarmonyLib;
 using UnityEngine;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 
 namespace DontStarvePuft
 {
     internal sealed class DontStarvePuftPatches : KMod.UserMod2
     {
+        public override void OnLoad(Harmony harmony)
+        {
+            PUtil.InitLibrary();
+            base.OnLoad(harmony);
+        }
+
         [HarmonyPatch(typeof(GasAndLiquidConsumerMonitor.Instance), nameof(GasAndLiquidConsumerMonitor.Instance.Consume))]
         private static class GasAndLiquidConsumerMonitor_Instance_Consume
         {

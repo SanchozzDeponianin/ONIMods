@@ -16,9 +16,9 @@ namespace SmartLogicDoors
         private static Harmony harmony;
         public override void OnLoad(Harmony harmony)
         {
+            PUtil.InitLibrary();
             base.OnLoad(harmony);
             SmartLogicDoorsPatches.harmony = harmony;
-            PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(typeof(SmartLogicDoorsPatches));
         }
 

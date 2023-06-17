@@ -16,9 +16,9 @@ namespace SquirrelGenerator
 
         public override void OnLoad(Harmony harmony)
         {
+            PUtil.InitLibrary();
             base.OnLoad(harmony);
             harmonyInstance = harmony;
-            PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(typeof(SquirrelGeneratorPatches));
             new POptions().RegisterOptions(this, typeof(SquirrelGeneratorOptions));
         }

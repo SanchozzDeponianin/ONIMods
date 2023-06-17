@@ -15,8 +15,8 @@ namespace MechanicsStation
     {
         public override void OnLoad(Harmony harmony)
         {
-            base.OnLoad(harmony);
             PUtil.InitLibrary();
+            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(MechanicsStationPatches));
             new POptions().RegisterOptions(this, typeof(MechanicsStationOptions));
         }

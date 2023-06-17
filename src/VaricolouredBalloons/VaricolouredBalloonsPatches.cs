@@ -17,8 +17,8 @@ namespace VaricolouredBalloons
     {
         public override void OnLoad(Harmony harmony)
         {
-            base.OnLoad(harmony);
             PUtil.InitLibrary(true);
+            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(VaricolouredBalloonsPatches));
         }
 

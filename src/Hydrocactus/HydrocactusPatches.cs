@@ -14,9 +14,9 @@ namespace Hydrocactus
     {
         public override void OnLoad(Harmony harmony)
         {
+            PUtil.InitLibrary();
             HydrocactusOptions.Reload();
             base.OnLoad(harmony);
-            PUtil.InitLibrary();
             new PPatchManager(harmony).RegisterPatchClass(typeof(HydrocactusPatches));
             new POptions().RegisterOptions(this, typeof(HydrocactusOptions));
         }

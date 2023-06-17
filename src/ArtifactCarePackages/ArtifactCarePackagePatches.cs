@@ -15,8 +15,8 @@ namespace ArtifactCarePackages
     {
         public override void OnLoad(Harmony harmony)
         {
-            base.OnLoad(harmony);
             PUtil.InitLibrary();
+            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(ArtifactCarePackagePatches));
             new POptions().RegisterOptions(this, typeof(ArtifactCarePackageOptions));
         }
