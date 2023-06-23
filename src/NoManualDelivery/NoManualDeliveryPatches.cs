@@ -80,6 +80,7 @@ namespace NoManualDelivery
             "AquaticFarm",
             // Advanced Refrigeration https://steamcommunity.com/sharedfiles/filedetails/?id=2021324045
             "SimpleFridge", "FridgeRed", "FridgeYellow", "FridgeBlue", "FridgeAdvanced",
+            "FridgePod", "SpaceBox", "HightechSmallFridge", "HightechBigFridge",
             // Storage Pod  https://steamcommunity.com/sharedfiles/filedetails/?id=1873476551
             "StoragePodConfig",
             // Big Storage  https://steamcommunity.com/sharedfiles/filedetails/?id=1913589787
