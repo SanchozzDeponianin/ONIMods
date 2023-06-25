@@ -361,6 +361,21 @@ namespace ReBuildableAETN
                 ___analyzedArtifatIDs.RemoveAll(IsNotGameArtifactID);
             }
         }
+
+        // если вдруг при начальной загрузке конфиг ядра загрузится раньше чем конфиг артифактов то произойдёт краш 
+        // обычно такого не происходит и не удалось воспроизвести
+        // но теоритически возможно изза состояния гонки, особенно при наличии других модов добавляющих новые штуки
+        // правильно было бы объявить атрибут [EntityConfigOrder(2)] или типа того
+        // но собаки Клеи сделали его приватным
+        [HarmonyPatch(typeof(EntityConfigManager), "GetSortOrder")]
+        private static class EntityConfigManager_GetSortOrder
+        {
+            private static void Postfix(Type type, ref int __result)
+            {
+                if (type == typeof(MassiveHeatSinkCoreConfig))
+                    __result = 2;
+            }
+        }
     }
 }
 
