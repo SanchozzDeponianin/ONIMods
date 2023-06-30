@@ -96,6 +96,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AthleticsGenerator", "Athle
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrangleCarry", "WrangleCarry\WrangleCarry.csproj", "{EE935859-2390-46E6-85C4-59CA917A3FF7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PickupFloppingPacu", "PickupFloppingPacu\PickupFloppingPacu.csproj", "{3E69CE22-BD50-4FF6-896D-096B4F7C7F57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MainlineSteam = Debug|MainlineSteam
@@ -408,6 +410,14 @@ Global
 		{EE935859-2390-46E6-85C4-59CA917A3FF7}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{EE935859-2390-46E6-85C4-59CA917A3FF7}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{EE935859-2390-46E6-85C4-59CA917A3FF7}.Release|StableBackup.Build.0 = Release|StableBackup
+		{3E69CE22-BD50-4FF6-896D-096B4F7C7F57}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
+		{3E69CE22-BD50-4FF6-896D-096B4F7C7F57}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
+		{3E69CE22-BD50-4FF6-896D-096B4F7C7F57}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
+		{3E69CE22-BD50-4FF6-896D-096B4F7C7F57}.Debug|StableBackup.Build.0 = Debug|StableBackup
+		{3E69CE22-BD50-4FF6-896D-096B4F7C7F57}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
+		{3E69CE22-BD50-4FF6-896D-096B4F7C7F57}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
+		{3E69CE22-BD50-4FF6-896D-096B4F7C7F57}.Release|StableBackup.ActiveCfg = Release|StableBackup
+		{3E69CE22-BD50-4FF6-896D-096B4F7C7F57}.Release|StableBackup.Build.0 = Release|StableBackup
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
