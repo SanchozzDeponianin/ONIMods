@@ -127,7 +127,7 @@ namespace ButcherStation
 
             public class ENABLE_NOT_COUNT_BABIES
             {
-                public static LocString NAME = "Enable \"Don't count Babies\" Feachure";
+                public static LocString NAME = "Enable \"Don't count Babies\" Feature";
                 public static LocString TOOLTIP = "";
             }
         }

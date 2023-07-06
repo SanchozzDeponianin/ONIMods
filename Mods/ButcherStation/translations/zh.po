@@ -104,7 +104,7 @@ msgstr ""
 
 #. ButcherStation.STRINGS.OPTIONS.ENABLE_NOT_COUNT_BABIES.NAME
 msgctxt "ButcherStation.STRINGS.OPTIONS.ENABLE_NOT_COUNT_BABIES.NAME"
-msgid "Enable "Don't count Babies" Feachure"
+msgid "Enable "Don't count Babies" Feature"
 msgstr "启用“不算幼崽”功能"
 
 #. ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.NAME

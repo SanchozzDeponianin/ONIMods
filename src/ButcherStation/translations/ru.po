@@ -60,7 +60,7 @@ msgstr "{0} дополнительное <style=\"KKeyword\">Мясо</style> п
 
 #. ButcherStation.STRINGS.OPTIONS.ENABLE_NOT_COUNT_BABIES.NAME
 msgctxt "ButcherStation.STRINGS.OPTIONS.ENABLE_NOT_COUNT_BABIES.NAME"
-msgid "Enable \"Don't count Babies\" Feachure"
+msgid "Enable \"Don't count Babies\" Feature"
 msgstr "Включить опцию \"Не учитывать детёнышей\""
 
 #. ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.NAME
