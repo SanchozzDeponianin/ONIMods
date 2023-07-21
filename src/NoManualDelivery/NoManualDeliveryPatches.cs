@@ -62,6 +62,7 @@ namespace NoManualDelivery
             FishFeederConfig.ID,
             EggIncubatorConfig.ID,
             KilnConfig.ID,
+            "Chlorinator",
             IceCooledFanConfig.ID,
             SolidBoosterConfig.ID,
             ResearchCenterConfig.ID,
