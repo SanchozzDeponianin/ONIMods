@@ -95,6 +95,8 @@ namespace NoManualDelivery
             "Freezer",
             // Modified Storage https://steamcommunity.com/sharedfiles/filedetails/?id=1900617368
             "Ktoblin.ModifiedRefrigerator", "Ktoblin.ModifiedStorageLockerSmart",
+            // Gravitas Shipping Container https://steamcommunity.com/sharedfiles/filedetails/?id=2942005501
+            "GravitasBigStorage_Container",
         };
 
         private static List<string> BuildingToMakeAutomatableWithTransferArmPickupGasLiquid = new List<string>()
@@ -300,11 +302,68 @@ namespace NoManualDelivery
                 UpdateSweepBotStationStorage(___targetAutomatable);
             }
         }
+
+        // домег бомжега. галку нужно не показывать до поры. кнопку копировать настройки тоже.
+        [HarmonyPatch(typeof(AutomatableSideScreen), nameof(AutomatableSideScreen.IsValidForTarget))]
+        private static class AutomatableSideScreen_IsValidForTarget
+        {
+            private static void Postfix(GameObject target, ref bool __result)
+            {
+                if (__result && target.TryGetComponent<Automatable2>(out var automatable))
+                    __result = automatable.showInUI;
+            }
+        }
+
+        [HarmonyPatch(typeof(CopyBuildingSettings), "OnRefreshUserMenu")]
+        private static class CopyBuildingSettings_OnRefreshUserMenu
+        {
+            private static bool Prefix(CopyBuildingSettings __instance)
+            {
+                return __instance.enabled;
+            }
+        }
+
+        [HarmonyPatch(typeof(LonelyMinionHouse.Instance), nameof(LonelyMinionHouse.Instance.StartSM))]
+        private static class LonelyMinionHouse_Instance_StartSM
+        {
+            private static void Postfix(LonelyMinionHouse.Instance __instance)
+            {
+                bool StoryComplete = StoryManager.Instance.IsStoryComplete(Db.Get().Stories.LonelyMinion);
+                if (__instance.gameObject.TryGetComponent<Automatable2>(out var automatable))
+                    automatable.showInUI = StoryComplete;
+                if (__instance.gameObject.TryGetComponent<CopyBuildingSettings>(out var settings))
+                    settings.enabled = StoryComplete;
+            }
+        }
+
+        [HarmonyPatch(typeof(LonelyMinionHouse.Instance), nameof(LonelyMinionHouse.Instance.OnCompleteStorySequence))]
+        private static class LonelyMinionHouse_Instance_OnCompleteStorySequence
+        {
+            private static void Postfix(LonelyMinionHouse.Instance __instance)
+            {
+                if (__instance.gameObject.TryGetComponent<CopyBuildingSettings>(out var settings))
+                    settings.enabled = true;
+                if (__instance.gameObject.TryGetComponent<Automatable2>(out var automatable))
+                    automatable.showInUI = true;
+            }
+        }
+
+        [HarmonyPatch(typeof(LonelyMinionHouseConfig), nameof(LonelyMinionHouseConfig.ConfigureBuildingTemplate))]
+        private static class LonelyMinionHouseConfig_ConfigureBuildingTemplate
+        {
+            private static void Postfix(GameObject go)
+            {
+                go.AddOrGet<Automatable2>().showInUI = false;
+                go.AddOrGet<CopyBuildingSettings>().copyGroupTag = GameTags.StorageLocker;
+            }
+        }
     }
 
     // нужно, чтобы установить галку по умолчанию
     public class Automatable2 : Automatable
     {
+        [SerializeField]
+        public bool showInUI = true;
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
