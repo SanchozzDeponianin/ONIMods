@@ -1,7 +1,7 @@
 # Sanchozz's mods for Oxygen Not Included
 Steam Workshop: https://steamcommunity.com/profiles/76561198341359629/myworkshopfiles/?appid=457140
 
-Last tested on game versions: Vanilla and Spaced Out! DLC **561558**
+Last tested on game versions: Vanilla and Spaced Out! DLC **568201**
 
 Limited support for so-called beta versions:  
 *Public_Testing* - Do not wait for a quick release of fixes if something breaks.  
@@ -50,6 +50,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Don't Starve Mr. Puft](https://steamcommunity.com/sharedfiles/filedetails/?id=2930779915) | Dynamically adjusts the rate of gas intake by creatures, such as Pufts and Slicksters, depending on their hunger. Should help eliminate or partially reduce the consequences of the late game problem, when these Creatures eat much more rarely than expected due to lags, and therefore they are constantly starving. | Yes | Yes |
 | [Eat every day](https://steamcommunity.com/sharedfiles/filedetails/?id=2573532147) | It forces duplicants to eat every day, even at the "no sweat" difficulty level, which guarantees a stable morale bonus. | Yes | Yes |
 | [Enclosed Telescope Tune-Up](https://steamcommunity.com/sharedfiles/filedetails/?id=2630438094) | Tuning of a Enclosed Telescope: increased the radius and scanning speed, adjusted requirements, some improvements and bug fixes. | Yes | Yes |
+| [Gassy Moo Eat Flowers](https://steamcommunity.com/sharedfiles/filedetails/?id=3017358638) | Now Gassy Moo can eat Balm Lily Flowers and harvested Gas Grass. | Yes | Yes |
 | [Graveyard Keeper](https://steamcommunity.com/sharedfiles/filedetails/?id=2885981437) | Now Pip can bury corpses directly into the ground and decorate them by growing plants nearby. | Yes | Yes |
 | [Hydrocactus](https://steamcommunity.com/sharedfiles/filedetails/?id=2794198686) | Allows you to obtain a half-forgotten plant Hydrocactus in an normal fair game | No | Yes |
 | [No Manual Delivery](https://steamcommunity.com/sharedfiles/filedetails/?id=2047308624) | Adds a "Allow Manual Use" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings. | Yes | Yes |

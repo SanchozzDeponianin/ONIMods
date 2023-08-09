@@ -100,6 +100,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PickupFloppingPacu", "Picku
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransitiveTransformerLoad", "TransitiveTransformerLoad\TransitiveTransformerLoad.csproj", "{15C1C273-8F9C-4CA3-BB99-F3C7A1761803}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MooDiet", "MooDiet\MooDiet.csproj", "{BBB31FE8-442A-40BE-88D7-91C4B69292BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MainlineSteam = Debug|MainlineSteam
@@ -428,6 +430,14 @@ Global
 		{15C1C273-8F9C-4CA3-BB99-F3C7A1761803}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{15C1C273-8F9C-4CA3-BB99-F3C7A1761803}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{15C1C273-8F9C-4CA3-BB99-F3C7A1761803}.Release|StableBackup.Build.0 = Release|StableBackup
+		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
+		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
+		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
+		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Debug|StableBackup.Build.0 = Debug|StableBackup
+		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
+		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
+		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Release|StableBackup.ActiveCfg = Release|StableBackup
+		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Release|StableBackup.Build.0 = Release|StableBackup
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
