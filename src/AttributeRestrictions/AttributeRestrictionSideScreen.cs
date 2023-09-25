@@ -167,7 +167,7 @@ namespace AttributeRestrictions
         public override bool IsValidForTarget(GameObject target)
         {
             var restriction = target.GetComponent<AttributeRestriction>();
-            return restriction != null && restriction.requiredAttribute != null;
+            return restriction != null && restriction.showInUI && restriction.requiredAttribute != null;
         }
 
         public override void SetTarget(GameObject target)

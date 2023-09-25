@@ -357,6 +357,17 @@ namespace NoManualDelivery
                 go.AddOrGet<CopyBuildingSettings>().copyGroupTag = GameTags.StorageLocker;
             }
         }
+
+        // древний окаменелостъ. галку нужно не показывать до окончания раскопок
+        [HarmonyPatch(typeof(FossilMine), nameof(FossilMine.SetActiveState))]
+        private static class FossilMine_SetActiveState
+        {
+            private static void Postfix(FossilMine __instance, bool active)
+            {
+                if (__instance.TryGetComponent<Automatable2>(out var automatable))
+                    automatable.showInUI = active;
+            }
+        }
     }
 
     // нужно, чтобы установить галку по умолчанию

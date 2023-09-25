@@ -129,5 +129,16 @@ namespace AttributeRestrictions
                 }
             }
         }
+
+        // древний окаменелостъ. интерфейс нужно не показывать до окончания раскопок
+        [HarmonyPatch(typeof(FossilMine), nameof(FossilMine.SetActiveState))]
+        private static class FossilMine_SetActiveState
+        {
+            private static void Postfix(FossilMine __instance, bool active)
+            {
+                if (__instance.TryGetComponent<AttributeRestriction>(out var restriction))
+                    restriction.showInUI = active;
+            }
+        }
     }
 }

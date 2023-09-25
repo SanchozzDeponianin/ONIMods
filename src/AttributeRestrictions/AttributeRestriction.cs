@@ -10,6 +10,9 @@ namespace AttributeRestrictions
         private static readonly EventSystem.IntraObjectHandler<AttributeRestriction> OnCopySettingsDelegate =
             new EventSystem.IntraObjectHandler<AttributeRestriction>((component, data) => component.OnCopySettings(data));
 
+        [SerializeField]
+        public bool showInUI = true;
+
         [Serialize]
         public bool isEnabled = false;
 
