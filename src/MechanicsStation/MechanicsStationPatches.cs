@@ -185,7 +185,7 @@ namespace MechanicsStation
             }
         }
 
-        // хак для повышения скорости работы фабрикаторов
+        // повышение скорости работы фабрикаторов
         [HarmonyPatch(typeof(Workable), nameof(Workable.GetEfficiencyMultiplier))]
         private static class Workable_GetEfficiencyMultiplier
         {
@@ -198,7 +198,7 @@ namespace MechanicsStation
             }
         }
 
-        // хак для повышения скорости выработки газа скважиной
+        // повышение скорости выработки газа скважиной
         [HarmonyPatch(typeof(OilWellCap), nameof(OilWellCap.AddGasPressure))]
         private static class OilWellCap_AddGasPressure
         {
@@ -211,7 +211,7 @@ namespace MechanicsStation
             }
         }
 
-        // хаки для нефтяной скважины
+        // нефтяная скважина
         // она не является обычной постройкой, она в другом слое присоединяемых построек, поэтому не участвует в подсистеме комнат
         // объявляем растением саму нефтяную дырку, чтобы она получала сообщения о комнатах
         // и перенаправляем сообщения в скважину
@@ -252,6 +252,34 @@ namespace MechanicsStation
             private static void Prefix(BuildingAttachPoint __instance)
             {
                 __instance.Unsubscribe((int)GameHashes.UpdateRoom, OnUpdateRoomDelegate);
+            }
+        }
+
+        // древний окаменелостъ. до окончания раскопок никаких шестеренок!
+        [HarmonyPatch(typeof(FossilMine), nameof(FossilMine.SetActiveState))]
+        private static class FossilMine_SetActiveState
+        {
+            private static void Postfix(FossilMine __instance, bool active)
+            {
+                if (__instance.TryGetComponent<TinkerableWorkable>(out var tw))
+                {
+                    tw.disabled = !active;
+                    tw.Trigger((int)GameHashes.EffectRemoved);
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(Tinkerable), "HasEffect")]
+        private static class Tinkerable_HasEffect
+        {
+            private static void Postfix(Tinkerable __instance, ref bool __result)
+            {
+                if (__result) return;
+                if (__instance.tinkerMaterialTag == MechanicsStationConfig.TINKER_TOOLS
+                    && __instance.TryGetComponent<TinkerableWorkable>(out var tw))
+                {
+                    __result = tw.disabled;
+                }
             }
         }
     }

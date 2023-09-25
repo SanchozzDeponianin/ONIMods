@@ -1,4 +1,6 @@
-﻿using Database;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Database;
 using Klei.AI;
 using STRINGS;
 using HarmonyLib;
@@ -31,6 +33,7 @@ namespace MechanicsStation
         internal static void Init()
         {
             var db = Db.Get();
+            var machineShop = db.RoomTypes.MachineShop;
 
             // тюнингуем и актифируем комнату "мащинэщоп"
             // подхватывать максимальный размер комнаты из тюнинга
@@ -43,7 +46,7 @@ namespace MechanicsStation
                 description: string.Format(ROOMS.CRITERIA.MAXIMUM_SIZE.DESCRIPTION, maxRoomSize),
                 stomp_in_conflict: null);
 
-            var additional_constraints = db.RoomTypes.MachineShop.additional_constraints;
+            var additional_constraints = machineShop.additional_constraints;
             for (int i = 0; i < additional_constraints.Length; i++)
             {
                 if (additional_constraints[i] == RoomConstraints.MAXIMUM_SIZE_96)
@@ -53,11 +56,21 @@ namespace MechanicsStation
                 }
             }
 
-            db.RoomTypes.Add(db.RoomTypes.MachineShop);
+            db.RoomTypes.Add(machineShop);
 
-            // модифицируем "мастерскую" чтобы она могла быть обгрейднутна до "кухни"
-            var upgrade_paths = db.RoomTypes.MachineShop.upgrade_paths.AddToArray(db.RoomTypes.Kitchen);
-            var priority = System.Math.Min(db.RoomTypes.MachineShop.priority, db.RoomTypes.Kitchen.priority);
+            // модифицируем "мастерскую" чтобы она могла быть обгрейднутна до других комнат
+            var upgrade_paths = new List<RoomType>() {
+                db.RoomTypes.Laboratory,
+                db.RoomTypes.Kitchen,
+                db.RoomTypes.Farm,
+                db.RoomTypes.CreaturePen,
+                db.RoomTypes.PowerPlant,
+                db.RoomTypes.RecRoom,
+                db.RoomTypes.Hospital,
+                db.RoomTypes.MassageClinic };
+            if (machineShop.upgrade_paths != null)
+                upgrade_paths.AddRange(machineShop.upgrade_paths);
+
             // детектим "Rooms Expanded"
             var RoomsExpanded = PPatchTools.GetTypeSafe("RoomsExpanded.RoomTypes_AllModded", "RoomsExpandedMerged");
             if (RoomsExpanded != null)
@@ -65,11 +78,12 @@ namespace MechanicsStation
                 PUtil.LogDebug("RoomsExpanded found. Attempt to add compatibility.");
                 try
                 {
-                    var KitchenetteRoom = (RoomType)RoomsExpanded.GetPropertySafe<RoomType>("KitchenetteRoom", true)?.GetValue(null);
-                    if (KitchenetteRoom != null)
+                    var ext_rooms = new string[] { "KitchenetteRoom", "Nursery", "GeneticNursery", "GymRoom", "MissionControlRoom" };
+                    foreach (var id in ext_rooms)
                     {
-                        upgrade_paths = upgrade_paths.AddToArray(KitchenetteRoom);
-                        priority = System.Math.Min(priority, KitchenetteRoom.priority);
+                        var room = (RoomType)RoomsExpanded.GetPropertySafe<RoomType>(id, true)?.GetValue(null);
+                        if (room != null)
+                            upgrade_paths.Add(room);
                     }
                 }
                 catch (System.Exception e)
@@ -77,8 +91,11 @@ namespace MechanicsStation
                     PUtil.LogExcWarn(e);
                 }
             }
-            var MachineShop = Traverse.Create(db.RoomTypes.MachineShop);
-            MachineShop.Property(nameof(RoomType.upgrade_paths)).SetValue(upgrade_paths);
+
+            upgrade_paths.RemoveAll(room => room == null);
+            var priority = System.Math.Min(machineShop.priority, upgrade_paths.Min(room => room.priority));
+            var MachineShop = Traverse.Create(machineShop);
+            MachineShop.Property(nameof(RoomType.upgrade_paths)).SetValue(upgrade_paths.ToArray());
             MachineShop.Property(nameof(RoomType.priority)).SetValue(priority);
 
             // добавляем перк для работы на станции

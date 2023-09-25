@@ -1,9 +1,13 @@
 ﻿using Klei.AI;
+using UnityEngine;
 
 namespace MechanicsStation
 {
     public class TinkerableWorkable : KMonoBehaviour
     {
+        [SerializeField]
+        public bool disabled = false;
+
         private AttributeInstance craftingSpeed;
         private AttributeInstance machinerySpeed;
 
