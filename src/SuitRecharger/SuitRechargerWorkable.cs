@@ -1,7 +1,10 @@
-﻿using Klei.AI;
+﻿using System.Reflection;
+using Klei.AI;
 using STRINGS;
+using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
+using PeterHan.PLib.Core;
 
 namespace SuitRecharger
 {
@@ -10,6 +13,9 @@ namespace SuitRecharger
         private static StatusItem SuitRecharging;
         private static float сhargeTime = 1f;
         private static float warmupTime;
+        private static float LeadSuitChargeWattage;
+        private static float TeleportSuitChargeWattage;
+        private static FieldInfo TeleportSuitBatteryCharge;
         private float elapsedTime;
 
 #pragma warning disable CS0649
@@ -29,6 +35,7 @@ namespace SuitRecharger
         private SuitTank suitTank;
         private JetSuitTank jetSuitTank;
         private LeadSuitTank leadSuitTank;
+        private Component teleportSuitTank;
         private Durability durability;
         private SuitRecharger.RepairSuitCost repairCost;
 
@@ -62,6 +69,38 @@ namespace SuitRecharger
                 */
                 warmupTime = Utils.GetAnimDuration(kanim, "working_pre");
                 сhargeTime = 2 * Utils.GetAnimDuration(kanim, "working_loop");
+                // дополнительная мощность при зарядке свинцового костюма
+                var def = Assets.GetBuildingDef(LeadSuitLockerConfig.ID);
+                if (def != null && def.BuildingComplete.TryGetComponent<LeadSuitLocker>(out var locker))
+                {
+                    var batteryChargeTime = 60f;
+                    try
+                    {
+                        batteryChargeTime = Traverse.Create(locker).Field<float>("batteryChargeTime").Value;
+                    }
+                    catch (System.Exception e)
+                    {
+                        PUtil.LogExcWarn(e);
+                    }
+                    LeadSuitChargeWattage = def.EnergyConsumptionWhenActive * batteryChargeTime / сhargeTime;
+                }
+                // дополнительная мощность при зарядке портального костюма из мода
+                var def2 = Assets.GetBuildingDef("TeleportSuitLocker");
+                if (def2 != null)
+                {
+                    var batteryChargeTime = 60f;
+                    try
+                    {
+                        TeleportSuitBatteryCharge = PPatchTools.GetTypeSafe("TeleportSuitMod.TeleportSuitTank")?.GetFieldSafe("batteryCharge", false);
+                        var options = Traverse.CreateWithType("TeleportSuitMod.TeleportSuitOptions").Property("Instance").GetValue();
+                        batteryChargeTime = Traverse.Create(options).Property<float>("suitBatteryChargeTime").Value;
+                    }
+                    catch (System.Exception e)
+                    {
+                        PUtil.LogExcWarn(e);
+                    }
+                    TeleportSuitChargeWattage = def2.EnergyConsumptionWhenActive * batteryChargeTime / сhargeTime;
+                }
             }
             workerStatusItem = SuitRecharging;
         }
@@ -77,6 +116,8 @@ namespace SuitRecharger
                 suit.TryGetComponent<JetSuitTank>(out jetSuitTank);
                 suit.TryGetComponent<LeadSuitTank>(out leadSuitTank);
                 suit.TryGetComponent<Durability>(out durability);
+                teleportSuitTank = suit.GetComponent("TeleportSuitMod.TeleportSuitTank");
+
                 durability.ApplyEquippedDurability(worker.GetComponent<MinionResume>());
                 // если есть несколько материалов подходящих для ремонта
                 // берём тот которого больше в наличии
@@ -120,6 +161,7 @@ namespace SuitRecharger
             suitTank = null;
             jetSuitTank = null;
             leadSuitTank = null;
+            teleportSuitTank = null;
             durability = null;
         }
 
@@ -137,9 +179,19 @@ namespace SuitRecharger
             bool oxygen_charged = ChargeSuit(dt);
             bool fuel_charged = FuelSuit(dt);
             bool battery_charged = FillBattery(dt);
+            bool teleport_charged = FillTeleportBattery(dt);
             bool repaired = RepairSuit(dt);
-            energyConsumer.BaseWattageRating = energyConsumer.WattsNeededWhenActive + (repaired ? 0f : repairCost.energy / сhargeTime);
-            return oxygen_charged && fuel_charged && battery_charged;
+
+            var wattage = energyConsumer.WattsNeededWhenActive;
+            if (!battery_charged)
+                wattage += LeadSuitChargeWattage;
+            if (!teleport_charged)
+                wattage += TeleportSuitChargeWattage;
+            if (!repaired)
+                wattage += repairCost.energy / сhargeTime;
+            energyConsumer.BaseWattageRating = wattage;
+
+            return oxygen_charged && fuel_charged && battery_charged && teleport_charged;
         }
 
         public override bool InstantlyFinish(Worker worker)
@@ -194,6 +246,20 @@ namespace SuitRecharger
             {
                 leadSuitTank.batteryCharge += dt / сhargeTime;
                 return false;
+            }
+            return true;
+        }
+
+        private bool FillTeleportBattery(float dt)
+        {
+            if (TeleportSuitBatteryCharge != null && teleportSuitTank != null)
+            {
+                float batteryCharge = (float)TeleportSuitBatteryCharge.GetValue(teleportSuitTank);
+                if (batteryCharge < 1f)
+                {
+                    TeleportSuitBatteryCharge.SetValue(teleportSuitTank, batteryCharge + dt / сhargeTime);
+                    return false;
+                }
             }
             return true;
         }
