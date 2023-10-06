@@ -2,16 +2,24 @@
 using System.Reflection;
 using Database;
 using HarmonyLib;
+using UnityEngine;
 using SanchozzONIMods.Lib;
 
 namespace WrangleCarry
 {
     internal sealed class WrangleCarryPatches : KMod.UserMod2
     {
+        private static WrangleCarryPatches @this;
         public override void OnLoad(Harmony harmony)
         {
             Utils.LogModVersion();
-            base.OnLoad(harmony);
+            @this = this;
+            harmony.Patch(typeof(Db).GetMethod(nameof(Db.Initialize)), prefix: new HarmonyMethod(typeof(WrangleCarryPatches), nameof(PatchLater)));
+        }
+
+        private static void PatchLater()
+        {
+            @this.mod.loaded_mod_data.harmony.PatchAll(@this.assembly);
         }
 
         // сделать перенос жеготных равноприоритетным с поимкой
@@ -71,35 +79,51 @@ namespace WrangleCarry
 
         // косметика
         // когда дупель несет жеготное, добавляем ему анимацию мешка за спиной
+        private const string chest = "snapTo_chest";
+        private static void AddSackSymbolOverride(GameObject dupe, GameObject pickupable)
+        {
+            if (dupe != null && pickupable != null
+                && pickupable.HasTag(GameTags.Creature) && !pickupable.HasTag(GameTags.Robot)
+                && dupe.TryGetComponent<KAnimControllerBase>(out var kbac)
+                && dupe.TryGetComponent<SymbolOverrideController>(out var syoc))
+            {
+                var symbol = Assets.GetAnim("creature_sack_kanim").GetData().build.GetSymbol("object");
+                syoc.AddSymbolOverride(chest, symbol);
+                kbac.SetSymbolVisiblity(chest, true);
+            }
+        }
+        private static void RemoveSackSymbolOverride(GameObject dupe)
+        {
+            if (dupe != null
+                && dupe.TryGetComponent<KAnimControllerBase>(out var kbac)
+                && dupe.TryGetComponent<SymbolOverrideController>(out var syoc))
+            {
+                kbac.SetSymbolVisiblity(chest, false);
+                syoc.RemoveSymbolOverride(chest);
+            }
+        }
+
+        // обычная переноска жеготного
         [HarmonyPatch(typeof(FetchAreaChore.States), nameof(FetchAreaChore.States.InitializeStates))]
         private static class FetchAreaChore_States_InitializeStates
         {
-            private const string chest = "snapTo_chest";
-            private static void SetSymbolOverride(FetchAreaChore.StatesInstance smi, bool enable)
-            {
-                var deliveryObject = smi.sm.deliveryObject.Get(smi);
-                if (deliveryObject != null && deliveryObject.HasTag(GameTags.Creatures.Deliverable)
-                    && smi.gameObject.TryGetComponent<KAnimControllerBase>(out var kbac)
-                    && smi.gameObject.TryGetComponent<SymbolOverrideController>(out var controller))
-                {
-                    if (enable)
-                    {
-                        var symbol = Assets.GetAnim("creature_sack_kanim").GetData().build.GetSymbol("object");
-                        controller.AddSymbolOverride(chest, symbol);
-                        kbac.SetSymbolVisiblity(chest, true);
-                    }
-                    else
-                    {
-                        kbac.SetSymbolVisiblity(chest, false);
-                        controller.RemoveSymbolOverride(chest);
-                    }
-                }
-            }
             private static void Postfix(FetchAreaChore.States __instance)
             {
                 __instance.delivering.movetostorage
-                    .Enter(smi => SetSymbolOverride(smi, true))
-                    .Exit(smi => SetSymbolOverride(smi, false));
+                    .Enter(smi => AddSackSymbolOverride(smi.gameObject, smi.sm.deliveryObject.Get(smi)))
+                    .Exit(smi => RemoveSackSymbolOverride(smi.gameObject));
+            }
+        }
+
+        // новая переноска жеготного командой MoveTo
+        [HarmonyPatch(typeof(MovePickupableChore.States), nameof(MovePickupableChore.States.InitializeStates))]
+        private static class MovePickupableChore_States_InitializeStates
+        {
+            private static void Postfix(MovePickupableChore.States __instance)
+            {
+                __instance.approachstorage
+                    .Enter(smi => AddSackSymbolOverride(smi.sm.deliverer.Get(smi), smi.sm.pickupablesource.Get(smi)))
+                    .Exit(smi => RemoveSackSymbolOverride(smi.sm.deliverer.Get(smi)));
             }
         }
     }
