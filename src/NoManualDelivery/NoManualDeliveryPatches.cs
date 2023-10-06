@@ -61,8 +61,6 @@ namespace NoManualDelivery
             CreatureFeederConfig.ID,
             FishFeederConfig.ID,
             EggIncubatorConfig.ID,
-            KilnConfig.ID,
-            "Chlorinator",
             IceCooledFanConfig.ID,
             SolidBoosterConfig.ID,
             ResearchCenterConfig.ID,
@@ -71,7 +69,6 @@ namespace NoManualDelivery
             GeoTunerConfig.ID,
             MissileLauncherConfig.ID,
             // из ДЛЦ:
-            UraniumCentrifugeConfig.ID,
             NuclearReactorConfig.ID,
             NoseconeHarvestConfig.ID,
             RailGunPayloadOpenerConfig.ID,
@@ -114,22 +111,26 @@ namespace NoManualDelivery
         };
 
         // добавляем компонент к постройкам
-        [HarmonyPatch(typeof(Assets), nameof(Assets.AddBuildingDef))]
-        private static class Assets_AddBuildingDef
+        [HarmonyPatch(typeof(BuildingConfigManager), nameof(BuildingConfigManager.ConfigurePost))]
+        private static class BuildingConfigManager_ConfigurePost
         {
-            private static void Prefix(BuildingDef def)
+            [HarmonyPriority(Priority.Low)]
+            private static void Postfix()
             {
-                GameObject go = def.BuildingComplete;
-                if (go != null)
+                foreach (var def in Assets.BuildingDefs)
                 {
-                    if (
-                        BuildingToMakeAutomatable.Contains(def.PrefabID)
-                        || (go.TryGetComponent<ManualDeliveryKG>(out _) && (go.TryGetComponent<ElementConverter>(out _) || go.TryGetComponent<EnergyGenerator>(out _)) && !go.TryGetComponent<ResearchCenter>(out _))
-                        || (go.TryGetComponent<ComplexFabricatorWorkable>(out _))
-                        || (go.TryGetComponent<TinkerStation>(out _))
-                        )
+                    var go = def?.BuildingComplete;
+                    if (go != null)
                     {
-                        go.AddOrGet<Automatable2>();
+                        if (
+                            BuildingToMakeAutomatable.Contains(def.PrefabID)
+                            || (go.TryGetComponent<ManualDeliveryKG>(out _) && (go.TryGetComponent<ElementConverter>(out _) || go.TryGetComponent<EnergyGenerator>(out _)) && !go.TryGetComponent<ResearchCenter>(out _))
+                            || go.TryGetComponent<ComplexFabricator>(out _)
+                            || go.TryGetComponent<TinkerStation>(out _)
+                            )
+                        {
+                            go.AddOrGet<Automatable2>();
+                        }
                     }
                 }
             }
