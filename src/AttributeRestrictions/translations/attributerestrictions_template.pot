@@ -8,6 +8,16 @@ msgctxt "AttributeRestrictions.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_SUFFIC
 msgid "Not allowed by Attribute Restrictions"
 msgstr ""
 
+#. AttributeRestrictions.STRINGS.OPTIONS.ATTRIBUTE.NAME
+msgctxt "AttributeRestrictions.STRINGS.OPTIONS.ATTRIBUTE.NAME"
+msgid "Attribute of the <style=\"KKeyword\">Manual Generator</style>"
+msgstr ""
+
+#. AttributeRestrictions.STRINGS.OPTIONS.ATTRIBUTE.TOOLTIP
+msgctxt "AttributeRestrictions.STRINGS.OPTIONS.ATTRIBUTE.TOOLTIP"
+msgid "When using a Manual Generator, two attributes are trained at the same time.\nWhich one should be tracked ?"
+msgstr ""
+
 #. AttributeRestrictions.STRINGS.UI.UISIDESCREENS.ATTRIBUTE_RESTRICTION_SIDESCREEN.IS_ENABLE.NAME
 msgctxt "AttributeRestrictions.STRINGS.UI.UISIDESCREENS.ATTRIBUTE_RESTRICTION_SIDESCREEN.IS_ENABLE.NAME"
 msgid "Allow to operate this Building when\nthe {0} attribute is"

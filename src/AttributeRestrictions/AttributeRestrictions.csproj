@@ -16,10 +16,13 @@
   <PropertyGroup>
     <Title>Attribute-based Workshop Restrictions</Title>
     <Description>.</Description>
-    <ModVersion>1.0.3</ModVersion>
+    <ModVersion>1.0.4</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\lib\BaseOptions.cs">
+      <Link>BaseOptions.cs</Link>
+    </Compile>
     <Compile Include="..\lib\UI.cs">
       <Link>UI.cs</Link>
     </Compile>
@@ -29,6 +32,7 @@
     <Compile Include="AttributeRestrictionsPatches.cs" />
     <Compile Include="AttributeRestrictionSideScreen.cs" />
     <Compile Include="AttributeRestriction.cs" />
+    <Compile Include="AttributeRestrictionsOptions.cs" />
     <Compile Include="STRINGS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

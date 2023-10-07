@@ -3,6 +3,7 @@ using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
+using PeterHan.PLib.Options;
 using PeterHan.PLib.UI;
 
 namespace AttributeRestrictions
@@ -14,6 +15,7 @@ namespace AttributeRestrictions
             PUtil.InitLibrary();
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(AttributeRestrictionsPatches));
+            new POptions().RegisterOptions(this, typeof(AttributeRestrictionsOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -36,6 +38,7 @@ namespace AttributeRestrictions
         [HarmonyPatch(typeof(BuildingConfigManager), nameof(BuildingConfigManager.ConfigurePost))]
         private static class BuildingConfigManager_ConfigurePost
         {
+            [HarmonyPriority(Priority.Low)]
             private static void Postfix()
             {
                 // фабрикаторы
@@ -64,11 +67,13 @@ namespace AttributeRestrictions
                 var gen_re = gen.AddOrGet<AttributeRestriction>();
                 gen_re.workable = gen.GetComponent<ManualGenerator>();
                 gen_re.isBelow = true;
+                if (AttributeRestrictionsOptions.Instance.attribute == ManualGeneratorAttribute.Athletics)
+                    gen_re.overrideAttribute = Db.Get().Attributes.Athletics.IdHash;
 
                 // самогонный аппарат
                 var oil = Assets.GetBuildingDef(OilRefineryConfig.ID).BuildingComplete;
                 var oil_re = oil.AddOrGet<AttributeRestriction>();
-                oil_re.overrideAttribute = Db.Get().Attributes.Machinery.Id;
+                oil_re.overrideAttribute = Db.Get().Attributes.Machinery.IdHash;
                 oil_re.isBelow = true;
                 oil.GetComponent<KPrefabID>().prefabSpawnFn += (gmo) =>
                 {

@@ -27,9 +27,9 @@ namespace AttributeRestrictions
         public Workable workable;
 
         [SerializeField]
-        public string overrideAttribute;
+        public HashedString overrideAttribute;
 
-        public Attribute requiredAttribute => (string.IsNullOrEmpty(overrideAttribute) ? null : Db.Get().Attributes.TryGet(overrideAttribute)) ?? workable?.GetWorkAttribute();
+        public Attribute requiredAttribute => (overrideAttribute.IsValid ? Db.Get().Attributes.TryGet(overrideAttribute) : null) ?? workable?.GetWorkAttribute();
 
         public static Chore.Precondition IsSufficientAttributeLevel = new Chore.Precondition
         {

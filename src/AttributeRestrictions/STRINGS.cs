@@ -1,4 +1,7 @@
-﻿namespace AttributeRestrictions
+﻿using static STRINGS.DUPLICANTS;
+using static STRINGS.UI;
+
+namespace AttributeRestrictions
 {
     public class STRINGS
     {
@@ -37,13 +40,28 @@
                 }
             }
         }
-        /*
+
         public class OPTIONS
         {
-        }*/
+            public class ATTRIBUTE
+            {
+                public static LocString NAME = $"Attribute of the {FormatAsKeyWord("Manual Generator")}";
+                public static LocString TOOLTIP = "When using a Manual Generator, two attributes are trained at the same time.\nWhich one should be tracked ?";
+            }
+            public class MACHINERY
+            {
+                public static LocString NAME = "";
+            }
+            public class ATHLETICS
+            {
+                public static LocString NAME = "";
+            }
+        }
 
         internal static void DoReplacement()
         {
+            OPTIONS.ATHLETICS.NAME = ATTRIBUTES.ATHLETICS.NAME;
+            OPTIONS.MACHINERY.NAME = ATTRIBUTES.MACHINERY.NAME;
             LocString.CreateLocStringKeys(typeof(UI));
         }
     }
