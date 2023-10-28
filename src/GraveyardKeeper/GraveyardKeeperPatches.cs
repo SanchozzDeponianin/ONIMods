@@ -111,8 +111,9 @@ namespace GraveyardKeeper
             }
         }
 
-        // игре очень не нравиться когда тело дупликанта пытается перенести кто-то кто сам не дупликант
-        // поэтому уничтожаем труп и заменяем его семечкой когда белка пытается всять
+        // ранее игре очень не нравилось когда тело дупликанта пытается перенести кто-то кто сам не дупликант
+        // теперь больше не крашится. но нужно быть начеку. и если что, то опять вернуть трюк
+        // (уничтожаем труп и заменяем его семечкой когда белка пытается всять)
         [HarmonyPatch(typeof(SeedPlantingStates), "PickupComplete")]
         private static class SeedPlantingStates_PickupComplete
         {
@@ -121,15 +122,11 @@ namespace GraveyardKeeper
                 if (pickupable != null && pickupable.HasTag(GameTags.Corpse))
                 {
                     var position = pickupable.transform.GetPosition();
-                    var seed = GameUtil.KInstantiate(Assets.GetPrefab(EvilFlowerConfig.SEED_ID), position, Grid.SceneLayer.Ore);
-                    seed.SetActive(true);
-                    seed.AddTag(GameTags.Corpse);
                     var fx = FXHelpers.CreateEffect("collapse_buildings_kanim", position);
                     fx.Play("idle", KAnim.PlayMode.Once);
                     fx.destroyOnAnimComplete = true;
                     CreatureHelpers.DeselectCreature(pickupable.gameObject);
-                    Util.KDestroyGameObject(pickupable.gameObject);
-                    return seed.GetComponent<Pickupable>();
+                    return pickupable;
                 }
                 else
                     return EntitySplitter.Split(pickupable, amount, prefab);
@@ -163,12 +160,12 @@ namespace GraveyardKeeper
             {
                 var offsets = new List<CellOffset>() { CellOffset.none };
                 foreach (var x in new int[] { -1, 1, -2, 2, -3, 3 })
-                    foreach (var y in new int[] { 0, 1, -1, 2, -2 })
+                    foreach (var y in new int[] { 0, 1, -1, 2, -2, 3 })
                         offsets.Add(new CellOffset(x, y));
                 cellOffsets = offsets.ToArray();
             }
 
-            private static void Prefix(SeedPlantingStates.Instance smi)
+            private static bool Prefix(SeedPlantingStates.Instance smi)
             {
                 if (!smi.IsNullOrStopped() && smi.targetSeed != null && smi.targetSeed.HasTag(GameTags.Corpse) && smi.targetSeed.TryGetComponent<PlantableSeed>(out var target_seed))
                 {
@@ -229,6 +226,8 @@ namespace GraveyardKeeper
                                 break;
                         }
                     }
+
+                    smi.GetComponent<Storage>().Drop(target_seed.gameObject);
                     if (planted_cells.Count > 0)
                     {
                         // добавляем красявости
@@ -237,32 +236,25 @@ namespace GraveyardKeeper
                             GameUtil.KInstantiate(Assets.GetPrefab(PlantSparkleFXConfig.ID), Grid.CellToPos(planted_cells[k]), Grid.SceneLayer.FXFront)
                                 .SetActive(true);
                         }
-                        // и удаляем трупное семечко
-                        smi.GetComponent<Storage>().Drop(target_seed.gameObject);
+                        // и удаляем труп
                         Util.KDestroyGameObject(target_seed.gameObject);
-                        smi.targetSeed = null;
                     }
                     else
                     {
-                        // либо снимаем с него метку и возвращаем как было
+                        // либо возвращаем как было
                         target_seed.PlantID = EvilFlowerConfig.ID;
                         target_seed.direction = SingleEntityReceptacle.ReceptacleDirection.Top;
-                        target_seed.RemoveTag(GameTags.Corpse);
+                        // и роняем труп
+                        if (!GameComps.Fallers.Has(target_seed.gameObject))
+                            GameComps.Fallers.Add(target_seed.gameObject, Vector2.zero);
                     }
                     planted_cells.Recycle();
+                    smi.targetSeed = null;
+                    smi.seed_cell = Grid.InvalidCell;
+                    smi.targetPlot = null;
+                    return false;
                 }
-            }
-        }
-
-        // снимаем трупную метку с семечка если белка отвлеклась или не смогла посадить
-        [HarmonyPatch(typeof(SeedPlantingStates), "DropAll")]
-        private static class SeedPlantingStates_DropAll
-        {
-            private static void Prefix(SeedPlantingStates.Instance smi)
-            {
-                var seed = smi.GetComponent<Storage>().FindFirst(GameTags.Corpse);
-                if (seed != null)
-                    seed.RemoveTag(GameTags.Corpse);
+                return true;
             }
         }
 
