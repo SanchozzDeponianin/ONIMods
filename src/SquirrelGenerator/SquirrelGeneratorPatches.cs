@@ -111,7 +111,7 @@ namespace SquirrelGenerator
                 if (smi.targetSeed == null)
                 {
                     smi.GetSMI<WheelRunningMonitor.StatesInstance>()?.SetSearchTimeImmediately();
-                    WheelRunningStates.ScheduleUpdateBrain(smi);
+                    WheelRunningStates.PrioritizeUpdateBrain(smi);
                 }
             }
         }

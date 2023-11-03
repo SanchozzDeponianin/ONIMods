@@ -13,6 +13,9 @@ namespace SquirrelGenerator
         public const int SEARCH_MAX_INTERVAL = 30;
         private const int MAX_NAVIGATE_DISTANCE = 200;
 
+        private static HashedString Happy = "Happy";
+        private static HashedString Neutral = "Neutral";
+
         public class StatesInstance : GameStateMachine<States, StatesInstance, WheelRunningMonitor>.GameInstance
         {
             private float nextSearchTime;
@@ -43,7 +46,7 @@ namespace SquirrelGenerator
                     if (Time.time < nextSearchTime)
                         return false;
                     RefreshSearchTime();
-                    if (!HasTag(GameTags.Creatures.Hungry) && master.effects.HasEffect("Happy"))
+                    if (!HasTag(GameTags.Creatures.Hungry) && master.IsHappy())
                         FindWheel();
                 }
                 return TargetWheel != null;
@@ -75,7 +78,6 @@ namespace SquirrelGenerator
             public void OnRunningComplete()
             {
                 TargetWheel = null;
-                RefreshSearchTime();
             }
         }
 
@@ -90,22 +92,28 @@ namespace SquirrelGenerator
 
 #pragma warning disable CS0649
         [MyCmpGet]
-        Effects effects;
+        private Effects effects;
 
         [MyCmpGet]
-        Navigator navigator;
+        private Navigator navigator;
 #pragma warning restore CS0649
 
         [Serialize]
         private bool shouldResumeRun;
+
+        public bool IsHappy()
+        {
+            return effects.HasEffect(Happy) || effects.HasEffect(Neutral);
+        }
 
         protected override void OnSpawn()
         {
             base.OnSpawn();
             GetComponent<KBatchedAnimController>().SetSceneLayer(Grid.SceneLayer.Creatures);
             smi.StartSM();
-            if (shouldResumeRun && TryGetComponent<CreatureBrain>(out var brain))
-                GameScheduler.Instance.Schedule(null, Random.Range(6f, 20f) * UpdateManager.SecondsPerSimTick, WheelRunningStates.ForceUpdateBrain, brain);
+            if (shouldResumeRun)
+                GameScheduler.Instance.Schedule(null, Random.Range(6f, 20f) * UpdateManager.SecondsPerSimTick,
+                    go => WheelRunningStates.PrioritizeUpdateBrain((GameObject)go), gameObject);
         }
 
         [OnSerializing]

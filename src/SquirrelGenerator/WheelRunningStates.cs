@@ -22,7 +22,7 @@ namespace SquirrelGenerator
             private AmountInstance calories;
             private AttributeInstance metabolism;
             private float metabolism_bonus;
-            public Effects effects;
+            public WheelRunningMonitor monitor;
             public KBatchedAnimController kbac;
             public Navigator navigator;
             public float originalSpeed;
@@ -44,9 +44,9 @@ namespace SquirrelGenerator
                 calories = Db.Get().Amounts.Calories.Lookup(gameObject);
                 metabolism = Db.Get().CritterAttributes.Metabolism.Lookup(gameObject);
                 metabolism_bonus = METABOLISM_BONUS + SquirrelGeneratorOptions.Instance.MetabolismBonus;
-                gameObject.TryGetComponent<Effects>(out effects);
-                gameObject.TryGetComponent<KBatchedAnimController>(out kbac);
-                gameObject.TryGetComponent<Navigator>(out navigator);
+                gameObject.TryGetComponent(out monitor);
+                gameObject.TryGetComponent(out kbac);
+                gameObject.TryGetComponent(out navigator);
                 originalSpeed = navigator.defaultSpeed;
             }
         }
@@ -156,13 +156,15 @@ namespace SquirrelGenerator
             running.loop
                 .Enter(StartRunning)
                 .QueueAnim("floor_floor_1_0_loop", true, null)
-                .Transition(running.pst, Update, UpdateRate.SIM_1000ms)
+                .Transition(running.pst, Update, UpdateRate.SIM_4000ms)
                 .Exit(StopRunning);
 
+            // если бег завершается штатным образом - роллим время следующего бега
             running.pst
                 .PlayAnim("rummage_pst")
                 .QueueAnim("queue_loop")
-                .OnAnimQueueComplete(null);
+                .OnAnimQueueComplete(null)
+                .Exit(smi => smi.monitor.smi?.RefreshSearchTime());
 
             // если мы препятствовали прерыванию другой чорой
             // в конце надо обновить моск
@@ -170,12 +172,12 @@ namespace SquirrelGenerator
                 .ToggleTag(GameTags.PreventChoreInterruption)
                 .PlayAnim("rummage_pst")
                 .OnAnimQueueComplete(null)
-                .Exit(ScheduleUpdateBrain);
+                .Exit(PrioritizeUpdateBrain);
         }
 
         private static bool ReserveWheel(Instance smi)
         {
-            var go = smi.GetSMI<WheelRunningMonitor.StatesInstance>()?.TargetWheel;
+            var go = smi.monitor.smi?.TargetWheel;
             if (go != null && !go.HasTag(GameTags.Creatures.ReservedByCreature))
             {
                 if (go.TryGetComponent<SquirrelGenerator>(out var squirrelGenerator) && squirrelGenerator.IsOperational)
@@ -204,7 +206,7 @@ namespace SquirrelGenerator
         private static bool Update(Instance smi)
         {
             smi.TargetWheel?.SetProductiveness(smi.Productiveness);
-            return smi.Productiveness <= 0f || smi.effects.HasEffect("Unhappy");
+            return smi.Productiveness <= 0f || !smi.monitor.IsHappy();
         }
 
         private static void StartRunning(Instance smi)
@@ -222,17 +224,15 @@ namespace SquirrelGenerator
             smi.kbac.SetSceneLayer(Grid.SceneLayer.Creatures);
         }
 
-        internal static void ScheduleUpdateBrain(StateMachine.Instance smi)
+        internal static void PrioritizeUpdateBrain(StateMachine.Instance smi)
         {
-            if (smi.gameObject.TryGetComponent<CreatureBrain>(out var brain))
-                GameScheduler.Instance.ScheduleNextFrame(null, ForceUpdateBrain, brain);
+            PrioritizeUpdateBrain(smi.gameObject);
         }
 
-        internal static void ForceUpdateBrain(object data)
+        internal static void PrioritizeUpdateBrain(GameObject go)
         {
-            var brain = data as CreatureBrain;
-            if (brain != null && brain.IsRunning())
-                brain.UpdateBrain();
+            if (go != null && go.TryGetComponent<CreatureBrain>(out var brain))
+                Game.BrainScheduler.PrioritizeBrain(brain);
         }
     }
 }
