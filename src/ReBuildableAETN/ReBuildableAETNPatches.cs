@@ -115,8 +115,9 @@ namespace ReBuildableAETN
 
             private static IEnumerable<MethodBase> TargetMethods()
             {
-                yield return typeof(Deconstructable).GetMethodSafe("QueueDeconstruction", false, PPatchTools.AnyArguments);
-                yield return typeof(Deconstructable).GetMethodSafe("CancelDeconstruction", false, PPatchTools.AnyArguments);
+                yield return typeof(Deconstructable).GetMethodSafe("QueueDeconstruction", false);
+                yield return typeof(Deconstructable).GetMethodSafe("CancelDeconstruction", false, typeof(bool))
+                    ?? typeof(Deconstructable).GetMethodSafe("CancelDeconstruction", false);
             }
 
             private static void Postfix(Deconstructable __instance, ref bool ___shouldShowSkillPerkStatusItem, bool ___isMarkedForDeconstruction)
@@ -359,21 +360,6 @@ namespace ReBuildableAETN
                     ___placedArtifacts[x].RemoveAll(IsNotGameArtifactID);
                 }
                 ___analyzedArtifatIDs.RemoveAll(IsNotGameArtifactID);
-            }
-        }
-
-        // если вдруг при начальной загрузке конфиг ядра загрузится раньше чем конфиг артифактов то произойдёт краш 
-        // обычно такого не происходит и не удалось воспроизвести
-        // но теоритически возможно изза состояния гонки, особенно при наличии других модов добавляющих новые штуки
-        // правильно было бы объявить атрибут [EntityConfigOrder(2)] или типа того
-        // но собаки Клеи сделали его приватным
-        [HarmonyPatch(typeof(EntityConfigManager), "GetSortOrder")]
-        private static class EntityConfigManager_GetSortOrder
-        {
-            private static void Postfix(Type type, ref int __result)
-            {
-                if (type == typeof(MassiveHeatSinkCoreConfig))
-                    __result = 2;
             }
         }
     }

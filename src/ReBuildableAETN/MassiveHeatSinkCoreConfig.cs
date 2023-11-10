@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace ReBuildableAETN
 {
+    [EntityConfigOrder(2)]
     public class MassiveHeatSinkCoreConfig : IEntityConfig
     {
         public const string ID = "MassiveHeatSinkCore";

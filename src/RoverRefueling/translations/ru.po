@@ -23,10 +23,10 @@ msgctxt "RoverRefueling.STRINGS.BUILDINGS.PREFABS.ROVERREFUELINGSTATION.REQUIREM
 msgid "Requires approximately <style=\"consumed\">{0}</style> kg of {1} to recharge nearly fully."
 msgstr "Для почти полной зарядки требуется примерно <style=\"consumed\">{0}</style> кг {1}."
 
-#. RoverRefueling.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.ROVER_NEED_REFUELING
-msgctxt "RoverRefueling.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.ROVER_NEED_REFUELING"
-msgid "not a {ROVER}"
-msgstr "не {ROVER}"
+#. RoverRefueling.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ROVER
+msgctxt "RoverRefueling.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ROVER"
+msgid "Not a {ROVER}"
+msgstr "Не {ROVER}"
 
 #. RoverRefueling.STRINGS.DUPLICANTS.MODIFIERS.SCOUTBOTREFUELING.NAME
 msgctxt "RoverRefueling.STRINGS.DUPLICANTS.MODIFIERS.SCOUTBOTREFUELING.NAME"

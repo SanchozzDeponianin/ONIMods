@@ -27,7 +27,7 @@ namespace RoverRefueling
             {
                 public class PRECONDITIONS
                 {
-                    public static LocString ROVER_NEED_REFUELING = $"not a {ROVER}";
+                    public static LocString IS_ROVER = $"Not a {ROVER}";
                 }
             }
             public class MODIFIERS

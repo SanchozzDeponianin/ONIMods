@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Rover's Recharger</Title>
     <Description>Allows you to charge the Rover's battery with chemical fuel</Description>
-    <ModVersion>1.0.6</ModVersion>
+    <ModVersion>1.0.7</ModVersion>
     <SupportedContent>EXPANSION1_ID</SupportedContent>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>

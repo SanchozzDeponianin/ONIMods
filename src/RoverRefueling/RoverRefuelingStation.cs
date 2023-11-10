@@ -10,15 +10,22 @@ namespace RoverRefueling
         private static readonly EventSystem.IntraObjectHandler<RoverRefuelingStation> OnStorageChangeDelegate =
             new EventSystem.IntraObjectHandler<RoverRefuelingStation>((component, data) => component.RefreshMeter());
 
+        private static readonly Chore.Precondition IsRover = new Chore.Precondition
+        {
+            id = nameof(IsRover),
+            description = STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ROVER,
+            sortOrder = -2,
+            fn = (ref Chore.Precondition.Context context, object data) =>
+                context.consumerState.prefabid.PrefabTag == GameTags.Robots.Models.ScoutRover
+        };
+
         private static readonly Chore.Precondition RoverNeedRefueling = new Chore.Precondition
         {
             id = nameof(RoverNeedRefueling),
-            description = STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.ROVER_NEED_REFUELING,
+            description = global::STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.HAS_URGE,
             sortOrder = -1,
-            fn = delegate (ref Chore.Precondition.Context context, object data)
-            {
-                return context.consumerState.prefabid.HasTag(RoverRefuelingPatches.RoverNeedRefueling);
-            }
+            fn = (ref Chore.Precondition.Context context, object data) =>
+                context.consumerState.prefabid.HasTag(RoverRefuelingPatches.RoverNeedRefueling)
         };
 
         public class StatesInstance : GameStateMachine<States, StatesInstance, RoverRefuelingStation, object>.GameInstance
@@ -117,6 +124,7 @@ namespace RoverRefueling
                         priority_class: PriorityScreen.PriorityClass.personalNeeds,
                         priority_class_value: Chore.DEFAULT_BASIC_PRIORITY,
                         add_to_daily_report: false);
+                chore.AddPrecondition(IsRover);
                 chore.AddPrecondition(RoverNeedRefueling);
                 return chore;
             }
