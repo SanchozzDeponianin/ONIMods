@@ -100,6 +100,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransitiveTransformerLoad",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MooDiet", "MooDiet\MooDiet.csproj", "{BBB31FE8-442A-40BE-88D7-91C4B69292BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EndlessTelescope", "EndlessTelescope\EndlessTelescope.csproj", "{F642BB0C-ACAA-4217-9978-806C4773FC6D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MainlineSteam = Debug|MainlineSteam
@@ -428,6 +430,14 @@ Global
 		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Release|StableBackup.Build.0 = Release|StableBackup
+		{F642BB0C-ACAA-4217-9978-806C4773FC6D}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
+		{F642BB0C-ACAA-4217-9978-806C4773FC6D}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
+		{F642BB0C-ACAA-4217-9978-806C4773FC6D}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
+		{F642BB0C-ACAA-4217-9978-806C4773FC6D}.Debug|StableBackup.Build.0 = Debug|StableBackup
+		{F642BB0C-ACAA-4217-9978-806C4773FC6D}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
+		{F642BB0C-ACAA-4217-9978-806C4773FC6D}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
+		{F642BB0C-ACAA-4217-9978-806C4773FC6D}.Release|StableBackup.ActiveCfg = Release|StableBackup
+		{F642BB0C-ACAA-4217-9978-806C4773FC6D}.Release|StableBackup.Build.0 = Release|StableBackup
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
