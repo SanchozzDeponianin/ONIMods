@@ -102,7 +102,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MooDiet", "MooDiet\MooDiet.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EndlessTelescope", "EndlessTelescope\EndlessTelescope.csproj", "{F642BB0C-ACAA-4217-9978-806C4773FC6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobotsMoveTo", "RobotsMoveTo\RobotsMoveTo.csproj", "{CB91C365-D3A7-4868-8918-B2BDB91BF8DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlYourRobots", "ControlYourRobots\ControlYourRobots.csproj", "{975AB9CB-535B-41EC-9D82-58B923248765}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -440,14 +440,14 @@ Global
 		{F642BB0C-ACAA-4217-9978-806C4773FC6D}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{F642BB0C-ACAA-4217-9978-806C4773FC6D}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{F642BB0C-ACAA-4217-9978-806C4773FC6D}.Release|StableBackup.Build.0 = Release|StableBackup
-		{CB91C365-D3A7-4868-8918-B2BDB91BF8DB}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
-		{CB91C365-D3A7-4868-8918-B2BDB91BF8DB}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
-		{CB91C365-D3A7-4868-8918-B2BDB91BF8DB}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
-		{CB91C365-D3A7-4868-8918-B2BDB91BF8DB}.Debug|StableBackup.Build.0 = Debug|StableBackup
-		{CB91C365-D3A7-4868-8918-B2BDB91BF8DB}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
-		{CB91C365-D3A7-4868-8918-B2BDB91BF8DB}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
-		{CB91C365-D3A7-4868-8918-B2BDB91BF8DB}.Release|StableBackup.ActiveCfg = Release|StableBackup
-		{CB91C365-D3A7-4868-8918-B2BDB91BF8DB}.Release|StableBackup.Build.0 = Release|StableBackup
+		{975AB9CB-535B-41EC-9D82-58B923248765}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
+		{975AB9CB-535B-41EC-9D82-58B923248765}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
+		{975AB9CB-535B-41EC-9D82-58B923248765}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
+		{975AB9CB-535B-41EC-9D82-58B923248765}.Debug|StableBackup.Build.0 = Debug|StableBackup
+		{975AB9CB-535B-41EC-9D82-58B923248765}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
+		{975AB9CB-535B-41EC-9D82-58B923248765}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
+		{975AB9CB-535B-41EC-9D82-58B923248765}.Release|StableBackup.ActiveCfg = Release|StableBackup
+		{975AB9CB-535B-41EC-9D82-58B923248765}.Release|StableBackup.Build.0 = Release|StableBackup
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.NAME
+msgctxt "ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.NAME"
+msgid "Sleep Mode"
+msgstr "Спящий режим"
+
+#. ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.TOOLTIP
+msgctxt "ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.TOOLTIP"
+msgid "This Robot went into sleep mode to save its battery.\n\nDo robots dream of electric Dreckos?"
+msgstr "Этот робот перешел в спящий режим для экономии заряда батареи.\n\nСнятся ли роботам электро-дрекконы?"
+
