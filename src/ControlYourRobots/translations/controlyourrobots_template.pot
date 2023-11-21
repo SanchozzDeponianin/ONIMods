@@ -3,6 +3,21 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_ENABLE.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_ENABLE.NAME"
+msgid "Enable energy saving mode when idling"
+msgstr ""
+
+#. ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_ENABLE.TOOLTIP
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_ENABLE.TOOLTIP"
+msgid "When the Robot is idle and just stands still and does nothing, it will consume less battery energy."
+msgstr ""
+
+#. ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_VALUE.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_VALUE.NAME"
+msgid "Battery consumption rate in energy saving mode, % of nominal value"
+msgstr ""
+
 #. ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.NAME
 msgctxt "ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.NAME"
 msgid "Sleep Mode"

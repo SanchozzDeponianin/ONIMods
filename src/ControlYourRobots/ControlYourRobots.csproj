@@ -16,13 +16,17 @@
   <PropertyGroup>
     <Title>Control your Robots</Title>
     <Description>.</Description>
-    <ModVersion>1.1.0</ModVersion>
-    <UsesPLib>false</UsesPLib>
+    <ModVersion>1.2.0</ModVersion>
+    <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\lib\BaseOptions.cs">
+      <Link>BaseOptions.cs</Link>
+    </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="ControlYourRobotsOptions.cs" />
     <Compile Include="RobotSleepStates.cs" />
     <Compile Include="ControlYourRobotsPatches.cs" />
     <Compile Include="RobotTurnOffOn.cs" />
