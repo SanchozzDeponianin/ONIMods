@@ -1,0 +1,47 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not IncludedPOT Version: 2.0\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
+
+#. ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_ENABLE.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_ENABLE.NAME"
+msgid "Enable energy saving mode when idling"
+msgstr "空闲的时候会启动节电模式"
+
+#. ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_ENABLE.TOOLTIP
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_ENABLE.TOOLTIP"
+msgid ""
+"When the Robot is idle and just stands still and does nothing, it will "
+"consume less battery energy."
+msgstr "当机器人空闲并且只是站着没事干的时候，会消耗较少的能量。"
+
+#. ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_VALUE.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_VALUE.NAME"
+msgid "Battery consumption rate in energy saving mode, % of nominal value"
+msgstr "在节电模式下，电池消耗会是正常情况下的 %"
+
+#. ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.NAME
+msgctxt "ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.NAME"
+msgid "Sleep Mode"
+msgstr "睡眠模式"
+
+#. ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.TOOLTIP
+msgctxt "ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.TOOLTIP"
+msgid ""
+"This Robot went into sleep mode to save its battery.\n"
+"\n"
+"Do robots dream of electric Dreckos?"
+msgstr ""
+"这个机器人进入了睡眠模式以节省电量。\n"
+"\n"
+"机器人会梦见赛博壁虎吗？"

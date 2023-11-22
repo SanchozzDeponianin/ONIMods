@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Control your Robots</Title>
     <Description>.</Description>
-    <ModVersion>1.2.0</ModVersion>
+    <ModVersion>1.2.1</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
