@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using Database;
 using HarmonyLib;
 using UnityEngine;
@@ -124,6 +127,89 @@ namespace WrangleCarry
                 __instance.approachstorage
                     .Enter(smi => AddSackSymbolOverride(smi.sm.deliverer.Get(smi), smi.sm.pickupablesource.Get(smi)))
                     .Exit(smi => RemoveSackSymbolOverride(smi.sm.deliverer.Get(smi)));
+            }
+        }
+
+        // если команда MoveTo применена к жеготному, меняем ChoreType на RanchingFetch
+        [HarmonyPatch(typeof(MovePickupableChore), MethodType.Constructor)]
+        [HarmonyPatch(new Type[] { typeof(IStateMachineTarget), typeof(GameObject), typeof(Action<Chore>) })]
+        private static class MovePickupableChore_Constructor
+        {
+            private static ChoreType Inject(ChoreType original, GameObject go)
+            {
+                if (go != null && go.GetComponent<CreatureBrain>() != null)
+                {
+                    return Db.Get().ChoreTypes.RanchingFetch;
+                }
+                return original;
+            }
+
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions, MethodBase original)
+            {
+                var pickupable = original?.GetParameters().FirstOrDefault(p =>
+                    p.ParameterType == typeof(GameObject) && p.Name == "pickupable");
+                var choreTypes = typeof(Db).GetField(nameof(Db.ChoreTypes));
+                var inject = typeof(MovePickupableChore_Constructor).GetMethod(nameof(Inject), BindingFlags.NonPublic | BindingFlags.Static);
+                if (pickupable != null && choreTypes != null && inject != null)
+                {
+                    int i = instructions.FindIndex(ins => ins.LoadsField(choreTypes));
+                    if (i != -1)
+                    {
+                        i++;
+                        var ins = instructions[i];
+                        if (ins.opcode == OpCodes.Ldfld && ins.operand is FieldInfo field && field.FieldType == typeof(ChoreType))
+                        {
+                            instructions.Insert(++i, TranspilerUtils.GetLoadArgInstruction(pickupable));
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, inject));
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
+        // если множество объектов назначены для переноски командой MoveTo в одну целевую клетку
+        // клеи по неизвестной причине прописали в MovePickupableChore.States.InitializeStates
+        // вместо того чтобы просто позволить чоре успешно завершится,
+        // и новая чора для следующего объекта была бы пересоздана из CancellableMove
+        // они возвращают эту же чору к началу, выставляя целевой следующий объект
+        // и завтавляя этого же дупликанта снова и снова носить объекты
+        // и это приводит к крайне странному поведению, если для переноски
+        // назначены вперемешку и жеготные и куски материалов.
+        // например. если нет дупликантов с навыком отлова жеготных:
+        // если первое в очереди жеготное - дупликанты также откажутся носить куски материалов
+        // если первое в очереди кусок материала - дупликанты перенесут и жеготных, даже не имея навыка отлова
+
+        // можно было бы просто позволить чоре всегда завершаться,
+        // но возможно у клеев была какая то причина сделать так
+        // поэтому позволим чоре завершиться,
+        // если следующий объект == жеготное, а choreType не соответсвует замененному нами RanchingFetch
+        // и наоборот
+        [HarmonyPatch(typeof(MovePickupableChore.States), "IsDeliveryComplete")]
+        private static class MovePickupableChore_States_IsDeliveryComplete
+        {
+            private static void Postfix(ref bool __result, MovePickupableChore.StatesInstance smi)
+            {
+                if (!__result)
+                {
+                    var go = smi.sm.deliverypoint.Get(smi);
+                    if (go != null && go.TryGetComponent<CancellableMove>(out var move))
+                    {
+                        var next = move.GetNextTarget();
+                        if (next != null)
+                        {
+                            if (next.TryGetComponent<CreatureBrain>(out _) !=
+                                (smi.master.choreType.IdHash == Db.Get().ChoreTypes.RanchingFetch.IdHash))
+                                __result = true;
+                        }
+                    }
+                }
             }
         }
     }

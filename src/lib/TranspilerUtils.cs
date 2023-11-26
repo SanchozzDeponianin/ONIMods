@@ -57,16 +57,20 @@ namespace SanchozzONIMods.Lib
             }
         }
 
+        public delegate bool Callback_Full(List<CodeInstruction> instructions, MethodBase original, ILGenerator IL, Log log);
+        public delegate bool Callback_Method_Log(List<CodeInstruction> instructions, MethodBase original, Log log);
+        public delegate bool Callback_Method_IL(List<CodeInstruction> instructions, MethodBase original, ILGenerator IL);
+        public delegate bool Callback_Method(List<CodeInstruction> instructions, MethodBase original);
         public delegate bool Callback_IL_Log(List<CodeInstruction> instructions, ILGenerator IL, Log log);
         public delegate bool Callback_Log(List<CodeInstruction> instructions, Log log);
         public delegate bool Callback_IL(List<CodeInstruction> instructions, ILGenerator IL);
         public delegate bool Callback(List<CodeInstruction> instructions);
 
-        public static IEnumerable<CodeInstruction> Wrap(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL, Callback_IL_Log transpiler)
+        public static IEnumerable<CodeInstruction> Wrap(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL, Callback_Full transpiler)
         {
             var modified_instructions = instructions.ToList();
             var log = new Log(original);
-            if (transpiler(modified_instructions, IL, log))
+            if (transpiler(modified_instructions, original, IL, log))
             {
                 log.Success();
                 return modified_instructions;
@@ -78,19 +82,39 @@ namespace SanchozzONIMods.Lib
             }
         }
 
+        public static IEnumerable<CodeInstruction> Wrap(IEnumerable<CodeInstruction> instructions, MethodBase original, Callback_Method_Log transpiler)
+        {
+            return Wrap(instructions, original, null, (list, method, il, log) => transpiler(list, method, log));
+        }
+
+        public static IEnumerable<CodeInstruction> Wrap(IEnumerable<CodeInstruction> instructions, MethodBase original, Callback_Method_IL transpiler)
+        {
+            return Wrap(instructions, original, null, (list, method, il, log) => transpiler(list, method, il));
+        }
+
+        public static IEnumerable<CodeInstruction> Wrap(IEnumerable<CodeInstruction> instructions, MethodBase original, Callback_Method transpiler)
+        {
+            return Wrap(instructions, original, null, (list, method, il, log) => transpiler(list, method));
+        }
+
+        public static IEnumerable<CodeInstruction> Wrap(IEnumerable<CodeInstruction> instructions, MethodBase original, Callback_IL_Log transpiler)
+        {
+            return Wrap(instructions, original, null, (list, method, il, log) => transpiler(list, il, log));
+        }
+
         public static IEnumerable<CodeInstruction> Wrap(IEnumerable<CodeInstruction> instructions, MethodBase original, Callback_Log transpiler)
         {
-            return Wrap(instructions, original, null, (list, il, log) => transpiler(list, log));
+            return Wrap(instructions, original, null, (list, method, il, log) => transpiler(list, log));
         }
 
         public static IEnumerable<CodeInstruction> Wrap(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL, Callback_IL transpiler)
         {
-            return Wrap(instructions, original, IL, (list, il, log) => transpiler(list, il));
+            return Wrap(instructions, original, IL, (list, method, il, log) => transpiler(list, il));
         }
 
         public static IEnumerable<CodeInstruction> Wrap(IEnumerable<CodeInstruction> instructions, MethodBase original, Callback transpiler)
         {
-            return Wrap(instructions, original, null, (list, il, log) => transpiler(list));
+            return Wrap(instructions, original, null, (list, method, il, log) => transpiler(list));
         }
 
         public static CodeInstruction GetMatchingLoadInstruction(CodeInstruction code)

@@ -16,10 +16,13 @@
   <PropertyGroup>
     <Title>Wrangle &amp; Carry</Title>
     <Description>.</Description>
-    <ModVersion>1.0.2</ModVersion>
+    <ModVersion>1.0.3</ModVersion>
     <UsesPLib>false</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\lib\TranspilerUtils.cs">
+      <Link>TranspilerUtils.cs</Link>
+    </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
