@@ -51,6 +51,7 @@ namespace NoManualDelivery
             StorageLockerConfig.ID,
             StorageLockerSmartConfig.ID,
             ObjectDispenserConfig.ID,
+            "StorageTile",
             RationBoxConfig.ID,
             RefrigeratorConfig.ID,
             DiningTableConfig.ID,
