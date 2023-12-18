@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Wrangle &amp; Carry</Title>
     <Description>.</Description>
-    <ModVersion>1.0.3</ModVersion>
+    <ModVersion>1.0.4</ModVersion>
     <UsesPLib>false</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

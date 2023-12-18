@@ -131,17 +131,20 @@ namespace WrangleCarry
         }
 
         // если команда MoveTo применена к жеготному, меняем ChoreType на RanchingFetch
+        private static bool IsCritter(GameObject go)
+        {
+            return go != null && go.TryGetComponent<CreatureBrain>(out _) && !go.HasTag(GameTags.Robot);
+        }
+
         [HarmonyPatch(typeof(MovePickupableChore), MethodType.Constructor)]
         [HarmonyPatch(new Type[] { typeof(IStateMachineTarget), typeof(GameObject), typeof(Action<Chore>) })]
         private static class MovePickupableChore_Constructor
         {
             private static ChoreType Inject(ChoreType original, GameObject go)
             {
-                if (go != null && go.GetComponent<CreatureBrain>() != null)
-                {
+                if (IsCritter(go))
                     return Db.Get().ChoreTypes.RanchingFetch;
-                }
-                return original;
+                else return original;
             }
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
@@ -204,8 +207,7 @@ namespace WrangleCarry
                         var next = move.GetNextTarget();
                         if (next != null)
                         {
-                            if (next.TryGetComponent<CreatureBrain>(out _) !=
-                                (smi.master.choreType.IdHash == Db.Get().ChoreTypes.RanchingFetch.IdHash))
+                            if (IsCritter(next) != (smi.master.choreType.IdHash == Db.Get().ChoreTypes.RanchingFetch.IdHash))
                                 __result = true;
                         }
                     }
