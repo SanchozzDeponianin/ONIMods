@@ -2,7 +2,7 @@
 
 namespace ControlYourRobots
 {
-    public class RobotSleepStates : GameStateMachine<RobotSleepStates, RobotSleepStates.Instance>
+    public class RobotSleepFX : GameStateMachine<RobotSleepFX, RobotSleepFX.Instance>
     {
         public new class Instance : GameInstance
         {
@@ -27,7 +27,6 @@ namespace ControlYourRobots
             default_state = root;
             root
                 .Enter(smi => smi.CreateFx())
-                .PlayAnim("in_storage")
                 .Exit(smi => smi.DestroyFx());
         }
     }

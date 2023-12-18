@@ -16,18 +16,24 @@
   <PropertyGroup>
     <Title>Control your Robots</Title>
     <Description>.</Description>
-    <ModVersion>1.2.1</ModVersion>
+    <ModVersion>1.2.2</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\BaseOptions.cs">
       <Link>BaseOptions.cs</Link>
     </Compile>
+    <Compile Include="..\lib\StateMachinesExtensions.cs">
+      <Link>StateMachinesExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\TranspilerUtils.cs">
+      <Link>TranspilerUtils.cs</Link>
+    </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
     <Compile Include="ControlYourRobotsOptions.cs" />
-    <Compile Include="RobotSleepStates.cs" />
+    <Compile Include="RobotSleepFX.cs" />
     <Compile Include="ControlYourRobotsPatches.cs" />
     <Compile Include="RobotTurnOffOn.cs" />
     <Compile Include="STRINGS.cs" />
