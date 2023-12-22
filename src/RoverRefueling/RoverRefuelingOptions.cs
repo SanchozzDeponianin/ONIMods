@@ -22,5 +22,13 @@ namespace RoverRefueling
         [Option]
         [Limit(50, 500)]
         public float fuel_mass_per_charge { get; set; } = 150;
+
+        [JsonProperty]
+        [Option]
+        public bool fuel_cargo_bay_enable { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool fuel_cargo_bay_fill_enable { get; set; } = false;
     }
 }

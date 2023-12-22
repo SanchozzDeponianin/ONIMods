@@ -6,7 +6,7 @@ namespace RoverRefueling
     public class RoverRefuelingStationConfig : IBuildingConfig
     {
         public const string ID = "RoverRefuelingStation";
-        private const int NUM_USES = 3;
+        public const int NUM_USES = 3;
         public static Tag fuelTag = GameTags.CombustibleLiquid;
         public override string[] GetDlcIds() => DlcManager.AVAILABLE_EXPANSION1_ONLY;
         public override BuildingDef CreateBuildingDef()
@@ -51,6 +51,7 @@ namespace RoverRefueling
             md.RequestedItemTag = fuelTag;
             md.capacity = capacity;
             md.refillMass = mass_per_charge;
+            md.operationalRequirement = Operational.State.Functional;
             md.choreTypeIDHash = Db.Get().ChoreTypes.Fetch.IdHash;
             md.Pause(true, "");
             var consumer = go.AddOrGet<ConduitConsumer>();

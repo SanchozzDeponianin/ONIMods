@@ -2,13 +2,11 @@
 
 namespace RoverRefueling
 {
+    using handler = EventSystem.IntraObjectHandler<RoverRefuelingStation>;
     public class RoverRefuelingStation : StateMachineComponent<RoverRefuelingStation.StatesInstance>
     {
-        private static readonly EventSystem.IntraObjectHandler<RoverRefuelingStation> CheckPipeDelegate =
-            new EventSystem.IntraObjectHandler<RoverRefuelingStation>((component, data) => component.CheckPipe());
-
-        private static readonly EventSystem.IntraObjectHandler<RoverRefuelingStation> OnStorageChangeDelegate =
-            new EventSystem.IntraObjectHandler<RoverRefuelingStation>((component, data) => component.RefreshMeter());
+        private static readonly handler CheckPipeDelegate = new handler((component, data) => component.CheckPipe());
+        private static readonly handler OnStorageChangeDelegate = new handler((component, data) => component.RefreshMeter());
 
         private static readonly Chore.Precondition IsRover = new Chore.Precondition
         {
@@ -153,13 +151,14 @@ namespace RoverRefueling
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            Subscribe((int)GameHashes.ConduitConnectionChanged, CheckPipeDelegate);
-            Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
             smi.StartSM();
             var kbac = GetComponent<KBatchedAnimController>();
             fuel_meter = new MeterController(kbac, "meter_oxygen_target", "meter_oxygen", Meter.Offset.Infront, Grid.SceneLayer.BuildingFront, new string[] { "meter_oxygen_target" });
             progress_meter = new MeterController(kbac, "meter_resources_target", "meter_resources", Meter.Offset.Behind, Grid.SceneLayer.BuildingBack, new string[] { "meter_resources_target" });
             RefreshMeter();
+            CheckPipe();
+            Subscribe((int)GameHashes.ConduitConnectionChanged, CheckPipeDelegate);
+            Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
         }
 
         protected override void OnCleanUp()

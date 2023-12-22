@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Rover's Recharger</Title>
     <Description>Allows you to charge the Rover's battery with chemical fuel</Description>
-    <ModVersion>1.0.7</ModVersion>
+    <ModVersion>1.1.0</ModVersion>
     <SupportedContent>EXPANSION1_ID</SupportedContent>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
@@ -27,6 +27,7 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="RoverFuelCargoBay.cs" />
     <Compile Include="RoverRefuelingOptions.cs" />
     <Compile Include="STRINGS.cs" />
     <Compile Include="WhirlPoolFxEffectConfig.cs" />
