@@ -112,8 +112,8 @@ namespace HEPBridgeInsulationTile
             {
                 SimHashes.Glass,
                 SimHashes.Polypropylene,
+                SimHashes.HardPolypropylene,
                 SimHashes.SolidViscoGel,
-                SimHashes.SolidResin,
             };
             foreach (var hash in hashes)
             {

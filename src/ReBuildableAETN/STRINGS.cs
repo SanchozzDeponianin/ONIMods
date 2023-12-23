@@ -21,13 +21,7 @@ namespace ReBuildableAETN
             public class MASSIVE_HEATSINK_CORE
             {
                 public static LocString NAME = "Neutronium Core";
-                public static LocString DESC = string.Concat(
-                    "A mysterious thingy, presumably made of refined ",
-                    FormatAsLink("Neutronium", "UNOBTANIUM"),
-                    ". Very cold to the touch.\n\n",
-                    "It is a necessary component for rebuilding the ",
-                    MASSIVEHEATSINK
-                    );
+                public static LocString DESC = $"A mysterious thingy, presumably made of refined {FormatAsLink("Neutronium", "UNOBTANIUM")}. Very cold to the touch.\n\nIt is a necessary component for rebuilding the {MASSIVEHEATSINK}";
             }
         }
 
@@ -45,6 +39,7 @@ namespace ReBuildableAETN
             public class TAGS
             {
                 public static LocString BUILDINGNEUTRONIUMCORE = "";
+                public static LocString BUILDINGNEUTRONIUMCORE_DESC = "";
             }
         }
 
@@ -133,6 +128,7 @@ namespace ReBuildableAETN
         {
             MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.NAME = global::STRINGS.MISC.STATUSITEMS.STUDIED.NAME;
             MISC.TAGS.BUILDINGNEUTRONIUMCORE = ITEMS.MASSIVE_HEATSINK_CORE.NAME;
+            MISC.TAGS.BUILDINGNEUTRONIUMCORE_DESC.ReplaceText(ITEMS.MASSIVE_HEATSINK_CORE.DESC.text.Split('\n')[0]);
             var dictionary = new Dictionary<string, string>()
             {
                 { MASSIVEHEATSINK, PREFABS.MASSIVEHEATSINK.NAME },

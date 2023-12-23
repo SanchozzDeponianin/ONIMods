@@ -11,6 +11,7 @@ using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
+using PeterHan.PLib.UI;
 using static ReBuildableAETN.MassiveHeatSinkCoreConfig;
 
 namespace ReBuildableAETN
@@ -30,6 +31,15 @@ namespace ReBuildableAETN
         private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));
+            LoadSprite();
+        }
+
+        private static void LoadSprite()
+        {
+            const string name = "ui_buildingneutroniumcore";
+            var sprite = PUIUtils.LoadSprite($"ReBuildableAETN.sprites.{name}.png");
+            sprite.name = name;
+            Assets.Sprites.Add(name, sprite);
         }
 
         [PLibMethod(RunAt.AfterDbInit)]

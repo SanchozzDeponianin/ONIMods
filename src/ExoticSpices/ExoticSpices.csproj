@@ -43,8 +43,5 @@
     <Compile Include="ExoticSpicesPatches.cs" />
     <Compile Include="STRINGS.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="sprites/*.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

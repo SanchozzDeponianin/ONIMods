@@ -91,6 +91,11 @@
     <Reference Include="PLibOptions" HintPath="$(PLibFolder)/PLibOptions.dll" />
     <Reference Include="PLibUI" HintPath="$(PLibFolder)/PLibUI.dll" />
   </ItemGroup>
+  
+  <!-- вкоряченные спрайты -->
+  <ItemGroup>
+    <EmbeddedResource Include="$(ProjectDir)/sprites/*.png" />
+  </ItemGroup>
 
   <!-- сведения о сборке -->
   <PropertyGroup>
