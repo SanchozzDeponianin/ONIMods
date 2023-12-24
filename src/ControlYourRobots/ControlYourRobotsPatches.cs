@@ -203,5 +203,17 @@ namespace ControlYourRobots
                         smi => IdleBatteryModifiers.ContainsKey(smi.PrefabID()));
             }
         }
+
+        // поиск пути с учётом разрешения дверей
+        [HarmonyPatch(typeof(CreatureBrain), "OnPrefabInit")]
+        private static class CreatureBrain_OnPrefabInit
+        {
+            private static Tag[] Robot_AI_Tags = { GameTags.Robot, GameTags.DupeBrain };
+            private static void Postfix(CreatureBrain __instance)
+            {
+                if (__instance.HasAllTags(Robot_AI_Tags) && __instance.TryGetComponent<Navigator>(out var navigator))
+                    navigator.SetAbilities(new RobotPathFinderAbilities(navigator));
+            }
+        }
     }
 }
