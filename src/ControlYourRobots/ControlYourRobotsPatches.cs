@@ -247,5 +247,53 @@ namespace ControlYourRobots
                 return false;
             }
         }
+
+        // внедряем портреты роботов в эээ.. экран доступов двери.. все портреты
+        [HarmonyPatch(typeof(CrewPortrait), "Rebuild")]
+        private static class CrewPortrait_SetIdentityObject
+        {
+            private static void Postfix(CrewPortrait __instance)
+            {
+                if (__instance.controller == null)
+                    return;
+                var children = __instance.GetComponentsInChildren<KBatchedAnimController>(true);
+                // в норме тут ^ только один kbac, и он равен controller. его трогать не будем.
+                if (!__instance.identityObject.IsNullOrDestroyed() && __instance.identityObject is RobotAssignablesProxy proxy)
+                {
+                    KBatchedAnimController robot = null;
+                    // ищем ранее внедрённый портрет
+                    for (int i = 0; i < children.Length; i++)
+                    {
+                        if (children[i] != __instance.controller)
+                        {
+                            robot = children[i];
+                            break;
+                        }
+                    }
+                    // или внедряем новый
+                    if (robot == null)
+                    {
+                        robot = Util.KInstantiateUI<KBatchedAnimController>(__instance.controller.gameObject, __instance.controller.gameObject.transform.parent.gameObject, false);
+                    }
+                    robot.gameObject.SetActive(false);
+                    robot.SwapAnims(Assets.GetPrefab(proxy.PrefabID).GetComponent<KBatchedAnimController>().AnimFiles);
+                    robot.initialAnim = "ui";
+                    robot.gameObject.SetActive(true);
+                    robot.Play("ui", KAnim.PlayMode.Loop);
+                }
+                else
+                {
+                    // если не робот - ищем и скрываем ранее внедренные портреты
+                    // надеюсь другие моды не будут внедрять левые портреты
+                    for (int i = 0; i < children.Length; i++)
+                    {
+                        if (children[i] != __instance.controller)
+                        {
+                            children[i].gameObject.SetActive(false);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
