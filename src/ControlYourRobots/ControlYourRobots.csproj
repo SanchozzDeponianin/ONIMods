@@ -32,6 +32,9 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="RobotIdentity.cs" />
+    <Compile Include="RobotAssignablesProxy.cs" />
+    <Compile Include="RobotAssignablesProxyConfig.cs" />
     <Compile Include="RobotPathFinderAbilities.cs" />
     <Compile Include="ControlYourRobotsOptions.cs" />
     <Compile Include="RobotSleepFX.cs" />

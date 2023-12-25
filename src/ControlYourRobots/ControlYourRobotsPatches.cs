@@ -215,5 +215,37 @@ namespace ControlYourRobots
                     navigator.SetAbilities(new RobotPathFinderAbilities(navigator));
             }
         }
+
+        // внедряем роботов в экран доступов двери
+        [HarmonyPatch(typeof(AccessControlSideScreen), nameof(AccessControlSideScreen.SetTarget))]
+        private static class AccessControlSideScreen_SetTarget
+        {
+            private static List<MinionAssignablesProxy> Inject(List<MinionAssignablesProxy> list)
+            {
+                list.AddRange(RobotAssignablesProxy.Cmps.Items);
+                return list;
+            }
+
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var list = typeof(AccessControlSideScreen).GetFieldSafe("identityList", false);
+                var inject = typeof(AccessControlSideScreen_SetTarget).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments);
+                if (list != null && inject != null)
+                {
+                    int i = instructions.FindIndex(ins => ins.StoresField(list));
+                    if (i != -1)
+                    {
+                        instructions.Insert(i, new CodeInstruction(OpCodes.Call, inject));
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
     }
 }

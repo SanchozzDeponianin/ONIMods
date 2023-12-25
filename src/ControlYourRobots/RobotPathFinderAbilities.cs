@@ -1,11 +1,17 @@
 ﻿namespace ControlYourRobots
 {
+    // CreaturePathFinderAbilities дополненная проверкой доступа дверей как у MinionPathFinderAbilities
+    // proxyID общий для всех роботов одного типа
     public class RobotPathFinderAbilities : CreaturePathFinderAbilities
     {
-        private const int proxyID = Grid.Restriction.DefaultID;
+        private Tag prefabID;
+        private int proxyID = Grid.Restriction.DefaultID;
         private CellOffset[][] transitionVoidOffsets;
 
-        public RobotPathFinderAbilities(Navigator navigator) : base(navigator) { }
+        public RobotPathFinderAbilities(Navigator navigator) : base(navigator)
+        {
+            prefabID = navigator.PrefabID();
+        }
 
         protected override void Refresh(Navigator navigator)
         {
@@ -17,6 +23,8 @@
                     transitionVoidOffsets[i] = navigator.NavGrid.transitions[i].voidOffsets;
                 }
             }
+            if (proxyID == Grid.Restriction.DefaultID)
+                proxyID = RobotAssignablesProxy.GetRobotProxyID(prefabID);
             base.Refresh(navigator);
         }
 
