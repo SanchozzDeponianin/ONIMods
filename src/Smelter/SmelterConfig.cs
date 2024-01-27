@@ -3,6 +3,7 @@ using System.Linq;
 using TUNING;
 using HarmonyLib;
 using UnityEngine;
+using static STRINGS.BUILDINGS.PREFABS;
 
 namespace Smelter
 {
@@ -100,7 +101,7 @@ namespace Smelter
             var workable = go.AddOrGet<SmelterWorkable>();
             workable.overrideAnims = new KAnimFile[] { Assets.GetAnim("anim_interacts_smelter_kanim") };
 
-            ConduitConsumer conduitConsumer = go.AddOrGet<ConduitConsumer>();
+            var conduitConsumer = go.AddOrGet<ConduitConsumer>();
             conduitConsumer.capacityTag = GameTags.Liquid;
             conduitConsumer.capacityKG = COOLANT_MASS * 2;
             conduitConsumer.storage = lcfr.inStorage;
@@ -174,20 +175,16 @@ namespace Smelter
                         new ComplexRecipe.RecipeElement(SimHashes.Salt.CreateTag(), SALT),
                         new ComplexRecipe.RecipeElement(phosphorus.CreateTag(), PHOSPHORUS)
                     };
-
-                    string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID(MetalRefineryConfig.ID, SimHashes.Katairite.CreateTag());
                     string id = ComplexRecipeManager.MakeRecipeID(MetalRefineryConfig.ID, ingredients, results);
                     new ComplexRecipe(id, ingredients, results)
                     {
                         time = BUILDINGS.FABRICATION_TIME_SECONDS.MODERATE,
-                        description = string.Format(
-                            global::STRINGS.BUILDINGS.PREFABS.METALREFINERY.RECIPE_DESCRIPTION,
+                        description = string.Format(METALREFINERY.RECIPE_DESCRIPTION,
                             ElementLoader.FindElementByHash(SimHashes.Tungsten).name,
                             ElementLoader.FindElementByHash(SimHashes.Katairite).name),
                         nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
                         fabricators = new List<Tag> { TagManager.Create(MetalRefineryConfig.ID) }
                     };
-                    ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, id);
                 }
             }
 
@@ -202,19 +199,39 @@ namespace Smelter
                 {
                     new ComplexRecipe.RecipeElement(SimHashes.LiquidPhosphorus.CreateTag(), INPUT_KG, ComplexRecipe.RecipeElement.TemperatureOperation.Melted)
                 };
-                string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID(GlassForgeConfig.ID, SimHashes.Phosphorite.CreateTag());
                 string id = ComplexRecipeManager.MakeRecipeID(GlassForgeConfig.ID, ingredients, results);
                 new ComplexRecipe(id, ingredients, results)
                 {
-                    time = BUILDINGS.FABRICATION_TIME_SECONDS.SHORT / 2,
-                    description = string.Format(
-                        global::STRINGS.BUILDINGS.PREFABS.GLASSFORGE.RECIPE_DESCRIPTION,
+                    time = BUILDINGS.FABRICATION_TIME_SECONDS.VERY_SHORT,
+                    description = string.Format(GLASSFORGE.RECIPE_DESCRIPTION,
                         ElementLoader.FindElementByHash(SimHashes.LiquidPhosphorus).name,
                         ElementLoader.FindElementByHash(SimHashes.Phosphorite).name),
                     nameDisplay = ComplexRecipe.RecipeNameDisplay.Result,
                     fabricators = new List<Tag> { TagManager.Create(GlassForgeConfig.ID) }
                 };
-                ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, id);
+            }
+
+            // добавляем переплавку пластика в стеклоплавильню
+            if (SmelterOptions.Instance.recipes.Plastic_To_Naphtha)
+            {
+                var ingredients = new ComplexRecipe.RecipeElement[]
+                {
+                    new ComplexRecipe.RecipeElement(SimHashes.Polypropylene.CreateTag(), INPUT_KG)
+                };
+                var results = new ComplexRecipe.RecipeElement[]
+                {
+                    new ComplexRecipe.RecipeElement(SimHashes.Naphtha.CreateTag(), INPUT_KG, ComplexRecipe.RecipeElement.TemperatureOperation.Melted)
+                };
+                string id = ComplexRecipeManager.MakeRecipeID(GlassForgeConfig.ID, ingredients, results);
+                new ComplexRecipe(id, ingredients, results)
+                {
+                    time = BUILDINGS.FABRICATION_TIME_SECONDS.VERY_SHORT,
+                    description = string.Format(GLASSFORGE.RECIPE_DESCRIPTION,
+                        ElementLoader.FindElementByHash(SimHashes.Naphtha).name,
+                        ElementLoader.FindElementByHash(SimHashes.Polypropylene).name),
+                    nameDisplay = ComplexRecipe.RecipeNameDisplay.Result,
+                    fabricators = new List<Tag> { TagManager.Create(GlassForgeConfig.ID) }
+                };
             }
 
             // добавляем копию рецептов из электроплавильни. кроме стали и наёбия
@@ -236,7 +253,6 @@ namespace Smelter
                 .ToList()
                 .Do((ComplexRecipe recipe) =>
                 {
-                    string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID(ID, recipe.ingredients[0].material);
                     string id = ComplexRecipeManager.MakeRecipeID(ID, recipe.ingredients, recipe.results);
                     new ComplexRecipe(id, recipe.ingredients, recipe.results)
                     {
@@ -245,7 +261,6 @@ namespace Smelter
                         nameDisplay = recipe.nameDisplay,
                         fabricators = new List<Tag> { TagManager.Create(ID) }
                     };
-                    ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, id);
                 });
 
             // добавляем копию рецептов из стеклоплавильни с увеличенным временем фабрикации
@@ -256,46 +271,43 @@ namespace Smelter
                 .Do((ComplexRecipe recipe) =>
                 {
                     var material = ElementLoader.GetElement(recipe.results[0].material);
-                    var result = (material.lowTempTransition != null && material.lowTemp > OUTPUT_TEMPERATURE) ? material.lowTempTransition.tag : material.tag;
+                    var result = (material.lowTempTransition != null && material.lowTemp > OUTPUT_TEMPERATURE) ?
+                        material.lowTempTransition.tag : material.tag;
                     var results = new ComplexRecipe.RecipeElement[] {
                         new ComplexRecipe.RecipeElement(result, recipe.results[0].amount) };
-
-                    string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID(ID, recipe.ingredients[0].material);
                     string id = ComplexRecipeManager.MakeRecipeID(ID, recipe.ingredients, results);
                     new ComplexRecipe(id, recipe.ingredients, results)
                     {
                         time = recipe.time * fabricationTimeMultiplier,
-                        description = string.Format(global::STRINGS.BUILDINGS.PREFABS.GLASSFORGE.RECIPE_DESCRIPTION, ElementLoader.GetElement(results[0].material).name, ElementLoader.GetElement(recipe.ingredients[0].material).name),
+                        description = string.Format(GLASSFORGE.RECIPE_DESCRIPTION,
+                            ElementLoader.GetElement(results[0].material).name,
+                            ElementLoader.GetElement(recipe.ingredients[0].material).name),
                         nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
                         fabricators = new List<Tag> { TagManager.Create(ID) }
                     };
-                    ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, id);
                 });
 
-            // добавляем переплавку пластика
-            if (SmelterOptions.Instance.recipes.Plastic_To_Naphtha)
+            // добавляем расплавленную серу в стеклоплавильню
+            if (SmelterOptions.Instance.recipes.Sulfur_To_LiquidSulfur)
             {
                 var ingredients = new ComplexRecipe.RecipeElement[]
                 {
-                    new ComplexRecipe.RecipeElement(SimHashes.Polypropylene.CreateTag(), INPUT_KG)
+                    new ComplexRecipe.RecipeElement(SimHashes.Sulfur.CreateTag(), INPUT_KG)
                 };
                 var results = new ComplexRecipe.RecipeElement[]
                 {
-                    new ComplexRecipe.RecipeElement(SimHashes.Naphtha.CreateTag(), INPUT_KG)
+                    new ComplexRecipe.RecipeElement(SimHashes.LiquidSulfur.CreateTag(), INPUT_KG, ComplexRecipe.RecipeElement.TemperatureOperation.Melted)
                 };
-                string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID(ID, SimHashes.Polypropylene.CreateTag());
-                string id = ComplexRecipeManager.MakeRecipeID(ID, ingredients, results);
+                string id = ComplexRecipeManager.MakeRecipeID(GlassForgeConfig.ID, ingredients, results);
                 new ComplexRecipe(id, ingredients, results)
                 {
-                    time = BUILDINGS.FABRICATION_TIME_SECONDS.SHORT,
-                    description = string.Format(
-                        global::STRINGS.BUILDINGS.PREFABS.GLASSFORGE.RECIPE_DESCRIPTION,
-                        ElementLoader.FindElementByHash(SimHashes.Naphtha).name,
-                        ElementLoader.FindElementByHash(SimHashes.Polypropylene).name),
-                    nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
-                    fabricators = new List<Tag> { TagManager.Create(ID) }
+                    time = BUILDINGS.FABRICATION_TIME_SECONDS.VERY_SHORT,
+                    description = string.Format(GLASSFORGE.RECIPE_DESCRIPTION,
+                        ElementLoader.FindElementByHash(SimHashes.LiquidSulfur).name,
+                        ElementLoader.FindElementByHash(SimHashes.Sulfur).name),
+                    nameDisplay = ComplexRecipe.RecipeNameDisplay.Result,
+                    fabricators = new List<Tag> { TagManager.Create(GlassForgeConfig.ID) }
                 };
-                ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, id);
             }
 
             // добавляем варку резины
@@ -320,19 +332,16 @@ namespace Smelter
                     new ComplexRecipe.RecipeElement(isoresin.CreateTag(), output1),
                     new ComplexRecipe.RecipeElement(water.tag, output2, ComplexRecipe.RecipeElement.TemperatureOperation.Heated, true),
                 };
-                string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID(ID, resin.tag);
                 string id = ComplexRecipeManager.MakeRecipeID(ID, ingredients, results);
                 new ComplexRecipe(id, ingredients, results)
                 {
                     time = BUILDINGS.FABRICATION_TIME_SECONDS.SHORT,
-                    description = string.Format(
-                        global::STRINGS.BUILDINGS.PREFABS.GLASSFORGE.RECIPE_DESCRIPTION,
+                    description = string.Format(GLASSFORGE.RECIPE_DESCRIPTION,
                         ElementLoader.FindElementByHash(isoresin).name,
                         resin.name),
                     nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
                     fabricators = new List<Tag> { TagManager.Create(ID) }
                 };
-                ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, id);
 
                 // и замерзшая резина
                 var resin_solid = resin.lowTempTransition;
@@ -340,19 +349,16 @@ namespace Smelter
                 {
                     new ComplexRecipe.RecipeElement(resin_solid.tag, input)
                 };
-                string obsolete_id2 = ComplexRecipeManager.MakeObsoleteRecipeID(ID, resin_solid.tag);
                 string id2 = ComplexRecipeManager.MakeRecipeID(ID, ingredients2, results);
                 new ComplexRecipe(id2, ingredients2, results)
                 {
                     time = BUILDINGS.FABRICATION_TIME_SECONDS.SHORT,
-                    description = string.Format(
-                        global::STRINGS.BUILDINGS.PREFABS.GLASSFORGE.RECIPE_DESCRIPTION,
+                    description = string.Format(GLASSFORGE.RECIPE_DESCRIPTION,
                         ElementLoader.FindElementByHash(isoresin).name,
                         resin_solid.name),
                     nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
                     fabricators = new List<Tag> { TagManager.Create(ID) }
                 };
-                ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id2, id2);
             }
 
             // добавляем древесный уголь в печку
@@ -371,19 +377,16 @@ namespace Smelter
                     new ComplexRecipe.RecipeElement(SimHashes.RefinedCarbon.CreateTag(), CARBON, ComplexRecipe.RecipeElement.TemperatureOperation.Heated),
                     new ComplexRecipe.RecipeElement(SimHashes.CarbonDioxide.CreateTag(), CO2, ComplexRecipe.RecipeElement.TemperatureOperation.Heated)
                 };
-                string obsolete_id = ComplexRecipeManager.MakeObsoleteRecipeID(KilnConfig.ID, WoodLogConfig.TAG);
                 string id = ComplexRecipeManager.MakeRecipeID(KilnConfig.ID, ingredients, results);
                 new ComplexRecipe(id, ingredients, results)
                 {
                     time = BUILDINGS.FABRICATION_TIME_SECONDS.SHORT,
-                    description = string.Format(
-                        global::STRINGS.BUILDINGS.PREFABS.EGGCRACKER.RECIPE_DESCRIPTION,
+                    description = string.Format(EGGCRACKER.RECIPE_DESCRIPTION,
                         global::STRINGS.UI.FormatAsLink(global::STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.WOOD.NAME, ForestTreeConfig.ID.ToUpperInvariant()),
                         ElementLoader.FindElementByHash(SimHashes.RefinedCarbon).name),
                     nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
                     fabricators = new List<Tag> { TagManager.Create(KilnConfig.ID) }
                 };
-                ComplexRecipeManager.Get().AddObsoleteIDMapping(obsolete_id, id);
             }
         }
     }

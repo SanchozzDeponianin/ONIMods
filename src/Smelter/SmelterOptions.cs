@@ -26,6 +26,10 @@ namespace Smelter
 
             [JsonProperty]
             [Option]
+            public bool Sulfur_To_LiquidSulfur { get; set; } = true;
+
+            [JsonProperty]
+            [Option]
             public bool Resin_To_Isoresin { get; set; } = true;
 
             [JsonProperty]
