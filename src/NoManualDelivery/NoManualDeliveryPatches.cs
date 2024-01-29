@@ -95,6 +95,8 @@ namespace NoManualDelivery
             "Ktoblin.ModifiedRefrigerator", "Ktoblin.ModifiedStorageLockerSmart",
             // Gravitas Shipping Container https://steamcommunity.com/sharedfiles/filedetails/?id=2942005501
             "GravitasBigStorage_Container",
+            // Big Storage Restoraged https://steamcommunity.com/sharedfiles/filedetails/?id=3059711743
+            "BigStorageLocker", "BigBeautifulStorageLocker", "BigSmartStorageLocker", "BigStorageTile",
         };
 
         private static List<string> BuildingToMakeAutomatableWithTransferArmPickupGasLiquid = new List<string>()
