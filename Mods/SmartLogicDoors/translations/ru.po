@@ -6,5 +6,5 @@ msgstr ""
 #. SmartLogicDoors.STRINGS.UI.UISIDESCREENS.SMARTLOGICDOOR_SIDESCREEN.TITLE
 msgctxt "SmartLogicDoors.STRINGS.UI.UISIDESCREENS.SMARTLOGICDOOR_SIDESCREEN.TITLE"
 msgid "Door State at the <b><style=\"logic_on\">Green</style></b> / <b><style=\"logic_off\">Red</style></b> signal:"
-msgstr "Состояние двери при <b><style=\"logic_on\">зелёном</style></b> / <b><style=\"logic_off\">красном</style></b> сигнале:"
+msgstr "Дверь при <b><style=\"logic_on\">зелёном</style></b> / <b><style=\"logic_off\">красном</style></b> сигнале:"
 

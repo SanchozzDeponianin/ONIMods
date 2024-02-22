@@ -84,7 +84,7 @@ namespace SmartLogicDoors
         }
 
         public override void ClearTarget() => target = null;
-        public override int GetSideScreenSortOrder() => 10;
+        public override int GetSideScreenSortOrder() => -20;
         public override string GetTitle() => STRINGS.UI.UISIDESCREENS.SMARTLOGICDOOR_SIDESCREEN.TITLE.text;
     }
 }
