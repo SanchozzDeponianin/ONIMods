@@ -153,9 +153,11 @@ namespace ControlYourRobots
                 AddPrecondition(blabla);
             }
             */
-            private static bool IsNotRobot(bool condition, GameObject go)
+            private static Component IsNotRobot(Component cmp)
             {
-                return condition && go != null && !go.HasTag(GameTags.Robot);
+                if (cmp != null && cmp.HasTag(GameTags.Robot))
+                    return null;
+                return cmp;
             }
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
@@ -165,26 +167,23 @@ namespace ControlYourRobots
 
             private static bool transpiler(List<CodeInstruction> instructions, MethodBase original)
             {
-                var pickupable = original?.GetParameters().FirstOrDefault(p =>
-                    p.ParameterType == typeof(GameObject) && p.Name == "pickupable");
                 var gc = typeof(GameObject).GetMethodSafe(nameof(GameObject.GetComponent), false)
                     ?.MakeGenericMethod(typeof(CreatureBrain));
-                var opi = typeof(UnityEngine.Object).GetMethodSafe("op_Implicit", true, typeof(UnityEngine.Object));
                 var inject = typeof(MovePickupableChore_Constructor)
-                    .GetMethodSafe(nameof(IsNotRobot), true, typeof(bool), typeof(GameObject));
-                if (pickupable != null && gc != null && opi != null && inject != null)
+                    .GetMethodSafe(nameof(IsNotRobot), true, typeof(Component));
+                if (gc != null && inject != null)
                 {
-                    int i = instructions.FindIndex(ins => ins.Calls(gc));
-                    if (i != -1)
+                    int n = 0;
+                    for (int i = 0; i < instructions.Count; i++)
                     {
-                        i++;
-                        if (instructions[i].Calls(opi))
+                        if (instructions[i].Calls(gc))
                         {
-                            instructions.Insert(++i, TranspilerUtils.GetLoadArgInstruction(pickupable));
                             instructions.Insert(++i, new CodeInstruction(OpCodes.Call, inject));
-                            return true;
+                            n++;
                         }
                     }
+                    if (n > 0)
+                        return true;
                 }
                 return false;
             }

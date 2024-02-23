@@ -130,7 +130,8 @@ namespace WrangleCarry
             }
         }
 
-        // если команда MoveTo применена к жеготному, меняем ChoreType на RanchingFetch
+        // если команда MoveTo применена к жеготному, меняем ChoreType на Ranch
+        // todo: удалить патч когда У50 канет в лету
         private static bool IsCritter(GameObject go)
         {
             return go != null && go.TryGetComponent<CreatureBrain>(out _) && !go.HasTag(GameTags.Robot);
@@ -140,10 +141,12 @@ namespace WrangleCarry
         [HarmonyPatch(new Type[] { typeof(IStateMachineTarget), typeof(GameObject), typeof(Action<Chore>) })]
         private static class MovePickupableChore_Constructor
         {
+            private static bool Prepare() => Utils.GameVersion <= 587362u;
+
             private static ChoreType Inject(ChoreType original, GameObject go)
             {
                 if (IsCritter(go))
-                    return Db.Get().ChoreTypes.RanchingFetch;
+                    return Db.Get().ChoreTypes.Ranch;
                 else return original;
             }
 
@@ -192,7 +195,7 @@ namespace WrangleCarry
         // можно было бы просто позволить чоре всегда завершаться,
         // но возможно у клеев была какая то причина сделать так
         // поэтому позволим чоре завершиться,
-        // если следующий объект == жеготное, а choreType не соответсвует замененному нами RanchingFetch
+        // если следующий объект == жеготное, а choreType == Fetch
         // и наоборот
         [HarmonyPatch(typeof(MovePickupableChore.States), "IsDeliveryComplete")]
         private static class MovePickupableChore_States_IsDeliveryComplete
@@ -207,7 +210,7 @@ namespace WrangleCarry
                         var next = move.GetNextTarget();
                         if (next != null)
                         {
-                            if (IsCritter(next) != (smi.master.choreType.IdHash == Db.Get().ChoreTypes.RanchingFetch.IdHash))
+                            if (IsCritter(next) == (smi.master.choreType.IdHash == Db.Get().ChoreTypes.Fetch.IdHash))
                                 __result = true;
                         }
                     }

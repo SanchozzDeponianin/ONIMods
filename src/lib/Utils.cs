@@ -57,6 +57,9 @@ namespace SanchozzONIMods.Lib
             Debug.LogFormat("Mod {0} initialized, version {1}", modInfo.assemblyName, modInfo.fileVersion ?? "Unknown");
         }
 
+        // извлекаем значение константы
+        public static uint GameVersion { get; }
+
         // вычисляем значение Action.NumActions определенную в Assembly-CSharp-firstpass
         // напрямую использовать Action.NumActions может выйти боком 
         // если клей изменят enum а мод был не перекомпилирован
@@ -72,6 +75,11 @@ namespace SanchozzONIMods.Lib
                     limit = Action.NumActions;
             }
             MaxAction = limit;
+
+            GameVersion = 0u;
+            var field = typeof(KleiVersion).GetField(nameof(KleiVersion.ChangeList));
+            if (field != null && field.GetRawConstantValue() is uint value)
+                GameVersion = value;
         }
 
         // логирование со стактрасом
