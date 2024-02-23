@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Transitive Transformer Load</Title>
     <Description>.</Description>
-    <ModVersion>1.0.0</ModVersion>
+    <ModVersion>1.0.1</ModVersion>
     <UsesPLib>false</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

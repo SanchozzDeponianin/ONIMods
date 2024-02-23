@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using UnityEngine;
 using KMod;
@@ -95,11 +96,15 @@ namespace TTL
                                 if (call_stack.Pop() != circuitID)
                                     Debug.LogWarning("Unexpected Mismatch circuitID !!!");
                             }
-                            __result += Mathf.Min(nested_power, nested_transformers_power);
+                            // U51 уже прибавил мощность трансформаторов, придётся отнять для правильного результата
+                            __result += Mathf.Min(nested_power, nested_transformers_power) - nested_transformers_power;
 
                             // если есть FastTrack, он уже прибавил мощность трансформаторов, придётся отнять для правильного результата
+                            // todo: проверить как будет влиять FastTrack после релиза U51
+                            /*
                             if (FastTrack)
                                 __result -= nested_transformers_power;
+                            */
                         }
                     }
                 }
@@ -153,9 +158,28 @@ namespace TTL
 
         // в окне энергия игра показывает макс мощность трансов как 0
         // заменим на минимум из а) мощность нижней подсети б) мощность трансформатора
-        [HarmonyPatch(typeof(EnergyInfoScreen), "AddConsumerInfo")]
-        private static class EnergyInfoScreen_AddConsumerInfo
+        [HarmonyPatch]
+        private static class AdditionalDetailsPanel_AddConsumerInfo
         {
+            private const BindingFlags @static = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                foreach (var method in typeof(AdditionalDetailsPanel).GetMethods(@static))
+                {
+                    if (method.IsDefined(typeof(CompilerGeneratedAttribute)))
+                    {
+                        var parameters = method.GetParameters();
+                        if (parameters.Length > 0 && parameters[0].ParameterType == typeof(IEnergyConsumer))
+                        {
+#if DEBUG
+                            Debug.Log(method.Name);
+#endif
+                            yield return method;
+                        }
+                    }
+                }
+            }
+
             private static float GetNestedCircuitWattageOrMaxWattageRating(IEnergyConsumer consumer)
             {
                 var battery = consumer as Battery;
@@ -178,8 +202,7 @@ namespace TTL
             private static bool transpiler(List<CodeInstruction> instructions)
             {
                 var watts_needed = typeof(IEnergyConsumer).GetProperty(nameof(IEnergyConsumer.WattsNeededWhenActive)).GetGetMethod(true);
-                var insert = typeof(EnergyInfoScreen_AddConsumerInfo).GetMethod(nameof(GetNestedCircuitWattageOrMaxWattageRating),
-                    BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                var insert = typeof(AdditionalDetailsPanel_AddConsumerInfo).GetMethod(nameof(GetNestedCircuitWattageOrMaxWattageRating), @static);
                 if (watts_needed != null && insert != null)
                 {
                     for (int i = 0; i < instructions.Count; i++)
