@@ -38,8 +38,8 @@ namespace ButcherStation
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuildingsAndModifier()
         {
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, FishingStationConfig.ID, BUILD_SUBCATEGORY.ranching, ShearingStationConfig.ID);
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, ButcherStationConfig.ID, BUILD_SUBCATEGORY.ranching, ShearingStationConfig.ID);
+            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, FishingStationConfig.ID, BUILD_SUBCATEGORY.ranching, MilkingStationConfig.ID);
+            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, ButcherStationConfig.ID, BUILD_SUBCATEGORY.ranching, MilkingStationConfig.ID);
             Utils.AddBuildingToTechnology("AnimalControl", ButcherStationConfig.ID, FishingStationConfig.ID);
 
             var formatter = new ToPercentAttributeFormatter(1f, GameUtil.TimeSlice.None);
@@ -310,9 +310,20 @@ namespace ButcherStation
         }
 
         // для замены максимума жеготных
-        [HarmonyPatch(typeof(CreatureDeliveryPoint), "IUserControlledCapacity.MaxCapacity", MethodType.Getter)]
+        // todo: упростить когда У50 канет в лету
+        //[HarmonyPatch(typeof(CreatureDeliveryPoint), "IUserControlledCapacity.MaxCapacity", MethodType.Getter)]
+        [HarmonyPatch]
         private static class CreatureDeliveryPoint_MaxCapacity
         {
+            //private static bool Prepare() => PUtil.GameVersion <= 587362u;
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                const string name = "IUserControlledCapacity.MaxCapacity";
+                var old = typeof(CreatureDeliveryPoint).GetPropertySafe<float>(name, false)?.GetGetMethod(true);
+                if (old != null) yield return old;
+                var @new = PPatchTools.GetTypeSafe("BaggableCritterCapacityTracker")?.GetPropertySafe<float>(name, false)?.GetGetMethod(true);
+                if (@new != null) yield return @new;
+            }
             private static bool Prefix(ref float __result)
             {
                 __result = ButcherStationOptions.Instance.max_creature_limit;

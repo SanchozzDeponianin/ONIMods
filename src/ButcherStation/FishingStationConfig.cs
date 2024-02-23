@@ -42,9 +42,7 @@ namespace ButcherStation
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
-            var prefabID = go.GetComponent<KPrefabID>();
-            prefabID.AddTag(RoomConstraints.ConstraintTags.CreatureRelocator, false);
-            prefabID.AddTag(RoomConstraints.ConstraintTags.RanchStationType, false);
+            go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.RanchStationType, false);
             var storage = go.AddOrGet<Storage>();
             storage.allowItemRemoval = false;
             storage.showDescriptor = false;

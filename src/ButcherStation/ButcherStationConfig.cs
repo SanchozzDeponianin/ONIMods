@@ -40,9 +40,7 @@ namespace ButcherStation
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
-            var prefabID = go.GetComponent<KPrefabID>();
-            prefabID.AddTag(RoomConstraints.ConstraintTags.CreatureRelocator, false);
-            prefabID.AddTag(RoomConstraints.ConstraintTags.RanchStationType, false);
+            go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.RanchStationType, false);
             var storage = go.AddOrGet<Storage>();
             storage.allowItemRemoval = false;
             storage.showDescriptor = false;
@@ -63,7 +61,6 @@ namespace ButcherStation
             var def = go.AddOrGetDef<RanchStation.Def>();
             def.IsCritterEligibleToBeRanchedCb = ButcherStation.IsCreatureEligibleToBeButchedCB;
             def.OnRanchCompleteCb = (creature_go) => ButcherStation.ButchCreature(creature_go);
-            //def.GetTargetRanchCell = (smi) =>;
             def.RancherInteractAnim = "anim_interacts_shearingstation_kanim";
             def.RanchedPreAnim = "hit";
             def.RanchedLoopAnim = "hit";

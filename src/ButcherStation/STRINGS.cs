@@ -62,7 +62,7 @@ namespace ButcherStation
                     public class WRANGLE_UNSELECTED
                     {
                         public static LocString NAME = "Auto-Wrangle Unwanted";
-                        public static LocString TOOLTIP = "A Duplicant will automatically wrangle any critters that do not belong in this stable, that are not selected in the filter";
+                        public static LocString TOOLTIP = "A Duplicant will automatically wrangle any critters that do not belong in this stable, that are NOT selected in the filter";
                     }
 
                     public class WRANGLE_OLD_AGED
@@ -100,12 +100,6 @@ namespace ButcherStation
                         public static LocString TOOLTIP = "Critters exceeding this population limit <b>{0}</b> will automatically be wrangled";
                     }
 
-                    public class NOT_COUNT_BABIES
-                    {
-                        public static LocString NAME = "Don't count Babies";
-                        public static LocString TOOLTIP = "Babies will not be counted when counting the number of Critters in the Room";
-                    }
-
                     public static LocString FILTER_LABEL = "Critters filter:";
                 }
             }
@@ -125,16 +119,20 @@ namespace ButcherStation
                 public static LocString TOOLTIP = $"Affects both {FormatAsKeyWord("Butcher")} and {FormatAsKeyWord("Fishing Stations")} as well as {FormatAsKeyWord("Critter Drop-Off")} and {FormatAsKeyWord("Fish Release")}";
             }
 
-            public class ENABLE_NOT_COUNT_BABIES
+            public class FILTERED_COUNT
             {
-                public static LocString NAME = "Enable \"Don't count Babies\" Feature";
-                public static LocString TOOLTIP = "";
+                public static LocString NAME = "Count only the Critters selected in the filter";
+                public static LocString TOOLTIP =
+$@"If checked, only the Critters selected in the filter will be counted
+Similar to the new {FormatAsKeyWord("Critter Drop-Off")} in the U51 version of the game and newer
+
+If unchecked, all Critters in the Room will be counted
+Similar to the old {FormatAsKeyWord("Critter Drop-Off")} in the U50 version of the game and older";
             }
         }
 
         internal static void DoReplacement()
         {
-            OPTIONS.ENABLE_NOT_COUNT_BABIES.TOOLTIP = UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.NOT_COUNT_BABIES.TOOLTIP;
             LocString.CreateLocStringKeys(typeof(BUILDING));
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
             LocString.CreateLocStringKeys(typeof(UI));

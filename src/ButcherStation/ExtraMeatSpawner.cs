@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using STRINGS;
-using UnityEngine;
 
 namespace ButcherStation
 {

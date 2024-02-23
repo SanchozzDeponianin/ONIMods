@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using Klei.AI;
 using KSerialization;
 using STRINGS;
 using UnityEngine;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 
 namespace ButcherStation
@@ -20,7 +19,7 @@ namespace ButcherStation
 
         public static readonly Tag[] CreatureNotEligibleTags = new Tag[] { GameTags.Creatures.Bagged, GameTags.Trapped, GameTags.Creatures.Die, GameTags.Dead };
 
-        public const int CREATURELIMIT = 20;
+        public const int CREATURELIMIT = 40;
         public const float EXTRAMEATPERRANCHINGATTRIBUTE = 0.025f;
 
         [Serialize]
@@ -34,10 +33,6 @@ namespace ButcherStation
 
         [Serialize]
         internal float ageButchThresold = 0.85f;
-
-        [Obsolete]
-        [Serialize]
-        private bool autoButchSurplus = false;
 
         [Serialize]
         internal bool wrangleUnSelected = false;// ловить лишних не выбранных в фильтре
@@ -53,9 +48,6 @@ namespace ButcherStation
 
         [SerializeField]
         internal bool allowLeaveAlive = false;  // показывать "оставить живым" в сидэскреене
-
-        [Serialize]                             // добавлено по просьбе одного товарища что сделал китайский перевод
-        internal bool notCountBabies = false;   // не считать детей при обновлении число жеготных в комнате
 
 #pragma warning disable CS0649
         [MyCmpReq]
@@ -75,32 +67,37 @@ namespace ButcherStation
             base.OnPrefabInit();
             if (capacityStatusItem == null)
             {
-                capacityStatusItem = new StatusItem("StorageLocker", "BUILDING", string.Empty, StatusItem.IconType.Info, NotificationType.Neutral, false, OverlayModes.None.ID)
+                // todo: упростить когда У50 канет в лету
+                bool old = PUtil.GameVersion <= 587362u;
+                var id = old ? "StorageLocker" : "CritterCapacity";
+                capacityStatusItem = new StatusItem(id, "BUILDING", string.Empty, StatusItem.IconType.Info, NotificationType.Neutral, false, OverlayModes.None.ID);
+                if (old)
                 {
-                    resolveStringCallback = delegate (string str, object data)
+                    capacityStatusItem.resolveStringCallback = (string str, object data) =>
                     {
                         var butcherStation = (ButcherStation)data;
                         string stored = Util.FormatWholeNumber(butcherStation.storedCreatureCount);
                         string capacity = Util.FormatWholeNumber(ButcherStationOptions.Instance.max_creature_limit);
-                        return str.Replace("{Stored}", stored).Replace("{Capacity}", capacity).Replace("{Units}", UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.UNITS_SUFFIX);
-                    }
-                };
+                        return str.Replace("{Stored}", stored).Replace("{Capacity}", capacity)
+                            .Replace("{Units}", UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.UNITS_SUFFIX);
+                    };
+                }
+                else
+                {
+                    string unit1 = Strings.Get("STRINGS.BUILDING.STATUSITEMS.CRITTERCAPACITY.UNIT");
+                    string unit2 = Strings.Get("STRINGS.BUILDING.STATUSITEMS.CRITTERCAPACITY.UNITS");
+                    capacityStatusItem.resolveStringCallback = (string str, object data) =>
+                    {
+                        var butcherStation = (ButcherStation)data;
+                        string stored = Util.FormatWholeNumber(butcherStation.storedCreatureCount);
+                        string capacity = Util.FormatWholeNumber(butcherStation.creatureLimit);
+                        return str.Replace("{Stored}", stored).Replace("{Capacity}", capacity)
+                            .Replace("{StoredUnits}", (butcherStation.storedCreatureCount == 1) ? unit1 : unit2)
+                            .Replace("{CapacityUnits}", (butcherStation.creatureLimit == 1) ? unit1 : unit2);
+                    };
+                }
             }
             GetComponent<KSelectable>().SetStatusItem(Db.Get().StatusItemCategories.Main, capacityStatusItem, this);
-        }
-
-        // подгружаем старый параметр из прошлых версий
-        [OnDeserialized]
-        private void OnDeserialized()
-        {
-#pragma warning disable CS0612
-            if (autoButchSurplus)
-            {
-                wrangleUnSelected = true;
-                wrangleSurplus = true;
-                autoButchSurplus = false;
-            }
-#pragma warning restore CS0612
         }
 
         protected override void OnSpawn()
@@ -108,7 +105,6 @@ namespace ButcherStation
             base.OnSpawn();
             Subscribe((int)GameHashes.CopySettings, OnCopySettings);
             treeFilterable.OnFilterChanged += OnFilterChanged;
-            //RefreshCreatures();
         }
 
         protected override void OnCleanUp()
@@ -129,13 +125,14 @@ namespace ButcherStation
                 wrangleOldAged = butcherStation.wrangleOldAged;
                 wrangleSurplus = butcherStation.wrangleSurplus;
                 leaveAlive = allowLeaveAlive && butcherStation.leaveAlive;
-                notCountBabies = ButcherStationOptions.Instance.enable_not_count_babies && butcherStation.notCountBabies;
+                dirty = true;
             }
         }
 
         private void OnFilterChanged(HashSet<Tag> _)
         {
             dirty = true;
+            RefreshCreatures();
         }
 
         public void Sim4000ms(float dt)
@@ -158,15 +155,11 @@ namespace ButcherStation
 
             int old = storedCreatureCount;
             storedCreatureCount = 0;
-            bool not_count_babies = ButcherStationOptions.Instance.enable_not_count_babies && notCountBabies;
+            bool filteredCount = ButcherStationOptions.Instance.filtered_count;
             foreach (KPrefabID creature in creatures)
             {
-                if (!creature.HasAnyTags(CreatureNotEligibleTags))
+                if (!creature.HasAnyTags(CreatureNotEligibleTags) && (!filteredCount || treeFilterable.AcceptedTags.Contains(creature.PrefabTag)))
                 {
-                    if (not_count_babies && creature.TryGetComponent<Effects>(out var effects) && effects.HasEffect("IsABaby"))
-                    {
-                        continue;
-                    }
                     storedCreatureCount++;
                 }
             }
@@ -247,14 +240,7 @@ namespace ButcherStation
             if (kill)
                 creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);
             if (creature_go.TryGetComponent<CreatureBrain>(out var brain))
-                GameScheduler.Instance.ScheduleNextFrame(null, ForceUpdateBrain, brain);
-        }
-
-        private static void ForceUpdateBrain(object data)
-        {
-            var brain = data as CreatureBrain;
-            if (brain != null && brain.IsRunning())
-                brain.UpdateBrain();
+                Game.BrainScheduler.PrioritizeBrain(brain);
         }
     }
 }

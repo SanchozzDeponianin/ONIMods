@@ -21,6 +21,6 @@ namespace ButcherStation
 
         [JsonProperty]
         [Option]
-        public bool enable_not_count_babies { get; set; } = false;
+        public bool filtered_count { get; set; } = true;
     }
 }
