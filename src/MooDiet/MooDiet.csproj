@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Gassy Moo Eat Flowers</Title>
     <Description>.</Description>
-    <ModVersion>1.0.0</ModVersion>
+    <ModVersion>1.0.1</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

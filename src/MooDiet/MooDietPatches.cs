@@ -149,22 +149,16 @@ namespace MooDiet
             {
                 блабла чтото там CreatureFeeder кормушка
             }
-
-            var list = ListPool<ScenePartitionerEntry, GameScenePartitioner>.Allocate();
         --- if (diet.eatsPlantsDirectly)
         +++ if (CanEatsPlants(diet))
             {
                 блабла чтото там GameScenePartitioner plants живые растения
-                foreach (blabla in list)
-                ...
-        +++     list.Clear();
         +++     if (CanEatsNonPlants(diet)) goto else;
             }
             else
             {
                 блабла чтото там GameScenePartitioner pickupablesLayer материалы на полу
             }
-            list.Recycle();
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
@@ -179,12 +173,8 @@ namespace MooDiet
                 var canEatsPlants = typeof(HybridDiet).GetMethodSafe(nameof(HybridDiet.CanEatsPlants), true, typeof(Diet));
                 var canEatsNonPlants = typeof(HybridDiet).GetMethodSafe(nameof(HybridDiet.CanEatsNonPlants), true, typeof(Diet));
 
-                var allocate = typeof(ListPool<ScenePartitionerEntry, GameScenePartitioner>).GetMethodSafe("Allocate", true);
-                var clear = typeof(List<ScenePartitionerEntry>).GetMethodSafe("Clear", false);
-
                 if (def_diet == null || diet_eatsPlantsDirectly == null
-                    || notNeedCreatureFeeder == null || canEatsPlants == null || canEatsNonPlants == null
-                    || allocate == null || clear == null)
+                    || notNeedCreatureFeeder == null || canEatsPlants == null || canEatsNonPlants == null)
                     return false;
 
                 int diet_idx = instructions.FindIndex(ins => ins.LoadsField(def_diet));
@@ -200,11 +190,6 @@ namespace MooDiet
                 if (second_idx == -1)
                     return false;
 
-                int allocate_idx = instructions.FindLastIndex(second_idx - 1, ins => ins.Calls(allocate));
-                if (allocate_idx == -1 || !instructions[allocate_idx + 1].IsStloc())
-                    return false;
-                var list_var = TranspilerUtils.GetMatchingLoadInstruction(instructions[allocate_idx + 1]);
-
                 int br_else_idx = instructions.FindIndex(second_idx + 1, ins => ins.Branches(out _));
                 if (br_else_idx == -1)
                     return false;
@@ -214,24 +199,19 @@ namespace MooDiet
                 if (else_idx == -1)
                     return false;
 
-                int leave_foreach_idx = instructions.FindLastIndex(else_idx, ins => ins.opcode == OpCodes.Leave || ins.opcode == OpCodes.Leave_S);
-                if (leave_foreach_idx == -1)
+                int end_if_idx = instructions.FindLastIndex(else_idx, ins =>
+                    ins.opcode == OpCodes.Br || ins.opcode == OpCodes.Br_S || ins.opcode == OpCodes.Ret);
+                if (end_if_idx == -1)
                     return false;
-                var end_if_label = (Label)instructions[leave_foreach_idx].operand;
 
                 instructions[first_idx].opcode = OpCodes.Call;
                 instructions[first_idx].operand = notNeedCreatureFeeder;
                 instructions[second_idx].opcode = OpCodes.Call;
                 instructions[second_idx].operand = canEatsPlants;
 
-                var list_clear_label = IL.DefineLabel();
-                instructions[leave_foreach_idx].operand = list_clear_label;
-                instructions[else_idx].MoveLabelsTo(diet_var);
-                instructions.Insert(else_idx++, list_var.WithLabels(list_clear_label));
-                instructions.Insert(else_idx++, new CodeInstruction(OpCodes.Callvirt, clear));
-                instructions.Insert(else_idx++, diet_var);
-                instructions.Insert(else_idx++, new CodeInstruction(OpCodes.Call, canEatsNonPlants));
-                instructions.Insert(else_idx++, new CodeInstruction(OpCodes.Brfalse, end_if_label));
+                instructions.Insert(end_if_idx++, diet_var);
+                instructions.Insert(end_if_idx++, new CodeInstruction(OpCodes.Call, canEatsNonPlants));
+                instructions.Insert(end_if_idx++, new CodeInstruction(OpCodes.Brtrue, (Label)else_label));
 #if DEBUG
                 PPatchTools.DumpMethodBody(instructions);
 #endif
