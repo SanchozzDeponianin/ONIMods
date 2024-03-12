@@ -96,8 +96,11 @@ namespace TTL
                                 if (call_stack.Pop() != circuitID)
                                     Debug.LogWarning("Unexpected Mismatch circuitID !!!");
                             }
+                            __result += Mathf.Min(nested_power, nested_transformers_power);
+
                             // U51 уже прибавил мощность трансформаторов, придётся отнять для правильного результата
-                            __result += Mathf.Min(nested_power, nested_transformers_power) - nested_transformers_power;
+                            // Похоже Клеи откатили это
+                            //__result += Mathf.Min(nested_power, nested_transformers_power) - nested_transformers_power;
 
                             // если есть FastTrack, он уже прибавил мощность трансформаторов, придётся отнять для правильного результата
                             // todo: проверить как будет влиять FastTrack после релиза U51
