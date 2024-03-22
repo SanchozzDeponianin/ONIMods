@@ -195,7 +195,7 @@ namespace ControlYourRobots
         {
             private static bool Prepare() => ControlYourRobotsOptions.Instance.low_power_mode_enable;
 
-            private static void Postfix(GameStateMachine<IdleStates, IdleStates.Instance, IStateMachineTarget, IdleStates.Def>.State ___loop)
+            private static void Postfix(IdleStates.State ___loop)
             {
                 ___loop.ToggleAttributeModifier("low power mode",
                         smi => IdleBatteryModifiers[smi.PrefabID()],

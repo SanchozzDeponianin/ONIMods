@@ -280,7 +280,7 @@ namespace ButcherStation
         [HarmonyPatch(typeof(BaggedStates), nameof(BaggedStates.InitializeStates))]
         private static class BaggedStates_InitializeStates
         {
-            private static GameStateMachine<BaggedStates, BaggedStates.Instance, IStateMachineTarget, BaggedStates.Def>.State PlayAnimStub(GameStateMachine<BaggedStates, BaggedStates.Instance, IStateMachineTarget, BaggedStates.Def>.State @this, string _1, KAnim.PlayMode _2)
+            private static BaggedStates.State PlayAnimStub(BaggedStates.State @this, string _1, KAnim.PlayMode _2)
             {
                 return @this;
             }
@@ -298,7 +298,7 @@ namespace ButcherStation
             }
             private static bool transpiler(List<CodeInstruction> instructions)
             {
-                var PlayAnim = typeof(GameStateMachine<BaggedStates, BaggedStates.Instance, IStateMachineTarget, BaggedStates.Def>.State).GetMethodSafe("PlayAnim", false, typeof(string), typeof(KAnim.PlayMode));
+                var PlayAnim = typeof(BaggedStates.State).GetMethodSafe("PlayAnim", false, typeof(string), typeof(KAnim.PlayMode));
                 var Stub = typeof(BaggedStates_InitializeStates).GetMethodSafe(nameof(PlayAnimStub), true, PPatchTools.AnyArguments);
                 if (PlayAnim != null && Stub != null)
                 {
