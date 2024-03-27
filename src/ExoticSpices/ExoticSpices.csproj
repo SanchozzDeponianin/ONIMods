@@ -16,7 +16,7 @@
   <PropertyGroup>
     <Title>Festive Halloween Spices</Title>
     <Description>Adds some exotic Spices with extraordinary effects to the Spice Grinder.</Description>
-    <ModVersion>1.0.3</ModVersion>
+    <ModVersion>1.0.4</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
@@ -42,6 +42,7 @@
     <Compile Include="ExoticSpicesAssets.cs" />
     <Compile Include="ExoticSpicesPatches.cs" />
     <Compile Include="STRINGS.cs" />
+    <EmbeddedResource Include="TextAssets/SFXTags_Duplicants.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
