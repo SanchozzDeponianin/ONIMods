@@ -21,6 +21,8 @@ namespace Smelter
         internal const float START_FUEL_MASS = BUILDINGS.FABRICATION_TIME_SECONDS.SHORT * FUEL_CONSUME_RATE;
         private const float CO2_EMIT_RATE = 0.05f;
         private const float CO2_OUTPUT_TEMPERATURE = 120 + Constants.CELSIUS2KELVIN;
+        internal const string ANIM = "smelter_new_kanim";
+        internal const string ANIM_WORK = "anim_interacts_smelter_new_kanim";
 
         private static readonly List<Storage.StoredItemModifier> RefineryStoredItemModifiers = new List<Storage.StoredItemModifier>
         {
@@ -36,7 +38,7 @@ namespace Smelter
                 id: ID,
                 width: 3,
                 height: 3,
-                anim: "smelter_kanim",
+                anim: ANIM,
                 hitpoints: BUILDINGS.HITPOINTS.TIER1,
                 construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER3,
                 construction_mass: new float[] { BUILDINGS.CONSTRUCTION_MASS_KG.TIER3[0], BUILDINGS.CONSTRUCTION_MASS_KG.TIER4[0] },
@@ -99,7 +101,8 @@ namespace Smelter
             manualDeliveryKG.operationalRequirement = Operational.State.Functional;
 
             var workable = go.AddOrGet<SmelterWorkable>();
-            workable.overrideAnims = new KAnimFile[] { Assets.GetAnim("anim_interacts_smelter_kanim") };
+            workable.overrideAnims = new KAnimFile[] { Assets.GetAnim(ANIM_WORK) };
+            workable.workingPstFailed = new HashedString[] { "working_pst_failed" };
 
             var conduitConsumer = go.AddOrGet<ConduitConsumer>();
             conduitConsumer.capacityTag = GameTags.Liquid;

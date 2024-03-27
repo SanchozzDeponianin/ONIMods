@@ -19,12 +19,16 @@ namespace Smelter
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(SmelterPatches));
             new POptions().RegisterOptions(this, typeof(SmelterOptions));
+            new KAnimGroupManager().RegisterInteractAnims(SmelterConfig.ANIM_WORK);
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
-        private static void Localize()
+        private static void BeforeDbInit()
         {
             Utils.InitLocalization(typeof(STRINGS));
+            PGameUtils.CopySoundsToAnim(SmelterConfig.ANIM, "smelter_kanim");
+            Utils.LoadAudioSheet("Smelter.TextAssets.SFXTags_Buildings.txt", "SFXTags_Buildings");
+            Utils.LoadAudioSheet("Smelter.TextAssets.SFXTags_Duplicants.txt", "SFXTags_Duplicants");
         }
 
         [PLibMethod(RunAt.AfterDbInit)]

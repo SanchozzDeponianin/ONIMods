@@ -184,6 +184,8 @@ namespace Smelter
             operational.SetFlag(coolantOutputPipeEmpty, false);
             // брать топливо из выходного хранилища. так как входное для рецептов. чтобы не было путаницы углерода для топлива и стали.
             elementConverter.SetStorage(outStorage);
+            fabricatorSM.idleAnimationName = "on";
+            workable.OnWorkableEventCB += OnWorkableEvent;
             smi = new StatesInstance(this);
             smi.StartSM();
         }
@@ -191,7 +193,20 @@ namespace Smelter
         protected override void OnCleanUp()
         {
             smi.StopSM("cleanup");
+            workable.OnWorkableEventCB -= OnWorkableEvent;
             base.OnCleanUp();
+        }
+
+        // предотвращаем двойное проигрывание анимации вызванное из недр ComplexFabricatorSM
+        private void OnWorkableEvent(Workable workable, Workable.WorkableEvent workable_event)
+        {
+            if (workable_event == global::Workable.WorkableEvent.WorkStopped)
+            {
+                var smi = fabricatorSM.smi;
+                if (!smi.IsNullOrStopped())
+                    smi.GoTo(smi.sm.operating.working_pst_complete);
+                operational.SetActive(false, false);
+            }
         }
 
         public bool HasEnoughFuel()
@@ -272,7 +287,6 @@ namespace Smelter
                     && primaryElement.Temperature >= primaryElement.Element.highTemp)
                     primaryElement.Temperature = primaryElement.Element.highTemp - SimMessages.STATE_TRANSITION_TEMPERATURE_BUFER;
             }
-            operational.SetActive(false, false);
             return results;
         }
 

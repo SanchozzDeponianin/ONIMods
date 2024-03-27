@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 #if USESPLIB
 using PeterHan.PLib.Core;
+using PeterHan.PLib.Detours;
 #endif
 
 namespace SanchozzONIMods.Lib
@@ -297,6 +299,52 @@ namespace SanchozzONIMods.Lib
                 ReplaceAllLocStringTextByDictionary(nestedType, replacementDictionary);
             }
         }
+
+        // загружаем таблицы звуков
+#if USESPLIB
+        private delegate void CreateAllSoundsDelegate(AudioSheets sheet, string animFile, AudioSheet.SoundInfo info, string defaultType);
+        private static readonly DetouredMethod<CreateAllSoundsDelegate> CREATE_SOUND = typeof(PGameUtils).DetourLazy<CreateAllSoundsDelegate>("CreateAllSounds");
+        public static void LoadAudioSheet(string path, string name, string defaultType = "SoundEvent")
+        {
+            var audioSheet = GameAudioSheets.Get();
+#if DEBUG
+            foreach (var sheet in audioSheet.sheets)
+                Debug.Log($"name = {sheet.asset.name} , defaultType = {sheet.defaultType}");
+#endif
+            var assembly = Assembly.GetCallingAssembly();
+            try
+            {
+                using (var stream = assembly.GetManifestResourceStream(path))
+                {
+                    if (stream == null)
+                    {
+                        Debug.LogWarningFormat($"Could not load AudioSheet: {0}", path);
+                        return;
+                    }
+                    using (var reader = new StreamReader(stream, Encoding.UTF8))
+                    {
+                        var text = reader.ReadToEnd();
+                        var soundInfos = new ResourceLoader<AudioSheet.SoundInfo>(text, name).resources;
+                        foreach (var info in soundInfos)
+                        {
+                            try
+                            {
+                                CREATE_SOUND.Invoke(audioSheet, info.File, info, !string.IsNullOrEmpty(info.Type) ? info.Type : defaultType);
+                            }
+                            catch (Exception e)
+                            {
+                                LogExcWarn(e);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                LogExcWarn(e);
+            }
+        }
+#endif
     }
 
     public static class BUILD_CATEGORY

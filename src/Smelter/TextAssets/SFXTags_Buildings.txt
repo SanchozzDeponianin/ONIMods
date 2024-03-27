@@ -1,0 +1,2 @@
+File,Anim,Type,RequiredDlcId,MinInterval,Name0,Frame0,Name1,Frame1,Name2,Frame2,Name3,Frame3,Name4,Frame4,Name5,Frame5,Name6,Frame6,Name7,Frame7,Name8,Frame8,Name9,Frame9,Name10,Frame10,Name11,Frame11
+smelter_new_kanim,working_pst_failed,,,,Smelter_creak_down,12,Smelter_creak_up,55,,,,,,,,,,,,,,,,,,,,
