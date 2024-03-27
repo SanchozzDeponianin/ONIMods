@@ -31,6 +31,7 @@ namespace ExoticSpices
         {
             Utils.InitLocalization(typeof(STRINGS));
             LoadSprites();
+            PGameUtils.CopySoundsToAnim(ANIM_REACT_BUTT_SCRATCH, "anim_react_butt_scratch_kanim");
         }
 
         [PLibMethod(RunAt.AfterDbInit)]
