@@ -105,6 +105,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EndlessTelescope", "Endless
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlYourRobots", "ControlYourRobots\ControlYourRobots.csproj", "{975AB9CB-535B-41EC-9D82-58B923248765}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WakeUpLazyAss", "WakeUpLazyAss\WakeUpLazyAss.csproj", "{98C3FBA1-766E-4800-BE63-88BF3D279F9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|MainlineSteam = Debug|MainlineSteam
@@ -449,6 +451,14 @@ Global
 		{975AB9CB-535B-41EC-9D82-58B923248765}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
 		{975AB9CB-535B-41EC-9D82-58B923248765}.Release|StableBackup.ActiveCfg = Release|StableBackup
 		{975AB9CB-535B-41EC-9D82-58B923248765}.Release|StableBackup.Build.0 = Release|StableBackup
+		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Debug|MainlineSteam.ActiveCfg = Debug|MainlineSteam
+		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Debug|MainlineSteam.Build.0 = Debug|MainlineSteam
+		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Debug|StableBackup.ActiveCfg = Debug|StableBackup
+		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Debug|StableBackup.Build.0 = Debug|StableBackup
+		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Release|MainlineSteam.ActiveCfg = Release|MainlineSteam
+		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Release|MainlineSteam.Build.0 = Release|MainlineSteam
+		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Release|StableBackup.ActiveCfg = Release|StableBackup
+		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Release|StableBackup.Build.0 = Release|StableBackup
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
