@@ -33,7 +33,7 @@ namespace ExoticSpices
             LoadSprites();
             PGameUtils.CopySoundsToAnim(ANIM_REACT_BUTT_SCRATCH, "anim_react_butt_scratch_kanim");
             PGameUtils.CopySoundsToAnim(ANIM_LOCO_ZOMBIE, "anim_loco_new_kanim");
-            Utils.LoadAudioSheet("ExoticSpices.TextAssets.SFXTags_Duplicants.txt", "SFXTags_Duplicants");
+            Utils.LoadEmbeddedAudioSheet("ExoticSpices.AudioSheets.SFXTags_Duplicants.csv", "SFXTags_Duplicants");
         }
 
         [PLibMethod(RunAt.AfterDbInit)]

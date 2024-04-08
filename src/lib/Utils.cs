@@ -304,13 +304,30 @@ namespace SanchozzONIMods.Lib
 #if USESPLIB
         private delegate void CreateAllSoundsDelegate(AudioSheets sheet, string animFile, AudioSheet.SoundInfo info, string defaultType);
         private static readonly DetouredMethod<CreateAllSoundsDelegate> CREATE_SOUND = typeof(PGameUtils).DetourLazy<CreateAllSoundsDelegate>("CreateAllSounds");
-        public static void LoadAudioSheet(string path, string name, string defaultType = "SoundEvent")
+
+        public static void LoadAudioSheet(string csvText, string name, string defaultType)
         {
             var audioSheet = GameAudioSheets.Get();
 #if DEBUG
             foreach (var sheet in audioSheet.sheets)
                 Debug.Log($"name = {sheet.asset.name} , defaultType = {sheet.defaultType}");
 #endif
+            var soundInfos = new ResourceLoader<AudioSheet.SoundInfo>(csvText, name).resources;
+            foreach (var info in soundInfos)
+            {
+                try
+                {
+                    CREATE_SOUND.Invoke(audioSheet, info.File, info, !string.IsNullOrEmpty(info.Type) ? info.Type : defaultType);
+                }
+                catch (Exception e)
+                {
+                    LogExcWarn(e);
+                }
+            }
+        }
+
+        public static void LoadEmbeddedAudioSheet(string path, string name, string defaultType = "SoundEvent")
+        {
             var assembly = Assembly.GetCallingAssembly();
             try
             {
@@ -324,18 +341,7 @@ namespace SanchozzONIMods.Lib
                     using (var reader = new StreamReader(stream, Encoding.UTF8))
                     {
                         var text = reader.ReadToEnd();
-                        var soundInfos = new ResourceLoader<AudioSheet.SoundInfo>(text, name).resources;
-                        foreach (var info in soundInfos)
-                        {
-                            try
-                            {
-                                CREATE_SOUND.Invoke(audioSheet, info.File, info, !string.IsNullOrEmpty(info.Type) ? info.Type : defaultType);
-                            }
-                            catch (Exception e)
-                            {
-                                LogExcWarn(e);
-                            }
-                        }
+                        LoadAudioSheet(text, name, defaultType);
                     }
                 }
             }
@@ -344,7 +350,52 @@ namespace SanchozzONIMods.Lib
                 LogExcWarn(e);
             }
         }
+
+        public static void LoadAudioSheetFromFile(string path, string name, string defaultType = "SoundEvent")
+        {
+            try
+            {
+                if (!File.Exists(path))
+                {
+                    Debug.LogWarningFormat($"Could not load AudioSheet: {0}", path);
+                    return;
+                }
+                var text = File.ReadAllText(path, Encoding.UTF8);
+                LoadAudioSheet(text, name, defaultType);
+            }
+            catch (Exception e)
+            {
+                LogExcWarn(e);
+            }
+        }
 #endif
+
+        // предотвращаем разговоры при проигрывании этих анимаций
+        public static void MuteMouthFlapSpeech(HashedString kanim_file, params HashedString[] anims)
+        {
+            var sheet = GameAudioSheets.Get();
+            var muted_kanims = Traverse.Create(sheet).Field<Dictionary<HashedString, HashSet<HashedString>>>("animsNotAllowedToPlaySpeech").Value;
+            if (!muted_kanims.TryGetValue(kanim_file, out var hashset))
+            {
+                hashset = new HashSet<HashedString>();
+                muted_kanims[kanim_file] = hashset;
+            }
+            foreach (var anim_name in anims)
+                hashset.Add(anim_name);
+        }
+
+        public static void MuteMouthFlapSpeech(params Klei.AI.Emote[] muted_emotes)
+        {
+            foreach (var emote in muted_emotes)
+            {
+                if (emote.AnimSet != null && emote.StepCount > 0)
+                {
+                    HashedString kanim_name = emote.AnimSet.name;
+                    emote.CollectStepAnims(out var anims, 1);
+                    MuteMouthFlapSpeech(kanim_name, anims);
+                }
+            }
+        }
     }
 
     public static class BUILD_CATEGORY

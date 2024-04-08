@@ -42,7 +42,6 @@
     <Compile Include="ExoticSpicesAssets.cs" />
     <Compile Include="ExoticSpicesPatches.cs" />
     <Compile Include="STRINGS.cs" />
-    <EmbeddedResource Include="TextAssets/SFXTags_Duplicants.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

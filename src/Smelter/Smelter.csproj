@@ -40,8 +40,6 @@
     <Compile Include="SmelterConfig.cs" />
     <Compile Include="STRINGS.cs" />
     <Compile Include="SmelterOptions.cs" />
-    <EmbeddedResource Include="TextAssets/SFXTags_Buildings.txt" />
-    <EmbeddedResource Include="TextAssets/SFXTags_Duplicants.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

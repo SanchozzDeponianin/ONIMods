@@ -27,6 +27,14 @@
     </PropertyGroup>
   </Target>
 
+  <!-- вкоряченные ресурсы -->
+  <Target Name="EmbeddedResources" BeforeTargets="PreBuildEvent">
+    <ItemGroup>
+      <EmbeddedResource Include="$(ProjectDir)/sprites/*.png" />
+      <EmbeddedResource Include="$(ProjectDir)/AudioSheets/*.csv" />
+    </ItemGroup>
+  </Target>
+
   <!-- обновляем сведения о сборке -->
   <Target Name="AssemblyInfo" BeforeTargets="PreBuildEvent" Outputs="UpdatedAssemblyInfoFiles">
     <ItemGroup>
