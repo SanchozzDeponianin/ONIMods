@@ -20,8 +20,12 @@ namespace WrangleCarry
             harmony.Patch(typeof(Db).GetMethod(nameof(Db.Initialize)), prefix: new HarmonyMethod(typeof(WrangleCarryPatches), nameof(PatchLater)));
         }
 
+        private const string rage_kanim = "anim_rage_kanim";
+        private static readonly HashedString[] rage_anims = { "idle_pre", "rage_pre", "rage_loop", "rage_loop", "rage_pst", "idle_pst" };
+
         private static void PatchLater()
         {
+            Utils.MuteMouthFlapSpeech(rage_kanim, rage_anims);
             @this.mod.loaded_mod_data.harmony.PatchAll(@this.assembly);
         }
 
@@ -69,14 +73,12 @@ namespace WrangleCarry
         [HarmonyPatch(typeof(Capturable), "OnCompleteWork")]
         private static class Capturable_OnCompleteWork
         {
-            private const string kanim = "anim_rage_kanim";
-            private static readonly HashedString[] anims = { "rage_pre", "rage_loop", "rage_loop", "rage_loop", "rage_pst" };
             private static void Postfix(Capturable __instance, Worker worker)
             {
                 if (__instance.TryGetComponent<Pickupable>(out var pickupable) && pickupable.IsReachable())
                     return;
                 if (worker != null && worker.TryGetComponent<ChoreProvider>(out var provider))
-                    new EmoteChore(provider, Db.Get().ChoreTypes.EmoteHighPriority, kanim, anims);
+                    new EmoteChore(provider, Db.Get().ChoreTypes.EmoteHighPriority, rage_kanim, rage_anims);
             }
         }
 

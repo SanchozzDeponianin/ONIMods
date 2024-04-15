@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Title>Eat every day</Title>
+    <Description>It forces duplicants to eat every day, even at the "no sweat" difficulty level, which guarantees a stable morale bonus.</Description>
+    <ModVersion>1.1.0</ModVersion>
+    <Author>ricvail, Sanchozz</Author>
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -11,12 +17,6 @@
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup>
-    <Title>Eat every day</Title>
-    <Description>It forces duplicants to eat every day, even at the "no sweat" difficulty level, which guarantees a stable morale bonus.</Description>
-    <ModVersion>1.1.0</ModVersion>
-    <Author>ricvail, Sanchozz</Author>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\Utils.cs">

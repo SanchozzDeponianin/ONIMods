@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Title>Rover's Recharger</Title>
+    <Description>Allows you to charge the Rover's battery with chemical fuel</Description>
+    <ModVersion>1.1.0</ModVersion>
+    <SupportedContent>EXPANSION1_ID</SupportedContent>
+    <UsesPLib>true</UsesPLib>
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,13 +19,6 @@
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup>
-    <Title>Rover's Recharger</Title>
-    <Description>Allows you to charge the Rover's battery with chemical fuel</Description>
-    <ModVersion>1.1.0</ModVersion>
-    <SupportedContent>EXPANSION1_ID</SupportedContent>
-    <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\BaseOptions.cs">
