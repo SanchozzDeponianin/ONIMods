@@ -63,14 +63,35 @@
     </ItemGroup>
   </Target>
 
+  <!-- дегенерация публицизированых длл игры -->
+  <Target Name="Publicise" BeforeTargets="PreBuildEvent" Condition=" '$(DistributeMod)' == 'true' And '$(UsesPublicise)' == 'true' " >
+    <ItemGroup>
+      <PubliciseInputAssemblies Include="$(GameFolder)/Assembly-CSharp.dll;$(GameFolder)/Assembly-CSharp-firstpass.dll;" />
+    </ItemGroup>
+    <MakeDir Directories="$(PublicisedFolder)" Condition = "!Exists('$(PublicisedFolder)')" />
+    <Publicise
+		   InputAssemblies="@(PubliciseInputAssemblies)"
+		   OutputPath="$(PublicisedFolder)"
+		   PubliciseCompilerGenerated="false"/>
+  </Target>
+
+  <!-- подчищаем при очистке -->
+  <Target Name="CleanPublicise" AfterTargets="Clean" Condition=" '$(DistributeMod)' == 'true' And '$(UsesPublicise)' == 'true' " >
+    <RemoveDir Directories="$(PublicisedFolder)" Condition="Exists('$(PublicisedFolder)')" />
+  </Target>
+
   <!-- вытаскиваем информацию о версии и ветке из файлов игры. для записи ямлов и вычисления конечного пути -->
   <UsingTask
     Condition=" '$(DistributeMod)' == 'true' "
     TaskName="SanchozzONIMods.GetKleiAssemblyInfo"
     AssemblyFile="$(MSBuildTasksHelperDLL)" />
 
-  <Target Name="GetKleiAssemblyInfo" BeforeTargets="PreBuildEvent" AfterTargets="AssemblyInfo" Condition=" '$(DistributeMod)' == 'true' ">
-    <SanchozzONIMods.GetKleiAssemblyInfo GameFolder="$(GameFolder)" >
+  <Target Name="GetKleiAssemblyInfo" BeforeTargets="PreBuildEvent" AfterTargets="AssemblyInfo;Publicise" Condition=" '$(DistributeMod)' == 'true' ">
+    <PropertyGroup>
+      <AssemblyCSharp Condition=" '$(UsesPublicise)' != 'true' " >$(GameFolder)/Assembly-CSharp.dll</AssemblyCSharp>
+      <AssemblyCSharp Condition=" '$(UsesPublicise)' == 'true' " >$(PublicisedFolder)/Assembly-CSharp_public.dll</AssemblyCSharp>
+    </PropertyGroup>
+    <SanchozzONIMods.GetKleiAssemblyInfo AssemblyCSharp="$(AssemblyCSharp)" >
       <Output TaskParameter="KleiBuildVersion" PropertyName="KleiBuildVersion" />
       <Output TaskParameter="KleiBuildBranch" PropertyName="KleiBuildBranch" />
     </SanchozzONIMods.GetKleiAssemblyInfo>

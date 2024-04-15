@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -19,7 +18,7 @@ namespace SanchozzONIMods
     public class GetKleiAssemblyInfo : Task
     {
         [Required]
-        public string GameFolder { get; set; }
+        public string AssemblyCSharp { get; set; }
 
         [Output]
         public string KleiBuildVersion { get; set; }
@@ -31,10 +30,8 @@ namespace SanchozzONIMods
             bool result = false;
             try
             {
-                var path = Path.Combine(GameFolder, "Assembly-CSharp.dll");
-                Log.LogMessage(MessageImportance.High, $"Reading assembly '{path}'");
-
-                var assembly = Assembly.ReflectionOnlyLoadFrom(path);
+                Log.LogMessage(MessageImportance.High, $"Reading assembly '{AssemblyCSharp}'");
+                var assembly = Assembly.ReflectionOnlyLoadFrom(AssemblyCSharp);
                 var kleiversion = assembly.GetType("KleiVersion", true);
                 KleiBuildVersion = ((uint)kleiversion.GetField("ChangeList").GetRawConstantValue()).ToString();
                 KleiBuildBranch = (string)kleiversion.GetField("BuildBranch").GetRawConstantValue();
