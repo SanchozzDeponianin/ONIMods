@@ -50,7 +50,7 @@ namespace MoreEmotions
                 new EmoteStep{anim = "working_pre"},
                 new EmoteStep{anim = "working_loop"},
                 new EmoteStep{anim = "work_pst"}
-            }, "anim_interrupt_binge_eat_kanim");
+            }, "anim_out_of_reach_binge_eat_kanim");
             HandWipe = new Emote(this, nameof(HandWipe), DEFAULT_STEPS, "anim_react_hand_wipe_kanim");
             Laugh = new Emote(this, nameof(Laugh), DEFAULT_STEPS, "anim_react_laugh_kanim");
             Respect = new Emote(this, nameof(Respect), DEFAULT_STEPS, "anim_react_respect_kanim");

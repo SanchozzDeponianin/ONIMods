@@ -22,6 +22,12 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\lib\BaseOptions.cs">
+      <Link>BaseOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\EffectsExtensions.cs">
+      <Link>EffectsExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\lib\StateMachinesExtensions.cs">
       <Link>StateMachinesExtensions.cs</Link>
     </Compile>
@@ -31,10 +37,13 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="MoreEmotionsEffects.cs" />
+    <Compile Include="MoreEmotionsOptions.cs" />
     <Compile Include="StressCheeringMonitor.cs" />
     <Compile Include="RespectGraveReactable.cs" />
     <Compile Include="MoreMinionEmotes.cs" />
     <Compile Include="MoreEmotionsPatches.cs" />
+    <Compile Include="STRINGS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

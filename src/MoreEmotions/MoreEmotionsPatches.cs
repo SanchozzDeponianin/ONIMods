@@ -1,20 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Database;
 using Klei.AI;
 using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
+using PeterHan.PLib.PatchManager;
+using PeterHan.PLib.Options;
 
 namespace MoreEmotions
 {
+    using static MoreEmotionsEffects;
+
     internal sealed class MoreEmotionsPatches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             Utils.LogModVersion();
             base.OnLoad(harmony);
+            new PPatchManager(harmony).RegisterPatchClass(typeof(MoreEmotionsPatches));
+            new POptions().RegisterOptions(this, typeof(MoreEmotionsOptions));
         }
 
         // todo: опции для включения и шансов
@@ -24,15 +29,25 @@ namespace MoreEmotions
         // * объсмеяние laugh
         // * сожалениё putoff
         // * приветствия fistbump и highfive
+        // * проверить звуки на успокаивании stressed и cheering
 
-        [HarmonyPatch(typeof(Emotes), MethodType.Constructor)]
-        [HarmonyPatch(new Type[] { typeof(ResourceSet) })]
-        private static class Emotes_Constructor
+        [PLibMethod(RunAt.BeforeDbInit)]
+        private static void BeforeDbInit()
         {
-            private static void Postfix(Emotes __instance)
-            {
-                new MoreMinionEmotes(__instance);
-            }
+            Utils.InitLocalization(typeof(STRINGS));
+        }
+
+        [PLibMethod(RunAt.AfterDbInit)]
+        private static void AfterDbInit()
+        {
+            new MoreMinionEmotes(Db.Get().Emotes);
+            Init();
+#if DEBUG
+            // чтобы можно было тестить эмоции через MoveTo
+            var choreTypes = Db.Get().ChoreTypes;
+            choreTypes.MoveTo.priority = choreTypes.Hug.priority;
+            choreTypes.MoveTo.explicitPriority = choreTypes.Hug.explicitPriority;
+#endif
         }
 
         internal static bool ReactorIsOnFloor(GameObject _, Navigator.ActiveTransition transition)
@@ -59,15 +74,24 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(BladderMonitor), nameof(BladderMonitor.InitializeStates))]
         private static class BladderMonitor_InitializeStates
         {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.full_bladder_emote || MoreEmotionsOptions.Instance.full_bladder_laugh;
+
             private static void Postfix(BladderMonitor __instance)
             {
-                __instance.urgentwant.wanting.ToggleReactable(CreateSelfReactable);
-                __instance.urgentwant.peeing.ToggleReactable(CreatePasserbyReactable);
+                if (MoreEmotionsOptions.Instance.full_bladder_emote)
+                    __instance.urgentwant.wanting.ToggleReactable(CreateSelfReactable);
+                if (MoreEmotionsOptions.Instance.full_bladder_laugh)
+                    __instance.urgentwant.peeing
+                        .ToggleReactable(CreatePasserbyReactable)
+                        .ToggleReactable(CreatePasserbyReactable)
+                        .ToggleReactable(CreatePasserbyReactable)
+                        .ToggleReactable(CreatePasserbyReactable)
+                        .ToggleReactable(CreatePasserbyReactable);
             }
 
             private static Reactable CreateSelfReactable(BladderMonitor.Instance smi)
             {
-                const float cooldown = TUNING.DUPLICANTSTATS.PEE_FUSE_TIME / 4f;
+                const float cooldown = 0.25f * TUNING.DUPLICANTSTATS.PEE_FUSE_TIME;
                 var reactable = new SelfEmoteReactable(smi.master.gameObject, "FullBladder", Db.Get().ChoreTypes.EmoteHighPriority, 0f, cooldown)
                     .SetEmote(MoreMinionEmotes.Instance.FullBladder)
                     .AddPrecondition(ReactorIsOnFloor);
@@ -79,20 +103,18 @@ namespace MoreEmotions
             {
                 void AddEffect(GameObject reactor)
                 {
-                    // todo: добавление эффекта
-                    /*
-                    if (!smi.IsNullOrDestroyed() && !smi.gameObject.IsNullOrDestroyed() && smi.gameObject.TryGetComponent(out Effects effects))
-                        effects.Add();
-                    */
+                    if (MoreEmotionsOptions.Instance.full_bladder_add_effect
+                        && !smi.IsNullOrDestroyed() && !smi.gameObject.IsNullOrDestroyed()
+                        && smi.gameObject.TryGetComponent(out Effects effects))
+                        effects.AddOrExtend(FullBladderLaugh, true);
                 }
 
                 if (smi.IsPeeing() && smi.GetComponent<ChoreDriver>().GetCurrentChore() is PeeChore)
                 {
-                    var reactable = new EmoteReactable(smi.gameObject, "PeeLaugh", Db.Get().ChoreTypes.EmoteHighPriority, 7, 5)
+                    var reactable = new EmoteReactable(smi.gameObject, "PeeLaugh", Db.Get().ChoreTypes.EmoteHighPriority, 9, 5)
                         .SetEmote(MoreMinionEmotes.Instance.Laugh)
                         .RegisterEmoteStepCallbacks("react", AddEffect, null)
-                        .AddPrecondition(ReactorIsOnFloor)
-                        .AddPrecondition((reactor, transition) => ReactorIsFacingMe(smi.gameObject, reactor));
+                        .AddPrecondition(ReactorIsOnFloor);
                     reactable.preventChoreInterruption = true;
                     return reactable;
                 }
@@ -104,6 +126,8 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(CalorieMonitor), nameof(CalorieMonitor.InitializeStates))]
         private static class CalorieMonitor_InitializeStates
         {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.starvation_emote;
+
             private static void Postfix(CalorieMonitor __instance)
             {
                 __instance.hungry.starving.ToggleReactable(CreateSelfReactable);
@@ -111,7 +135,7 @@ namespace MoreEmotions
 
             private static Reactable CreateSelfReactable(CalorieMonitor.Instance smi)
             {
-                const float cooldown = 60f;
+                const float cooldown = 0.1f * Constants.SECONDS_PER_CYCLE;
                 var reactable = new SelfEmoteReactable(smi.master.gameObject, "EatHand", Db.Get().ChoreTypes.EmoteHighPriority, 0f, cooldown)
                     .SetEmote(MoreMinionEmotes.Instance.EatHand)
                     .AddPrecondition(ReactorIsOnFloor);
@@ -124,6 +148,7 @@ namespace MoreEmotions
         [HarmonyPatch]
         private static class StressEmoteChore_StatesInstance_Constructor
         {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.alternative_binge_eat_emote;
             private static MethodBase TargetMethod() => typeof(StressEmoteChore.StatesInstance).GetConstructors()[0];
 
             private static HashedString orig_emote_kanim = "anim_interrupt_binge_eat_kanim";
@@ -150,6 +175,8 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(HandSanitizer.Work), "OnCompleteWork")]
         private static class HandSanitizer_Work_OnCompleteWork
         {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.wet_hands_emote;
+
             private static void Postfix(HandSanitizer.Work __instance, Worker worker)
             {
                 if (UnityEngine.Random.value < 0.25f)
@@ -164,6 +191,8 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(Moppable), "OnStopWork")]
         private static class Moppable_OnCompleteWork
         {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.wet_hands_emote;
+
             private static void Postfix(Worker worker)
             {
                 if (UnityEngine.Random.value < 0.25f)
@@ -176,17 +205,33 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(DeathMonitor), nameof(DeathMonitor.InitializeStates))]
         private static class DeathMonitor_InitializeStates
         {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.saw_corpse_emote;
+
             private static void Postfix(DeathMonitor __instance)
             {
                 __instance.dead.ToggleReactable(CreatePasserbyReactable);
             }
 
+            private static void AddEffect(GameObject reactor)
+            {
+                if (MoreEmotionsOptions.Instance.saw_corpse_add_effect
+                    && !reactor.IsNullOrDestroyed() && reactor.TryGetComponent(out Effects effects))
+                    effects.Add(SawCorpse, true);
+            }
+
             private static Reactable CreatePasserbyReactable(DeathMonitor.Instance smi)
             {
-                var reactable = new EmoteReactable(smi.gameObject, "Respect_Corpse", Db.Get().ChoreTypes.EmoteHighPriority, 7, 5)
+                var reactable = new EmoteReactable(
+                        gameObject: smi.gameObject,
+                        id: "Saw_Corpse",
+                        chore_type: Db.Get().ChoreTypes.EmoteHighPriority,
+                        range_width: 7,
+                        range_height: 5,
+                        globalCooldown: 0f,
+                        localCooldown: 30f)
                     .SetEmote(MoreMinionEmotes.Instance.PutOff)
+                    .RegisterEmoteStepCallbacks("putoff_pre", null, AddEffect)
                     .AddPrecondition(ReactorIsOnFloor)
-                    .AddPrecondition((reactor, transition) => ReactorIsFacingMe(smi.gameObject, reactor))
                     .AddPrecondition((reactor, transition) => ReactorNotCarryMe(smi.gameObject, reactor));
                 reactable.preventChoreInterruption = true;
                 return reactable;
@@ -196,6 +241,8 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(Grave.States), nameof(Grave.States.InitializeStates))]
         private static class Grave_States_InitializeStates
         {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.respect_grave_emote;
+
             private static void Postfix(Grave.States __instance)
             {
                 __instance.full.ToggleReactable(CreatePasserbyReactable);
@@ -204,10 +251,8 @@ namespace MoreEmotions
             private static Reactable CreatePasserbyReactable(Grave.StatesInstance smi)
             {
                 var reactable = new RespectGraveReactable(smi.gameObject)
-                    .AddPrecondition(ReactorIsOnFloor)
-                    .AddPrecondition((reactor, transition) => ReactorIsFacingMe(smi.gameObject, reactor));
+                    .AddPrecondition(ReactorIsOnFloor);
                 reactable.preventChoreInterruption = true;
-                reactable.Begin(null); // для выставления таймаута
                 return reactable;
             }
         }
@@ -216,6 +261,8 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(StressBehaviourMonitor), nameof(StressBehaviourMonitor.InitializeStates))]
         private static class StressBehaviourMonitor_InitializeStates
         {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.stress_cheering;
+
             private static void Postfix(StressBehaviourMonitor __instance)
             {
                 __instance.stressed.tierOne.ToggleStateMachine(smi => new StressCheeringMonitor.Instance(smi.master));
@@ -240,6 +287,8 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(DupeGreetingManager), nameof(DupeGreetingManager.BeginNewGreeting))]
         private static class DupeGreetingManager_BeginNewGreeting
         {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.double_greeting;
+
             private const float LocalCooldown = 20f;
             private static HashedString ReactableId = "NavigatorPassingGreeting";
             private static List<Emote> new_emotes;
@@ -256,20 +305,20 @@ namespace MoreEmotions
 
             private static Reactable GetReactable(MinionIdentity minion, Emote emote, Action<GameObject> onstart_cb, Reactable.ReactablePrecondition precondition)
             {
-                var reactable = new SelfEmoteReactable(minion.gameObject, ReactableId, Db.Get().ChoreTypes.Emote, 1000f, LocalCooldown, float.PositiveInfinity)
+                var reactable = new SelfEmoteReactable(minion.gameObject, ReactableId, Db.Get().ChoreTypes.Emote, 1000f, LocalCooldown)
                     .SetEmote(emote).SetThought(Db.Get().Thoughts.Chatty)
                     .RegisterEmoteStepCallbacks("react_l", onstart_cb, null)
                     //.RegisterEmoteStepCallbacks("react_l", DEBUG_PAUSE, null)
                     .AddPrecondition(precondition);
                 return reactable;
             }
-
+#if DEBUG
             private static void DEBUG_PAUSE(GameObject go)
             {
                 if (!SpeedControlScreen.Instance.IsPaused)
                     SpeedControlScreen.Instance.TogglePause(false);
             }
-
+#endif
             private static bool Prefix(MinionIdentity minion_a, MinionIdentity minion_b, int cell, DupeGreetingManager __instance)
             {
                 // затычка чтобы не создавались 100500 приветствий когда множество дуплей тусуются в одной области
