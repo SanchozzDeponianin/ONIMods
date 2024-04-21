@@ -31,6 +31,36 @@ namespace SanchozzONIMods.Lib
             return effectInstance;
         }
 
+        public static EffectInstance AddOrExtend(this Effects effects, string id, bool should_save, float duration)
+        {
+            return effects.AddOrExtend((HashedString)id, should_save, duration);
+        }
+
+        public static EffectInstance AddOrExtend(this Effects effects, HashedString id, bool should_save, float duration)
+        {
+            var effect = Db.Get().effects.TryGet(id);
+            if (effect != null)
+                return effects.AddOrExtend(effect, should_save, duration);
+            else
+            {
+                Debug.LogWarningFormat("Could not find Effect: {0}", id);
+                return null;
+            }
+        }
+
+        public static EffectInstance AddOrExtend(this Effects effects, Effect effect, bool should_save, float duration)
+        {
+            var effectInstance = effects.Get(effect);
+            if (effectInstance == null)
+            {
+                effectInstance = effects.Add(effect, should_save);
+                effectInstance.timeRemaining = duration;
+            }
+            else
+                effectInstance.timeRemaining += duration;
+            return effectInstance;
+        }
+
 #if false
         public static void AddEffectToAllLiveMinions(string effect_id, bool should_save, bool extend = false)
         {

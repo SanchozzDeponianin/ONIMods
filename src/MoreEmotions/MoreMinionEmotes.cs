@@ -23,6 +23,7 @@ namespace MoreEmotions
             new EmoteStep{anim = "working_pst"}
         };
 
+        public Emote Kick;
         public Emote FullBladder;
         public Emote EatHand;
         public Emote HandWipe;
@@ -44,6 +45,12 @@ namespace MoreEmotions
 
         private void InitializeEmotes()
         {
+            Kick = new Emote(this, nameof(Kick), new EmoteStep[]
+            {
+                new EmoteStep{anim = "kick_pre"},
+                new EmoteStep{anim = "kick_loop"},
+                new EmoteStep{anim = "kick_pst"}
+            }, "anim_emotes_default_kanim");
             FullBladder = new Emote(this, nameof(FullBladder), DEFAULT_IDLE_STEPS, "anim_idle_bladder_kanim");
             EatHand = new Emote(this, nameof(EatHand), new EmoteStep[]
             {

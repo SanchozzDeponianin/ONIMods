@@ -22,8 +22,6 @@ namespace MoreEmotions
             new POptions().RegisterOptions(this, typeof(MoreEmotionsOptions));
         }
 
-        // todo: опции для включения и шансов
-
         // todo: добавить звуки к анимациям (сложна)
         // * терпёжъ bladder
         // * объсмеяние laugh
@@ -67,6 +65,53 @@ namespace MoreEmotions
             if (reactable.TryGetComponent(out Pickupable pickupable) && pickupable.storage != null && pickupable.storage.gameObject == reactor)
                 return false;
             return true;
+        }
+
+        // пинать нарколептика
+        public static GameHashes SleepDisturbedByKick = (GameHashes)Hash.SDBMLower(nameof(SleepDisturbedByKick));
+
+        [HarmonyPatch(typeof(SleepChore.States), nameof(SleepChore.States.InitializeStates))]
+        private static class SleepChore_States_InitializeStates
+        {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.wake_up_lazy_ass;
+
+            private static void Postfix(SleepChore.States __instance)
+            {
+                var not_so_uninterruptable = __instance.CreateState("not_so_uninterruptable", __instance.sleep.uninterruptable);
+                var interrupt_kick = __instance.CreateState("interrupt_kick", __instance.sleep.uninterruptable);
+                var interrupt_kick_and_sleep_again = __instance.CreateState("interrupt_kick_and_sleep_again", __instance.sleep.uninterruptable);
+
+                __instance.sleep.uninterruptable
+                    .DefaultState(not_so_uninterruptable)
+                    .ToggleReactable(smi => new KickLazyAssReactable(smi.gameObject));
+
+                not_so_uninterruptable
+                    .QueueAnim("working_loop", true)
+                    .EventHandler(SleepDisturbedByKick, smi =>
+                    {
+                        if (smi.gameObject.TryGetComponent(out Schedulable schedulable)
+                            && schedulable.IsAllowed(Db.Get().ScheduleBlockTypes.Sleep))
+                        {
+                            smi.GoTo(interrupt_kick_and_sleep_again);
+                            return;
+                        }
+                        var stamina = Db.Get().Amounts.Stamina.Lookup(smi.gameObject);
+                        if (stamina != null && stamina.value < stamina.GetMax() * 0.2f)
+                        {
+                            smi.GoTo(interrupt_kick_and_sleep_again);
+                            return;
+                        }
+                        smi.GoTo(interrupt_kick);
+                    });
+
+                interrupt_kick
+                    .QueueAnim("working_pst")
+                    .OnAnimQueueComplete(__instance.success);
+
+                interrupt_kick_and_sleep_again
+                    .QueueAnim("interrupt_light")
+                    .OnAnimQueueComplete(not_so_uninterruptable);
+            }
         }
 
         // а) очень хочет в сортир
@@ -201,7 +246,6 @@ namespace MoreEmotions
         }
 
         // скорьбь а) возле трупа б) возле могилы
-        // todo: добавление эффектов
         [HarmonyPatch(typeof(DeathMonitor), nameof(DeathMonitor.InitializeStates))]
         private static class DeathMonitor_InitializeStates
         {
