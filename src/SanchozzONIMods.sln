@@ -105,7 +105,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EndlessTelescope", "Endless
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlYourRobots", "ControlYourRobots\ControlYourRobots.csproj", "{975AB9CB-535B-41EC-9D82-58B923248765}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WakeUpLazyAss", "WakeUpLazyAss\WakeUpLazyAss.csproj", "{98C3FBA1-766E-4800-BE63-88BF3D279F9A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreEmotions", "MoreEmotions\MoreEmotions.csproj", "{F77D9FA9-32B4-4DA2-B5A7-3E6570823AEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -451,14 +451,14 @@ Global
 		{975AB9CB-535B-41EC-9D82-58B923248765}.Release|Backup.Build.0 = Release|Backup
 		{975AB9CB-535B-41EC-9D82-58B923248765}.Release|Steam.ActiveCfg = Release|Steam
 		{975AB9CB-535B-41EC-9D82-58B923248765}.Release|Steam.Build.0 = Release|Steam
-		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Debug|Backup.ActiveCfg = Debug|Backup
-		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Debug|Backup.Build.0 = Debug|Backup
-		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Debug|Steam.ActiveCfg = Debug|Steam
-		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Debug|Steam.Build.0 = Debug|Steam
-		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Release|Backup.ActiveCfg = Release|Backup
-		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Release|Backup.Build.0 = Release|Backup
-		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Release|Steam.ActiveCfg = Release|Steam
-		{98C3FBA1-766E-4800-BE63-88BF3D279F9A}.Release|Steam.Build.0 = Release|Steam
+		{F77D9FA9-32B4-4DA2-B5A7-3E6570823AEB}.Debug|Backup.ActiveCfg = Debug|Backup
+		{F77D9FA9-32B4-4DA2-B5A7-3E6570823AEB}.Debug|Backup.Build.0 = Debug|Backup
+		{F77D9FA9-32B4-4DA2-B5A7-3E6570823AEB}.Debug|Steam.ActiveCfg = Debug|Steam
+		{F77D9FA9-32B4-4DA2-B5A7-3E6570823AEB}.Debug|Steam.Build.0 = Debug|Steam
+		{F77D9FA9-32B4-4DA2-B5A7-3E6570823AEB}.Release|Backup.ActiveCfg = Release|Backup
+		{F77D9FA9-32B4-4DA2-B5A7-3E6570823AEB}.Release|Backup.Build.0 = Release|Backup
+		{F77D9FA9-32B4-4DA2-B5A7-3E6570823AEB}.Release|Steam.ActiveCfg = Release|Steam
+		{F77D9FA9-32B4-4DA2-B5A7-3E6570823AEB}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
