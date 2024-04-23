@@ -40,6 +40,7 @@ namespace MoreEmotions
         {
             new MoreMinionEmotes(Db.Get().Emotes);
             Init();
+            STRINGS.PostProcess();
 #if DEBUG
             // чтобы можно было тестить эмоции через MoveTo
             var choreTypes = Db.Get().ChoreTypes;
@@ -131,7 +132,7 @@ namespace MoreEmotions
                         .ToggleReactable(CreatePasserbyReactable)
                         .ToggleReactable(CreatePasserbyReactable)
                         .ToggleReactable(CreatePasserbyReactable)
-                        .ToggleReactable(CreatePasserbyReactable);
+                        .ToggleReactable(CreatePasserbyReactable); // чтобы сразу несколько дуплей могли среагировать
             }
 
             private static Reactable CreateSelfReactable(BladderMonitor.Instance smi)
@@ -253,7 +254,11 @@ namespace MoreEmotions
 
             private static void Postfix(DeathMonitor __instance)
             {
-                __instance.dead.ToggleReactable(CreatePasserbyReactable);
+                __instance.dead
+                    .ToggleReactable(CreatePasserbyReactable)
+                    .ToggleReactable(CreatePasserbyReactable)
+                    .ToggleReactable(CreatePasserbyReactable)
+                    .ToggleReactable(CreatePasserbyReactable); // чтобы сразу несколько дуплей могли среагировать
             }
 
             private static void AddEffect(GameObject reactor)

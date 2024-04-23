@@ -16,6 +16,10 @@ namespace MoreEmotions
         [Option]
         public bool stress_cheering { get; set; } = true;
 
+        [JsonIgnore]
+        [Option]
+        public LocText stress_cheering_effect { get; set; }
+
         [JsonProperty]
         [Option]
         public bool double_greeting { get; set; } = true;

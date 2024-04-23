@@ -170,6 +170,11 @@ namespace SanchozzONIMods.Lib
             AccessTools.Method(locstring_tree_root, "DoReplacement", new Type[0])
                 ?.Invoke(null, null);
 
+            CreateOptionsLocStringKeys(locstring_tree_root);
+        }
+
+        public static void CreateOptionsLocStringKeys(Type locstring_tree_root)
+        { 
             // дополнительно создаем ключи специально для опций.
             // ключи должны получиться в формате 
             // "STRINGS.{Namespace}.OPTIONS.{Name}.XXX"

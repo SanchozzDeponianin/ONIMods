@@ -146,8 +146,8 @@ namespace MoreEmotions
                     range_width: 7,
                     range_height: 1,
                     globalCooldown: 30f,
-                    localCooldown: StressedCheering.duration,
-                    max_initial_delay: 1.5f * StressedCheering.duration)
+                    localCooldown: 60f,
+                    max_initial_delay: StressedCheering.duration)
                 .SetEmote(MoreMinionEmotes.Instance.Cheering)
                 .RegisterEmoteStepCallbacks("working_pre", smi.CheeringStart, null)
                 .RegisterEmoteStepCallbacks("working_loop", smi.CheeringCheck, null)
