@@ -1,16 +1,18 @@
-﻿namespace ControlYourRobots
+﻿using Klei.AI;
+
+namespace ControlYourRobots
 {
-    // мимикриацция под MinionAssignablesProxy для внедрения в контроль дверей
+    // мимикриацция под MinionAssignablesProxy для внедрения в контроль дверей и экран приоритетов
     // один прокси-объект для всех роботов одного типа
     // методы OnЧетотам переопределены для избежания создания и верчения ненужными нам сущностями
 
     using handler = EventSystem.IntraObjectHandler<RobotAssignablesProxy>;
-    public class RobotAssignablesProxy : MinionAssignablesProxy
+    public class RobotAssignablesProxy : MinionAssignablesProxy, IPersonalPriorityManager
     {
         private static readonly handler OnQueueDestroyObjectDelegate = new handler((cmp, data) => cmp.OnQueueDestroyObject(data));
         public static Components.Cmps<RobotAssignablesProxy> Cmps = new Components.Cmps<RobotAssignablesProxy>();
         private static object @lock = new object();
-        SchedulerHandle handle;
+        private SchedulerHandle handle;
 
         public Tag PrefabID
         {
@@ -105,6 +107,53 @@
                 return proxy.TargetInstanceID;
             else
                 return TryAdd(Instantiate(prefabID)).TargetInstanceID;
+        }
+
+        public int GetAssociatedSkillLevel(ChoreGroup group)
+        {
+            foreach (var rppp in RobotPersonalPriorityProxy.Cmps.Items)
+                if (PrefabID == rppp.PrefabID)
+                    return rppp.consumer.GetAssociatedSkillLevel(group);
+            return 0;
+        }
+
+        public int GetPersonalPriority(ChoreGroup group)
+        {
+            foreach (var rppp in RobotPersonalPriorityProxy.Cmps.Items)
+                if (PrefabID == rppp.PrefabID)
+                    return rppp.consumer.GetPersonalPriority(group);
+            return ChoreConsumer.DEFAULT_PERSONAL_CHORE_PRIORITY;
+        }
+
+        public void SetPersonalPriority(ChoreGroup group, int value)
+        {
+            foreach (var rppp in RobotPersonalPriorityProxy.Cmps.Items)
+                if (PrefabID == rppp.PrefabID)
+                    rppp.consumer.SetPersonalPriority(group, value);
+        }
+
+        public bool IsChoreGroupDisabled(ChoreGroup group)
+        {
+            foreach (var rppp in RobotPersonalPriorityProxy.Cmps.Items)
+                if (PrefabID == rppp.PrefabID)
+                    return rppp.consumer.IsChoreGroupDisabled(group);
+            return false;
+        }
+
+        public bool IsChoreGroupDisabled(ChoreGroup group, out Trait disablingTrait)
+        {
+            foreach (var rppp in RobotPersonalPriorityProxy.Cmps.Items)
+                if (PrefabID == rppp.PrefabID)
+                    return rppp.traits.IsChoreGroupDisabled(group, out disablingTrait);
+            disablingTrait = null;
+            return false;
+        }
+
+        public void ResetPersonalPriorities()
+        {
+            foreach (var rppp in RobotPersonalPriorityProxy.Cmps.Items)
+                if (PrefabID == rppp.PrefabID)
+                    rppp.consumer.ResetPersonalPriorities();
         }
     }
 }

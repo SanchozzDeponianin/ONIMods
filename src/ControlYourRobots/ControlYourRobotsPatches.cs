@@ -4,10 +4,12 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Klei.AI;
+using STRINGS;
 using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
+using PeterHan.PLib.Detours;
 using PeterHan.PLib.PatchManager;
 using PeterHan.PLib.Options;
 
@@ -49,6 +51,14 @@ namespace ControlYourRobots
                     float rate = batteryDepletionRate * (1f - ControlYourRobotsOptions.Instance.low_power_mode_value / 100f);
                     IdleBatteryModifiers[id] = new AttributeModifier(batteryType.deltaAttribute.Id, rate,
                         global::STRINGS.CREATURES.STATUSITEMS.IDLE.NAME);
+                }
+                __result.AddOrGet<RobotPersonalPriorityProxy>();
+                // поправим небольшой косячок клеев
+                if (DlcManager.FeatureClusterSpaceEnabled())
+                {
+                    var trait = Db.Get().traits.TryGet(id + "BaseTrait");
+                    if (trait != null)
+                        trait.disabledChoreGroups = trait.disabledChoreGroups.AddItem(Db.Get().ChoreGroups.Rocketry).ToArray();
                 }
             }
         }
@@ -292,6 +302,211 @@ namespace ControlYourRobots
                         }
                     }
                 }
+            }
+        }
+
+        // далее: для внедрения в экран приоритетов
+
+        [HarmonyPatch(typeof(TableRow), nameof(TableRow.ConfigureContent))]
+        private static class TableRow_ConfigureContent
+        {
+            private static void Prefix(TableRow __instance, IAssignableIdentity minion)
+            {
+                if (minion is RobotAssignablesProxy)
+                    __instance.rowType = TableRow.RowType.Minion;
+            }
+        }
+
+        [HarmonyPatch(typeof(JobsTableScreen), "GetPriorityManager")]
+        private static class JobsTableScreen_GetPriorityManager
+        {
+            private static void Postfix(TableRow row, ref IPersonalPriorityManager __result)
+            {
+                if (__result == null && row.rowType == TableRow.RowType.Minion && row.GetIdentity() is RobotAssignablesProxy proxy)
+                {
+                    __result = proxy;
+                }
+            }
+        }
+
+        // внедряемся в экран приоритетов
+        [HarmonyPatch(typeof(TableScreen), "RefreshRows")]
+        private static class TableScreen_RefreshRows
+        {
+            private static Action<TableScreen, IAssignableIdentity> AddRow = typeof(TableScreen).Detour<Action<TableScreen, IAssignableIdentity>>("AddRow");
+
+            private static void Inject(TableScreen screen)
+            {
+                if (screen is JobsTableScreen)
+                {
+                    // не добавлять если все гоботы уничтожены
+                    foreach (var proxy in RobotAssignablesProxy.Cmps.Items)
+                    {
+                        if (proxy != null)
+                        {
+                            foreach (var rppp in RobotPersonalPriorityProxy.Cmps.Items)
+                            {
+                                if (rppp != null && rppp.PrefabID == proxy.PrefabID)
+                                {
+                                    AddRow(screen, proxy);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var cmi = typeof(ClusterManager).GetFieldSafe(nameof(ClusterManager.Instance), true);
+                var inject = typeof(TableScreen_RefreshRows).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments);
+                if (cmi != null && inject != null)
+                {
+                    int i = instructions.FindIndex(ins => ins.LoadsField(cmi));
+                    if (i != -1)
+                    {
+                        var Ldfld_cmi = instructions[i];
+                        instructions.Insert(i++, new CodeInstruction(OpCodes.Ldarg_0).MoveLabelsFrom(Ldfld_cmi).MoveBlocksFrom(Ldfld_cmi));
+                        instructions.Insert(i++, new CodeInstruction(OpCodes.Call, inject));
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        // тоолтипы для гоботов
+        [HarmonyPatch(typeof(JobsTableScreen), "HoverPersonalPriority")]
+        private static class JobsTableScreen_HoverPersonalPriority
+        {
+            private static Func<TableScreen, GameObject, TableRow> GetWidgetRow
+                = typeof(TableScreen).Detour<Func<TableScreen, GameObject, TableRow>>("GetWidgetRow");
+
+            private static Func<TableScreen, GameObject, TableColumn> GetWidgetColumn
+                = typeof(TableScreen).Detour<Func<TableScreen, GameObject, TableColumn>>("GetWidgetColumn");
+
+            private static Func<JobsTableScreen, int, LocString> GetPriorityStr
+                = typeof(JobsTableScreen).Detour<Func<JobsTableScreen, int, LocString>>("GetPriorityStr");
+
+            private static Func<JobsTableScreen, int, string> GetPriorityValue
+                = typeof(JobsTableScreen).Detour<Func<JobsTableScreen, int, string>>("GetPriorityValue");
+
+            private static Func<JobsTableScreen, string> GetUsageString
+                = typeof(JobsTableScreen).Detour<Func<JobsTableScreen, string>>("GetUsageString");
+
+            private static void Postfix(object widget_go_obj, JobsTableScreen __instance, ref string __result)
+            {
+                if (!string.IsNullOrEmpty(__result))
+                    return;
+                var go = widget_go_obj as GameObject;
+                var row = GetWidgetRow(__instance, go);
+                if (row.rowType != TableRow.RowType.Minion)
+                    return;
+                var proxy = row.GetIdentity() as RobotAssignablesProxy;
+                if (proxy == null)
+                    return;
+                var group = (GetWidgetColumn(__instance, go) as PrioritizationGroupTableColumn).userData as ChoreGroup;
+                var toolTip = go.GetComponentInChildren<ToolTip>();
+                string text;
+                if (proxy.IsChoreGroupDisabled(group, out var trait))
+                {
+                    text = UI.JOBSSCREEN.TRAIT_DISABLED.ToString()
+                        .Replace("{Name}", proxy.GetProperName())
+                        .Replace("{Job}", group.Name)
+                        .Replace("{Trait}", trait.Name);
+                    toolTip.ClearMultiStringTooltip();
+                    toolTip.AddMultiStringTooltip(text, null);
+                }
+                else
+                {
+                    int priority = proxy.GetPersonalPriority(group);
+                    text = UI.JOBSSCREEN.ITEM_TOOLTIP.ToString()
+                        .Replace("{Name}", row.name)
+                        .Replace("{Job}", group.Name)
+                        .Replace("{Priority}", GetPriorityStr(__instance, priority))
+                        .Replace("{PriorityValue}", GetPriorityValue(__instance, priority));
+                    toolTip.ClearMultiStringTooltip();
+                    toolTip.AddMultiStringTooltip(text, null);
+                    text = "\n" + UI.JOBSSCREEN.MINION_SKILL_TOOLTIP.ToString()
+                        .Replace("{Name}", proxy.GetProperName())
+                        .Replace("{Attribute}", group.attribute.Name);
+                    text += GameUtil.ColourizeString(__instance.TooltipTextStyle_Ability.textColor, proxy.GetAssociatedSkillLevel(group).ToString());
+                    toolTip.AddMultiStringTooltip(text, null);
+                    toolTip.AddMultiStringTooltip(UI.HORIZONTAL_RULE + "\n" + GetUsageString(__instance), null);
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(TableScreen), "SortRows")]
+        private static class TableScreen_SortRows
+        {
+            // предотвращение краша
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
+            {
+                return TranspilerUtils.Wrap(instructions, original, IL, transpiler);
+            }
+            /*
+                пропускаем эти вызовы методов если переменная является RobotAssignablesProxy
+                myWorld = keyValuePair.Key
+                --- .GetSoleOwner()
+                --- .GetComponent<MinionAssignablesProxy>()
+                    .GetTargetGameObject()
+                    .GetComponent<KMonoBehaviour>()
+                    .GetMyWorld();
+            */
+            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
+            {
+                var GetSoleOwner = typeof(IAssignableIdentity).GetMethodSafe(nameof(IAssignableIdentity.GetSoleOwner), false);
+                var GetTargetGameObject = typeof(MinionAssignablesProxy).GetMethodSafe(nameof(MinionAssignablesProxy.GetTargetGameObject), false);
+                if (GetSoleOwner != null && GetTargetGameObject != null)
+                {
+                    int i = instructions.FindIndex(ins => ins.Calls(GetSoleOwner));
+                    int j = instructions.FindIndex(ins => ins.Calls(GetTargetGameObject));
+                    if (i != -1 && j != -1)
+                    {
+                        var @goto = IL.DefineLabel();
+                        instructions[j].labels.Add(@goto);
+                        instructions.Insert(i++, new CodeInstruction(OpCodes.Dup));
+                        instructions.Insert(i++, new CodeInstruction(OpCodes.Isinst, typeof(RobotAssignablesProxy)));
+                        instructions.Insert(i++, new CodeInstruction(OpCodes.Brtrue_S, @goto));
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            // сортировка на верх
+            private static void Postfix(TableScreen __instance)
+            {
+                if (__instance is JobsTableScreen)
+                {
+                    foreach (var row in __instance.all_sortable_rows)
+                    {
+                        if (row.GetIdentity() is RobotAssignablesProxy)
+                            row.gameObject.transform.SetSiblingIndex(1);
+                    }
+                }
+            }
+        }
+
+        // ищо предотвращение краша
+        [HarmonyPatch(typeof(ChoreConsumer), nameof(ChoreConsumer.GetAssociatedSkillLevel))]
+        private static class ChoreConsumer_GetAssociatedSkillLevel
+        {
+            private static bool Prefix(ChoreGroup group, ChoreConsumer __instance, ref int __result)
+            {
+                if (__instance.GetAttributes().Get(group.attribute.Id) == null)
+                {
+                    __result = 0;
+                    return false;
+                }
+                return true;
             }
         }
     }
