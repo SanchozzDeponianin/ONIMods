@@ -107,6 +107,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlYourRobots", "Contro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreEmotions", "MoreEmotions\MoreEmotions.csproj", "{F77D9FA9-32B4-4DA2-B5A7-3E6570823AEB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VitalsDisplayRads", "VitalsDisplayRads\VitalsDisplayRads.csproj", "{0B2E1D4B-6968-404D-898A-2698037F5239}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Backup = Debug|Backup
@@ -459,6 +461,14 @@ Global
 		{F77D9FA9-32B4-4DA2-B5A7-3E6570823AEB}.Release|Backup.Build.0 = Release|Backup
 		{F77D9FA9-32B4-4DA2-B5A7-3E6570823AEB}.Release|Steam.ActiveCfg = Release|Steam
 		{F77D9FA9-32B4-4DA2-B5A7-3E6570823AEB}.Release|Steam.Build.0 = Release|Steam
+		{0B2E1D4B-6968-404D-898A-2698037F5239}.Debug|Backup.ActiveCfg = Debug|Backup
+		{0B2E1D4B-6968-404D-898A-2698037F5239}.Debug|Backup.Build.0 = Debug|Backup
+		{0B2E1D4B-6968-404D-898A-2698037F5239}.Debug|Steam.ActiveCfg = Debug|Steam
+		{0B2E1D4B-6968-404D-898A-2698037F5239}.Debug|Steam.Build.0 = Debug|Steam
+		{0B2E1D4B-6968-404D-898A-2698037F5239}.Release|Backup.ActiveCfg = Release|Backup
+		{0B2E1D4B-6968-404D-898A-2698037F5239}.Release|Backup.Build.0 = Release|Backup
+		{0B2E1D4B-6968-404D-898A-2698037F5239}.Release|Steam.ActiveCfg = Release|Steam
+		{0B2E1D4B-6968-404D-898A-2698037F5239}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
