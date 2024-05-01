@@ -35,12 +35,13 @@ namespace MoreEmotions
         public Emote Cheering;
         public Emote FistBump;
         public Emote HighFive;
+        public Emote MoonWalk;
 
         public MoreMinionEmotes(ResourceSet parent) : base(nameof(MoreMinionEmotes), parent)
         {
             InitializeEmotes();
             Instance = this;
-            Utils.MuteMouthFlapSpeech(FullBladder, Laugh, PutOff);
+            Utils.MuteMouthFlapSpeech(FullBladder, Laugh, PutOff, MoonWalk);
         }
 
         private void InitializeEmotes()
@@ -66,12 +67,19 @@ namespace MoreEmotions
             {
                 new EmoteStep{anim = "putoff_pre"},
                 new EmoteStep{anim = "putoff_loop"},
+                new EmoteStep{anim = "putoff_loop"},
                 new EmoteStep{anim = "putoff_pst"}
             }, "anim_putoff_kanim");
             Stressed = new Emote(this, nameof(Stressed), DEFAULT_WORK_STEPS, "anim_react_stressed_dupe_kanim");
             Cheering = new Emote(this, nameof(Cheering), DEFAULT_WORK_STEPS, "anim_react_cheering_dupe_kanim");
             FistBump = new Emote(this, nameof(FistBump), new EmoteStep[] { new EmoteStep { anim = "react_l" } }, "anim_react_fistbump_kanim");
             HighFive = new Emote(this, nameof(HighFive), new EmoteStep[] { new EmoteStep { anim = "react_l" } }, "anim_react_highfive_kanim");
+            MoonWalk = new Emote(this, nameof(MoonWalk), new EmoteStep[]
+            {
+                new EmoteStep{anim = "floor_floor_moonwalk_1_0_pre"},
+                //new EmoteStep{anim = "floor_floor_moonwalk_1_0_loop"},
+                new EmoteStep{anim = "floor_floor_moonwalk_1_0_pst"}
+            }, "anim_react_moonwalk_kanim");
         }
     }
 }

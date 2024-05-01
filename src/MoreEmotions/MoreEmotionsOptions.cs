@@ -26,6 +26,10 @@ namespace MoreEmotions
 
         [JsonProperty]
         [Option]
+        public bool moonwalk_greeting { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
         public bool full_bladder_emote { get; set; } = true;
 
         [JsonProperty]

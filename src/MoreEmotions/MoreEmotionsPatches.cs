@@ -25,14 +25,18 @@ namespace MoreEmotions
         // todo: добавить звуки к анимациям (сложна)
         // * терпёжъ bladder
         // * объсмеяние laugh
-        // * сожалениё putoff
-        // * приветствия fistbump и highfive
         // * проверить звуки на успокаивании stressed и cheering
 
         [PLibMethod(RunAt.BeforeDbInit)]
         private static void BeforeDbInit()
         {
             Utils.InitLocalization(typeof(STRINGS));
+            Utils.LoadEmbeddedAudioSheet("MoreEmotions.AudioSheets.SFXTags_Duplicants.csv", "SFXTags_Duplicants");
+#if DEBUG
+            var path = System.IO.Path.Combine(Utils.modInfo.rootDirectory, "AudioSheets", "SFXTags_Duplicants.csv");
+            if (System.IO.File.Exists(path))
+                Utils.LoadAudioSheetFromFile(path, "SFXTags_Duplicants");
+#endif
         }
 
         [PLibMethod(RunAt.AfterDbInit)]
@@ -333,13 +337,13 @@ namespace MoreEmotions
 #endif
 
         // приветствие кулаками и пятюней
+        private static HashedString ReactableId = "NavigatorPassingGreeting";
+
         [HarmonyPatch(typeof(DupeGreetingManager), nameof(DupeGreetingManager.BeginNewGreeting))]
         private static class DupeGreetingManager_BeginNewGreeting
         {
             private static bool Prepare() => MoreEmotionsOptions.Instance.double_greeting;
-
             private const float LocalCooldown = 20f;
-            private static HashedString ReactableId = "NavigatorPassingGreeting";
             private static List<Emote> new_emotes;
 
             private static bool CanReact(MinionIdentity minion, float time)
@@ -387,6 +391,8 @@ namespace MoreEmotions
                 }
                 // первично, шансы обычного или нашего приветствия пропорцилнальны количеству возможных приветствий
                 int m = DupeGreetingManager.emotes.Count;
+                if (MoreEmotionsOptions.Instance.moonwalk_greeting)
+                    m++;
                 int n = new_emotes.Count;
                 int i = UnityEngine.Random.Range(0, m + n);
                 if (i >= n)
@@ -416,6 +422,26 @@ namespace MoreEmotions
                         offset -= 1f;
                     return offset >= 0f && offset < 1f;
                 }
+                return false;
+            }
+        }
+
+        // танцуюющеее приветсвие
+        [HarmonyPatch(typeof(DupeGreetingManager), nameof(DupeGreetingManager.GetReactable))]
+        private static class DupeGreetingManager_GetReactable
+        {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.moonwalk_greeting;
+            private static bool Prefix(MinionIdentity minion, DupeGreetingManager __instance, ref Reactable __result)
+            {
+                if (DupeGreetingManager.emotes == null)
+                    return true;
+                int m = DupeGreetingManager.emotes.Count;
+                int i = UnityEngine.Random.Range(0, m + 1);
+                if (i >= 1)
+                    return true;
+                __result = new SelfEmoteReactable(minion.gameObject, ReactableId, Db.Get().ChoreTypes.Emote, 1000f)
+                    .SetEmote(MoreMinionEmotes.Instance.MoonWalk).SetThought(Db.Get().Thoughts.Chatty)
+                    .RegisterEmoteStepCallbacks("floor_floor_moonwalk_1_0_pre", __instance.BeginReacting, null);
                 return false;
             }
         }

@@ -55,6 +55,10 @@ namespace MoreEmotions
             {
                 public static LocString NAME = "Two \"Dual\" greetings with fists and hands";
             }
+            public class MOONWALK_GREETING
+            {
+                public static LocString NAME = "\"Dancing\" greeting";
+            }
             public class FULL_BLADDER_EMOTE
             {
                 public static LocString NAME = "\"I'm going to burst!\"";

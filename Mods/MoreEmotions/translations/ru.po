@@ -83,6 +83,11 @@ msgctxt "MoreEmotions.STRINGS.OPTIONS.FULL_BLADDER_LAUGH.TOOLTIP"
 msgid "Duplicants laugh at the Duplicant who made a mess"
 msgstr "Дупликанты смеются над дупликантом, который сделал лужу"
 
+#. MoreEmotions.STRINGS.OPTIONS.MOONWALK_GREETING.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.MOONWALK_GREETING.NAME"
+msgid "\"Dancing\" greeting"
+msgstr "\"Танцующее\" приветствие"
+
 #. MoreEmotions.STRINGS.OPTIONS.RESPECT_GRAVE_ADD_EFFECT.NAME
 msgctxt "MoreEmotions.STRINGS.OPTIONS.RESPECT_GRAVE_ADD_EFFECT.NAME"
 msgid "Enable buff"
