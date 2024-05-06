@@ -109,6 +109,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreEmotions", "MoreEmotion
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VitalsDisplayRads", "VitalsDisplayRads\VitalsDisplayRads.csproj", "{0B2E1D4B-6968-404D-898A-2698037F5239}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorpseOnPedestal", "CorpseOnPedestal\CorpseOnPedestal.csproj", "{200E4B4A-037C-4979-9030-25466658E226}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Backup = Debug|Backup
@@ -469,6 +471,14 @@ Global
 		{0B2E1D4B-6968-404D-898A-2698037F5239}.Release|Backup.Build.0 = Release|Backup
 		{0B2E1D4B-6968-404D-898A-2698037F5239}.Release|Steam.ActiveCfg = Release|Steam
 		{0B2E1D4B-6968-404D-898A-2698037F5239}.Release|Steam.Build.0 = Release|Steam
+		{200E4B4A-037C-4979-9030-25466658E226}.Debug|Backup.ActiveCfg = Debug|Backup
+		{200E4B4A-037C-4979-9030-25466658E226}.Debug|Backup.Build.0 = Debug|Backup
+		{200E4B4A-037C-4979-9030-25466658E226}.Debug|Steam.ActiveCfg = Debug|Steam
+		{200E4B4A-037C-4979-9030-25466658E226}.Debug|Steam.Build.0 = Debug|Steam
+		{200E4B4A-037C-4979-9030-25466658E226}.Release|Backup.ActiveCfg = Release|Backup
+		{200E4B4A-037C-4979-9030-25466658E226}.Release|Backup.Build.0 = Release|Backup
+		{200E4B4A-037C-4979-9030-25466658E226}.Release|Steam.ActiveCfg = Release|Steam
+		{200E4B4A-037C-4979-9030-25466658E226}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
