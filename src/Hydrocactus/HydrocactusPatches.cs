@@ -51,10 +51,10 @@ namespace Hydrocactus
         [HarmonyPatch(typeof(Immigration), "ConfigureCarePackages")]
         private static class Immigration_ConfigureCarePackages
         {
-            private static void Postfix(ref CarePackageInfo[] ___carePackages)
+            private static void Postfix(List<CarePackageInfo> ___carePackages)
             {
                 var seed = new CarePackageInfo(FilterPlantConfig.SEED_ID, HydrocactusOptions.Instance.carepackage_seeds_amount, null);
-                ___carePackages = ___carePackages.AddItem(seed).ToArray();
+                ___carePackages.Add(seed);
             }
         }
 

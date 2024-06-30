@@ -253,11 +253,11 @@ namespace ExoticSpices
         private static class Immigration_ConfigureCarePackages
         {
             private static bool Prepare() => ExoticSpicesOptions.Instance.carepackage_seeds_amount > 0;
-            private static void Postfix(ref CarePackageInfo[] ___carePackages)
+            private static void Postfix(List<CarePackageInfo> ___carePackages)
             {
                 var seed = new CarePackageInfo(EvilFlowerConfig.SEED_ID, ExoticSpicesOptions.Instance.carepackage_seeds_amount,
                     () => DiscoveredResources.Instance.IsDiscovered(EvilFlowerConfig.SEED_ID));
-                ___carePackages = ___carePackages.AddItem(seed).ToArray();
+                ___carePackages.Add(seed);
             }
         }
     }

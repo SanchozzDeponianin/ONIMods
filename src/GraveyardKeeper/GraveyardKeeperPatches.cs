@@ -86,6 +86,7 @@ namespace GraveyardKeeper
                 PlantsToSpawn.AddRange(SingleHarvestPlants);
             if (GraveyardKeeperOptions.Instance.regular_plants)
                 PlantsToSpawn.AddRange(RegularPlants);
+            PlantsToSpawn.RemoveAll(tag => !SaveLoader.Instance.IsDlcListActiveForCurrentSave(Assets.GetPrefab(tag).GetComponent<KPrefabID>().requiredDlcIds));
             if (PlantsToSpawn.Count == 0)
                 PlantsToSpawn.Add(EvilFlowerConfig.ID);
             modifiedPlantableCellQuery = new PlantableCellQuery();

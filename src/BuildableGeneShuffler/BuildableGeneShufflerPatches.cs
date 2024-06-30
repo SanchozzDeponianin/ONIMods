@@ -133,9 +133,9 @@ namespace BuildableGeneShuffler
         [HarmonyPatch(typeof(Immigration), "ConfigureCarePackages")]
         private static class Immigration_ConfigureCarePackages
         {
-            private static void Postfix(ref CarePackageInfo[] ___carePackages)
+            private static void Postfix(List<CarePackageInfo> ___carePackages)
             {
-                ___carePackages = ___carePackages.AddItem(new CarePackageInfo(GlomConfig.ID, 1f, null)).ToArray();
+                ___carePackages.Add(new CarePackageInfo(GlomConfig.ID, 1f, null));
             }
         }
 
