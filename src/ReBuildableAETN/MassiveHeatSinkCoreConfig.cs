@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TUNING;
 using UnityEngine;
+using SanchozzONIMods.Lib;
 
 namespace ReBuildableAETN
 {
@@ -12,6 +13,8 @@ namespace ReBuildableAETN
         public const float TEMPERATURE = 100f;
         public static Tag tag = TagManager.Create(ID);
         public static Tag MaterialBuildingTag = TagManager.Create("BuildingNeutroniumCore");
+
+        public string[] GetDlcIds() => Utils.GetDlcIds(DlcManager.AVAILABLE_ALL_VERSIONS);
 
         public static readonly ArtifactTier TIER_CORE = new ArtifactTier(
             STRINGS.UI.SPACEARTIFACTS.ARTIFACTTIERS.TIER_CORE.key, DECOR.BONUS.TIER7, 0);
@@ -61,11 +64,6 @@ namespace ReBuildableAETN
             if (DlcManager.IsPureVanilla())
                 ArtifactConfig.artifactItems[ArtifactType.Any].Add(go.name);
             return go;
-        }
-
-        public string[] GetDlcIds()
-        {
-            return DlcManager.AVAILABLE_ALL_VERSIONS;
         }
 
         public void OnPrefabInit(GameObject inst)

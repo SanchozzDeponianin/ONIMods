@@ -16,7 +16,7 @@ namespace TTL
         private static bool FastTrack = false;
         public override void OnLoad(Harmony harmony)
         {
-            Utils.LogModVersion();
+            if (Utils.LogModVersion()) return;
         }
 
         public override void OnAllModsLoaded(Harmony harmony, IReadOnlyList<Mod> mods)

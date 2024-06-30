@@ -32,6 +32,7 @@
     <ItemGroup>
       <EmbeddedResource Include="$(ProjectDir)/sprites/*.png" />
       <EmbeddedResource Include="$(ProjectDir)/AudioSheets/*.csv" />
+      <EmbeddedResource Include="$(ProjectDir)/../SFXTagsGlobal.csv" LogicalName="SFXTagsGlobal.csv" />
     </ItemGroup>
   </Target>
 

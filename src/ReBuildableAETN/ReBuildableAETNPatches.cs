@@ -18,11 +18,12 @@ namespace ReBuildableAETN
 {
     public sealed class ReBuildableAETNPatches : KMod.UserMod2
     {
+        private static ReBuildableAETNPatches @this;
         public override void OnLoad(Harmony harmony)
         {
-            PUtil.InitLibrary();
+            if (Utils.LogModVersion()) return;
+            @this = this;
             ReBuildableAETNOptions.Reload();
-            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(GetType());
             new POptions().RegisterOptions(this, typeof(ReBuildableAETNOptions));
         }
@@ -32,6 +33,7 @@ namespace ReBuildableAETN
         {
             Utils.InitLocalization(typeof(STRINGS));
             LoadSprite();
+            @this.PatchLater();
         }
 
         private static void LoadSprite()

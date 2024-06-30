@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Aquatic Farm</Title>
     <Description>Adds a new Aquatic Farm tile that can absorbs Liquids from the world for irrigation. Does not require Liquid Piping.</Description>
-    <ModVersion>1.2.6</ModVersion>
+    <ModVersion>1.2.7</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

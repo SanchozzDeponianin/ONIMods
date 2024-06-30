@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using SanchozzONIMods.Lib;
 
 namespace CrabsProfit
 {
@@ -10,7 +11,7 @@ namespace CrabsProfit
         public const string ID = "CrabsProfitRandomOre";
         public static readonly Tag TAG = TagManager.Create(ID);
 
-        public string[] GetDlcIds() => DlcManager.AVAILABLE_ALL_VERSIONS;
+        public string[] GetDlcIds() => Utils.GetDlcIds(DlcManager.AVAILABLE_ALL_VERSIONS);
 
         public GameObject CreatePrefab()
         {

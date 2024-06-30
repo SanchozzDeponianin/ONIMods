@@ -2,6 +2,7 @@
 using TUNING;
 using HarmonyLib;
 using UnityEngine;
+using SanchozzONIMods.Lib;
 using static STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEREDIRECTOR;
 
 namespace HEPBridgeInsulationTile
@@ -10,6 +11,8 @@ namespace HEPBridgeInsulationTile
     {
         public const string ID = "HighEnergyParticleWallBridgeRedirector"; // legacy
         public static readonly Tag secodary_material = TagManager.Create(MATERIALS.EXTRUDABLE[0]);
+
+        public override string[] GetDlcIds() => Utils.GetDlcIds(DlcManager.AVAILABLE_EXPANSION1_ONLY);
 
         public override BuildingDef CreateBuildingDef()
         {
@@ -120,11 +123,6 @@ namespace HEPBridgeInsulationTile
                 var element = ElementLoader.FindElementByHash(hash);
                 element.oreTags = element.oreTags.AddToArray(secodary_material);
             }
-        }
-
-        public override string[] GetDlcIds()
-        {
-            return DlcManager.AVAILABLE_EXPANSION1_ONLY;
         }
     }
 }

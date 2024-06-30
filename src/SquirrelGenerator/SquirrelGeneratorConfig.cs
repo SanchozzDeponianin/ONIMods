@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using TUNING;
+using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 
 namespace SquirrelGenerator
@@ -7,6 +8,8 @@ namespace SquirrelGenerator
     public class SquirrelGeneratorConfig : IBuildingConfig
     {
         public const string ID = "SquirrelGenerator";
+
+        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {

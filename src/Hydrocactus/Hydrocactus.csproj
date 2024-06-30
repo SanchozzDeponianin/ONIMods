@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Hydrocactus</Title>
     <Description>Allows you to obtain a half-forgotten plant Hydrocactus in an ordinary fair game.</Description>
-    <ModVersion>1.0.1</ModVersion>
+    <ModVersion>1.0.2</ModVersion>
     <SupportedContent>EXPANSION1_ID</SupportedContent>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>

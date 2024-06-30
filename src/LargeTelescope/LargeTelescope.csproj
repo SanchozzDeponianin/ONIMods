@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Enclosed Telescope Tune-Up</Title>
     <Description>Tuning of a Enclosed Telescope: increased the radius and scanning speed, adjusted requirements, some improvements and bug fixes.</Description>
-    <ModVersion>2.1.1</ModVersion>
+    <ModVersion>2.1.2</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

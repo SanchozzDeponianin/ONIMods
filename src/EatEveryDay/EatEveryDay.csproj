@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Eat every day</Title>
     <Description>It forces duplicants to eat every day, even at the "no sweat" difficulty level, which guarantees a stable morale bonus.</Description>
-    <ModVersion>1.1.0</ModVersion>
+    <ModVersion>1.1.1</ModVersion>
     <Author>ricvail, Sanchozz</Author>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

@@ -45,7 +45,7 @@ namespace Smelter
         private const string SULFUR = "{SULFUR}";
         private const string LIQUIDSULFUR = "{LIQUIDSULFUR}";
         private const string WOOD = "{WOOD}";
-        private const string REFINEDCARBON = "{REFINEDCARBON}";
+        private const string CARBON = "{CARBON}";
         private const string RESIN = "{RESIN}";
         private const string ISORESIN = "{ISORESIN}";
 
@@ -87,7 +87,7 @@ namespace Smelter
             }
             public class WOOD_TO_CARBON
             {
-                public static LocString NAME = $"{WOOD} to {REFINEDCARBON}";
+                public static LocString NAME = $"{WOOD} to {CARBON}";
                 public static LocString TOOLTIP = $"Available at {KILN}";
             }
 
@@ -113,7 +113,7 @@ namespace Smelter
             BUILDINGS.PREFABS.SMELTER.DESC = global::STRINGS.BUILDINGS.PREFABS.METALREFINERY.DESC;
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
 
-            var elements = new string[] { KATAIRITE, TUNGSTEN, PHOSPHORITE, PHOSPHORUS, POLYPROPYLENE, NAPHTHA, SULFUR, LIQUIDSULFUR, REFINEDCARBON, RESIN, ISORESIN };
+            var elements = new string[] { KATAIRITE, TUNGSTEN, PHOSPHORITE, PHOSPHORUS, POLYPROPYLENE, NAPHTHA, SULFUR, LIQUIDSULFUR, CARBON, RESIN, ISORESIN };
             //var buildings = new string[] { SMELTER, METALREFINERY, GLASSFORGE, KILN};
             var dictionary = Utils.PrepareReplacementDictionary(null, elements, "STRINGS.ELEMENTS.{0}.NAME");
             //.PrepareReplacementDictionary(buildings, "STRINGS.BUILDINGS.PREFABS.{0}.NAME");

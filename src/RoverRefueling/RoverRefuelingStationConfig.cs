@@ -1,5 +1,6 @@
 ﻿using TUNING;
 using UnityEngine;
+using SanchozzONIMods.Lib;
 
 namespace RoverRefueling
 {
@@ -8,7 +9,9 @@ namespace RoverRefueling
         public const string ID = "RoverRefuelingStation";
         public const int NUM_USES = 3;
         public static Tag fuelTag = GameTags.CombustibleLiquid;
-        public override string[] GetDlcIds() => DlcManager.AVAILABLE_EXPANSION1_ONLY;
+
+        public override string[] GetDlcIds() => Utils.GetDlcIds(DlcManager.AVAILABLE_EXPANSION1_ONLY);
+
         public override BuildingDef CreateBuildingDef()
         {
             var def = BuildingTemplates.CreateBuildingDef(

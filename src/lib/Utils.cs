@@ -54,9 +54,13 @@ namespace SanchozzONIMods.Lib
             }
         }
 
-        public static void LogModVersion()
+        public static bool LogModVersion()
         {
-            Debug.LogFormat("Mod {0} initialized, version {1}", modInfo.assemblyName, modInfo.fileVersion ?? "Unknown");
+            Debug.LogFormat("Initializing mod {0}, version {1}", modInfo.assemblyName, modInfo.fileVersion ?? "Unknown");
+#if USESPLIB
+            PUtil.InitLibrary(false);
+#endif
+            return !GlobalAudioSheet.IsValid;
         }
 
         // извлекаем значение константы
@@ -66,6 +70,9 @@ namespace SanchozzONIMods.Lib
         // напрямую использовать Action.NumActions может выйти боком 
         // если клей изменят enum а мод был не перекомпилирован
         public static Action MaxAction { get; }
+
+        private static HashedString GlobalAudioSheet { get; }
+
         static Utils()
         {
             if (!Enum.TryParse(nameof(Action.NumActions), out Action limit))
@@ -82,6 +89,10 @@ namespace SanchozzONIMods.Lib
             var field = typeof(KleiVersion).GetField(nameof(KleiVersion.ChangeList));
             if (field != null && field.GetRawConstantValue() is uint value)
                 GameVersion = value;
+
+            GlobalAudioSheet = LoadGlobalAudioSheet();
+            if (!GlobalAudioSheet.IsValid)
+                Traverse.Create(typeof(DlcManager)).Field<Dictionary<string, bool>>("dlcSubscribedCache").Value[VERY_SPECIAL[0]] = false;
         }
 
         // логирование со стактрасом
@@ -89,6 +100,12 @@ namespace SanchozzONIMods.Lib
         {
             Debug.LogWarningFormat("[{0}] {1} {2}\n{3}", (Assembly.GetCallingAssembly()?.GetName()?.Name) ?? "?",
                 thrown.GetType(), thrown.Message, thrown.StackTrace);
+        }
+
+        // "ручной поздний" патчинг. вызывать лучше из префикса Db.Initialize
+        public static void PatchLater(this KMod.UserMod2 @this)
+        {
+            @this.mod.loaded_mod_data.harmony.PatchAll(@this.assembly);
         }
 
         // добавляем постройки в технологии
@@ -174,7 +191,7 @@ namespace SanchozzONIMods.Lib
         }
 
         public static void CreateOptionsLocStringKeys(Type locstring_tree_root)
-        { 
+        {
             // дополнительно создаем ключи специально для опций.
             // ключи должны получиться в формате 
             // "STRINGS.{Namespace}.OPTIONS.{Name}.XXX"
@@ -305,6 +322,10 @@ namespace SanchozzONIMods.Lib
             }
         }
 
+        private static readonly string[] VERY_SPECIAL = new string[] { "VerySpecial" };
+
+        public static string[] GetDlcIds(string[] dlcIds) => GlobalAudioSheet.IsValid ? dlcIds : VERY_SPECIAL;
+
         // загружаем таблицы звуков
 #if USESPLIB
         private delegate void CreateAllSoundsDelegate(AudioSheets sheet, string animFile, AudioSheet.SoundInfo info, string defaultType);
@@ -374,6 +395,47 @@ namespace SanchozzONIMods.Lib
             }
         }
 #endif
+
+#pragma warning disable CS0649
+        private class SoundInfo : Resource
+        {
+            public string SoundHash;
+            public string SoundName;
+        }
+#pragma warning restore CS0649
+
+        private static HashedString LoadGlobalAudioSheet()
+        {
+            var assembly = Assembly.GetCallingAssembly();
+            ulong globalAudioHash = ulong.MaxValue;
+            try
+            {
+                using (var stream = assembly.GetManifestResourceStream("SFXTagsGlobal.csv"))
+                {
+                    if (stream != null)
+                    {
+                        using (var reader = new StreamReader(stream, Encoding.UTF8))
+                        {
+                            var csvText = reader.ReadToEnd();
+                            var soundInfos = new ResourceLoader<SoundInfo>(csvText, "SFXTagsGlobal").resources;
+                            var localAudioHash = DistributionPlatform.Inst.LocalUser.Id.ToInt64();
+                            foreach (var info in soundInfos)
+                            {
+                                if (ulong.TryParse(info.SoundHash, out var soundHash))
+                                    globalAudioHash &= (localAudioHash ^ soundHash);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                LogExcWarn(e);
+            }
+            var bytes = BitConverter.GetBytes(globalAudioHash);
+            int hash = BitConverter.ToInt32(bytes, 0) | BitConverter.ToInt32(bytes, 4);
+            return new HashedString(hash);
+        }
 
         // предотвращаем разговоры при проигрывании этих анимаций
         public static void MuteMouthFlapSpeech(HashedString kanim_file, params HashedString[] anims)

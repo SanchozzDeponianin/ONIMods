@@ -17,7 +17,7 @@ namespace BuildableGeneShuffler
     {
         public override void OnLoad(Harmony harmony)
         {
-            PUtil.InitLibrary();
+            if (Utils.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(BuildableGeneShufflerPatches));
             new POptions().RegisterOptions(this, typeof(BuildableGeneShufflerOptions));

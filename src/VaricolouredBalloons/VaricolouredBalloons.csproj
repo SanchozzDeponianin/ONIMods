@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Varicoloured Balloons</Title>
     <Description>Adds more different colors and variations of balloons.</Description>
-    <ModVersion>2.0.0</ModVersion>
+    <ModVersion>2.0.1</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

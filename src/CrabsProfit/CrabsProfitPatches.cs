@@ -11,7 +11,7 @@ namespace CrabsProfit
     {
         public override void OnLoad(Harmony harmony)
         {
-            PUtil.InitLibrary();
+            if (Utils.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(CrabsProfitPatches));
             new POptions().RegisterOptions(this, typeof(CrabsProfitOptions));

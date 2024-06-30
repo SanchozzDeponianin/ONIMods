@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using TUNING;
+using SanchozzONIMods.Lib;
 
 namespace CarouselCentrifuge
 {
     public class CarouselCentrifugeConfig : IBuildingConfig
     {
         public const string ID = "CarouselCentrifuge";
+
+        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {

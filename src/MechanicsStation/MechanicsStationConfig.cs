@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TUNING;
 using UnityEngine;
+using SanchozzONIMods.Lib;
 using static MechanicsStation.MechanicsStationAssets;
 
 namespace MechanicsStation
@@ -12,6 +13,8 @@ namespace MechanicsStation
         public static readonly Tag TINKER_TOOLS = MachinePartsConfig.TAG;
         public const float MASS_PER_TINKER = 5f;
         public const float OUTPUT_TEMPERATURE = 308.15f;
+
+        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {

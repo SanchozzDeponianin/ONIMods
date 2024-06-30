@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Relic Hunter</Title>
     <Description>.</Description>
-    <ModVersion>1.2.0</ModVersion>
+    <ModVersion>1.2.1</ModVersion>
     <SupportedContent>VANILLA_ID</SupportedContent>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

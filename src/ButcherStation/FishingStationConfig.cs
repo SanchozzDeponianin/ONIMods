@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using TUNING;
+using SanchozzONIMods.Lib;
 using SanchozzONIMods.Shared;
 
 namespace ButcherStation
@@ -8,6 +9,8 @@ namespace ButcherStation
     public class FishingStationConfig : IBuildingConfig
     {
         public const string ID = "FishingStation";
+
+        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {

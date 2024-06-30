@@ -10,12 +10,13 @@ namespace AthleticsGenerator
 {
     internal sealed class AthleticsGeneratorPatches : KMod.UserMod2
     {
+        private static AthleticsGeneratorPatches @this;
         public static AttributeConverter ManualGeneratorPower;
 
         public override void OnLoad(Harmony harmony)
         {
-            PUtil.InitLibrary();
-            base.OnLoad(harmony);
+            if (Utils.LogModVersion()) return;
+            @this = this;
             new PPatchManager(harmony).RegisterPatchClass(typeof(AthleticsGeneratorPatches));
             new POptions().RegisterOptions(this, typeof(AthleticsGeneratorOptions));
         }
@@ -24,6 +25,7 @@ namespace AthleticsGenerator
         private static void BeforeDbInit()
         {
             Utils.InitLocalization(typeof(STRINGS));
+            @this.PatchLater();
         }
 
         [PLibMethod(RunAt.AfterDbInit)]

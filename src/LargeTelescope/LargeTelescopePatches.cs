@@ -15,11 +15,12 @@ namespace LargeTelescope
 {
     internal sealed class LargeTelescopePatches : KMod.UserMod2
     {
+        private static LargeTelescopePatches @this;
         public override void OnLoad(Harmony harmony)
         {
-            PUtil.InitLibrary();
+            if (Utils.LogModVersion()) return;
+            @this = this;
             LargeTelescopeOptions.Reload();
-            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(LargeTelescopePatches));
             new POptions().RegisterOptions(this, typeof(LargeTelescopeOptions));
         }
@@ -28,6 +29,7 @@ namespace LargeTelescope
         private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));
+            @this.PatchLater();
         }
 
         // тюнинг искричества и стоимости

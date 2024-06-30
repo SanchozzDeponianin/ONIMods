@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Attribute-based Workshop Restrictions</Title>
     <Description>.</Description>
-    <ModVersion>1.0.5</ModVersion>
+    <ModVersion>1.0.6</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

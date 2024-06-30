@@ -1,11 +1,14 @@
 ﻿using TUNING;
 using UnityEngine;
+using SanchozzONIMods.Lib;
 
 namespace AquaticFarm
 {
     public class AquaticFarmConfig : IBuildingConfig
     {
         public const string ID = "AquaticFarm";
+
+        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using SanchozzONIMods.Lib;
 
 namespace CrabsProfit
 {
@@ -9,7 +10,7 @@ namespace CrabsProfit
         public const string ID = "BabyCrabFreshWaterShell";
         public static readonly Tag TAG = TagManager.Create(ID, BABY_CRAB_SHELL.VARIANT_FRESH_WATER.NAME);
 
-        public string[] GetDlcIds() => DlcManager.AVAILABLE_ALL_VERSIONS;
+        public string[] GetDlcIds() => Utils.GetDlcIds(DlcManager.AVAILABLE_ALL_VERSIONS);
 
         public GameObject CreatePrefab()
         {

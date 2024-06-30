@@ -15,7 +15,7 @@ namespace WrangleCarry
         private static WrangleCarryPatches @this;
         public override void OnLoad(Harmony harmony)
         {
-            Utils.LogModVersion();
+            if (Utils.LogModVersion()) return;
             @this = this;
             harmony.Patch(typeof(Db).GetMethod(nameof(Db.Initialize)), prefix: new HarmonyMethod(typeof(WrangleCarryPatches), nameof(PatchLater)));
         }
@@ -26,7 +26,7 @@ namespace WrangleCarry
         private static void PatchLater()
         {
             Utils.MuteMouthFlapSpeech(rage_kanim, rage_anims);
-            @this.mod.loaded_mod_data.harmony.PatchAll(@this.assembly);
+            @this.PatchLater();
         }
 
         // сделать перенос жеготных равноприоритетным с поимкой

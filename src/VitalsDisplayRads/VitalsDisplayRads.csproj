@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Vitals Display Rads</Title>
     <Description>.</Description>
-    <ModVersion>1.0.0</ModVersion>
+    <ModVersion>1.0.1</ModVersion>
     <SupportedContent>EXPANSION1_ID</SupportedContent>
     <UsesPLib>false</UsesPLib>
     <UsesPublicise>true</UsesPublicise>

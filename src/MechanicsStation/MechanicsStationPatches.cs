@@ -15,7 +15,7 @@ namespace MechanicsStation
     {
         public override void OnLoad(Harmony harmony)
         {
-            PUtil.InitLibrary();
+            if (Utils.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(MechanicsStationPatches));
             new POptions().RegisterOptions(this, typeof(MechanicsStationOptions));

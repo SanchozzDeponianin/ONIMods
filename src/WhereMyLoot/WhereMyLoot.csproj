@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Where's My Loot?</Title>
     <Description>Allows you to get the expected loot from objects that have not been inspected but have been demolished.</Description>
-    <ModVersion>1.0.1</ModVersion>
+    <ModVersion>1.0.2</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

@@ -120,7 +120,7 @@ msgstr ""
 
 #. Smelter.STRINGS.OPTIONS.WOOD_TO_CARBON.NAME
 msgctxt "Smelter.STRINGS.OPTIONS.WOOD_TO_CARBON.NAME"
-msgid "{WOOD} to {REFINEDCARBON}"
+msgid "{WOOD} to {CARBON}"
 msgstr ""
 
 #. Smelter.STRINGS.OPTIONS.WOOD_TO_CARBON.TOOLTIP

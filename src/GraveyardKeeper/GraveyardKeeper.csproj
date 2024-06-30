@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Graveyard Keeper</Title>
     <Description>The Pip buries the corpses of Duplicants in the ground and decorates them with Plants.</Description>
-    <ModVersion>1.0.3</ModVersion>
+    <ModVersion>1.0.4</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

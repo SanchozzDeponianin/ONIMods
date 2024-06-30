@@ -14,7 +14,7 @@ namespace SandboxMutantPlant
 
         public override void OnLoad(Harmony harmony)
         {
-            Utils.LogModVersion();
+            if (Utils.LogModVersion()) return;
             base.OnLoad(harmony);
         }
 

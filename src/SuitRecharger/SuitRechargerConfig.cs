@@ -2,6 +2,7 @@
 using UnityEngine;
 using TUNING;
 using HarmonyLib;
+using SanchozzONIMods.Lib;
 using SanchozzONIMods.Shared;
 
 namespace SuitRecharger
@@ -15,6 +16,8 @@ namespace SuitRecharger
         private readonly ConduitPortInfo fuelInputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 2));
         private readonly ConduitPortInfo liquidWasteOutputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 0));
         private readonly ConduitPortInfo gasWasteOutputPort = new ConduitPortInfo(ConduitType.Gas, new CellOffset(1, 0));
+
+        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {

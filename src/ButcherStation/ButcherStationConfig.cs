@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using TUNING;
+using SanchozzONIMods.Lib;
 
 namespace ButcherStation
 {
     public class ButcherStationConfig : IBuildingConfig
     {
         public const string ID = "ButcherStation";
+
+        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {

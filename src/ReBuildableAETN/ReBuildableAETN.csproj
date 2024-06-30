@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Rebuildable AETN</Title>
     <Description>Allows you to disassemble and build AETN in another place</Description>
-    <ModVersion>1.1.15</ModVersion>
+    <ModVersion>1.1.16</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
