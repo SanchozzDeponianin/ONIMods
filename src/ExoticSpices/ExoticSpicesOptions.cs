@@ -75,7 +75,7 @@ namespace ExoticSpices
             [JsonProperty]
             [Option]
             [Limit(0, 100)]
-            public int stamina_buff { get; set; } = 60;
+            public int stamina_buff { get; set; } = 100;
         }
 
         [JsonProperty]
