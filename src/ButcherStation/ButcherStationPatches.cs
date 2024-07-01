@@ -72,9 +72,17 @@ namespace ButcherStation
         }
 
         // добавляем тэги для убиваемых животных
-        [HarmonyPatch(typeof(EntityTemplates), nameof(EntityTemplates.ExtendEntityToBasicCreature))]
+        [HarmonyPatch]
         private static class EntityTemplates_ExtendEntityToBasicCreature
         {
+            private static MethodBase TargetMethod()
+            {
+                // ищем метод с большим количеством параметров (У52 методов всего два)
+                var methods = typeof(EntityTemplates).GetMethods().Where(m => m.Name == nameof(EntityTemplates.ExtendEntityToBasicCreature)).ToList();
+                methods.Sort((a, b) => b.GetParameters().Length - a.GetParameters().Length);
+                return methods[0];
+            }
+
             private static void Postfix(GameObject __result)
             {
                 __result.GetComponent<KPrefabID>().prefabSpawnFn += delegate (GameObject inst)

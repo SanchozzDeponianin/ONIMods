@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
 using HarmonyLib;
-using UnityEngine;
 using Klei.AI;
 using TUNING;
 using SanchozzONIMods.Lib;
@@ -129,93 +126,12 @@ namespace MooDiet
                             diet_info.caloriesPerKg / crop_per_cycle / food.calories_multiplier,
                             diet_info.producedConversionRate / crop_per_cycle / food.calories_multiplier * food.output_multiplier)).ToArray();
                     }
-                    var hybridDiet = new HybridDiet(new_diet);
+                    var hybridDiet = new Diet(new_diet);
                     ccm_def.diet = hybridDiet;
                     var scm_def = moo_go.GetDef<SolidConsumerMonitor.Def>();
                     if (scm_def != null)
                         scm_def.diet = hybridDiet;
                 }
-            }
-        }
-
-        // исправляем поиск еды для жеготных со смешанной диетой
-        [HarmonyPatch(typeof(SolidConsumerMonitor), "FindFood")]
-        private static class SolidConsumerMonitor_FindFood
-        {
-            // ох бл
-            /*
-        --- if (!diet.eatsPlantsDirectly)
-        +++ if (!NotNeedCreatureFeeder(diet))
-            {
-                блабла чтото там CreatureFeeder кормушка
-            }
-        --- if (diet.eatsPlantsDirectly)
-        +++ if (CanEatsPlants(diet))
-            {
-                блабла чтото там GameScenePartitioner plants живые растения
-        +++     if (CanEatsNonPlants(diet)) goto else;
-            }
-            else
-            {
-                блабла чтото там GameScenePartitioner pickupablesLayer материалы на полу
-            }
-            */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
-            {
-                return TranspilerUtils.Wrap(instructions, original, IL, transpiler);
-            }
-            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
-            {
-                var def_diet = typeof(SolidConsumerMonitor.Def).GetFieldSafe(nameof(SolidConsumerMonitor.Def.diet), false);
-                var diet_eatsPlantsDirectly = typeof(Diet).GetFieldSafe(nameof(Diet.eatsPlantsDirectly), false);
-
-                var notNeedCreatureFeeder = typeof(HybridDiet).GetMethodSafe(nameof(HybridDiet.NotNeedCreatureFeeder), true, typeof(Diet));
-                var canEatsPlants = typeof(HybridDiet).GetMethodSafe(nameof(HybridDiet.CanEatsPlants), true, typeof(Diet));
-                var canEatsNonPlants = typeof(HybridDiet).GetMethodSafe(nameof(HybridDiet.CanEatsNonPlants), true, typeof(Diet));
-
-                if (def_diet == null || diet_eatsPlantsDirectly == null
-                    || notNeedCreatureFeeder == null || canEatsPlants == null || canEatsNonPlants == null)
-                    return false;
-
-                int diet_idx = instructions.FindIndex(ins => ins.LoadsField(def_diet));
-                if (diet_idx == -1 || !instructions[diet_idx + 1].IsStloc())
-                    return false;
-                var diet_var = TranspilerUtils.GetMatchingLoadInstruction(instructions[diet_idx + 1]);
-
-                int first_idx = instructions.FindIndex(ins => ins.LoadsField(diet_eatsPlantsDirectly));
-                if (first_idx == -1)
-                    return false;
-
-                int second_idx = instructions.FindIndex(first_idx + 1, ins => ins.LoadsField(diet_eatsPlantsDirectly));
-                if (second_idx == -1)
-                    return false;
-
-                int br_else_idx = instructions.FindIndex(second_idx + 1, ins => ins.Branches(out _));
-                if (br_else_idx == -1)
-                    return false;
-                instructions[br_else_idx].Branches(out var else_label);
-
-                int else_idx = instructions.FindIndex(br_else_idx, ins => ins.labels.Contains((Label)else_label));
-                if (else_idx == -1)
-                    return false;
-
-                int end_if_idx = instructions.FindLastIndex(else_idx, ins =>
-                    ins.opcode == OpCodes.Br || ins.opcode == OpCodes.Br_S || ins.opcode == OpCodes.Ret);
-                if (end_if_idx == -1)
-                    return false;
-
-                instructions[first_idx].opcode = OpCodes.Call;
-                instructions[first_idx].operand = notNeedCreatureFeeder;
-                instructions[second_idx].opcode = OpCodes.Call;
-                instructions[second_idx].operand = canEatsPlants;
-
-                instructions.Insert(end_if_idx++, diet_var);
-                instructions.Insert(end_if_idx++, new CodeInstruction(OpCodes.Call, canEatsNonPlants));
-                instructions.Insert(end_if_idx++, new CodeInstruction(OpCodes.Brtrue, (Label)else_label));
-#if DEBUG
-                PPatchTools.DumpMethodBody(instructions);
-#endif
-                return true;
             }
         }
 
@@ -233,21 +149,6 @@ namespace MooDiet
                         effect = ___effects.Add(MOO_FLOWER_FED, true);
                     effect.timeRemaining += @event.calories / __instance.def.caloriesPerCycle * Constants.SECONDS_PER_CYCLE;
                 }
-            }
-        }
-
-        // исправленный описатель для жеготных со смешанной диетой, стандартный крашится
-        [HarmonyPatch(typeof(CreatureCalorieMonitor.Def), nameof(CreatureCalorieMonitor.Def.GetDescriptors))]
-        private static class CreatureCalorieMonitor_Def_GetDescriptors
-        {
-            private static bool Prefix(CreatureCalorieMonitor.Def __instance, GameObject obj, ref List<Descriptor> __result)
-            {
-                if (__instance.diet is HybridDiet)
-                {
-                    __result = HybridDiet.GetDescriptors(obj, __instance.diet);
-                    return false;
-                }
-                return true;
             }
         }
 

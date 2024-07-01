@@ -23,14 +23,10 @@
     <Compile Include="..\lib\BaseOptions.cs">
       <Link>BaseOptions.cs</Link>
     </Compile>
-    <Compile Include="..\lib\TranspilerUtils.cs">
-      <Link>TranspilerUtils.cs</Link>
-    </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
     <Compile Include="MooDietOptions.cs" />
-    <Compile Include="HybridDiet.cs" />
     <Compile Include="MooDietPatches.cs" />
     <Compile Include="STRINGS.cs" />
   </ItemGroup>

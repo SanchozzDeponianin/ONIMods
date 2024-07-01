@@ -73,6 +73,8 @@ namespace NoManualDelivery
             NuclearReactorConfig.ID,
             NoseconeHarvestConfig.ID,
             RailGunPayloadOpenerConfig.ID,
+            // из ДЛЦ2:
+            "IceKettle",
 
             // из модов:
             // Aquatic Farm https://steamcommunity.com/sharedfiles/filedetails/?id=1910961538

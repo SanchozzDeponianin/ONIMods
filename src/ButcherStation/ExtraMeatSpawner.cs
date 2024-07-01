@@ -5,7 +5,7 @@ namespace ButcherStation
 {
     public class ExtraMeatSpawner : KMonoBehaviour
     {
-        public static HashSet<string> meats = new HashSet<string>() { MeatConfig.ID, FishMeatConfig.ID, ShellfishMeatConfig.ID };
+        private static HashSet<string> meats = new HashSet<string>() { MeatConfig.ID, FishMeatConfig.ID, ShellfishMeatConfig.ID, "Tallow" };
 
         public float dropMultiplier = 0f;
         private bool butchered = false;
