@@ -17,7 +17,7 @@ namespace VaricolouredBalloons
     {
         public override void OnLoad(Harmony harmony)
         {
-            PUtil.InitLibrary(true);
+            if (Utils.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(VaricolouredBalloonsPatches));
         }
@@ -28,7 +28,13 @@ namespace VaricolouredBalloons
 
         private static BalloonArtistFacadeResource MakeBalloon(string id, string animFile, BalloonArtistFacadeType type)
         {
-            return new BalloonArtistFacadeResource(id, string.Empty, string.Empty, PermitRarity.Universal, animFile, type);
+            // для большинства анимаций (кроме групповых) их batchTag совпадает с id их группы
+            // для моддовых анимаций игра создаёт отдельные группы с id = name, однако batchTag = KAnimBatchManager.NO_BATCH
+            // начиная с U48 batchTag начал использоваться вглубине скинов балонов, изза одинакового batchTag началось мерцание текстур
+            // поэтому, сгенерируем уникальный batchTag от name
+            var kAnimFile = Assets.GetAnim(animFile);
+            Traverse.Create(kAnimFile).Field<HashedString>("_batchTag").Value = kAnimFile.name;
+            return new BalloonArtistFacadeResource(id, string.Empty, string.Empty, PermitRarity.Universal, animFile, type, DlcManager.AVAILABLE_ALL_VERSIONS);
         }
 
         [PLibMethod(RunAt.AfterDbInit)]
