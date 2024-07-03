@@ -13,7 +13,7 @@ namespace WhereMyLoot
     {
         public override void OnLoad(Harmony harmony)
         {
-            PUtil.InitLibrary(true);
+            if (Utils.LogModVersion()) return;
             base.OnLoad(harmony);
         }
 
@@ -58,6 +58,18 @@ namespace WhereMyLoot
                         geneShuffler.IsConsumed = true;
                         Scenario.SpawnPrefab(Grid.PosToCell(__instance), dropOffset.x, dropOffset.y, GeneShufflerRechargeConfig.ID, Grid.SceneLayer.Front).SetActive(true);
                         PopFXManager.Instance.SpawnFX(PopFXManager.Instance.sprite_Plus, Assets.GetPrefab(GeneShufflerRechargeConfig.ID.ToTag()).GetProperName(), __instance.transform, 1.5f, false);
+                    }
+
+                    // штука для разблокировки исследований
+                    var smi = __instance.GetSMI<POITechItemUnlocks.Instance>();
+                    if (!smi.IsNullOrStopped() && smi.IsInsideState(smi.sm.locked))
+                    {
+                        smi.sm.seenNotification.Set(true, smi);
+                        smi.UnlockTechItems();
+                        smi.sm.pendingChore.Set(false, smi);
+                        if (!string.IsNullOrEmpty(smi.def.loreUnlockId))
+                            Game.Instance.unlocks.Unlock(smi.def.loreUnlockId, true);
+                        //smi.gameObject.Trigger((int)GameHashes.UIRefresh, null);
                     }
                 }
             }
