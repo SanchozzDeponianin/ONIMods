@@ -1,71 +1,118 @@
-﻿using PeterHan.PLib.Detours;
+﻿using Klei.AI;
+using PeterHan.PLib.Detours;
 
 namespace BetterPlantTending
 {
-    public class ExtendedFertilizationIrrigationMonitor : TendedPlant
+    using handler = EventSystem.IntraObjectHandler<ExtendedFertilizationIrrigationMonitor>;
+    public class ExtendedFertilizationIrrigationMonitor : KMonoBehaviour
     {
-        private static readonly EventSystem.IntraObjectHandler<ExtendedFertilizationIrrigationMonitor> OnDelegate =
-            new EventSystem.IntraObjectHandler<ExtendedFertilizationIrrigationMonitor>((component, data) =>
-            {
-                component.dirty = true;
-                component.QueueApplyModifier();
-            });
+        // компонент для ряда дополнительных проверок что надо остановить поглощение удобрений и жидкостей
+        // если растение не растёт по иным причинам чем засыхание
 
-        IDetouredField<TreeBud, Growing> branch_growing = PDetours.DetourField<TreeBud, Growing>("growing");
-
-        protected override bool ApplyModifierOnEffectAdded => false;
-        protected override bool ApplyModifierOnEffectRemoved => false;
+        private static readonly handler OnDelegate = new handler((component, data) => component.QueueUpdateAbsorbing());
 
 #pragma warning disable CS0649
         [MySmiGet]
-        FertilizationMonitor.Instance fertilization;
+        private FertilizationMonitor.Instance fertilization;
 
         [MySmiGet]
-        IrrigationMonitor.Instance irrigation;
+        private IrrigationMonitor.Instance irrigation;
 
         [MyCmpGet]
-        Growing growing;
+        private Growing growing;
 
-        [MyCmpGet]
-        BuddingTrunk buddingTrunk;
+        [MySmiGet]
+        private PlantBranchGrower.Instance grower;
+
+        [MySmiGet]
+        private SpaceTreePlant.Instance siropTree;
 #pragma warning restore CS0649
 
-        private bool subscribed;
-        private bool shouldAbsorbing = true;
+        private bool shouldAbsorb = true;
+        private int subscribeCount = 0;
         private bool dirty = true;
+        private SchedulerHandle updateHandle;
 
-        public void Subscribe()
+        public bool ShouldAbsorb
         {
-            if (!subscribed && BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning)
+            get
+            {
+                if (dirty)
+                {
+                    UpdateShouldAbsorb();
+                    dirty = false;
+                }
+                return shouldAbsorb;
+            }
+        }
+
+        public static void Subscribe(StateMachine.Instance smi)
+        {
+            if (!BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning)
+                return;
+            var monitor = smi.GetComponent<ExtendedFertilizationIrrigationMonitor>();
+            if (monitor != null)
+                monitor.Subscribe();
+        }
+
+        public static void Unsubscribe(StateMachine.Instance smi)
+        {
+            var monitor = smi.GetComponent<ExtendedFertilizationIrrigationMonitor>();
+            if (monitor != null)
+                monitor.Unsubscribe();
+        }
+
+        public static void QueueUpdateAbsorbing(StateMachine.Instance smi)
+        {
+            if (!BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning)
+                return;
+            var monitor = smi.GetComponent<ExtendedFertilizationIrrigationMonitor>();
+            if (monitor != null && monitor.subscribeCount > 0)
+                monitor.QueueUpdateAbsorbing();
+        }
+
+        private void Subscribe()
+        {
+            if (subscribeCount++ == 0)
             {
                 Subscribe((int)GameHashes.Grow, OnDelegate);
                 Subscribe((int)GameHashes.Wilt, OnDelegate);
                 Subscribe((int)GameHashes.CropWakeUp, OnDelegate);
                 Subscribe((int)GameHashes.CropSleep, OnDelegate);
-                subscribed = true;
+                Subscribe((int)GameHashes.TreeBranchCountChanged, OnDelegate);
             }
         }
 
-        public void Unsubscribe()
+        private void Unsubscribe()
         {
-            if (subscribed)
+            if (subscribeCount > 0)
             {
-                Unsubscribe((int)GameHashes.Grow, OnDelegate);
-                Unsubscribe((int)GameHashes.Wilt, OnDelegate);
-                Unsubscribe((int)GameHashes.CropWakeUp, OnDelegate);
-                Unsubscribe((int)GameHashes.CropSleep, OnDelegate);
-                subscribed = false;
+                subscribeCount--;
+                if (subscribeCount <= 0)
+                    ForceUnsubscribe();
             }
+        }
+
+        private void ForceUnsubscribe()
+        {
+            Unsubscribe((int)GameHashes.Grow, OnDelegate, true);
+            Unsubscribe((int)GameHashes.Wilt, OnDelegate, true);
+            Unsubscribe((int)GameHashes.CropWakeUp, OnDelegate, true);
+            Unsubscribe((int)GameHashes.CropSleep, OnDelegate, true);
+            Unsubscribe((int)GameHashes.TreeBranchCountChanged, OnDelegate, true);
         }
 
         protected override void OnCleanUp()
         {
-            Unsubscribe();
+            ForceUnsubscribe();
+            if (updateHandle.IsValid)
+                updateHandle.ClearScheduler();
             base.OnCleanUp();
         }
 
-        public override void ApplyModifier()
+        private void UpdateAbsorbing(object _)
         {
+            dirty = true;
             // тут стартуем поглощение, так как проверка должна быть встроена в патчи
             if (!fertilization.IsNullOrStopped() && fertilization.IsInsideState(fertilization.sm.replanted.fertilized.absorbing))
                 fertilization.StartAbsorbing();
@@ -73,37 +120,63 @@ namespace BetterPlantTending
                 irrigation.UpdateAbsorbing(true);
         }
 
-        public bool ShouldAbsorbing()
+        private void QueueUpdateAbsorbing()
         {
-            if (dirty)
+            dirty = true;
+            if (updateHandle.IsValid)
+                updateHandle.ClearScheduler();
+            updateHandle = GameScheduler.Instance.Schedule("QueueUpdateAbsorbing", 2 * UpdateManager.SecondsPerSimTick, UpdateAbsorbing);
+        }
+
+        private static IDetouredField<SpaceTreeBranch.Instance, AmountInstance> Maturity
+            = PDetours.DetourField<SpaceTreeBranch.Instance, AmountInstance>("maturity");
+
+        private void UpdateShouldAbsorb()
+        {
+            if (growing != null)
             {
-                if (growing != null)
+                bool fullyGrown = growing.ReachedNextHarvest();
+                if (fullyGrown && !siropTree.IsNullOrStopped())
                 {
-                    if (buddingTrunk != null && growing.ReachedNextHarvest())
+                    // поглощение включено если сироповое дерево генерирует сироп
+                    if (siropTree.IsInsideState(siropTree.sm.production.producing))
                     {
-                        // проверка всех веток дерева
-                        // поглощение включено если есть растущие ветки или их меньше максимума
-                        int num_branches = 0;
-                        int num_growing_branches = 0;
-                        for (int i = 0; i < ForestTreeConfig.NUM_BRANCHES; i++)
-                        {
-                            var branch = buddingTrunk.GetBranchAtPosition(i);
-                            if (branch != null)
-                            {
-                                num_branches++;
-                                var bg = branch_growing.Get(branch);
-                                if (bg != null && bg.IsGrowing() && !bg.ReachedNextHarvest())
-                                    num_growing_branches++;
-                            }
-                        }
-                        shouldAbsorbing = num_growing_branches > 0 || num_branches < buddingTrunk.maxBuds;
+                        shouldAbsorb = true;
+                        return;
                     }
-                    else
-                        shouldAbsorbing = growing.IsGrowing() && !growing.ReachedNextHarvest();
                 }
-                dirty = false;
+                if (fullyGrown && !grower.IsNullOrStopped())
+                {
+                    // проверка всех веток дерева
+                    // поглощение включено если есть растущие ветки
+                    int growing_branches = 0;
+                    if (grower.CurrentBranchCount > 0)
+                        grower.ActionPerBranch(branch =>
+                        {
+                            if (branch.TryGetComponent<Growing>(out var branch_growing))    // деревянные ветки
+                            {
+                                if (branch_growing.IsGrowing() && !branch_growing.ReachedNextHarvest())
+                                {
+                                    growing_branches++;
+                                }
+                            }
+                            else
+                            {
+                                var stbi = branch.GetSMI<SpaceTreeBranch.Instance>();       // сироповые ветки
+                                if (!stbi.IsNullOrStopped() && !stbi.IsBranchFullyGrown)
+                                {
+                                    var maturity = Maturity.Get(stbi);
+                                    if (maturity.GetDelta() > 0)
+                                        growing_branches++;
+                                }
+                            }
+                        });
+                    shouldAbsorb = growing_branches > 0;
+                }
+                // в иных случаях поглощение включено если растение может расти и не выросло полностью
+                else
+                    shouldAbsorb = !fullyGrown && growing.IsGrowing();
             }
-            return shouldAbsorbing;
         }
     }
 }

@@ -9,7 +9,6 @@ using TUNING;
 using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
-using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
 using static BetterPlantTending.BetterPlantTendingAssets;
@@ -90,46 +89,38 @@ namespace BetterPlantTending
             }
         }
 
-        // деревянное дерево
+        // деревянное и сироповое дерево
         // в ванили отдельные ветки не будут убобрять после загрузки сейва
         // так как до них не доходит событие OnUpdateRoom
         // потому что ветки забанены в RoomProberе
         // чиним это
-        [HarmonyPatch(typeof(BuddingTrunk), "OnPrefabInit")]
-        private static class BuddingTrunk_OnPrefabInit
+        [HarmonyPatch(typeof(PlantBranchGrower), nameof(PlantBranchGrower.InitializeStates))]
+        private static class PlantBranchGrower_InitializeStates
         {
-            private static readonly EventSystem.IntraObjectHandler<BuddingTrunk> OnUpdateRoomDelegate =
-                new EventSystem.IntraObjectHandler<BuddingTrunk>((component, data) => RetriggerOnUpdateRoom(component, data));
-
-            private static void RetriggerOnUpdateRoom(BuddingTrunk trunk, object data)
+            private static void Postfix(PlantBranchGrower __instance)
             {
-                for (int i = 0; i < ForestTreeConfig.NUM_BRANCHES; i++)
+                __instance.root.EventHandler(GameHashes.UpdateRoom, (smi, data) =>
                 {
-                    trunk.GetBranchAtPosition(i)?.Trigger((int)GameHashes.UpdateRoom, data);
-                }
-            }
-
-            private static void Postfix(BuddingTrunk __instance)
-            {
-                if (BetterPlantTendingOptions.Instance.tree_fix_tinkering_branches)
-                    __instance.Subscribe((int)GameHashes.UpdateRoom, OnUpdateRoomDelegate);
+                    if (BetterPlantTendingOptions.Instance.tree_fix_tinkering_branches)
+                        smi.ActionPerBranch(branch => branch.Trigger((int)GameHashes.UpdateRoom, data));
+                });
             }
         }
 
+        // деревянное дерево
         // разблокируем возможность мутации
-        [HarmonyPatch(typeof(BuddingTrunk), "ExtractExtraSeed")]
-        private static class BuddingTrunk_ExtractExtraSeed
+        [HarmonyPatch(typeof(ForestTreeSeedMonitor), nameof(ForestTreeSeedMonitor.ExtractExtraSeed))]
+        private static class ForestTreeSeedMonitor_ExtractExtraSeed
         {
             private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
 
-            private static GameObject AddMutation(GameObject seed, BuddingTrunk trunk)
+            private static GameObject AddMutation(GameObject seed, ForestTreeSeedMonitor trunk)
             {
                 if (BetterPlantTendingOptions.Instance.tree_unlock_mutation)
                 {
-                    var trunk_mutant = trunk.GetComponent<MutantPlant>();
-                    var seed_mutant = seed.GetComponent<MutantPlant>();
-                    if (trunk_mutant != null && trunk_mutant.IsOriginal
-                        && seed_mutant != null && trunk.GetComponent<SeedProducer>().RollForMutation())
+                    if (trunk.TryGetComponent<MutantPlant>(out var trunk_mutant) && trunk_mutant.IsOriginal
+                        && seed.TryGetComponent<MutantPlant>(out var seed_mutant)
+                        && trunk.TryGetComponent<SeedProducer>(out var producer) && producer.RollForMutation())
                     {
                         seed_mutant.Mutate();
                     }
@@ -149,7 +140,7 @@ namespace BetterPlantTending
             private static bool transpiler(List<CodeInstruction> instructions)
             {
                 var kInstantiate = typeof(Util).GetMethodSafe(nameof(Util.KInstantiate), true, typeof(GameObject), typeof(Vector3));
-                var addMutation = typeof(BuddingTrunk_ExtractExtraSeed).GetMethodSafe(nameof(AddMutation), true, PPatchTools.AnyArguments);
+                var addMutation = typeof(ForestTreeSeedMonitor_ExtractExtraSeed).GetMethodSafe(nameof(AddMutation), true, PPatchTools.AnyArguments);
                 if (kInstantiate != null && addMutation != null)
                 {
                     for (int i = 0; i < instructions.Count; i++)
@@ -166,27 +157,9 @@ namespace BetterPlantTending
             }
         }
 
-        // применяем мутацию от ствола на ветку
-        [HarmonyPatch(typeof(TreeBud), nameof(TreeBud.SetTrunkPosition))]
-        private static class TreeBud_SetTrunkPosition
-        {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+        // TODO: даже мутантовое дерево создаёт семена при сборе/спавне веток. рассмотреть возможность заблокировать это
 
-            private static readonly IDetouredField<PlantSubSpeciesCatalog, HashSet<Tag>> identifiedSubSpecies =
-                PDetours.DetourField<PlantSubSpeciesCatalog, HashSet<Tag>>("identifiedSubSpecies");
-
-            private static void Postfix(TreeBud __instance, BuddingTrunk budding_trunk)
-            {
-                var budding_mutant = budding_trunk?.GetComponent<MutantPlant>();
-                if (budding_mutant != null && !budding_mutant.IsOriginal)
-                {
-                    var branch_mutant = __instance.GetComponent<MutantPlant>();
-                    budding_mutant.CopyMutationsTo(branch_mutant);
-                    // принудительно но по тихому идентифицируем мутацию ветки
-                    identifiedSubSpecies.Get(PlantSubSpeciesCatalog.Instance).Add(branch_mutant.SubSpeciesID);
-                }
-            }
-        }
+        // TODO: сиропное дерево. ускоряем производство сиропа пропорционально баффам
 
         // солёная лоза, ну и заодно и неиспользуемый кактус, они оба на одной основе сделаны
         [HarmonyPatch]
@@ -337,7 +310,8 @@ namespace BetterPlantTending
         {
             private static void Postfix(Tinkerable __instance, Worker worker)
             {
-                __instance.GetComponent<ExtraSeedProducer>()?.CreateExtraSeed(worker);
+                if (__instance.TryGetComponent<ExtraSeedProducer>(out var producer))
+                    producer.CreateExtraSeed(worker);
             }
         }
 
@@ -387,14 +361,14 @@ namespace BetterPlantTending
                             __result = true;
                             return;
                         }
-                        var growing = __instance.GetComponent<Growing>();
-                        if (growing != null && (growing.ReachedNextHarvest() || !growing.IsGrowing())) // полностью выросло или не растёт
+                        // полностью выросло или не растёт
+                        if (__instance.TryGetComponent<Growing>(out var growing) && (growing.ReachedNextHarvest() || !growing.IsGrowing()))
                         {
                             __result = true;
                             return;
                         }
                     }
-                    if (!__instance.GetComponent<ExtraSeedProducer>()?.ShouldFarmTinkerTending ?? false)
+                    if (__instance.TryGetComponent<ExtraSeedProducer>(out var producer) && !producer.ShouldFarmTinkerTending)
                     {
                         __result = true;
                         return;
@@ -477,10 +451,10 @@ namespace BetterPlantTending
         {
             private static bool Prefix(TreeClimbStates.Instance smi)
             {
-                var extraSeedProducer = smi.sm.target.Get(smi)?.GetComponent<ExtraSeedProducer>();
-                if (extraSeedProducer != null)
+                var target = smi.sm.target.Get(smi);
+                if (target != null && target.TryGetComponent<ExtraSeedProducer>(out var producer))
                 {
-                    extraSeedProducer.ExtractExtraSeed();
+                    producer.ExtractExtraSeed();
                     return false;
                 }
                 return true;
@@ -549,11 +523,16 @@ namespace BetterPlantTending
                 var entries = ListPool<ScenePartitionerEntry, GameScenePartitioner>.Allocate();
                 var search_extents = new Extents(Grid.PosToCell(smi.master.transform.GetPosition()), radius);
                 GameScenePartitioner.Instance.GatherEntries(search_extents, GameScenePartitioner.Instance.plants, entries);
-                var plants = entries
-                    .Select((e) => e.obj as KMonoBehaviour)
-                    .Where((kmb) => (kmb.GetMyWorldId() == myWorldId)
-                        && ((kmb.GetComponent<Crop>() != null) || (kmb.GetComponent<ExtraSeedProducer>()?.ShouldDivergentTending ?? false)))
-                    .ToList();
+                var plants = new List<KMonoBehaviour>();
+                foreach (var entry in entries)
+                {
+                    var kmb = entry.obj as KMonoBehaviour;
+                    if (kmb != null && (kmb.GetMyWorldId() == myWorldId)
+                        && (kmb.TryGetComponent<Crop>(out _) || (kmb.TryGetComponent<ExtraSeedProducer>(out var producer) && producer.ShouldDivergentTending)))
+                    {
+                        plants.Add(kmb);
+                    }
+                }
                 entries.Recycle();
                 return plants;
             }
@@ -624,21 +603,25 @@ namespace BetterPlantTending
         // вопервых исправление неконсистентности поглощения твердых удобрений засохшими растениями после загрузки сейфа
         // патчим FertilizationMonitor чтобы был больше похож на IrrigationMonitor
         // вовторых останавливаем поглощения воды/удобрений при других причинах отсутствии роста,
-        // с учетом нюансов: ветки дерева
         // для ентого внедряем собственный компонент
+        private static bool ShouldAbsorb(StateMachine.Instance smi)
+        {
+            bool absorb = !smi.gameObject.HasTag(GameTags.Wilting);
+            if (absorb && BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning
+                && smi.gameObject.TryGetComponent<ExtendedFertilizationIrrigationMonitor>(out var monitor))
+                absorb = absorb && monitor.ShouldAbsorb;
+            return absorb;
+        }
+
         [HarmonyPatch(typeof(FertilizationMonitor.Instance), nameof(FertilizationMonitor.Instance.StartAbsorbing))]
         private static class FertilizationMonitor_Instance_StartAbsorbing
         {
             private static bool Prefix(FertilizationMonitor.Instance __instance)
             {
-                if (__instance.gameObject.HasTag(GameTags.Wilting)
-                    || (BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning
-                        && !__instance.GetComponent<ExtendedFertilizationIrrigationMonitor>().ShouldAbsorbing()))
-                {
+                bool absorb = ShouldAbsorb(__instance);
+                if (!absorb)
                     __instance.StopAbsorbing();
-                    return false;
-                }
-                return true;
+                return absorb;
             }
         }
 
@@ -653,8 +636,8 @@ namespace BetterPlantTending
             private static void Postfix(FertilizationMonitor __instance)
             {
                 __instance.replanted.fertilized.absorbing
-                    .Enter(smi => smi.GetComponent<ExtendedFertilizationIrrigationMonitor>().Subscribe())
-                    .Exit(smi => smi.GetComponent<ExtendedFertilizationIrrigationMonitor>().Unsubscribe());
+                    .Enter(ExtendedFertilizationIrrigationMonitor.Subscribe)
+                    .Exit(ExtendedFertilizationIrrigationMonitor.Unsubscribe);
             }
         }
 
@@ -663,9 +646,7 @@ namespace BetterPlantTending
         {
             private static void Prefix(IrrigationMonitor.Instance __instance, ref bool allow)
             {
-                allow = allow && !__instance.gameObject.HasTag(GameTags.Wilting);
-                if (BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning)
-                    allow = allow && __instance.GetComponent<ExtendedFertilizationIrrigationMonitor>().ShouldAbsorbing();
+                allow = allow && ShouldAbsorb(__instance);
             }
         }
 
@@ -675,8 +656,8 @@ namespace BetterPlantTending
             private static void Postfix(IrrigationMonitor __instance)
             {
                 __instance.replanted.irrigated.absorbing
-                    .Enter(smi => smi.GetComponent<ExtendedFertilizationIrrigationMonitor>().Subscribe())
-                    .Exit(smi => smi.GetComponent<ExtendedFertilizationIrrigationMonitor>().Unsubscribe());
+                    .Enter(ExtendedFertilizationIrrigationMonitor.Subscribe)
+                    .Exit(ExtendedFertilizationIrrigationMonitor.Unsubscribe);
             }
         }
 
@@ -698,27 +679,41 @@ namespace BetterPlantTending
             }
         }
 
-        // ретриггерим от веток дерева на ствол, чтобы пересчитать необходимость поглощения воды/удобрений
-        private static readonly EventSystem.IntraObjectHandler<TreeBud> OnGrowDelegate =
-            new EventSystem.IntraObjectHandler<TreeBud>((component, data) =>
-                component?.buddingTrunk?.Get()?.Trigger((int)GameHashes.Grow));
-
-        [HarmonyPatch(typeof(TreeBud), "SubscribeToTrunk")]
-        private static class TreeBud_SubscribeToTrunk
+        // чтобы пересчитать необходимость поглощения воды/удобрений
+        // когда меняется состояние ветки
+        [HarmonyPatch(typeof(PlantBranch), nameof(PlantBranch.InitializeStates))]
+        private static class PlantBranch_InitializeStates
         {
-            private static void Postfix(TreeBud __instance)
+            private static void Postfix(PlantBranch __instance)
             {
-                if (BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning)
-                    __instance.Subscribe((int)GameHashes.Grow, OnGrowDelegate);
+                __instance.root.EventHandler(GameHashes.Grow, (smi, data) =>
+                {
+                    if (smi.HasTrunk)
+                        //smi.trunk.Trigger((int)GameHashes.Grow, data);
+                        ExtendedFertilizationIrrigationMonitor.QueueUpdateAbsorbing(smi.trunk);
+                });
             }
         }
 
-        [HarmonyPatch(typeof(TreeBud), "UnsubscribeToTrunk")]
-        private static class TreeBud_UnsubscribeToTrunk
+        [HarmonyPatch(typeof(SpaceTreePlant.Instance), "OnBranchWiltStateChanged")]
+        private static class SpaceTreePlant_Instance_OnBranchWiltStateChanged
         {
-            private static void Postfix(TreeBud __instance)
+            private static void Postfix(SpaceTreePlant.Instance __instance)
             {
-                __instance.Unsubscribe((int)GameHashes.Grow, OnGrowDelegate, true);
+                ExtendedFertilizationIrrigationMonitor.QueueUpdateAbsorbing(__instance);
+            }
+        }
+
+        // чтобы пересчитать необходимость поглощения воды/удобрений
+        // когда сироповое дерево не/может производить сироп
+        [HarmonyPatch(typeof(SpaceTreePlant), nameof(SpaceTreePlant.InitializeStates))]
+        private static class SpaceTreePlant_InitializeStates
+        {
+            private static void Postfix(SpaceTreePlant __instance)
+            {
+                __instance.production.producing
+                    .Enter(ExtendedFertilizationIrrigationMonitor.QueueUpdateAbsorbing)
+                    .Exit(ExtendedFertilizationIrrigationMonitor.QueueUpdateAbsorbing);
             }
         }
     }

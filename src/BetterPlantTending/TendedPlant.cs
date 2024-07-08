@@ -1,30 +1,23 @@
 ﻿namespace BetterPlantTending
 {
+    using handler = EventSystem.IntraObjectHandler<TendedPlant>;
     public abstract class TendedPlant : KMonoBehaviour
     {
-        protected virtual bool ApplyModifierOnEffectAdded => true;
-        protected virtual bool ApplyModifierOnEffectRemoved => true;
-
-        private static readonly EventSystem.IntraObjectHandler<TendedPlant> OnEffectChangedDelegate =
-            new EventSystem.IntraObjectHandler<TendedPlant>((component, data) => component.ApplyModifier());
+        private static readonly handler OnEffectChangedDelegate = new handler((component, data) => component.ApplyModifier());
 
         private SchedulerHandle updateHandle;
 
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            if (ApplyModifierOnEffectAdded)
-                Subscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
-            if (ApplyModifierOnEffectRemoved)
-                Subscribe((int)GameHashes.EffectRemoved, OnEffectChangedDelegate);
+            Subscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
+            Subscribe((int)GameHashes.EffectRemoved, OnEffectChangedDelegate);
         }
 
         protected override void OnCleanUp()
         {
-            if (ApplyModifierOnEffectAdded)
-                Unsubscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
-            if (ApplyModifierOnEffectRemoved)
-                Unsubscribe((int)GameHashes.EffectRemoved, OnEffectChangedDelegate);
+            Unsubscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
+            Unsubscribe((int)GameHashes.EffectRemoved, OnEffectChangedDelegate);
             if (updateHandle.IsValid)
                 updateHandle.ClearScheduler();
             base.OnCleanUp();

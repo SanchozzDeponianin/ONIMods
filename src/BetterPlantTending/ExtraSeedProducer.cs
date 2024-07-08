@@ -8,6 +8,7 @@ using static BetterPlantTending.BetterPlantTendingAssets;
 
 namespace BetterPlantTending
 {
+    using handler = EventSystem.IntraObjectHandler<ExtraSeedProducer>;
     public class ExtraSeedProducer : KMonoBehaviour, IGameObjectEffectDescriptor
     {
 #pragma warning disable CS0649
@@ -31,15 +32,8 @@ namespace BetterPlantTending
         public bool ShouldDivergentTending => (isNotDecorative || !hasExtraSeedAvailable) && !IsWilting;
         public bool ShouldFarmTinkerTending => isNotDecorative || !hasExtraSeedAvailable;
 
-        private static readonly EventSystem.IntraObjectHandler<ExtraSeedProducer> OnUprootedDelegate = new EventSystem.IntraObjectHandler<ExtraSeedProducer>(delegate (ExtraSeedProducer component, object data)
-        {
-            component.ExtractExtraSeed();
-        });
-
-        private static readonly EventSystem.IntraObjectHandler<ExtraSeedProducer> OnCropTendedDelegate = new EventSystem.IntraObjectHandler<ExtraSeedProducer>(delegate (ExtraSeedProducer component, object data)
-        {
-            component.CreateExtraSeed();
-        });
+        private static readonly handler OnUprootedDelegate = new handler((component, data) => component.ExtractExtraSeed());
+        private static readonly handler OnCropTendedDelegate = new handler((component, data) => component.CreateExtraSeed());
 
         private static readonly System.Func<SeedProducer, string, int, bool, GameObject> ProduceSeed =
             typeof(SeedProducer).Detour<System.Func<SeedProducer, string, int, bool, GameObject>>("ProduceSeed");

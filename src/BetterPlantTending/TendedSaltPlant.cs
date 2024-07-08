@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace BetterPlantTending
 {
+    using handler = EventSystem.IntraObjectHandler<TendedPlant>;
     public class TendedSaltPlant : TendedPlant
     {
-        private static readonly EventSystem.IntraObjectHandler<TendedPlant> OnGrowDelegate =
-            new EventSystem.IntraObjectHandler<TendedPlant>((component, data) => component.QueueApplyModifier());
+        private static readonly handler OnGrowDelegate = new handler((component, data) => component.QueueApplyModifier());
 
         [SerializeField]
         public float consumptionRate;
