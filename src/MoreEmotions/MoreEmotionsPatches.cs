@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Klei.AI;
 using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
 using PeterHan.PLib.Options;
 
@@ -22,10 +24,7 @@ namespace MoreEmotions
             new POptions().RegisterOptions(this, typeof(MoreEmotionsOptions));
         }
 
-        // todo: добавить звуки к анимациям (сложна)
-        // * терпёжъ bladder
-        // * объсмеяние laugh
-        // * проверить звуки на успокаивании stressed и cheering
+        // todo: добавлять звуки к анимациям
 
         [PLibMethod(RunAt.BeforeDbInit)]
         private static void BeforeDbInit()
@@ -116,6 +115,135 @@ namespace MoreEmotions
                 interrupt_kick_and_sleep_again
                     .QueueAnim("interrupt_light")
                     .OnAnimQueueComplete(not_so_uninterruptable);
+            }
+        }
+
+        // альтернативные анимации сна
+        // todo: подумать над совместимостью с модом на специи
+        [HarmonyPatch(typeof(SleepChore.States), nameof(SleepChore.States.InitializeStates))]
+        internal static class SleepChore_States_InitializeStates_Alternative
+        {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.alternative_sleep_anims;
+
+            private static SleepChore.States.State peaceful;
+            private static SleepChore.States.State bad;
+
+            private static void Postfix(SleepChore.States __instance)
+            {
+                peaceful = __instance.CreateState(nameof(peaceful), __instance.sleep.normal);
+                bad = __instance.CreateState(nameof(bad), __instance.sleep.normal);
+
+                __instance.sleep
+                    .Enter(CheckPeacefulSleep);
+
+                __instance.sleep.normal
+                    .Transition(peaceful, smi => smi.hadPeacefulSleep)
+                    .Transition(bad, smi => smi.hadBadSleep && smi.timeinstate > 2 * UpdateManager.SecondsPerSimTick);
+
+                peaceful
+                    .Enter(smi => smi.hadPeacefulSleep = false)
+                    .QueueAnim("trans_peaceful", false)
+                    .QueueAnim("peaceful_loop", true)
+                    .QueueAnimOnExit("trans_working", false);
+
+                bad
+                    .Enter(smi => smi.hadBadSleep = false)
+                    .QueueAnim("trans_bad", false)
+                    .QueueAnim("bad_loop", true)
+                    .QueueAnimOnExit("trans_bad_working", false);
+
+                __instance.sleep.interrupt_scared
+                    .Exit(CheckBadSleep);
+
+                __instance.sleep.interrupt_movement
+                    .Exit(CheckBadSleep);
+
+                __instance.sleep.interrupt_cold
+                    .Exit(CheckBadSleep);
+
+                __instance.sleep.interrupt_noise
+                    .Exit(CheckBadSleep);
+
+                __instance.sleep.interrupt_light
+                    .Exit(CheckBadSleep);
+            }
+
+            private static void CheckPeacefulSleep(SleepChore.StatesInstance smi)
+            {
+                var bed = smi.sm.bed.Get(smi);
+                if (bed != null && bed.TryGetComponent<Building>(out _))
+                {
+                    smi.hadPeacefulSleep = smi.IsLoudSleeper()
+                        || (bed.PrefabID() == LuxuryBedConfig.ID ? UnityEngine.Random.value < 0.8f : UnityEngine.Random.value < 0.15f);
+                }
+            }
+
+            private static void CheckBadSleep(SleepChore.StatesInstance smi)
+            {
+                var bed = smi.sm.bed.Get(smi);
+                if (bed != null && bed.TryGetComponent<Building>(out _))
+                {
+                    smi.hadBadSleep = true;
+                }
+            }
+
+            // подмена PlayAnim на QueueAnim в некоторых "прерываниях" сна
+            private static SleepChore.States.State PlayQueueAnim(SleepChore.States.State @this, string anim)
+            {
+                @this.QueueAnim(anim, false);
+                return @this;
+            }
+
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var PlayAnim = typeof(SleepChore.States.State).GetMethodSafe("PlayAnim", false, typeof(string));
+                var QueueAnim = typeof(SleepChore_States_InitializeStates_Alternative).GetMethodSafe(nameof(PlayQueueAnim), true, PPatchTools.AnyArguments);
+                if (PlayAnim != null && QueueAnim != null)
+                {
+                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, PlayAnim, QueueAnim).ToList();
+                    return true;
+                }
+                return false;
+            }
+
+            internal static HashedString GetWorkPstAnim(SleepChore.StatesInstance smi)
+            {
+                if (!smi.IsNullOrStopped())
+                {
+                    if (smi.IsInsideState(peaceful))
+                        return "trans_working";
+                    if (smi.IsInsideState(bad))
+                        return "trans_bad_working";
+                }
+                return HashedString.Invalid;
+            }
+        }
+
+        // поправляем анимацию завершения сна
+        [HarmonyPatch(typeof(Sleepable), nameof(Sleepable.GetWorkPstAnims))]
+        private static class Sleepable_GetWorkPstAnims
+        {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.alternative_sleep_anims;
+
+            private static void Postfix(Worker worker, ref HashedString[] __result)
+            {
+                if (worker != null)
+                {
+                    var smi = worker.GetSMI<SleepChore.StatesInstance>();
+                    var anim = SleepChore_States_InitializeStates_Alternative.GetWorkPstAnim(smi);
+                    if (anim.IsValid)
+                    {
+                        var anims = new HashedString[__result.Length + 1];
+                        anims[0] = anim;
+                        Array.Copy(__result, 0, anims, 1, __result.Length);
+                        __result = anims;
+                    }
+                }
             }
         }
 

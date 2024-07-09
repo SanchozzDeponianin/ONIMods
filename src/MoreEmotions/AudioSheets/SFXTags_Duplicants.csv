@@ -24,3 +24,5 @@ anim_react_cheering_dupe_kanim,working_loop,VoiceSoundEvent,,,conversation_quest
 anim_react_cheering_dupe_kanim,working_loop,SoundEvent,,,Cloth_canvas_soft,164,Cloth_canvas_soft,219,,,,,,,,,,,,,,,,,,,,
 anim_react_cheering_dupe_kanim,working_loop,SoundEvent,,,Dupe_hand_wave,95,Dupe_hand_wave,101,Dupe_hand_wave,107,Dupe_hand_wave,113,,,,,,,,,,,,,,,,
 anim_react_cheering_dupe_kanim,working_loop,SoundEvent,,,RancherStation_rub,170,RancherStation_rub,184,RancherStation_rub,200,,,,,,,,,,,,,,,,,,
+anim_sleep_bed_kanim,bad_loop,VoiceSoundEvent,,,sleep_inhale,11,sleep_exhale,26,,,,,,,,,,,,,,,,,,,,
+anim_interacts_ladder_bed_kanim,bad_loop,VoiceSoundEvent,EXPANSION1_ID,,sleep_inhale,11,sleep_exhale,26,,,,,,,,,,,,,,,,,,,,

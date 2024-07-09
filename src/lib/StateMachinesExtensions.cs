@@ -142,5 +142,30 @@ namespace SanchozzONIMods.Lib
             }
             else return false;
         }
+
+        // заказать анимацию при выходе из статуса
+        public static GameStateMachine<SM, I, M, D>.State QueueAnimOnExit<SM, I, M, D>
+            (this GameStateMachine<SM, I, M, D>.State @this,
+                string anim,
+                bool loop = false,
+                Func<I, string> suffix_callback = null)
+            where SM : GameStateMachine<SM, I, M, D>
+            where I : GameStateMachine<SM, I, M, D>.GameInstance
+            where M : IStateMachineTarget
+            //where D : GameStateMachine<SM, I, M, D>.BaseDef or just object
+        {
+            if (@this == null)
+                throw new ArgumentNullException(nameof(@this));
+            var state_target = @this.GetStateTarget();
+            var mode = loop ? KAnim.PlayMode.Loop : KAnim.PlayMode.Once;
+            @this.Exit($"QueueAnimOnExit({anim}, {mode.ToString()})", (I smi) =>
+            {
+                string suffix = (suffix_callback != null) ? suffix_callback(smi) : string.Empty;
+                var kbac = state_target.Get<KAnimControllerBase>(smi);
+                if (kbac != null)
+                    kbac.Queue(anim + suffix, mode);
+            });
+            return @this;
+        }
     }
 }

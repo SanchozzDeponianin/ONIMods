@@ -6,6 +6,7 @@ namespace MoreEmotions
 {
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
+    [RestartRequired]
     internal sealed class MoreEmotionsOptions : BaseOptions<MoreEmotionsOptions>
     {
         [JsonProperty]
@@ -47,6 +48,10 @@ namespace MoreEmotions
         [JsonProperty]
         [Option]
         public bool alternative_binge_eat_emote { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool alternative_sleep_anims { get; set; } = true;
 
         [JsonProperty]
         [Option]

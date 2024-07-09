@@ -84,6 +84,10 @@ namespace MoreEmotions
                 public static LocString NAME = "Alternative variant of Binge Eater emotion";
                 public static LocString TOOLTIP = "A stressed Binge Eater will sometimes try to bite his hand";
             }
+            public class ALTERNATIVE_SLEEP_ANIMS
+            {
+                public static LocString NAME = "Alternative variants of sleeping on a Bed animation";
+            }
             public class SAW_CORPSE_EMOTE
             {
                 public static LocString NAME = "The \"Saw Corpse\" Emotion";
