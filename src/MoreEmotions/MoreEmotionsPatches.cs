@@ -86,7 +86,7 @@ namespace MoreEmotions
                 var interrupt_kick_and_sleep_again = __instance.CreateState("interrupt_kick_and_sleep_again", __instance.sleep.uninterruptable);
 
                 __instance.sleep.uninterruptable
-                    .DefaultState(not_so_uninterruptable)
+                    .EnterTransition(not_so_uninterruptable, smi => !smi.hadPeacefulSleep)
                     .ToggleReactable(smi => new KickLazyAssReactable(smi.gameObject));
 
                 not_so_uninterruptable
@@ -119,7 +119,6 @@ namespace MoreEmotions
         }
 
         // альтернативные анимации сна
-        // todo: подумать над совместимостью с модом на специи
         [HarmonyPatch(typeof(SleepChore.States), nameof(SleepChore.States.InitializeStates))]
         internal static class SleepChore_States_InitializeStates_Alternative
         {
@@ -127,11 +126,13 @@ namespace MoreEmotions
 
             private static SleepChore.States.State peaceful;
             private static SleepChore.States.State bad;
+            private static SleepChore.States.State phospho_rufus; // для совместимости с фосфорными специями
 
             private static void Postfix(SleepChore.States __instance)
             {
                 peaceful = __instance.CreateState(nameof(peaceful), __instance.sleep.normal);
                 bad = __instance.CreateState(nameof(bad), __instance.sleep.normal);
+                phospho_rufus = __instance.CreateState(nameof(peaceful), __instance.sleep.uninterruptable);
 
                 __instance.sleep
                     .Enter(CheckPeacefulSleep);
@@ -139,6 +140,9 @@ namespace MoreEmotions
                 __instance.sleep.normal
                     .Transition(peaceful, smi => smi.hadPeacefulSleep)
                     .Transition(bad, smi => smi.hadBadSleep && smi.timeinstate > 2 * UpdateManager.SecondsPerSimTick);
+
+                __instance.sleep.uninterruptable
+                    .EnterTransition(phospho_rufus, smi => smi.hadPeacefulSleep);
 
                 peaceful
                     .Enter(smi => smi.hadPeacefulSleep = false)
@@ -151,6 +155,12 @@ namespace MoreEmotions
                     .QueueAnim("trans_bad", false)
                     .QueueAnim("bad_loop", true)
                     .QueueAnimOnExit("trans_bad_working", false);
+
+                phospho_rufus
+                    .Enter(smi => smi.hadPeacefulSleep = false)
+                    .QueueAnim("trans_peaceful", false)
+                    .QueueAnim("peaceful_loop", true)
+                    .QueueAnimOnExit("trans_working", false);
 
                 __instance.sleep.interrupt_scared
                     .Exit(CheckBadSleep);
@@ -173,8 +183,8 @@ namespace MoreEmotions
                 var bed = smi.sm.bed.Get(smi);
                 if (bed != null && bed.TryGetComponent<Building>(out _))
                 {
-                    smi.hadPeacefulSleep = smi.IsLoudSleeper()
-                        || (bed.PrefabID() == LuxuryBedConfig.ID ? UnityEngine.Random.value < 0.8f : UnityEngine.Random.value < 0.15f);
+                    smi.hadPeacefulSleep = smi.IsLoudSleeper() || smi.HasTag(GameTags.EmitsLight)
+                        || (UnityEngine.Random.value < (bed.PrefabID() == LuxuryBedConfig.ID ? 0.8f : 0.15f));
                 }
             }
 
@@ -219,6 +229,8 @@ namespace MoreEmotions
                         return "trans_working";
                     if (smi.IsInsideState(bad))
                         return "trans_bad_working";
+                    if (smi.IsInsideState(phospho_rufus))
+                        return "trans_working";
                 }
                 return HashedString.Invalid;
             }
