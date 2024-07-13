@@ -11,6 +11,8 @@ namespace BetterPlantTending
         private const string OXYFERN = "{OXYFERN}";
         private const string GASGRASS = "{GASGRASS}";
         private const string WOOD_TREE = "{WOOD_TREE}";
+        private const string SPACE_TREE = "{SPACE_TREE}";
+        private const string SUGARWATER = "{SUGARWATER}";
         private const string SALTPLANT = "{SALTPLANT}";
         private const string CRITTERTRAPPLANT = "{CRITTERTRAPPLANT}";
         private const string SAPTREE = "{SAPTREE}";
@@ -65,6 +67,10 @@ namespace BetterPlantTending
             {
                 public static LocString NAME = $"Unlock {WOOD_TREE} mutations";
                 public static LocString TOOLTIP = "These mutations are provided within the game, but were not used for some reason";
+            }
+            public class SPACE_TREE_ADJUST_PRODUCTIVITY
+            {
+                public static LocString NAME = $"Adjust the {SUGARWATER} production rate of {SPACE_TREE} in proportion to the growth rate of its branches";
             }
             public class OXYFERN_FIX_OUTPUT_CELL
             {
@@ -133,6 +139,8 @@ namespace BetterPlantTending
                 { OXYFERN, CREATURES.SPECIES.OXYFERN.NAME },
                 { GASGRASS, CREATURES.SPECIES.GASGRASS.NAME },
                 { WOOD_TREE, CREATURES.SPECIES.WOOD_TREE.NAME },
+                { SPACE_TREE, CREATURES.SPECIES.SPACETREE.NAME },
+                { SUGARWATER, ELEMENTS.SUGARWATER.NAME },
                 { SALTPLANT, CREATURES.SPECIES.SALTPLANT.NAME },
                 { CRITTERTRAPPLANT, CREATURES.SPECIES.CRITTERTRAPPLANT.NAME },
                 { SAPTREE, CREATURES.SPECIES.SAPTREE.NAME },
@@ -142,7 +150,7 @@ namespace BetterPlantTending
                 { WORMCROPTENDED, CREATURES.MODIFIERS.DIVERGENTPLANTTENDEDWORM.NAME},
             };
             foreach (var k in dictionary.Keys.ToList())
-                dictionary[k] = UI.FormatAsKeyWord(dictionary[k]);
+                dictionary[k] = UI.FormatAsKeyWord(UI.StripLinkFormatting(dictionary[k]));
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
             OPTIONS.PREVENT_FERTILIZATION_IRRIGATION_NOT_GROWNING.TOOLTIP.ReplaceText(OPTIONS.PREVENT_TENDING_GROWN_OR_WILTING.TOOLTIP.text);
             OPTIONS.BASE_CHANCE_NOT_DECORATIVE.TOOLTIP.ReplaceText(OPTIONS.BASE_CHANCE_DECORATIVE.TOOLTIP.text);

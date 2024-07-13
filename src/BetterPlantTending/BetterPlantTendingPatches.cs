@@ -5,10 +5,12 @@ using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 using Klei.AI;
+using STRINGS;
 using TUNING;
 using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
+using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
 using static BetterPlantTending.BetterPlantTendingAssets;
@@ -35,6 +37,7 @@ namespace BetterPlantTending
         private static void AfterDbInit()
         {
             Init();
+            SpaceTreeBranch_ResolveTooltipCallback_Patch();
         }
 
         [PLibMethod(RunAt.OnStartGame)]
@@ -86,24 +89,6 @@ namespace BetterPlantTending
             private static void Postfix(ColdBreather __instance)
             {
                 __instance.GetComponent<TendedColdBreather>()?.ApplyModifier();
-            }
-        }
-
-        // деревянное и сироповое дерево
-        // в ванили отдельные ветки не будут убобрять после загрузки сейва
-        // так как до них не доходит событие OnUpdateRoom
-        // потому что ветки забанены в RoomProberе
-        // чиним это
-        [HarmonyPatch(typeof(PlantBranchGrower), nameof(PlantBranchGrower.InitializeStates))]
-        private static class PlantBranchGrower_InitializeStates
-        {
-            private static void Postfix(PlantBranchGrower __instance)
-            {
-                __instance.root.EventHandler(GameHashes.UpdateRoom, (smi, data) =>
-                {
-                    if (BetterPlantTendingOptions.Instance.tree_fix_tinkering_branches)
-                        smi.ActionPerBranch(branch => branch.Trigger((int)GameHashes.UpdateRoom, data));
-                });
             }
         }
 
@@ -159,7 +144,55 @@ namespace BetterPlantTending
 
         // TODO: даже мутантовое дерево создаёт семена при сборе/спавне веток. рассмотреть возможность заблокировать это
 
-        // TODO: сиропное дерево. ускоряем производство сиропа пропорционально баффам
+        // сиропное дерево. ускоряем производство сиропа пропорционально баффам
+        // просто посчитаем мультиплеры к атрибуту скорости роста
+        [HarmonyPatch(typeof(SpaceTreeBranch.Instance), nameof(SpaceTreeBranch.Instance.Productivity), MethodType.Getter)]
+        private static class SpaceTreeBranch_Instance_Productivity
+        {
+            private static void Postfix(SpaceTreeBranch.Instance __instance, ref float __result, AmountInstance ___maturity)
+            {
+                if (__result > 0f && BetterPlantTendingOptions.Instance.space_tree_adjust_productivity && ___maturity != null)
+                {
+                    var modifiers = ___maturity.deltaAttribute.Modifiers;
+                    float mult = 0f;
+                    for (int i = 0; i < modifiers.Count; i++)
+                    {
+                        var modifier = modifiers[i];
+                        if (!modifier.UIOnly && modifier.IsMultiplier)
+                            mult += modifier.Value;
+                    }
+                    if (mult != 0f)
+                        __result += Mathf.Abs(__result) * mult;
+                }
+            }
+        }
+
+        private static IDetouredField<SpaceTreeBranch.Instance, AmountInstance> Maturity
+            = PDetours.DetourField<SpaceTreeBranch.Instance, AmountInstance>("maturity");
+
+        private static void SpaceTreeBranch_ResolveTooltipCallback_Patch()
+        {
+            var statusItem = Db.Get().CreatureStatusItems.SpaceTreeBranchLightStatus;
+            var originCB = statusItem.resolveTooltipCallback;
+            statusItem.resolveTooltipCallback = (str, data) =>
+            {
+                var tooltip = originCB(str, data);
+                if (BetterPlantTendingOptions.Instance.space_tree_adjust_productivity)
+                {
+                    var modifiers = Maturity.Get((SpaceTreeBranch.Instance)data).deltaAttribute.Modifiers;
+                    string text = string.Empty;
+                    for (int i = 0; i < modifiers.Count; i++)
+                    {
+                        var modifier = modifiers[i];
+                        if (modifier.IsMultiplier)
+                            text += string.Format(DUPLICANTS.ATTRIBUTES.MODIFIER_ENTRY, modifier.GetDescription(), modifier.GetFormattedString());
+                    }
+                    if (!string.IsNullOrEmpty(text))
+                        tooltip = tooltip + "\n" + text;
+                }
+                return tooltip;
+            };
+        }
 
         // солёная лоза, ну и заодно и неиспользуемый кактус, они оба на одной основе сделаны
         [HarmonyPatch]
@@ -339,9 +372,20 @@ namespace BetterPlantTending
                         __instance.Subscribe((int)GameHashes.Grow, ___OnEffectRemovedDelegate);
                         __instance.Subscribe((int)GameHashes.CropSleep, ___OnEffectRemovedDelegate);
                         __instance.Subscribe((int)GameHashes.CropWakeUp, ___OnEffectRemovedDelegate);
+                        if (BetterPlantTendingOptions.Instance.space_tree_adjust_productivity)
+                            __instance.Subscribe((int)GameHashes.TagsChanged, OnTagsChanged);
                     }
                 }
             }
+
+            private static readonly Action<Tinkerable> QueueUpdateChore = typeof(Tinkerable).Detour<Action<Tinkerable>>("QueueUpdateChore");
+
+            private static readonly EventSystem.IntraObjectHandler<Tinkerable> OnTagsChanged
+                = new EventSystem.IntraObjectHandler<Tinkerable>((tinkerable, data) =>
+            {
+                if (((TagChangedEventData)data).tag == SpaceTreePlant.SpaceTreeReadyForManualHarvest)
+                    QueueUpdateChore(tinkerable);
+            });
         }
 
         // если убобрение не нужно - эмулируем как будто оно уже есть
@@ -366,6 +410,27 @@ namespace BetterPlantTending
                         {
                             __result = true;
                             return;
+                        }
+                        // ветка сиропового дерева:
+                        if (BetterPlantTendingOptions.Instance.space_tree_adjust_productivity)
+                        {
+                            // ускорение сиропа включено => дерево заполнено сиропом и ожидает сбора
+                            // TODO: повидимому, это не остановит убобрение если к дереву подключена труба и она переполнилась
+                            if (__instance.HasTag(SpaceTreePlant.SpaceTreeReadyForManualHarvest))
+                            {
+                                __result = true;
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            // ускорение сиропа выключено => ветка полностью выросла
+                            var stbi = __instance.GetSMI<SpaceTreeBranch.Instance>();
+                            if (!stbi.IsNullOrStopped() && stbi.IsBranchFullyGrown)
+                            {
+                                __result = true;
+                                return;
+                            }
                         }
                     }
                     if (__instance.TryGetComponent<ExtraSeedProducer>(out var producer) && !producer.ShouldFarmTinkerTending)

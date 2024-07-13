@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Better Farming Effects and Tweaks</Title>
     <Description>Provides a number of improvements for how your Farmers, Worms and Beetles take care of plants.</Description>
-    <ModVersion>2.0.7</ModVersion>
+    <ModVersion>2.1.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

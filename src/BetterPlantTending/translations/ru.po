@@ -133,6 +133,11 @@ msgctxt "BetterPlantTending.STRINGS.OPTIONS.SALTPLANT_ADJUST_GAS_CONSUMPTION.NAM
 msgid "Adjust the gas absorption rate of {SALTPLANT} in proportion to the growth rate"
 msgstr "{SALTPLANT} - скорость поглощения газа пропорционально скорости роста"
 
+#. BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_ADJUST_PRODUCTIVITY.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_ADJUST_PRODUCTIVITY.NAME"
+msgid "Adjust the {SUGARWATER} production rate of {SPACE_TREE} in proportion to the growth rate of its branches"
+msgstr "{SPACE_TREE} - скорость выработки {SUGARWATER} пропорционально скорости роста его ветвей"
+
 #. BetterPlantTending.STRINGS.OPTIONS.TREE_FIX_TINKERING_BRANCHES.NAME
 msgctxt "BetterPlantTending.STRINGS.OPTIONS.TREE_FIX_TINKERING_BRANCHES.NAME"
 msgid "Fix tinkering of {WOOD_TREE} branches"
