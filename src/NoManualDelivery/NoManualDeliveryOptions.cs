@@ -15,6 +15,10 @@ namespace NoManualDelivery
 
         [JsonProperty]
         [Option]
+        public bool AllowAlwaysPickupKettle { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
         public bool AllowTransferArmPickupGasLiquid { get; set; } = false;
     }
 }

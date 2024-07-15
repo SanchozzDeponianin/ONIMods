@@ -10,8 +10,18 @@ msgstr "Дупликанты всегда могут брать еду и лек
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP"
-msgid "Duplicants will ignore the <style=\"KKeyword\">{ALLOWMANUALBUTTON}</style> checkbox when picking up food and medicine to eat it."
-msgstr "Дупликанты будут игнорировать чекбокс <style=\"KKeyword\">{ALLOWMANUALBUTTON}</style> \nкогда подбирают еду и лекарства, чтобы съесть их."
+msgid "Duplicants will ignore the {ALLOWMANUALBUTTON} checkbox when picking up food and medicine to eat it."
+msgstr "Дупликанты будут игнорировать чекбокс {ALLOWMANUALBUTTON}\nкогда подбирают еду и лекарства, чтобы съесть их."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.NAME"
+msgid "Duplicants can always pick up Water from {ICEKETTLE}."
+msgstr "Дупликанты всегда могут брать Воду из {ICEKETTLE}."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.TOOLTIP"
+msgid "Duplicants will ignore the {ALLOWMANUALBUTTON} checkbox when picking up Water from {ICEKETTLE}."
+msgstr "Дупликанты будут игнорировать чекбокс {ALLOWMANUALBUTTON} когда берут воду из {ICEKETTLE}."
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME"
@@ -20,6 +30,6 @@ msgstr "{SOLIDTRANSFERARM} может подбирать и доставлять
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP"
-msgid "Also adds the <style=\"KKeyword\">{ALLOWMANUALBUTTON}</style> checkbox to the Pitcher Pump, Canister Filler, Bottle Emptier and Canister Emptier."
-msgstr "Также добавляет чекбокс <style=\"KKeyword\">{ALLOWMANUALBUTTON}</style> \nк Ручному насосу, Заполнителю канистр, Опустошителю бутылок и Опустошителю канистр."
+msgid "Also adds the {ALLOWMANUALBUTTON} checkbox to the Pitcher Pump, Canister Filler, Bottle Emptier and Canister Emptier."
+msgstr "Также добавляет чекбокс {ALLOWMANUALBUTTON}\nк Ручному насосу, Заполнителю канистр, Опустошителю бутылок и Опустошителю канистр."
 

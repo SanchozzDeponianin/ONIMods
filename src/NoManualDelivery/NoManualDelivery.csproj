@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>No Manual Delivery</Title>
     <Description>Adds a "Allow Manual Use" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings.</Description>
-    <ModVersion>1.6.5</ModVersion>
+    <ModVersion>1.6.6</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

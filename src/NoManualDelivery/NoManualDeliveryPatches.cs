@@ -51,7 +51,7 @@ namespace NoManualDelivery
             StorageLockerConfig.ID,
             StorageLockerSmartConfig.ID,
             ObjectDispenserConfig.ID,
-            "StorageTile",
+            StorageTileConfig.ID,
             RationBoxConfig.ID,
             RefrigeratorConfig.ID,
             DiningTableConfig.ID,
@@ -74,7 +74,7 @@ namespace NoManualDelivery
             NoseconeHarvestConfig.ID,
             RailGunPayloadOpenerConfig.ID,
             // из ДЛЦ2:
-            "IceKettle",
+            IceKettleConfig.ID,
 
             // из модов:
             // Aquatic Farm https://steamcommunity.com/sharedfiles/filedetails/?id=1910961538
@@ -162,13 +162,14 @@ namespace NoManualDelivery
 
         private static Tag[] AlwaysCouldBePickedUpByMinionTags = new Tag[0];
 
-        // хак для того чтобы разрешить дупликам забирать жеготных из инкубатора и всегда хватать еду
+        // хак для того чтобы разрешить дупликам забирать жеготных из инкубатора, всегда хватать еду, всегда брать воду из чайника
         [HarmonyPatch(typeof(Pickupable), nameof(Pickupable.CouldBePickedUpByMinion))]
         private static class Pickupable_CouldBePickedUpByMinion
         {
             private static bool Prefix(Pickupable __instance, GameObject carrier, ref bool __result)
             {
-                if (__instance.KPrefabID.HasAnyTags(AlwaysCouldBePickedUpByMinionTags))
+                if (__instance.KPrefabID.HasAnyTags(AlwaysCouldBePickedUpByMinionTags)
+                    || (NoManualDeliveryOptions.Instance.AllowAlwaysPickupKettle && __instance.targetWorkable is IceKettleWorkable))
                 {
                     __result = __instance.CouldBePickedUpByTransferArm(carrier);
                     return false;
@@ -372,6 +373,19 @@ namespace NoManualDelivery
             {
                 if (__instance.TryGetComponent<Automatable2>(out var automatable))
                     automatable.showInUI = active;
+            }
+        }
+
+        // чайник. 
+        // убираем AnimOverrides если воду из чайника берёт рука
+        [HarmonyPatch(typeof(Workable), nameof(Workable.GetAnim))]
+        private static class Workable_GetAnim
+        {
+            private static bool Prepare() => NoManualDeliveryOptions.Instance.AllowTransferArmPickupGasLiquid;
+            private static void Postfix(Workable __instance, Worker worker, ref Workable.AnimInfo __result)
+            {
+                if (__instance is IceKettleWorkable && !worker.usesMultiTool)
+                    __result.overrideAnims = null;
             }
         }
     }
