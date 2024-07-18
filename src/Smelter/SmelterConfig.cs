@@ -368,7 +368,8 @@ namespace Smelter
             }
 
             // добавляем древесный уголь в печку
-            if (SmelterOptions.Instance.recipes.Wood_To_Carbon)
+            // TODO: убрать когда У51 всё
+            if (SmelterOptions.Instance.recipes.Wood_To_Carbon && Utils.GameVersion <= 600112u)
             {
                 const float WOOD = 200f;
                 const float CARBON = 125f;
