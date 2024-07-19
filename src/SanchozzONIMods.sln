@@ -97,8 +97,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrangleCarry", "WrangleCarr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PickupFloppingPacu", "PickupFloppingPacu\PickupFloppingPacu.csproj", "{3E69CE22-BD50-4FF6-896D-096B4F7C7F57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransitiveTransformerLoad", "TransitiveTransformerLoad\TransitiveTransformerLoad.csproj", "{15C1C273-8F9C-4CA3-BB99-F3C7A1761803}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MooDiet", "MooDiet\MooDiet.csproj", "{BBB31FE8-442A-40BE-88D7-91C4B69292BC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EndlessTelescope", "EndlessTelescope\EndlessTelescope.csproj", "{F642BB0C-ACAA-4217-9978-806C4773FC6D}"
@@ -425,14 +423,6 @@ Global
 		{3E69CE22-BD50-4FF6-896D-096B4F7C7F57}.Release|Backup.Build.0 = Release|Backup
 		{3E69CE22-BD50-4FF6-896D-096B4F7C7F57}.Release|Steam.ActiveCfg = Release|Steam
 		{3E69CE22-BD50-4FF6-896D-096B4F7C7F57}.Release|Steam.Build.0 = Release|Steam
-		{15C1C273-8F9C-4CA3-BB99-F3C7A1761803}.Debug|Backup.ActiveCfg = Debug|Backup
-		{15C1C273-8F9C-4CA3-BB99-F3C7A1761803}.Debug|Backup.Build.0 = Debug|Backup
-		{15C1C273-8F9C-4CA3-BB99-F3C7A1761803}.Debug|Steam.ActiveCfg = Debug|Steam
-		{15C1C273-8F9C-4CA3-BB99-F3C7A1761803}.Debug|Steam.Build.0 = Debug|Steam
-		{15C1C273-8F9C-4CA3-BB99-F3C7A1761803}.Release|Backup.ActiveCfg = Release|Backup
-		{15C1C273-8F9C-4CA3-BB99-F3C7A1761803}.Release|Backup.Build.0 = Release|Backup
-		{15C1C273-8F9C-4CA3-BB99-F3C7A1761803}.Release|Steam.ActiveCfg = Release|Steam
-		{15C1C273-8F9C-4CA3-BB99-F3C7A1761803}.Release|Steam.Build.0 = Release|Steam
 		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Debug|Backup.ActiveCfg = Debug|Backup
 		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Debug|Backup.Build.0 = Debug|Backup
 		{BBB31FE8-442A-40BE-88D7-91C4B69292BC}.Debug|Steam.ActiveCfg = Debug|Steam

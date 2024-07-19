@@ -63,7 +63,6 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Rebuildable AETN](https://steamcommunity.com/sharedfiles/filedetails/?id=2539984678) | Allows to disassemble and build AETN in another place | Yes | Yes |
 | [Relic Hunter](https://steamcommunity.com/sharedfiles/filedetails/?id=1927259233) | Unlocks the Relic Hunter trait that exists in vanilla but is not used. A duplicant with this trait almost always finds Artifacts when traveling to other planets. | Yes | No |
 | [Sandbox: Mutant Plants](https://steamcommunity.com/sharedfiles/filedetails/?id=2493249462) | Allows to quickly receive mutant Seeds and Plants in the Sandbox mode | No | Yes |
-| [Transitive Transformer Load](https://steamcommunity.com/sharedfiles/filedetails/?id=3006233665) | Allows you to see the potential load of the electrical network, taking into account also the potential load of consumers in all subsidiary networks connected via Transformers. | Yes | Yes |
 | [Tweaked Biological Cargo Bay](https://steamcommunity.com/sharedfiles/filedetails/?id=1891479671) | Allows Duplicants independently transport animals directly from the Biological Cargo Bay to the Critter Drop-Off, without performing any unnecessary intermediate actions. | Yes | No |
 | [Varicoloured Balloons](https://steamcommunity.com/sharedfiles/filedetails/?id=2293939893) | Adds more different colors and variations of balloons. | Yes | Yes 
 | [Vitals Display Rads](https://steamcommunity.com/sharedfiles/filedetails/?id=3235954752) | The Vitals screen now shows the amount of Absorbed Rad Dose. | No | Yes |
