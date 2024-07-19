@@ -18,21 +18,14 @@ namespace PickupFloppingPacu
             {
                 __instance.root
                     .ToggleTag(GameTags.Creatures.Deliverable)
-                    .EventHandler(GameHashes.OnStore, ScheduleUpdateBrain);
+                    .EventHandler(GameHashes.OnStore, ForceUpdateBrain);
             }
         }
 
-        private static void ScheduleUpdateBrain(StateMachine.Instance smi)
+        private static void ForceUpdateBrain(StateMachine.Instance smi)
         {
             if (smi.gameObject.TryGetComponent<CreatureBrain>(out var brain))
-                GameScheduler.Instance.ScheduleNextFrame(null, ForceUpdateBrain, brain);
-        }
-
-        private static void ForceUpdateBrain(object data)
-        {
-            var brain = data as CreatureBrain;
-            if (brain != null && brain.IsRunning())
-                brain.UpdateBrain();
+                Game.BrainScheduler.PrioritizeBrain(brain);
         }
     }
 }
