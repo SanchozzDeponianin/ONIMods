@@ -89,7 +89,6 @@ namespace MooDiet
                         Traverse.Create(diet_info).Property<bool>(nameof(Diet.Info.eatsPlantsDirectly)).Value = true;
                     }
                     // добавляем новые варианты к существующей диете
-                    // потенциально крашабельно, если сторонний мод также понадобовляет диет с травой и цветами
                     var new_foods = new List<FoodInfo>()
                     {
                         new FoodInfo(GasGrassHarvestedConfig.ID, MooConfig.POOP_ELEMENT),
@@ -110,7 +109,7 @@ namespace MooDiet
                         new_foods.Add(new FoodInfo(PalmeraBerry, ElementLoader.FindElementByHash(SimHashes.Hydrogen).tag,
                             MooDietOptions.Instance.palmera_diet.palmera_per_cow / MooConfig.DAYS_PLANT_GROWTH_EATEN_PER_CYCLE));
                     }
-                    var new_diet = ccm_def.diet.infos;
+                    var new_diet = ccm_def.diet.infos.ToList();
                     foreach (var food in new_foods)
                     {
                         // сколько корове нужно растений на прокорм в день - фактически уже учтено в диете по умолчанию
@@ -122,11 +121,12 @@ namespace MooDiet
                             var cropVal = CROPS.CROP_TYPES.Find(m => m.cropId == food.ID);
                             crop_per_cycle = Constants.SECONDS_PER_CYCLE / cropVal.cropDuration * cropVal.numProduced;
                         }
-                        new_diet = new_diet.AddItem(new Diet.Info(new HashSet<Tag>() { food.ID }, food.output_ID,
+                        new_diet.RemoveAll(info => info.consumedTags.Contains(food.ID)); // удаляем дупликаты от посторонних модов.
+                        new_diet.Add(new Diet.Info(new HashSet<Tag>() { food.ID }, food.output_ID,
                             diet_info.caloriesPerKg / crop_per_cycle / food.calories_multiplier,
-                            diet_info.producedConversionRate / crop_per_cycle / food.calories_multiplier * food.output_multiplier)).ToArray();
+                            diet_info.producedConversionRate / crop_per_cycle / food.calories_multiplier * food.output_multiplier));
                     }
-                    var hybridDiet = new Diet(new_diet);
+                    var hybridDiet = new Diet(new_diet.ToArray());
                     ccm_def.diet = hybridDiet;
                     var scm_def = moo_go.GetDef<SolidConsumerMonitor.Def>();
                     if (scm_def != null)
