@@ -136,7 +136,17 @@ msgstr "{SALTPLANT} - скорость поглощения газа пропо�
 #. BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_ADJUST_PRODUCTIVITY.NAME
 msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_ADJUST_PRODUCTIVITY.NAME"
 msgid "Adjust the {SUGARWATER} production rate of {SPACE_TREE} in proportion to the growth rate of its branches"
-msgstr "{SPACE_TREE} - скорость выработки {SUGARWATER} пропорционально скорости роста его ветвей"
+msgstr "{SPACE_TREE} - скорость выработки {SUGARWATER}а пропорционально скорости роста его ветвей"
+
+#. BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.NAME"
+msgid "Unlock {SPACE_TREE} mutations"
+msgstr "{SPACE_TREE} - разблокировать мутации"
+
+#. BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.TOOLTIP"
+msgid "Now mutations affect the {SUGARWATER} production rate\nThe higher the {YIELDAMOUNT} and the shorter the {MATURITYMAX}, the higher the {SUGARWATER} production rate"
+msgstr "Теперь мутации влияют на скорость производства {SUGARWATER}а\nЧем выше {YIELDAMOUNT} и чем короче {MATURITYMAX}, тем выше скорость производства {SUGARWATER}а"
 
 #. BetterPlantTending.STRINGS.OPTIONS.TREE_FIX_TINKERING_BRANCHES.NAME
 msgctxt "BetterPlantTending.STRINGS.OPTIONS.TREE_FIX_TINKERING_BRANCHES.NAME"

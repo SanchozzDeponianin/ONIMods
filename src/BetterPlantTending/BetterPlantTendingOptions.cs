@@ -17,6 +17,7 @@ namespace BetterPlantTending
 
         [JsonProperty]
         [Option]
+        [RequireDLC(DlcManager.EXPANSION1_ID)]
         public bool allow_tinker_saptree { get; set; } = true;
 
         [JsonProperty]
@@ -32,17 +33,25 @@ namespace BetterPlantTending
         [Option]
         public bool prevent_fertilization_irrigation_not_growning { get; set; } = true;
 
-        [JsonProperty]
-        //[Option]
+        [JsonIgnore]
+        [System.Obsolete]
         public bool tree_fix_tinkering_branches { get; set; } = true;
 
         [JsonProperty]
         [Option]
+        [RequireDLC(DlcManager.EXPANSION1_ID)]
         public bool tree_unlock_mutation { get; set; } = true;
 
         [JsonProperty]
         [Option]
+        [RequireDLC(DlcManager.DLC2_ID)]
         public bool space_tree_adjust_productivity { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        [RequireDLC(DlcManager.EXPANSION1_ID)]
+        [RequireDLC(DlcManager.DLC2_ID)]
+        public bool space_tree_unlock_mutation { get; set; } = true;
 
         [JsonProperty]
         [Option]
@@ -54,22 +63,27 @@ namespace BetterPlantTending
 
         [JsonProperty]
         [Option]
+        [RequireDLC(DlcManager.EXPANSION1_ID)]
         public bool coldbreather_adjust_radiation_by_grow_speed { get; set; } = true;
 
         [JsonProperty]
         [Option]
+        [RequireDLC(DlcManager.EXPANSION1_ID)]
         public bool coldbreather_decrease_radiation_by_wildness { get; set; } = true;
 
         [JsonProperty]
         [Option]
+        [RequireDLC(DlcManager.EXPANSION1_ID)]
         public bool critter_trap_adjust_gas_production { get; set; } = true;
 
         [JsonProperty]
         [Option]
+        [RequireDLC(DlcManager.EXPANSION1_ID)]
         public bool critter_trap_decrease_gas_production_by_wildness { get; set; } = false;
 
         [JsonProperty]
         [Option]
+        [RequireDLC(DlcManager.EXPANSION1_ID)]
         public bool critter_trap_can_give_seeds { get; set; } = true;
 
         // шансы доп семян
@@ -89,11 +103,13 @@ namespace BetterPlantTending
             [JsonProperty]
             [Option(Format = "F2")]
             [Limit(0, 2 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
+            [RequireDLC(DlcManager.EXPANSION1_ID)]
             public float modifier_divergent { get; set; } = EXTRA_SEED_CHANCE_MODIFIER_DIVERGENT;
 
             [JsonProperty]
             [Option(Format = "F2")]
             [Limit(0, 2 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
+            [RequireDLC(DlcManager.EXPANSION1_ID)]
             public float modifier_worm { get; set; } = EXTRA_SEED_CHANCE_MODIFIER_WORM;
 
             [JsonProperty]

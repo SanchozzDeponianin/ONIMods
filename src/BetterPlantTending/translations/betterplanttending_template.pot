@@ -138,6 +138,16 @@ msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_ADJUST_PRODUCTIVITY.NAME"
 msgid "Adjust the {SUGARWATER} production rate of {SPACE_TREE} in proportion to the growth rate of its branches"
 msgstr ""
 
+#. BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.NAME"
+msgid "Unlock {SPACE_TREE} mutations"
+msgstr ""
+
+#. BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.TOOLTIP"
+msgid "Now mutations affect the {SUGARWATER} production rate\nThe higher the {YIELDAMOUNT} and the shorter the {MATURITYMAX}, the higher the {SUGARWATER} production rate"
+msgstr ""
+
 #. BetterPlantTending.STRINGS.OPTIONS.TREE_FIX_TINKERING_BRANCHES.NAME
 msgctxt "BetterPlantTending.STRINGS.OPTIONS.TREE_FIX_TINKERING_BRANCHES.NAME"
 msgid "Fix tinkering of {WOOD_TREE} branches"

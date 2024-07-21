@@ -20,6 +20,8 @@ namespace BetterPlantTending
         private const string FARMTINKER = "{FARMTINKER}";
         private const string DIVERGENTCROPTENDED = "{DIVERGENTCROPTENDED}";
         private const string WORMCROPTENDED = "{WORMCROPTENDED}";
+        private const string MATURITYMAX = "{MATURITYMAX}";
+        private const string YIELDAMOUNT = "{YIELDAMOUNT}";
 
         public class DUPLICANTS
         {
@@ -67,6 +69,11 @@ namespace BetterPlantTending
             {
                 public static LocString NAME = $"Unlock {WOOD_TREE} mutations";
                 public static LocString TOOLTIP = "These mutations are provided within the game, but were not used for some reason";
+            }
+            public class SPACE_TREE_UNLOCK_MUTATION
+            {
+                public static LocString NAME = $"Unlock {SPACE_TREE} mutations";
+                public static LocString TOOLTIP = $"Now mutations affect the {SUGARWATER} production rate\nThe higher the {YIELDAMOUNT} and the shorter the {MATURITYMAX}, the higher the {SUGARWATER} production rate";
             }
             public class SPACE_TREE_ADJUST_PRODUCTIVITY
             {
@@ -148,6 +155,8 @@ namespace BetterPlantTending
                 { FARMTINKER, global::STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.NAME },
                 { DIVERGENTCROPTENDED, CREATURES.MODIFIERS.DIVERGENTPLANTTENDED.NAME},
                 { WORMCROPTENDED, CREATURES.MODIFIERS.DIVERGENTPLANTTENDEDWORM.NAME},
+                { MATURITYMAX, CREATURES.ATTRIBUTES.MATURITYMAX.NAME },
+                { YIELDAMOUNT, global::STRINGS.DUPLICANTS.ATTRIBUTES.YIELDAMOUNT.NAME },
             };
             foreach (var k in dictionary.Keys.ToList())
                 dictionary[k] = UI.FormatAsKeyWord(UI.StripLinkFormatting(dictionary[k]));

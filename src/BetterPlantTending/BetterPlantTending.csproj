@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Better Farming Effects and Tweaks</Title>
     <Description>Provides a number of improvements for how your Farmers, Worms and Beetles take care of plants.</Description>
-    <ModVersion>2.1.0</ModVersion>
+    <ModVersion>2.2.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -23,6 +23,9 @@
     <Compile Include="..\lib\BaseOptions.cs">
       <Link>BaseOptions.cs</Link>
     </Compile>
+    <Compile Include="..\lib\StateMachinesExtensions.cs">
+      <Link>StateMachinesExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\lib\TranspilerUtils.cs">
       <Link>TranspilerUtils.cs</Link>
     </Compile>
@@ -32,6 +35,7 @@
     <Compile Include="BetterPlantTendingOptions.cs" />
     <Compile Include="BetterPlantTendingPatches.cs" />
     <Compile Include="BetterPlantTendingAssets.cs" />
+    <Compile Include="TreesPatches.cs" />
     <Compile Include="ExtendedFertilizationIrrigationMonitor.cs" />
     <Compile Include="TendedSaltPlant.cs" />
     <Compile Include="ExtraSeedProducer.cs" />

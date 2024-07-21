@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 #if USESPLIB
 using PeterHan.PLib.Detours;
 #else
@@ -143,6 +144,7 @@ namespace SanchozzONIMods.Lib
             else return false;
         }
 
+#if PUBLICISED
         // заказать анимацию при выходе из статуса
         public static GameStateMachine<SM, I, M, D>.State QueueAnimOnExit<SM, I, M, D>
             (this GameStateMachine<SM, I, M, D>.State @this,
@@ -166,6 +168,28 @@ namespace SanchozzONIMods.Lib
                     kbac.Queue(anim + suffix, mode);
             });
             return @this;
+        }
+#endif
+
+        // ObjectParameter который не будет срать в логи при загрузке и сохранении
+        public class NonSerializedObjectParameter<SM, I, M, D, ObjectType> : StateMachine<SM, I, M, D>.ObjectParameter<ObjectType>
+            where SM : StateMachine<SM, I, M, D>
+            where I : StateMachine<SM, I, M, D>.GenericInstance
+            where M : IStateMachineTarget
+            //where D : GameStateMachine<SM, I, M, D>.BaseDef or just object
+            where ObjectType : class
+        {
+            public new class Context : StateMachine<SM, I, M, D>.ObjectParameter<ObjectType>.Context
+            {
+                public Context(StateMachine.Parameter parameter, ObjectType default_value) : base(parameter, default_value) { }
+                public override void Deserialize(IReader reader, StateMachine.Instance smi) { }
+                public override void Serialize(BinaryWriter writer) { }
+            }
+
+            public override StateMachine.Parameter.Context CreateContext()
+            {
+                return new Context(this, defaultValue);
+            }
         }
     }
 }

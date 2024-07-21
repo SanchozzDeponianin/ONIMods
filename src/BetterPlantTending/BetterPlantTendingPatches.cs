@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 using Klei.AI;
-using STRINGS;
 using TUNING;
 using UnityEngine;
 using SanchozzONIMods.Lib;
@@ -37,7 +36,11 @@ namespace BetterPlantTending
         private static void AfterDbInit()
         {
             Init();
-            SpaceTreeBranch_ResolveTooltipCallback_Patch();
+            TreesPatches.SpaceTree_ResolveTooltipCallback_Patch();
+            // заблокируем мутацию самосброса урожая для сиропового дерева
+            // с его ветками самосбор всеравно не работает
+            if (DlcManager.FeaturePlantMutationsEnabled())
+                Db.Get().PlantMutations.heavyFruit.RestrictPrefabID(SpaceTreeConfig.ID);
         }
 
         [PLibMethod(RunAt.OnStartGame)]
@@ -90,108 +93,6 @@ namespace BetterPlantTending
             {
                 __instance.GetComponent<TendedColdBreather>()?.ApplyModifier();
             }
-        }
-
-        // деревянное дерево
-        // разблокируем возможность мутации
-        [HarmonyPatch(typeof(ForestTreeSeedMonitor), nameof(ForestTreeSeedMonitor.ExtractExtraSeed))]
-        private static class ForestTreeSeedMonitor_ExtractExtraSeed
-        {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
-
-            private static GameObject AddMutation(GameObject seed, ForestTreeSeedMonitor trunk)
-            {
-                if (BetterPlantTendingOptions.Instance.tree_unlock_mutation)
-                {
-                    if (trunk.TryGetComponent<MutantPlant>(out var trunk_mutant) && trunk_mutant.IsOriginal
-                        && seed.TryGetComponent<MutantPlant>(out var seed_mutant)
-                        && trunk.TryGetComponent<SeedProducer>(out var producer) && producer.RollForMutation())
-                    {
-                        seed_mutant.Mutate();
-                    }
-                }
-                return seed;
-            }
-            /*
-            ...
-                Util.KInstantiate(Assets.GetPrefab("ForestTreeSeed"), position)
-            +++     .AddMutation(this)
-                    .SetActive(true);
-            */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
-            {
-                return TranspilerUtils.Wrap(instructions, original, transpiler);
-            }
-            private static bool transpiler(List<CodeInstruction> instructions)
-            {
-                var kInstantiate = typeof(Util).GetMethodSafe(nameof(Util.KInstantiate), true, typeof(GameObject), typeof(Vector3));
-                var addMutation = typeof(ForestTreeSeedMonitor_ExtractExtraSeed).GetMethodSafe(nameof(AddMutation), true, PPatchTools.AnyArguments);
-                if (kInstantiate != null && addMutation != null)
-                {
-                    for (int i = 0; i < instructions.Count; i++)
-                    {
-                        if (instructions[i].Calls(kInstantiate))
-                        {
-                            instructions.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, addMutation));
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            }
-        }
-
-        // TODO: даже мутантовое дерево создаёт семена при сборе/спавне веток. рассмотреть возможность заблокировать это
-
-        // сиропное дерево. ускоряем производство сиропа пропорционально баффам
-        // просто посчитаем мультиплеры к атрибуту скорости роста
-        [HarmonyPatch(typeof(SpaceTreeBranch.Instance), nameof(SpaceTreeBranch.Instance.Productivity), MethodType.Getter)]
-        private static class SpaceTreeBranch_Instance_Productivity
-        {
-            private static void Postfix(SpaceTreeBranch.Instance __instance, ref float __result, AmountInstance ___maturity)
-            {
-                if (__result > 0f && BetterPlantTendingOptions.Instance.space_tree_adjust_productivity && ___maturity != null)
-                {
-                    var modifiers = ___maturity.deltaAttribute.Modifiers;
-                    float mult = 0f;
-                    for (int i = 0; i < modifiers.Count; i++)
-                    {
-                        var modifier = modifiers[i];
-                        if (!modifier.UIOnly && modifier.IsMultiplier)
-                            mult += modifier.Value;
-                    }
-                    if (mult != 0f)
-                        __result += Mathf.Abs(__result) * mult;
-                }
-            }
-        }
-
-        private static IDetouredField<SpaceTreeBranch.Instance, AmountInstance> Maturity
-            = PDetours.DetourField<SpaceTreeBranch.Instance, AmountInstance>("maturity");
-
-        private static void SpaceTreeBranch_ResolveTooltipCallback_Patch()
-        {
-            var statusItem = Db.Get().CreatureStatusItems.SpaceTreeBranchLightStatus;
-            var originCB = statusItem.resolveTooltipCallback;
-            statusItem.resolveTooltipCallback = (str, data) =>
-            {
-                var tooltip = originCB(str, data);
-                if (BetterPlantTendingOptions.Instance.space_tree_adjust_productivity)
-                {
-                    var modifiers = Maturity.Get((SpaceTreeBranch.Instance)data).deltaAttribute.Modifiers;
-                    string text = string.Empty;
-                    for (int i = 0; i < modifiers.Count; i++)
-                    {
-                        var modifier = modifiers[i];
-                        if (modifier.IsMultiplier)
-                            text += string.Format(DUPLICANTS.ATTRIBUTES.MODIFIER_ENTRY, modifier.GetDescription(), modifier.GetFormattedString());
-                    }
-                    if (!string.IsNullOrEmpty(text))
-                        tooltip = tooltip + "\n" + text;
-                }
-                return tooltip;
-            };
         }
 
         // солёная лоза, ну и заодно и неиспользуемый кактус, они оба на одной основе сделаны
