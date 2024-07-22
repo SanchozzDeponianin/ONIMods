@@ -347,5 +347,53 @@ namespace BetterPlantTending
                 __instance.SetOffsets(new CellOffset[2] { CellOffset.none, CellOffset.down });
             }
         }
+
+        // ветка сиропового дерева не имеет Growing поэтому не умеет самосброс урожая
+        // для мутации "Juicy Fruits" научим её
+        private static SpaceTreeBranch.BoolParameter force_self_harvest_on_grown;
+
+        [HarmonyPatch(typeof(SpaceTreeBranch), nameof(SpaceTreeBranch.InitializeStates))]
+        private static class SpaceTreeBranch_InitializeStates
+        {
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+
+            private static void Postfix(SpaceTreeBranch __instance, SpaceTreeBranch.GrownStates ___grown)
+            {
+                force_self_harvest_on_grown = __instance.AddParameter(nameof(force_self_harvest_on_grown), new SpaceTreeBranch.BoolParameter(false));
+                ___grown.ScheduleAction("TrySelfHarvest", smi => Random.Range(4f, 6f), TrySelfHarvestOnGrown);
+            }
+
+            private static void TrySelfHarvestOnGrown(SpaceTreeBranch.Instance smi)
+            {
+                // некоторое подражание Growing
+                if (!smi.IsNullOrStopped() && force_self_harvest_on_grown.Get(smi)
+                    && smi.harvestable != null && smi.harvestable.CanBeHarvested)
+                {
+                    bool harvestWhenReady = false;
+                    if (smi.harvestable.harvestDesignatable != null)
+                        harvestWhenReady = smi.harvestable.harvestDesignatable.HarvestWhenReady;
+                    smi.harvestable.ForceCancelHarvest();
+                    smi.harvestable.Harvest();
+                    if (harvestWhenReady)
+                        smi.harvestable.harvestDesignatable.SetHarvestWhenReady(true);
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(PlantMutation), "ApplyFunctionalTo")]
+        private static class PlantMutation_ApplyFunctionalTo
+        {
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+
+            private static void Postfix(MutantPlant target, bool ___forceSelfHarvestOnGrown)
+            {
+                if (___forceSelfHarvestOnGrown && target != null)
+                {
+                    var branch = target.GetSMI<SpaceTreeBranch.Instance>();
+                    if (!branch.IsNullOrDestroyed())
+                        force_self_harvest_on_grown.Set(true, branch);
+                }
+            }
+        }
     }
 }

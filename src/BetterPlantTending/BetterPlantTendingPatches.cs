@@ -37,10 +37,6 @@ namespace BetterPlantTending
         {
             Init();
             TreesPatches.SpaceTree_ResolveTooltipCallback_Patch();
-            // заблокируем мутацию самосброса урожая для сиропового дерева
-            // с его ветками самосбор всеравно не работает
-            if (DlcManager.FeaturePlantMutationsEnabled())
-                Db.Get().PlantMutations.heavyFruit.RestrictPrefabID(SpaceTreeConfig.ID);
         }
 
         [PLibMethod(RunAt.OnStartGame)]
