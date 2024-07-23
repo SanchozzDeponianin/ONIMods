@@ -103,6 +103,10 @@ namespace ButcherStation
             Prioritizable.AddRef(go);
             go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.Complete;
             AddVisualizer(go);
+            // Начиная с У52, BuildingDef.PostProcess() перезаписывает ProperName тэгов из MaterialCategory
+            // вернём водоросли как было
+            var algae = ElementLoader.GetElement(GameTags.Algae);
+            TagManager.Create(algae.tag.ToString(), algae.name);
         }
 
         private static void AddVisualizer(GameObject go)
