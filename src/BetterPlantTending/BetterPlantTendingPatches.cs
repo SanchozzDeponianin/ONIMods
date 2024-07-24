@@ -280,7 +280,7 @@ namespace BetterPlantTending
             private static readonly EventSystem.IntraObjectHandler<Tinkerable> OnTagsChanged
                 = new EventSystem.IntraObjectHandler<Tinkerable>((tinkerable, data) =>
             {
-                if (((TagChangedEventData)data).tag == SpaceTreePlant.SpaceTreeReadyForManualHarvest)
+                if (((TagChangedEventData)data).tag == SpaceTreePlant.SpaceTreeReadyForHarvest)
                     QueueUpdateChore(tinkerable);
             });
         }
@@ -312,8 +312,7 @@ namespace BetterPlantTending
                         if (BetterPlantTendingOptions.Instance.space_tree_adjust_productivity)
                         {
                             // ускорение сиропа включено => дерево заполнено сиропом и ожидает сбора
-                            // TODO: повидимому, это не остановит убобрение если к дереву подключена труба и она переполнилась
-                            if (__instance.HasTag(SpaceTreePlant.SpaceTreeReadyForManualHarvest))
+                            if (__instance.HasTag(SpaceTreePlant.SpaceTreeReadyForHarvest))
                             {
                                 __result = true;
                                 return;
