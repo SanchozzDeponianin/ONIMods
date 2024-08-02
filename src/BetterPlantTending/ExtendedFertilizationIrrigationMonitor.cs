@@ -50,6 +50,8 @@ namespace BetterPlantTending
         {
             if (!BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning)
                 return;
+            if (smi.IsNullOrDestroyed() || smi.GetMaster().IsNullOrDestroyed())
+                return;
             var monitor = smi.GetComponent<ExtendedFertilizationIrrigationMonitor>();
             if (monitor != null)
                 monitor.Subscribe();
@@ -57,6 +59,8 @@ namespace BetterPlantTending
 
         public static void Unsubscribe(StateMachine.Instance smi)
         {
+            if (smi.IsNullOrDestroyed() || smi.GetMaster().IsNullOrDestroyed())
+                return;
             var monitor = smi.GetComponent<ExtendedFertilizationIrrigationMonitor>();
             if (monitor != null)
                 monitor.Unsubscribe();
@@ -65,6 +69,8 @@ namespace BetterPlantTending
         public static void QueueUpdateAbsorbing(StateMachine.Instance smi)
         {
             if (!BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning)
+                return;
+            if (smi.IsNullOrDestroyed() || smi.GetMaster().IsNullOrDestroyed())
                 return;
             var monitor = smi.GetComponent<ExtendedFertilizationIrrigationMonitor>();
             if (monitor != null && monitor.subscribeCount > 0)

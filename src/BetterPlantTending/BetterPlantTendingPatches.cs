@@ -650,7 +650,6 @@ namespace BetterPlantTending
                 __instance.root.EventHandler(GameHashes.Grow, (smi, data) =>
                 {
                     if (smi.HasTrunk)
-                        //smi.trunk.Trigger((int)GameHashes.Grow, data);
                         ExtendedFertilizationIrrigationMonitor.QueueUpdateAbsorbing(smi.trunk);
                 });
             }
