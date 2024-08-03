@@ -50,7 +50,7 @@ namespace SanchozzONIMods.Shared
             if (__instance.allowPause)
             {
                 if (__instance.GetComponents<ManualDeliveryKG>().ToList().IndexOf(__instance) > 0)
-                    __instance.Unsubscribe((int)GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate);
+                    __instance.Unsubscribe((int)GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate, true);
                 else
                     __instance.Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
             }
@@ -59,7 +59,7 @@ namespace SanchozzONIMods.Shared
         private static void OnCleanUp(ManualDeliveryKG __instance)
         {
             if (__instance.allowPause)
-                __instance.Unsubscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+                __instance.Unsubscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate, true);
         }
 
         private static void OnCopySettings(this ManualDeliveryKG @this, object data)
