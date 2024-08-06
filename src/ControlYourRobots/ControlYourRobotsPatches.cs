@@ -28,6 +28,13 @@ namespace ControlYourRobots
             ControlYourRobotsOptions.Reload();
         }
 
+        public override void OnAllModsLoaded(Harmony harmony, IReadOnlyList<KMod.Mod> mods)
+        {
+            if (PPatchTools.GetTypeSafe("MassMoveTo.ModAssets") != null)
+                harmony.Patch(typeof(Movable).GetMethodSafe(nameof(Movable.MoveToLocation), false, typeof(int)),
+                    prefix: new HarmonyMethod(typeof(Movable_MoveToLocation_Kompot), nameof(Movable_MoveToLocation_Kompot.Prefix)));
+        }
+
         public static Tag RobotSuspend = TagManager.Create(nameof(RobotSuspend));
         private static Dictionary<Tag, AttributeModifier> SuspendedBatteryModifiers = new Dictionary<Tag, AttributeModifier>();
         private static Dictionary<Tag, AttributeModifier> IdleBatteryModifiers = new Dictionary<Tag, AttributeModifier>();
@@ -136,12 +143,35 @@ namespace ControlYourRobots
         }
 
         // скрываем кнопку MoveTo для перемещения объектов если это робот и он не выключен
+        private static bool IsRobotAndNotSuspend(KPrefabID kPrefabID)
+        {
+            return kPrefabID.HasTag(GameTags.Robot) && !kPrefabID.HasTag(RobotSuspend) && !kPrefabID.HasTag(GameTags.Dead);
+        }
+
         [HarmonyPatch(typeof(Movable), "OnRefreshUserMenu")]
         private static class Movable_OnRefreshUserMenu
         {
-            private static bool Prefix(Movable __instance)
+            private static bool Prefix(Pickupable ___pickupable)
             {
-                return !(__instance.HasTag(GameTags.Robot) && !__instance.HasTag(RobotSuspend));
+                return !IsRobotAndNotSuspend(___pickupable.KPrefabID);
+            }
+        }
+
+        // для совместимости с MassMoveTo. отменить перемещение если это робот и он не выключен
+        //[HarmonyPatch(typeof(Movable), nameof(Movable.MoveToLocation))]
+        private static class Movable_MoveToLocation_Kompot
+        {
+            private static readonly Action<Movable> ClearStorageProxy = typeof(Movable).Detour<Action<Movable>>("ClearStorageProxy");
+
+            internal static bool Prefix(Movable __instance, Pickupable ___pickupable)
+            {
+                if (__instance != null && IsRobotAndNotSuspend(___pickupable.KPrefabID))
+                {
+                    if (!__instance.IsMarkedForMove && __instance.StorageProxy != null)
+                        ClearStorageProxy(__instance);
+                    return false;
+                }
+                return true;
             }
         }
 
