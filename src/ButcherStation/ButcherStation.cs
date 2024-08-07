@@ -2,9 +2,7 @@
 using System.Linq;
 using Klei.AI;
 using KSerialization;
-using STRINGS;
 using UnityEngine;
-using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 
 namespace ButcherStation
@@ -67,35 +65,18 @@ namespace ButcherStation
             base.OnPrefabInit();
             if (capacityStatusItem == null)
             {
-                // todo: упростить когда У50 канет в лету
-                bool old = PUtil.GameVersion <= 587362u;
-                var id = old ? "StorageLocker" : "CritterCapacity";
-                capacityStatusItem = new StatusItem(id, "BUILDING", string.Empty, StatusItem.IconType.Info, NotificationType.Neutral, false, OverlayModes.None.ID);
-                if (old)
+                capacityStatusItem = new StatusItem("CritterCapacity", "BUILDING", string.Empty, StatusItem.IconType.Info, NotificationType.Neutral, false, OverlayModes.None.ID);
+                string unit1 = Strings.Get("STRINGS.BUILDING.STATUSITEMS.CRITTERCAPACITY.UNIT");
+                string unit2 = Strings.Get("STRINGS.BUILDING.STATUSITEMS.CRITTERCAPACITY.UNITS");
+                capacityStatusItem.resolveStringCallback = (string str, object data) =>
                 {
-                    capacityStatusItem.resolveStringCallback = (string str, object data) =>
-                    {
-                        var butcherStation = (ButcherStation)data;
-                        string stored = Util.FormatWholeNumber(butcherStation.storedCreatureCount);
-                        string capacity = Util.FormatWholeNumber(ButcherStationOptions.Instance.max_creature_limit);
-                        return str.Replace("{Stored}", stored).Replace("{Capacity}", capacity)
-                            .Replace("{Units}", UI.UISIDESCREENS.CAPTURE_POINT_SIDE_SCREEN.UNITS_SUFFIX);
-                    };
-                }
-                else
-                {
-                    string unit1 = Strings.Get("STRINGS.BUILDING.STATUSITEMS.CRITTERCAPACITY.UNIT");
-                    string unit2 = Strings.Get("STRINGS.BUILDING.STATUSITEMS.CRITTERCAPACITY.UNITS");
-                    capacityStatusItem.resolveStringCallback = (string str, object data) =>
-                    {
-                        var butcherStation = (ButcherStation)data;
-                        string stored = Util.FormatWholeNumber(butcherStation.storedCreatureCount);
-                        string capacity = Util.FormatWholeNumber(butcherStation.creatureLimit);
-                        return str.Replace("{Stored}", stored).Replace("{Capacity}", capacity)
-                            .Replace("{StoredUnits}", (butcherStation.storedCreatureCount == 1) ? unit1 : unit2)
-                            .Replace("{CapacityUnits}", (butcherStation.creatureLimit == 1) ? unit1 : unit2);
-                    };
-                }
+                    var butcherStation = (ButcherStation)data;
+                    string stored = Util.FormatWholeNumber(butcherStation.storedCreatureCount);
+                    string capacity = Util.FormatWholeNumber(butcherStation.creatureLimit);
+                    return str.Replace("{Stored}", stored).Replace("{Capacity}", capacity)
+                        .Replace("{StoredUnits}", (butcherStation.storedCreatureCount == 1) ? unit1 : unit2)
+                        .Replace("{CapacityUnits}", (butcherStation.creatureLimit == 1) ? unit1 : unit2);
+                };
             }
             GetComponent<KSelectable>().SetStatusItem(Db.Get().StatusItemCategories.Main, capacityStatusItem, this);
         }
@@ -224,17 +205,17 @@ namespace ButcherStation
                     int cell = Grid.PosToCell(targetRanchStation.transform.GetPosition());
                     creature_go.transform.SetPosition(Grid.CellToPosCCC(cell, Grid.SceneLayer.Creatures));
                 }
-                if (creature_go.TryGetComponent<ExtraMeatSpawner>(out var extraMeatSpawner))
-                {
-                    var smi = targetRanchStation.GetSMI<RancherChore.RancherChoreStates.Instance>();
-                    var rancher = smi.sm.rancher.Get(smi);
-                    extraMeatSpawner.dropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
-                }
                 if (targetRanchStation.gameObject.TryGetComponent<ButcherStation>(out var butcherStation) && butcherStation.leaveAlive)
                 {
                     kill = false;
                     if (creature_go.TryGetComponent<Baggable>(out var baggable))
                         baggable.SetWrangled();
+                }
+                if (kill && creature_go.TryGetComponent<ExtraMeatSpawner>(out var extraMeatSpawner))
+                {
+                    var smi = targetRanchStation.GetSMI<RancherChore.RancherChoreStates.Instance>();
+                    var rancher = smi.sm.rancher.Get(smi);
+                    extraMeatSpawner.dropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
                 }
             }
             if (kill)

@@ -316,24 +316,12 @@ namespace ButcherStation
         }
 
         // для замены максимума жеготных
-        // todo: упростить когда У50 канет в лету
-        //[HarmonyPatch(typeof(CreatureDeliveryPoint), "IUserControlledCapacity.MaxCapacity", MethodType.Getter)]
-        [HarmonyPatch]
-        private static class CreatureDeliveryPoint_MaxCapacity
+        [HarmonyPatch(typeof(BaggableCritterCapacityTracker), "OnPrefabInit")]
+        private static class BaggableCritterCapacityTracker_OnPrefabInit
         {
-            //private static bool Prepare() => PUtil.GameVersion <= 587362u;
-            private static IEnumerable<MethodBase> TargetMethods()
+            private static void Postfix(BaggableCritterCapacityTracker __instance)
             {
-                const string name = "IUserControlledCapacity.MaxCapacity";
-                var old = typeof(CreatureDeliveryPoint).GetPropertySafe<float>(name, false)?.GetGetMethod(true);
-                if (old != null) yield return old;
-                var @new = PPatchTools.GetTypeSafe("BaggableCritterCapacityTracker")?.GetPropertySafe<float>(name, false)?.GetGetMethod(true);
-                if (@new != null) yield return @new;
-            }
-            private static bool Prefix(ref float __result)
-            {
-                __result = ButcherStationOptions.Instance.max_creature_limit;
-                return false;
+                __instance.maximumCreatures = ButcherStationOptions.Instance.max_creature_limit;
             }
         }
 

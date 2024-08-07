@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Reflection;
-using System.Reflection.Emit;
 using Database;
 using HarmonyLib;
 using UnityEngine;
@@ -132,54 +129,9 @@ namespace WrangleCarry
             }
         }
 
-        // если команда MoveTo применена к жеготному, меняем ChoreType на Ranch
-        // todo: удалить патч когда У50 канет в лету
         private static bool IsCritter(GameObject go)
         {
             return go != null && go.TryGetComponent<CreatureBrain>(out _) && !go.HasTag(GameTags.Robot);
-        }
-
-        [HarmonyPatch(typeof(MovePickupableChore), MethodType.Constructor)]
-        [HarmonyPatch(new Type[] { typeof(IStateMachineTarget), typeof(GameObject), typeof(Action<Chore>) })]
-        private static class MovePickupableChore_Constructor
-        {
-            private static bool Prepare() => Utils.GameVersion <= 587362u;
-
-            private static ChoreType Inject(ChoreType original, GameObject go)
-            {
-                if (IsCritter(go))
-                    return Db.Get().ChoreTypes.Ranch;
-                else return original;
-            }
-
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
-            {
-                return TranspilerUtils.Wrap(instructions, original, transpiler);
-            }
-
-            private static bool transpiler(List<CodeInstruction> instructions, MethodBase original)
-            {
-                var pickupable = original?.GetParameters().FirstOrDefault(p =>
-                    p.ParameterType == typeof(GameObject) && p.Name == "pickupable");
-                var choreTypes = typeof(Db).GetField(nameof(Db.ChoreTypes));
-                var inject = typeof(MovePickupableChore_Constructor).GetMethod(nameof(Inject), BindingFlags.NonPublic | BindingFlags.Static);
-                if (pickupable != null && choreTypes != null && inject != null)
-                {
-                    int i = instructions.FindIndex(ins => ins.LoadsField(choreTypes));
-                    if (i != -1)
-                    {
-                        i++;
-                        var ins = instructions[i];
-                        if (ins.opcode == OpCodes.Ldfld && ins.operand is FieldInfo field && field.FieldType == typeof(ChoreType))
-                        {
-                            instructions.Insert(++i, TranspilerUtils.GetLoadArgInstruction(pickupable));
-                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, inject));
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            }
         }
 
         // если множество объектов назначены для переноски командой MoveTo в одну целевую клетку

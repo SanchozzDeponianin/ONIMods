@@ -11,7 +11,7 @@ namespace ButcherStation
     {
         [JsonProperty]
         [Option(Format = "F0")]
-        [Limit(ButcherStation.CREATURELIMIT, 1000)]
+        [Limit(20, 1000)]
         public int max_creature_limit { get; set; } = ButcherStation.CREATURELIMIT;
 
         [JsonProperty]
