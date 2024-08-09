@@ -111,6 +111,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorpseOnPedestal", "CorpseO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnyIceKettle", "AnyIceKettle\AnyIceKettle.csproj", "{1F0C835B-653C-4BAA-BAD0-A1D551D9D972}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DumpIncorrectFertilizers", "DumpIncorrectFertilizers\DumpIncorrectFertilizers.csproj", "{A064BEFB-E7EA-4294-81AE-E30B326F5AC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Backup = Debug|Backup
@@ -479,6 +481,14 @@ Global
 		{1F0C835B-653C-4BAA-BAD0-A1D551D9D972}.Release|Backup.Build.0 = Release|Backup
 		{1F0C835B-653C-4BAA-BAD0-A1D551D9D972}.Release|Steam.ActiveCfg = Release|Steam
 		{1F0C835B-653C-4BAA-BAD0-A1D551D9D972}.Release|Steam.Build.0 = Release|Steam
+		{A064BEFB-E7EA-4294-81AE-E30B326F5AC2}.Debug|Backup.ActiveCfg = Debug|Backup
+		{A064BEFB-E7EA-4294-81AE-E30B326F5AC2}.Debug|Backup.Build.0 = Debug|Backup
+		{A064BEFB-E7EA-4294-81AE-E30B326F5AC2}.Debug|Steam.ActiveCfg = Debug|Steam
+		{A064BEFB-E7EA-4294-81AE-E30B326F5AC2}.Debug|Steam.Build.0 = Debug|Steam
+		{A064BEFB-E7EA-4294-81AE-E30B326F5AC2}.Release|Backup.ActiveCfg = Release|Backup
+		{A064BEFB-E7EA-4294-81AE-E30B326F5AC2}.Release|Backup.Build.0 = Release|Backup
+		{A064BEFB-E7EA-4294-81AE-E30B326F5AC2}.Release|Steam.ActiveCfg = Release|Steam
+		{A064BEFB-E7EA-4294-81AE-E30B326F5AC2}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
