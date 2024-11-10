@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -19,11 +20,17 @@ namespace SanchozzONIMods
     {
         [Required]
         public string AssemblyCSharp { get; set; }
+        [Required]
+        public string LibraryPath { get; set; }
 
         [Output]
-        public string KleiBuildVersion { get; set; }
+        public string KleiGameVersion { get; set; }
+        [Output]
+        public string KleiBuildNumber { get; set; }
         [Output]
         public string KleiBuildBranch { get; set; }
+
+        public const string INVALID = "??";
 
         public override bool Execute()
         {
@@ -32,10 +39,29 @@ namespace SanchozzONIMods
             {
                 Log.LogMessage(MessageImportance.High, $"Reading assembly '{AssemblyCSharp}'");
                 var assembly = Assembly.ReflectionOnlyLoadFrom(AssemblyCSharp);
-                var kleiversion = assembly.GetType("KleiVersion", true);
-                KleiBuildVersion = ((uint)kleiversion.GetField("ChangeList").GetRawConstantValue()).ToString();
-                KleiBuildBranch = (string)kleiversion.GetField("BuildBranch").GetRawConstantValue();
-                Log.LogMessage(MessageImportance.High, $"KleiBuildVersion: {KleiBuildVersion}\nKleiBuildBranch:  {KleiBuildBranch}");
+                var flag = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
+                var KleiVersion = assembly.GetType("KleiVersion", true);
+                KleiBuildNumber = ((uint)KleiVersion.GetField("ChangeList", flag).GetRawConstantValue()).ToString();
+                KleiBuildBranch = (string)KleiVersion.GetField("BuildBranch", flag).GetRawConstantValue();
+                try
+                {
+                    // лядь, ReflectionOnlyLoad не подтягивает зависимости, будем вручную дёргать
+                    foreach (var dll in new string[] { "UnityEngine.CoreModule.dll", "netstandard.dll" })
+                    {
+                        var file = Path.Combine(LibraryPath, dll);
+                        if (File.Exists(file))
+                            Assembly.ReflectionOnlyLoadFrom(file);
+                    }
+                    var LaunchInitializer = assembly.GetType("LaunchInitializer", true);
+                    KleiGameVersion = (string)LaunchInitializer.GetField("PREFIX", flag).GetRawConstantValue() +
+                        ((int)LaunchInitializer.GetField("UPDATE_NUMBER", flag).GetRawConstantValue()).ToString();
+                }
+                catch (Exception e)
+                {
+                    Log.LogWarningFromException(e, true);
+                    KleiGameVersion = INVALID;
+                }
+                Log.LogMessage(MessageImportance.High, $"Game Version: {KleiGameVersion}-{KleiBuildNumber}\t Branch: {KleiBuildBranch}");
                 result = true;
             }
             catch (Exception e)

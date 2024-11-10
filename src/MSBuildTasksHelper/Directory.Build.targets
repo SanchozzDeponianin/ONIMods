@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <Target Name="ILRepack" AfterTargets="Build" >
+    <ItemGroup>
+      <InputAssemblies Include="$(TargetPath)" />
+      <InputAssemblies Include="$(PkgYamlDotNet)/lib/net47/YamlDotNet.dll" />
+    </ItemGroup>
+    <ILRepack
+        TargetPlatformVersion="v4"
+        TargetKind="SameAsPrimaryAssembly"
+        OutputFile="$(ProjectDir)/../../bin/$(TargetFileName)"
+        InputAssemblies="@(InputAssemblies)"
+        Internalize="true"
+        XmlDocumentation="false" />
+  </Target>
+</Project>

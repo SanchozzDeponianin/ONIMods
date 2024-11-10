@@ -30,12 +30,14 @@
 
   <!-- основные свойства -->
   <PropertyGroup>
-    <SupportedContent Condition=" '$(SupportedContent)' == '' ">VANILLA_ID,EXPANSION1_ID</SupportedContent>
+    <!-- SupportedContent = ALL,VANILLA_ID,EXPANSION1_ID -->
+    <SupportedContent Condition=" '$(SupportedContent)' == '' ">ALL</SupportedContent>
     <APIVersion>2</APIVersion>
     <ModVersion Condition=" '$(ModVersion)' == '' ">1.0.0</ModVersion>
     <DistributeMod Condition=" '$(DistributeMod)' != 'false' ">true</DistributeMod>
-    <MSBuildTasksHelperDLL>$(MSBuildProjectDirectory)/../../bin/MSBuildTasksHelper.dll</MSBuildTasksHelperDLL>
+    <UsesPLib Condition=" '$(UsesPLib)' != 'true' ">false</UsesPLib>
     <UsesPublicise Condition=" '$(UsesPublicise)' != 'true' ">false</UsesPublicise>
+    <MSBuildTasksHelperDLL>$(MSBuildProjectDirectory)/../../bin/MSBuildTasksHelper.dll</MSBuildTasksHelperDLL>
   </PropertyGroup>
 
   <!-- выбор пути где лежат соответсвующие файлы игры -->
@@ -75,7 +77,7 @@
   <Choose>
     <When Condition=" '$(UsesPLib)' == 'true' ">
       <ItemGroup>
-        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
+        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.34.2" />
       </ItemGroup>
     </When>
   </Choose>
@@ -112,14 +114,15 @@
       <ItemGroup>
         <Reference Include="0Harmony" HintPath="$(GameFolder)/0Harmony.dll" />
         <Reference Include="Newtonsoft.Json" HintPath="$(GameFolder)/Newtonsoft.Json.dll" />
+        <Reference Include="netstandard" HintPath="$(GameFolder)/netstandard.dll" />
         <Reference Include="System" HintPath="$(GameFolder)/System.dll" />
         <Reference Include="UnityEngine" HintPath="$(GameFolder)/UnityEngine.dll" />
         <Reference Include="UnityEngine.CoreModule" HintPath="$(GameFolder)/UnityEngine.CoreModule.dll" />
         <Reference Include="UnityEngine.ImageConversionModule" HintPath="$(GameFolder)/UnityEngine.ImageConversionModule.dll" />
-        <Reference Include="Unity.TextMeshPro" HintPath="$(GameFolder)/Unity.TextMeshPro.dll" />
         <Reference Include="UnityEngine.TextRenderingModule" HintPath="$(GameFolder)/UnityEngine.TextRenderingModule.dll" />
         <Reference Include="UnityEngine.UI" HintPath="$(GameFolder)/UnityEngine.UI.dll" />
         <Reference Include="UnityEngine.UIModule" HintPath="$(GameFolder)/UnityEngine.UIModule.dll" />
+        <Reference Include="Unity.TextMeshPro" HintPath="$(GameFolder)/Unity.TextMeshPro.dll" />
         <Reference Include="FMODUnity" HintPath="$(GameFolder)/FMODUnity.dll" />
       </ItemGroup>
     </When>

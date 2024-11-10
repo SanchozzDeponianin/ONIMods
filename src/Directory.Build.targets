@@ -92,9 +92,11 @@
       <AssemblyCSharp Condition=" '$(UsesPublicise)' != 'true' " >$(GameFolder)/Assembly-CSharp.dll</AssemblyCSharp>
       <AssemblyCSharp Condition=" '$(UsesPublicise)' == 'true' " >$(PublicisedFolder)/Assembly-CSharp_public.dll</AssemblyCSharp>
     </PropertyGroup>
-    <SanchozzONIMods.GetKleiAssemblyInfo AssemblyCSharp="$(AssemblyCSharp)" >
-      <Output TaskParameter="KleiBuildVersion" PropertyName="KleiBuildVersion" />
-      <Output TaskParameter="KleiBuildBranch" PropertyName="KleiBuildBranch" />
+
+    <SanchozzONIMods.GetKleiAssemblyInfo AssemblyCSharp="$(AssemblyCSharp)" LibraryPath="$(GameFolder)" >
+      <Output TaskParameter="KleiGameVersion" PropertyName="GameVersion" />
+      <Output TaskParameter="KleiBuildNumber" PropertyName="BuildNumber" />
+      <Output TaskParameter="KleiBuildBranch" PropertyName="BuildBranch" />
     </SanchozzONIMods.GetKleiAssemblyInfo>
   </Target>
 
@@ -113,7 +115,7 @@
       StaticID="Sanchozz.ONIMods.$(AssemblyName)"
       
       SupportedContent="$(SupportedContent)"
-      MinimumSupportedBuild="$(KleiBuildVersion)"
+      MinimumSupportedBuild="$(BuildNumber)"
       Version="$(ModVersion)"
       APIVersion="$(APIVersion)"
     />
@@ -132,7 +134,7 @@
     TaskName="SanchozzONIMods.GetReallyReferencedAssembliesAtFolder"
     AssemblyFile="$(MSBuildTasksHelperDLL)" />
 
-  <Target Name="ILRepack" AfterTargets="Build" Condition=" '$(UsesPLib)' == 'true' ">
+  <Target Name="ILRepack" AfterTargets="Build" Condition=" '$(DistributeMod)' == 'true' And '$(UsesPLib)' == 'true' ">
     <ItemGroup>
       <InputAssemblies Include="$(TargetPath)" />
     </ItemGroup>
@@ -153,10 +155,14 @@
         XmlDocumentation="false" />
   </Target>
 
-  <!-- копируем все потроха в целевую папку -->
-  <Target Name="CopyArtifactsToInstallFolder" AfterTargets="ILRepack" >
+  <UsingTask
+    Condition=" '$(DistributeMod)' == 'true' "
+    TaskName="SanchozzONIMods.TestInstallFolder"
+    AssemblyFile="$(MSBuildTasksHelperDLL)" />
 
-    <!-- правильный путь в зависимости от конфигурации и платформы -->
+  <!-- вычисляем целевую папку для копирования потрохов -->
+  <Target Name="DetermineInstallFolder" AfterTargets="ILRepack" Condition=" '$(DistributeMod)' == 'true' ">
+
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
       <InstallRootFolder>$(ModOutputFolderDebug)/$(ProjectName)</InstallRootFolder>
     </PropertyGroup>
@@ -165,18 +171,54 @@
       <InstallRootFolder>$(ModOutputFolderRelease)/$(ProjectName)</InstallRootFolder>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(KleiBuildBranch)' == 'release' ">
+    <SanchozzONIMods.TestInstallFolder
+      RootModInfoFile="$(InstallRootFolder)/mod_info.yaml"
+      KnownGameVersionsFile="$(ProjectDir)/../KnownGameVersions.yaml"
+      CurrentGameVersion="$(GameVersion)"
+      CurrentBuildNumber="$(BuildNumber)" >
+      <Output TaskParameter="PreviousGameVersion" PropertyName="PreviousGameVersion" />
+      <Output TaskParameter="PreviousBuildNumber" PropertyName="PreviousBuildNumber" />
+      <Output TaskParameter="DoInstallToRootFolder" PropertyName="DoInstallToRootFolder" />
+      <Output TaskParameter="NeededArchiving" PropertyName="NeededArchiving" />
+    </SanchozzONIMods.TestInstallFolder>
+
+    <PropertyGroup Condition=" '$(DoInstallToRootFolder)' == 'true' ">
       <InstallFolder>$(InstallRootFolder)</InstallFolder>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(KleiBuildBranch)' != 'release' ">
-      <InstallFolder>$(InstallRootFolder)/archived_versions/$(KleiBuildBranch)</InstallFolder>
+    <PropertyGroup Condition=" '$(DoInstallToRootFolder)' != 'true' And '$(GameVersion)' == '??' ">
+      <InstallFolder>$(InstallRootFolder)/archived_versions/previous_$(BuildNumber)</InstallFolder>
     </PropertyGroup>
 
-    <!-- вспомогательный хелпер копируем в бин, чтобы не потерялся при очистке -->
-    <PropertyGroup Condition=" '$(DistributeMod)' == 'false' ">
-      <InstallFolder>$(ProjectDir)/../../bin</InstallFolder>
+    <PropertyGroup Condition=" '$(DoInstallToRootFolder)' != 'true' And '$(GameVersion)' != '??' ">
+      <InstallFolder>$(InstallRootFolder)/archived_versions/previous_$(GameVersion)</InstallFolder>
     </PropertyGroup>
+  </Target>
+
+  <!-- при необходимости архивируем ранее существующие потроха -->
+  <Target Name="Archiving" AfterTargets="DetermineInstallFolder" Condition=" '$(DistributeMod)' == 'true' And '$(NeededArchiving)' == 'true' ">
+    <Message Importance="high" Text="Found mod for Previous Game version $(PreviousGameVersion)-$(PreviousBuildNumber)" />
+
+    <PropertyGroup Condition=" '$(PreviousGameVersion)' == '??' ">
+      <ArchiveFolder>$(InstallRootFolder)/archived_versions/previous_$(PreviousBuildNumber)</ArchiveFolder>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(PreviousGameVersion)' != '??' ">
+      <ArchiveFolder>$(InstallRootFolder)/archived_versions/previous_$(PreviousGameVersion)</ArchiveFolder>
+    </PropertyGroup>
+
+    <Message Importance="high" Text="Archiving into '$(ArchiveFolder)'" />
+
+    <ItemGroup>
+      <FilesToArchive Include="$(InstallRootFolder)/**/*" Exclude="$(InstallRootFolder)/archived_versions/**/*;$(InstallRootFolder)/mod.yaml" />
+    </ItemGroup>
+
+    <Move SourceFiles="@(FilesToArchive)" DestinationFiles="@(FilesToArchive->'$(ArchiveFolder)/%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <!-- копируем все потроха в целевую папку -->
+  <Target Name="CopyArtifactsToInstallFolder" AfterTargets="Archiving" Condition=" '$(DistributeMod)' == 'true' ">
+    <Message Importance="high" Text="Installing into '$(InstallFolder)'" />
 
     <ItemGroup>
       <AnimFiles Include="$(ProjectDir)/anim\**/*.*" />
@@ -196,5 +238,4 @@
     <Copy SourceFiles="$(ModDescriptionFile)" DestinationFolder="$(InstallRootFolder)" />
     <Copy SourceFiles="$(ProjectDir)/Preview.png" DestinationFiles="$(InstallFolder)/preview.png" Condition=" $(CopyPreview) == true " />
   </Target>
-
 </Project>
