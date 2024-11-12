@@ -1,0 +1,123 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not IncludedPOT Version: 2.0\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0\n"
+"Last-Translator: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
+
+#. MooDiet.STRINGS.CREATURES.MODIFIERS.MOOFLOWERFED.NAME
+msgctxt "MooDiet.STRINGS.CREATURES.MODIFIERS.MOOFLOWERFED.NAME"
+msgid "Flower Diet"
+msgstr "花卉饮食"
+
+#. MooDiet.STRINGS.OPTIONS.BECKONING.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.BECKONING.NAME"
+msgid ""
+"<style=\"KKeyword\">Accu-moo-lation</style> when <style=\"KKeyword\">Gassy "
+"Moo</style> eats <style=\"KKeyword\">Balm Lily Flowers</style>"
+msgstr ""
+"当<style=\"KKeyword\">释气海牛</style>食用<style=\"KKeyword\">芳香百合花</"
+"style>时增加的聚集度"
+
+#. MooDiet.STRINGS.OPTIONS.BECKONING.TOOLTIP
+msgctxt "MooDiet.STRINGS.OPTIONS.BECKONING.TOOLTIP"
+msgid ""
+"Balm Lily is actually a free plant that does not require resources\n"
+"In order to maintain the balance, there should be a penalty"
+msgstr ""
+"芳香百合是一种不需要资源的植物\n"
+"为了维持平衡，需要有惩罚机制"
+
+#. MooDiet.STRINGS.OPTIONS.EAT_BERRY.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.EAT_BERRY.NAME"
+msgid ""
+"<style=\"KKeyword\">Gassy Moo</style> can eat <style=\"KKeyword\">Palmera "
+"Berries</style>"
+msgstr ""
+"<style=\"KKeyword\">释气海牛</style>能够食用 <style=\"KKeyword\">棕桐树果实"
+"</style>"
+
+#. MooDiet.STRINGS.OPTIONS.EAT_PALMERA.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.EAT_PALMERA.NAME"
+msgid ""
+"<style=\"KKeyword\">Gassy Moo</style> can eat <style=\"KKeyword\">Palmera "
+"Tree</style> live plants"
+msgstr ""
+"<style=\"KKeyword\">释气海牛</style>能够食用正在生长的<style=\"KKeyword\">"
+"棕桐树</style>"
+
+#. MooDiet.STRINGS.OPTIONS.FLOWER_DIET.CATEGORY
+msgctxt "MooDiet.STRINGS.OPTIONS.FLOWER_DIET.CATEGORY"
+msgid "Balm Lily Flower Diet"
+msgstr "芳香百合花饮食"
+
+#. MooDiet.STRINGS.OPTIONS.FULL.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.FULL.NAME"
+msgid "Full"
+msgstr "100%"
+
+#. MooDiet.STRINGS.OPTIONS.HALF.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.HALF.NAME"
+msgid "Half"
+msgstr "50%"
+
+#. MooDiet.STRINGS.OPTIONS.LILY_PER_COW.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.LILY_PER_COW.NAME"
+msgid ""
+"<style=\"KKeyword\">Balm Lily</style> plants per one <style=\"KKeyword"
+"\">Gassy Moo</style>"
+msgstr ""
+"几株<style=\"KKeyword\">芳香百合</style>对应一头<style=\"KKeyword\">释气海"
+"牛</style>"
+
+#. MooDiet.STRINGS.OPTIONS.LILY_PER_COW.TOOLTIP
+msgctxt "MooDiet.STRINGS.OPTIONS.LILY_PER_COW.TOOLTIP"
+msgid ""
+"How many plants do you need to plant to feed one tamed happy Cow\n"
+"The consumed mass per cycle is calculated automatically depending on the "
+"yield of the plant"
+msgstr ""
+"需要种植多少植物才能喂养一头驯服的快乐海牛取决于植物的产量\n"
+"每个循环的消耗质量会根据植物的产量自动计算"
+
+#. MooDiet.STRINGS.OPTIONS.PALMERA_BUTTON.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.PALMERA_BUTTON.NAME"
+msgid "Browse Steam Workshop"
+msgstr "访问 Steam 创意工坊"
+
+#. MooDiet.STRINGS.OPTIONS.PALMERA_DIET.CATEGORY
+msgctxt "MooDiet.STRINGS.OPTIONS.PALMERA_DIET.CATEGORY"
+msgid "Palmera Tree Diet"
+msgstr "棕桐树饮食"
+
+#. MooDiet.STRINGS.OPTIONS.PALMERA_LABEL.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.PALMERA_LABEL.NAME"
+msgid "Only if the <style=\"KKeyword\">Palmera Tree</style> mod is installed"
+msgstr "仅安装 <style=\"KKeyword\">Palmera Tree</style> 模组后生效"
+
+#. MooDiet.STRINGS.OPTIONS.PALMERA_PER_COW.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.PALMERA_PER_COW.NAME"
+msgid ""
+"<style=\"KKeyword\">Palmera Tree</style> plants per one <style=\"KKeyword"
+"\">Gassy Moo</style>"
+msgstr ""
+"几棵<style=\"KKeyword\">棕桐树</style>对应一头<style=\"KKeyword\">释气海牛"
+"</style>"
+
+#. MooDiet.STRINGS.OPTIONS.QUARTER.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.QUARTER.NAME"
+msgid "Quarter"
+msgstr "25%"
+
+#. MooDiet.STRINGS.OPTIONS.ZERO.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.ZERO.NAME"
+msgid "Zero"
+msgstr "0%"

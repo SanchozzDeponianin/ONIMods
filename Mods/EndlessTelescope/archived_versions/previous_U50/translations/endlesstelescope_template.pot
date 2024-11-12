@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. EndlessTelescope.STRINGS.BUILDING.STATUSITEMS.TELESCOPE_DEEP_SPACE.NAME
+msgctxt "EndlessTelescope.STRINGS.BUILDING.STATUSITEMS.TELESCOPE_DEEP_SPACE.NAME"
+msgid "Studying Deep Space"
+msgstr ""
+
+#. EndlessTelescope.STRINGS.BUILDING.STATUSITEMS.TELESCOPE_DEEP_SPACE.TOOLTIP
+msgctxt "EndlessTelescope.STRINGS.BUILDING.STATUSITEMS.TELESCOPE_DEEP_SPACE.TOOLTIP"
+msgid "This building is currently investigating the far section of space,\nlocated beyond the distance of effective study.\n    • Effective distance: <b>{0}\n    • </b>Current distance: <b>{1}</b>\n    • Study Effectiveness: <b>{2}</b>"
+msgstr ""
+

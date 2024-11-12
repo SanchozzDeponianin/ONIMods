@@ -1,0 +1,160 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHDEPTH.NAME
+msgctxt "ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHDEPTH.NAME"
+msgid "Not enough depth"
+msgstr ""
+
+#. ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHDEPTH.TOOLTIP
+msgctxt "ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHDEPTH.TOOLTIP"
+msgid "Not enough depth to place a fishing hook, or other buildings interfere."
+msgstr ""
+
+#. ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHWATER.NAME
+msgctxt "ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHWATER.NAME"
+msgid "Not enough liquid"
+msgstr ""
+
+#. ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHWATER.TOOLTIP
+msgctxt "ButcherStation.STRINGS.BUILDING.STATUSITEMS.NOTENOUGHWATER.TOOLTIP"
+msgid "The fishing hook is not submerged in enough <style=\"KKeyword\">Liquid</style>."
+msgstr ""
+
+#. ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.DESC
+msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.DESC"
+msgid "Grooming critters make them look nice, feel happy... and more yummy."
+msgstr ""
+
+#. ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.EFFECT
+msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.EFFECT"
+msgid "Allows the assigned <link=\"RANCHER\">Rancher</link> to control the population and butchering too old, surplus, or unwanted <link=\"CRITTERS\">Critters</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHING1\">Critter Ranching</link> skill."
+msgstr ""
+
+#. ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.NAME
+msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.NAME"
+msgid "<link=\"BUTCHERSTATION\">Butcher Station</link>"
+msgstr ""
+
+#. ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.DESC
+msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.DESC"
+msgid "Fishing Stations allows to safely fishing <link=\"PACU\">Pacu</link> and not soak your feet."
+msgstr ""
+
+#. ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.EFFECT
+msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.EFFECT"
+msgid "Allows the assigned <link=\"RANCHER\">Rancher</link> to control the population and fishing too old, surplus, or unwanted <link=\"PACU\">Fishes</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHING1\">Critter Ranching</link> skill.\n\nA <link=\"ELEMENTSLIQUID\">Liquid</link> depth of 2 to 4 tiles is required to place a fishing hook."
+msgstr ""
+
+#. ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.NAME
+msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.NAME"
+msgid "<link=\"FISHINGSTATION\">Fishing Station</link>"
+msgstr ""
+
+#. ButcherStation.STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMODIFIER
+msgctxt "ButcherStation.STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMODIFIER"
+msgid "{0} Extra <style=\"KKeyword\">Meat</style> when working at the <style=\"KKeyword\">Butcher</style> and <style=\"KKeyword\">Fishing Stations</style>"
+msgstr ""
+
+#. ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.NAME
+msgctxt "ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.NAME"
+msgid "+X% <style=\"KKeyword\">Extra Meat</style> from butchered Critters per each <style=\"KKeyword\">Husbandry</style> attribute level"
+msgstr ""
+
+#. ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.TOOLTIP
+msgctxt "ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.TOOLTIP"
+msgid "Set to <style=\"KKeyword\">0</style> to disable Extra Meat drop"
+msgstr ""
+
+#. ButcherStation.STRINGS.OPTIONS.FILTERED_COUNT.NAME
+msgctxt "ButcherStation.STRINGS.OPTIONS.FILTERED_COUNT.NAME"
+msgid "Count only the Critters selected in the filter"
+msgstr ""
+
+#. ButcherStation.STRINGS.OPTIONS.FILTERED_COUNT.TOOLTIP
+msgctxt "ButcherStation.STRINGS.OPTIONS.FILTERED_COUNT.TOOLTIP"
+msgid "If checked, only the Critters selected in the filter will be counted\nSimilar to the new <style=\"KKeyword\">Critter Drop-Off</style> in the U51 version of the game and newer\n\nIf unchecked, all Critters in the Room will be counted\nSimilar to the old <style=\"KKeyword\">Critter Drop-Off</style> in the U50 version of the game and older"
+msgstr ""
+
+#. ButcherStation.STRINGS.OPTIONS.MAX_CREATURE_LIMIT.NAME
+msgctxt "ButcherStation.STRINGS.OPTIONS.MAX_CREATURE_LIMIT.NAME"
+msgid "<style=\"KKeyword\">Max Critters</style> limit"
+msgstr ""
+
+#. ButcherStation.STRINGS.OPTIONS.MAX_CREATURE_LIMIT.TOOLTIP
+msgctxt "ButcherStation.STRINGS.OPTIONS.MAX_CREATURE_LIMIT.TOOLTIP"
+msgid "Affects both <style=\"KKeyword\">Butcher</style> and <style=\"KKeyword\">Fishing Stations</style> as well as <style=\"KKeyword\">Critter Drop-Off</style> and <style=\"KKeyword\">Fish Release</style>"
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP"
+msgid "Critters older than this specified value <b>{0}%</b> will be automatically wrangled"
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP_LIFESPAN
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP_LIFESPAN"
+msgid "\n{0} out of {1} cycles lifespan"
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.PRE
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.PRE"
+msgid "Max: "
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.PST
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.PST"
+msgid " Critters"
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.CREATURE_LIMIT.TOOLTIP"
+msgid "Critters exceeding this population limit <b>{0}</b> will automatically be wrangled"
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.FILTER_LABEL
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.FILTER_LABEL"
+msgid "Critters filter:"
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.LEAVE_ALIVE.NAME
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.LEAVE_ALIVE.NAME"
+msgid "Leave critters alive"
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.LEAVE_ALIVE.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.LEAVE_ALIVE.TOOLTIP"
+msgid "A Duplicant will leave the wrangled critters alive instead of butchering them"
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_OLD_AGED.NAME
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_OLD_AGED.NAME"
+msgid "Auto-Wrangle Old Aged"
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_OLD_AGED.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_OLD_AGED.TOOLTIP"
+msgid "A Duplicant will automatically wrangle any critters that are selected in the filter and that their Age are older than the specified value"
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_SURPLUS.NAME
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_SURPLUS.NAME"
+msgid "Auto-Wrangle Surplus"
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_SURPLUS.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_SURPLUS.TOOLTIP"
+msgid "A Duplicant will automatically wrangle any critters that are selected in the filter if the total number of critters in this stable exceeds the specified population limit"
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_UNSELECTED.NAME
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_UNSELECTED.NAME"
+msgid "Auto-Wrangle Unwanted"
+msgstr ""
+
+#. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_UNSELECTED.TOOLTIP
+msgctxt "ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.WRANGLE_UNSELECTED.TOOLTIP"
+msgid "A Duplicant will automatically wrangle any critters that do not belong in this stable, that are NOT selected in the filter"
+msgstr ""
+
