@@ -20,28 +20,21 @@ namespace Archaeologist
         {
             private static void Prefix()
             {
+                Utils.InitLocalization(typeof(STRINGS));
+                LocString.CreateLocStringKeys(typeof(STRINGS.DUPLICANTS));
                 DUPLICANTSTATS.GOODTRAITS.Add(new DUPLICANTSTATS.TraitVal
                 {
                     id = Archaeologist,
                     statBonus = -DUPLICANTSTATS.SMALL_STATPOINT_BONUS,
                     rarity = DUPLICANTSTATS.RARITY_EPIC,
+                    dlcId = DlcManager.VANILLA_ID,
                     mutuallyExclusiveTraits = new List<string> { "CantResearch", "Uncultured" }
                 });
             }
 
-            private static void Postfix(ref Db __instance)
+            private static void Postfix(Db __instance)
             {
                 __instance.traits.Get(Archaeologist).PositiveTrait = true;
-            }
-        }
-
-        [HarmonyPatch(typeof(Localization), nameof(Localization.Initialize))]
-        internal static class Localization_Initialize
-        {
-            private static void Postfix()
-            {
-                Utils.InitLocalization(typeof(STRINGS));
-                LocString.CreateLocStringKeys(typeof(STRINGS.DUPLICANTS));
             }
         }
     }
