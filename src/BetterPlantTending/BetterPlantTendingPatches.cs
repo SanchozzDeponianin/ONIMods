@@ -238,7 +238,7 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(Tinkerable), "OnCompleteWork")]
         private static class Tinkerable_OnCompleteWork
         {
-            private static void Postfix(Tinkerable __instance, Worker worker)
+            private static void Postfix(Tinkerable __instance, WorkerBase worker)
             {
                 if (__instance.TryGetComponent<ExtraSeedProducer>(out var producer))
                     producer.CreateExtraSeed(worker);
@@ -519,7 +519,7 @@ namespace BetterPlantTending
                 var smi = typeof(CropTendingStates).GetMethodSafe("FindCrop", false, typeof(CropTendingStates.Instance))?.GetParameters()
                     ?.First(p => p.ParameterType == typeof(CropTendingStates.Instance));
                 var IsGrown = typeof(Growing).GetMethodSafe(nameof(Growing.IsGrown), false);
-                var GetWorldItems = typeof(Components.Cmps<Crop>).GetMethodSafe(nameof(Components.Cmps<Crop>.GetWorldItems), false, PPatchTools.AnyArguments);
+                var GetWorldItems = typeof(Components.Cmps<Crop>).GetMethodSafe(nameof(Components.Cmps<Crop>.GetWorldItems), false, typeof(int), typeof(bool));
                 var findPlants = typeof(CropTendingStates_FindCrop).GetMethodSafe(nameof(FindPlants), true, PPatchTools.AnyArguments);
                 var isNotNeedTending = typeof(CropTendingStates_FindCrop).GetMethodSafe(nameof(IsNotNeedTending), true, PPatchTools.AnyArguments);
 

@@ -184,7 +184,7 @@ namespace MoreEmotions
                 if (bed != null && bed.TryGetComponent<Building>(out _))
                 {
                     smi.hadPeacefulSleep = smi.IsLoudSleeper() || smi.HasTag(GameTags.EmitsLight)
-                        || (UnityEngine.Random.value < (bed.PrefabID() == LuxuryBedConfig.ID ? 0.8f : 0.15f));
+                        || (UnityEngine.Random.value < (bed.PrefabID() == LuxuryBedConfig.ID ? 0.75f : 0.25f));
                 }
             }
 
@@ -242,7 +242,7 @@ namespace MoreEmotions
         {
             private static bool Prepare() => MoreEmotionsOptions.Instance.alternative_sleep_anims;
 
-            private static void Postfix(Worker worker, ref HashedString[] __result)
+            private static void Postfix(WorkerBase worker, ref HashedString[] __result)
             {
                 if (worker != null)
                 {
@@ -281,7 +281,7 @@ namespace MoreEmotions
 
             private static Reactable CreateSelfReactable(BladderMonitor.Instance smi)
             {
-                const float cooldown = 0.25f * TUNING.DUPLICANTSTATS.PEE_FUSE_TIME;
+                float cooldown = 0.25f * TUNING.DUPLICANTSTATS.GetStatsFor(smi.PrefabID()).Secretions.PEE_FUSE_TIME;
                 var reactable = new SelfEmoteReactable(smi.master.gameObject, "FullBladder", Db.Get().ChoreTypes.EmoteHighPriority, 0f, cooldown)
                     .SetEmote(MoreMinionEmotes.Instance.FullBladder)
                     .AddPrecondition(ReactorIsOnFloor);
@@ -356,7 +356,7 @@ namespace MoreEmotions
         }
 
         // вытирание рук об себя а) после умывайника б) после вытирания
-        private static void CreateHandWipeChore(Worker worker)
+        private static void CreateHandWipeChore(WorkerBase worker)
         {
             if (worker.TryGetComponent(out ChoreProvider provider))
                 new EmoteChore(provider, Db.Get().ChoreTypes.EmoteHighPriority, MoreMinionEmotes.Instance.HandWipe);
@@ -367,7 +367,7 @@ namespace MoreEmotions
         {
             private static bool Prepare() => MoreEmotionsOptions.Instance.wet_hands_emote;
 
-            private static void Postfix(HandSanitizer.Work __instance, Worker worker)
+            private static void Postfix(HandSanitizer.Work __instance, WorkerBase worker)
             {
                 if (UnityEngine.Random.value < 0.25f)
                 {
@@ -383,7 +383,7 @@ namespace MoreEmotions
         {
             private static bool Prepare() => MoreEmotionsOptions.Instance.wet_hands_emote;
 
-            private static void Postfix(Worker worker)
+            private static void Postfix(WorkerBase worker)
             {
                 if (UnityEngine.Random.value < 0.25f)
                     CreateHandWipeChore(worker);

@@ -134,7 +134,7 @@ namespace SquirrelGenerator
                 .ScheduleGoTo(0.2f, moving.moving);
 
             moving.moving
-                .Enter("Speedup", smi => smi.navigator.defaultSpeed = smi.originalSpeed * TUNING.DUPLICANTSTATS.MOVEMENT.BONUS_2)
+                .Enter("Speedup", smi => smi.navigator.defaultSpeed = smi.originalSpeed * TUNING.DUPLICANTSTATS.MOVEMENT_MODIFIERS.BONUS_2)
                 .MoveTo(smi => smi.targetWheel_cell, running, null, false)
                 .Exit("RestoreSpeed", smi => smi.navigator.defaultSpeed = smi.originalSpeed);
 

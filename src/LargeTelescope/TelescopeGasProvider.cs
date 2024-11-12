@@ -46,7 +46,7 @@ namespace LargeTelescope
 
         // заменяем и восстанавливаем GasProvider. 
         // сделано не как у клеев, чтобы исправить эксплоит и баг со снятием костюма.
-        public void OverrideGasProvider(Worker worker)
+        public void OverrideGasProvider(WorkerBase worker)
         {
             if (worker != null && worker.TryGetComponent<OxygenBreather>(out var breather) && !ReferenceEquals(this, breather.GetGasProvider()))
                 breather.SetGasProvider(this);

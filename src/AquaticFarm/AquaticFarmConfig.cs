@@ -8,7 +8,7 @@ namespace AquaticFarm
     {
         public const string ID = "AquaticFarm";
 
-        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
+        public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(base.GetRequiredDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {

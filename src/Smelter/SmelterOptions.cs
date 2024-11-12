@@ -31,10 +31,6 @@ namespace Smelter
             [JsonProperty]
             [Option]
             public bool Resin_To_Isoresin { get; set; } = true;
-
-            [JsonProperty]
-            [Option]
-            public bool Wood_To_Carbon { get; set; } = true;
         }
 
         [JsonProperty]

@@ -9,7 +9,7 @@ namespace SquirrelGenerator
     {
         public const string ID = "SquirrelGenerator";
 
-        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
+        public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(base.GetRequiredDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {
@@ -44,14 +44,16 @@ namespace SquirrelGenerator
         public override void DoPostConfigureComplete(GameObject go)
         {
             go.AddOrGet<LogicOperationalController>();
-            go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.IndustrialMachinery, false);
+            var prefabID = go.GetComponent<KPrefabID>();
+            prefabID.AddTag(RoomConstraints.ConstraintTags.GeneratorType, false);
+            prefabID.AddTag(RoomConstraints.ConstraintTags.LightDutyGeneratorType, false);
+            prefabID.AddTag(RoomConstraints.ConstraintTags.IndustrialMachinery, false);
             go.AddOrGet<LoopingSounds>();
             Prioritizable.AddRef(go);
             go.AddOrGet<SquirrelGenerator>().powerDistributionOrder = 10;
             var kBatchedAnimController = go.AddOrGet<KBatchedAnimController>();
             kBatchedAnimController.fgLayer = Grid.SceneLayer.BuildingFront;
             kBatchedAnimController.initialAnim = "off";
-            Tinkerable.MakePowerTinkerable(go);
         }
     }
 }

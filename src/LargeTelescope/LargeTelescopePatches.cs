@@ -7,7 +7,6 @@ using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
-using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
 
@@ -91,7 +90,6 @@ namespace LargeTelescope
         [HarmonyPatch]
         private static class Telescopes_CreateChore
         {
-            private static readonly IDetouredField<Chore, List<Chore.PreconditionInstance>> preconditions = PDetours.DetourField<Chore, List<Chore.PreconditionInstance>>("preconditions");
             private static bool Prepare() => LargeTelescopeOptions.Instance.not_require_gas_pipe;
             private static IEnumerable<MethodBase> TargetMethods()
             {
@@ -107,7 +105,7 @@ namespace LargeTelescope
             }
             private static void Postfix(Chore __result)
             {
-                preconditions.Get(__result).RemoveAll(precondition => precondition.id == Telescope.ContainsOxygen.id);
+                __result.GetPreconditions().RemoveAll(precondition => precondition.condition.id == Telescope.ContainsOxygen.id);
             }
         }
 
@@ -186,7 +184,7 @@ namespace LargeTelescope
             private static IEnumerable<MethodBase> TargetMethods()
             {
                 const string method = "OnWorkTick";
-                var args = new Type[] { typeof(Worker), typeof(float) };
+                var args = new Type[] { typeof(WorkerBase), typeof(float) };
                 if (DlcManager.IsExpansion1Active())
                 {
                     yield return typeof(ClusterTelescope.ClusterTelescopeWorkable).GetMethodSafe(method, false, args);
@@ -198,7 +196,7 @@ namespace LargeTelescope
                 }
             }
 
-            private static void Prefix(Workable __instance, Worker worker, ref float dt)
+            private static void Prefix(Workable __instance, WorkerBase worker, ref float dt)
             {
                 if (__instance != null && __instance.TryGetComponent<TelescopeGasProvider>(out var gasProvider))
                 {

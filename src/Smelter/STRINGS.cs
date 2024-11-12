@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using STRINGS;
 using SanchozzONIMods.Lib;
 
@@ -44,15 +45,12 @@ namespace Smelter
         private const string NAPHTHA = "{NAPHTHA}";
         private const string SULFUR = "{SULFUR}";
         private const string LIQUIDSULFUR = "{LIQUIDSULFUR}";
-        private const string WOOD = "{WOOD}";
-        private const string CARBON = "{CARBON}";
         private const string RESIN = "{RESIN}";
         private const string ISORESIN = "{ISORESIN}";
 
         private const string SMELTER = "{SMELTER}";
         private const string METALREFINERY = "{METALREFINERY}";
         private const string GLASSFORGE = "{GLASSFORGE}";
-        private const string KILN = "{KILN}";
 
         public class OPTIONS
         {
@@ -85,11 +83,6 @@ namespace Smelter
                 public static LocString NAME = $"{RESIN} to {ISORESIN}";
                 public static LocString TOOLTIP = $"Available at {SMELTER}";
             }
-            public class WOOD_TO_CARBON
-            {
-                public static LocString NAME = $"{WOOD} to {CARBON}";
-                public static LocString TOOLTIP = $"Available at {KILN}";
-            }
 
             public class FEATURES
             {
@@ -112,18 +105,13 @@ namespace Smelter
         {
             BUILDINGS.PREFABS.SMELTER.DESC = global::STRINGS.BUILDINGS.PREFABS.METALREFINERY.DESC;
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
-
-            var elements = new string[] { KATAIRITE, TUNGSTEN, PHOSPHORITE, PHOSPHORUS, POLYPROPYLENE, NAPHTHA, SULFUR, LIQUIDSULFUR, CARBON, RESIN, ISORESIN };
-            //var buildings = new string[] { SMELTER, METALREFINERY, GLASSFORGE, KILN};
-            var dictionary = Utils.PrepareReplacementDictionary(null, elements, "STRINGS.ELEMENTS.{0}.NAME");
-            //.PrepareReplacementDictionary(buildings, "STRINGS.BUILDINGS.PREFABS.{0}.NAME");
-            // блядь! ключи для "STRINGS.BUILDINGS.PREFABS" создаются слишком поздно, в LegacyModMain.LoadBuildings
-            // диалог опций судя по всему инициируется раньше. поэтому обломалась идея сделать красивую подстановку.
-            dictionary.Add(SMELTER, BUILDINGS.PREFABS.SMELTER.NAME);
-            dictionary.Add(METALREFINERY, global::STRINGS.BUILDINGS.PREFABS.METALREFINERY.NAME);
-            dictionary.Add(GLASSFORGE, global::STRINGS.BUILDINGS.PREFABS.GLASSFORGE.NAME);
-            dictionary.Add(KILN, global::STRINGS.BUILDINGS.PREFABS.KILN.NAME);
-            dictionary.Add(WOOD, ITEMS.INDUSTRIAL_PRODUCTS.WOOD.NAME);
+            var elements = new string[] { KATAIRITE, TUNGSTEN, PHOSPHORITE, PHOSPHORUS, POLYPROPYLENE, NAPHTHA, SULFUR, LIQUIDSULFUR, RESIN, ISORESIN };
+            var dictionary = new Dictionary<string, string>
+            {
+                { SMELTER, BUILDINGS.PREFABS.SMELTER.NAME },
+                { METALREFINERY, global::STRINGS.BUILDINGS.PREFABS.METALREFINERY.NAME },
+                { GLASSFORGE, global::STRINGS.BUILDINGS.PREFABS.GLASSFORGE.NAME }
+            }.PrepareReplacementDictionary(elements, "STRINGS.ELEMENTS.{0}.NAME");
             foreach (var key in dictionary.Keys.ToList())
             {
                 dictionary[key] = UI.FormatAsKeyWord(UI.StripLinkFormatting(dictionary[key]));

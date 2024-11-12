@@ -33,7 +33,7 @@ namespace Smelter
             Storage.StoredItemModifier.Seal
         };
 
-        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
+        public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(base.GetRequiredDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {
@@ -364,35 +364,6 @@ namespace Smelter
                         resin_solid.name),
                     nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
                     fabricators = new List<Tag> { TagManager.Create(ID) }
-                };
-            }
-
-            // добавляем древесный уголь в печку
-            // TODO: убрать когда У51 всё
-            if (SmelterOptions.Instance.recipes.Wood_To_Carbon && Utils.GameVersion <= 600112u)
-            {
-                const float WOOD = 200f;
-                const float CARBON = 125f;
-                const float CO2 = WOOD - CARBON;
-
-                var ingredients = new ComplexRecipe.RecipeElement[]
-                {
-                    new ComplexRecipe.RecipeElement(WoodLogConfig.TAG, WOOD)
-                };
-                var results = new ComplexRecipe.RecipeElement[]
-                {
-                    new ComplexRecipe.RecipeElement(SimHashes.Carbon.CreateTag(), CARBON, ComplexRecipe.RecipeElement.TemperatureOperation.Heated),
-                    new ComplexRecipe.RecipeElement(SimHashes.CarbonDioxide.CreateTag(), CO2, ComplexRecipe.RecipeElement.TemperatureOperation.Heated)
-                };
-                string id = ComplexRecipeManager.MakeRecipeID(KilnConfig.ID, ingredients, results);
-                new ComplexRecipe(id, ingredients, results)
-                {
-                    time = BUILDINGS.FABRICATION_TIME_SECONDS.SHORT,
-                    description = string.Format(EGGCRACKER.RECIPE_DESCRIPTION,
-                        global::STRINGS.UI.FormatAsLink(global::STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.WOOD.NAME, ForestTreeConfig.ID.ToUpperInvariant()),
-                        ElementLoader.FindElementByHash(SimHashes.Carbon).name),
-                    nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
-                    fabricators = new List<Tag> { TagManager.Create(KilnConfig.ID) }
                 };
             }
         }

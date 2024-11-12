@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib.Core;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
 using PeterHan.PLib.UI;
@@ -37,7 +36,6 @@ namespace HEPBridgeInsulationTile
         private static void AddBuilding()
         {
             ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.HEP, HEPBridgeInsulationTileConfig.ID, BUILD_SUBCATEGORY.transmissions, HEPBridgeTileConfig.ID);
-            PGameUtils.CopySoundsToAnim("wallbridge_orb_transporter_kanim", "orb_transporter_kanim");
             // заменяем технологию для клеевской пластины
             var klei_tech_current = Db.Get().Techs.TryGetTechForTechItem(HEPBridgeTileConfig.ID);
             var klei_tech_new_id = HEPBridgeInsulationTileOptions.Instance.research_klei.ToString();

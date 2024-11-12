@@ -8,7 +8,7 @@ namespace CarouselCentrifuge
     {
         public const string ID = "CarouselCentrifuge";
 
-        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
+        public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(base.GetRequiredDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {

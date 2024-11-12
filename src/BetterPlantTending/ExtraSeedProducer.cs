@@ -71,7 +71,7 @@ namespace BetterPlantTending
             base.OnCleanUp();
         }
 
-        public void CreateExtraSeed(Worker worker = null)
+        public void CreateExtraSeed(WorkerBase worker = null)
         {
             if (!hasExtraSeedAvailable && !wilting.IsWilting())
             {

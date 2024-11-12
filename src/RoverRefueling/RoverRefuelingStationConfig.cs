@@ -10,7 +10,7 @@ namespace RoverRefueling
         public const int NUM_USES = 3;
         public static Tag fuelTag = GameTags.CombustibleLiquid;
 
-        public override string[] GetDlcIds() => Utils.GetDlcIds(DlcManager.AVAILABLE_EXPANSION1_ONLY);
+        public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(DlcManager.EXPANSION1);
 
         public override BuildingDef CreateBuildingDef()
         {

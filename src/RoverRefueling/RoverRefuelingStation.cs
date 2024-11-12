@@ -13,6 +13,7 @@ namespace RoverRefueling
             id = nameof(IsRover),
             description = STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ROVER,
             sortOrder = -2,
+            canExecuteOnAnyThread = true,
             fn = (ref Chore.Precondition.Context context, object data) =>
                 context.consumerState.prefabid.PrefabTag == GameTags.Robots.Models.ScoutRover
         };
@@ -22,6 +23,7 @@ namespace RoverRefueling
             id = nameof(RoverNeedRefueling),
             description = global::STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.HAS_URGE,
             sortOrder = -1,
+            canExecuteOnAnyThread = true,
             fn = (ref Chore.Precondition.Context context, object data) =>
                 context.consumerState.prefabid.HasTag(RoverRefuelingPatches.RoverNeedRefueling)
         };

@@ -23,7 +23,7 @@ namespace NoManualDelivery
             new POptions().RegisterOptions(this, typeof(NoManualDeliveryOptions));
             NoManualDeliveryOptions.Reload();
 
-            // хак для того чтобы разрешить руке хватать бутылки
+            // разрешить руке хватать бутылки
             if (NoManualDeliveryOptions.Instance.AllowTransferArmPickupGasLiquid)
             {
                 STORAGEFILTERS.SOLID_TRANSFER_ARM_CONVEYABLE = STORAGEFILTERS.SOLID_TRANSFER_ARM_CONVEYABLE
@@ -31,7 +31,7 @@ namespace NoManualDelivery
                 BuildingToMakeAutomatable.AddRange(BuildingToMakeAutomatableWithTransferArmPickupGasLiquid);
             }
 
-            // подготовка хака, чтобы разрешить дупликам забирать жеготных из инкубатора и всегда хватать еду
+            // подготовка, чтобы разрешить дупликам забирать жеготных из инкубатора и всегда хватать еду
             AlwaysCouldBePickedUpByMinionTags = new Tag[] { GameTags.Creatures.Deliverable };
             if (NoManualDeliveryOptions.Instance.AllowAlwaysPickupEdible)
             {
@@ -104,7 +104,10 @@ namespace NoManualDelivery
         private static List<string> BuildingToMakeAutomatableWithTransferArmPickupGasLiquid = new List<string>()
         {
             LiquidPumpingStationConfig.ID,
+            LiquidBottlerConfig.ID,
             GasBottlerConfig.ID,
+            BottleEmptierConduitGasConfig.ID,
+            BottleEmptierConduitLiquidConfig.ID,
             BottleEmptierConfig.ID,
             BottleEmptierGasConfig.ID,
             // из модов:
@@ -141,20 +144,16 @@ namespace NoManualDelivery
             }
         }
 
-        // хак для того чтобы разрешить дупликам доставку для Tinkerable объектов, типа генераторов
+        // разрешить дупликам доставку для Tinkerable объектов, типа генераторов
         [HarmonyPatch(typeof(Tinkerable), "UpdateChore")]
         private static class Tinkerable_UpdateChore
         {
-            private static readonly IDetouredField<Chore, bool> arePreconditionsDirty = PDetours.DetourField<Chore, bool>("arePreconditionsDirty");
-            private static readonly IDetouredField<Chore, List<Chore.PreconditionInstance>> preconditions = PDetours.DetourField<Chore, List<Chore.PreconditionInstance>>("preconditions");
-
             private static void Postfix(Chore ___chore)
             {
                 if (___chore != null && ___chore is FetchChore chore)
                 {
                     string id = ChorePreconditions.instance.IsAllowedByAutomation.id;
-                    arePreconditionsDirty.Set(chore, true);
-                    preconditions.Get(chore).RemoveAll((Chore.PreconditionInstance x) => x.id == id);
+                    chore.GetPreconditions().RemoveAll(x => x.condition.id == id);
                     chore.automatable = null;
                 }
             }
@@ -162,7 +161,7 @@ namespace NoManualDelivery
 
         private static Tag[] AlwaysCouldBePickedUpByMinionTags = new Tag[0];
 
-        // хак для того чтобы разрешить дупликам забирать жеготных из инкубатора, всегда хватать еду, всегда брать воду из чайника
+        // разрешить дупликам забирать жеготных из инкубатора, всегда хватать еду, всегда брать воду из чайника
         [HarmonyPatch(typeof(Pickupable), nameof(Pickupable.CouldBePickedUpByMinion))]
         private static class Pickupable_CouldBePickedUpByMinion
         {
@@ -178,7 +177,7 @@ namespace NoManualDelivery
             }
         }
 
-        // хак - дуплы обжирающиеся от стресса, будут игнорировать установленную галку
+        // дуплы обжирающиеся от стресса, будут игнорировать установленную галку
         [HarmonyPatch(typeof(BingeEatChore.StatesInstance), nameof(BingeEatChore.StatesInstance.FindFood))]
         private static class BingeEatChore_StatesInstance_FindFood
         {
@@ -209,7 +208,9 @@ namespace NoManualDelivery
             }
         }
 
-        // хак для того чтобы не испортить заголовок окна - сместить галку вниз
+        // чтобы не испортить заголовок окна - сместить галку вниз
+        // похоже второго патча достаточно
+#if false
         [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
         private static class DetailsScreen_OnPrefabInit
         {
@@ -229,11 +230,13 @@ namespace NoManualDelivery
                 }
             }
         }
+#endif
 
         [HarmonyPatch(typeof(SideScreenContent), nameof(SideScreenContent.GetSideScreenSortOrder))]
         private static class SideScreenContent_GetSideScreenSortOrder
         {
-            private static bool Prepare() => Environment.OSVersion.Platform.Equals(PlatformID.Win32NT);
+            // ранее в прошлом вылетало на линухах. todo: мониторить ситуацию
+            //private static bool Prepare() => Environment.OSVersion.Platform.Equals(PlatformID.Win32NT);
             private static void Postfix(SideScreenContent __instance, ref int __result)
             {
                 if (__instance is AutomatableSideScreen)
@@ -241,7 +244,7 @@ namespace NoManualDelivery
             }
         }
 
-        // хаки для станции бота.
+        // станция бота-подметашки
         // при изменении хранилища станция принудительно помечает все ресурсы "для переноски"
         // изза этого дуплы всегда будут игнорировать установленную галку (другая задача переноски, не учитывает галку вообще)
         // поэтому нужно при установленной галке - отменить пометки "для переноски"
@@ -382,9 +385,9 @@ namespace NoManualDelivery
         private static class Workable_GetAnim
         {
             private static bool Prepare() => NoManualDeliveryOptions.Instance.AllowTransferArmPickupGasLiquid;
-            private static void Postfix(Workable __instance, Worker worker, ref Workable.AnimInfo __result)
+            private static void Postfix(Workable __instance, WorkerBase worker, ref Workable.AnimInfo __result)
             {
-                if (__instance is IceKettleWorkable && !worker.usesMultiTool)
+                if (__instance is IceKettleWorkable && !worker.UsesMultiTool())
                     __result.overrideAnims = null;
             }
         }

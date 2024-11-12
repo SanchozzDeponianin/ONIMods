@@ -13,7 +13,7 @@ namespace BuildableGeneShuffler
         private static readonly float glass_mass = BUILDINGS.CONSTRUCTION_MASS_KG.TIER4[0];
         public static readonly float brine_mass = total_mass - metal_mass - glass_mass;
 
-        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
+        public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(base.GetRequiredDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {

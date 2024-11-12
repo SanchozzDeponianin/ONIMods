@@ -178,7 +178,7 @@ namespace ReBuildableAETN
             Refresh();
         }
 
-        protected override void OnCompleteWork(Worker worker)
+        protected override void OnCompleteWork(WorkerBase worker)
         {
             base.OnCompleteWork(worker);
             studied = true;

@@ -118,13 +118,3 @@ msgctxt "Smelter.STRINGS.OPTIONS.SULFUR_TO_LIQUIDSULFUR.TOOLTIP"
 msgid "Available at {GLASSFORGE}"
 msgstr ""
 
-#. Smelter.STRINGS.OPTIONS.WOOD_TO_CARBON.NAME
-msgctxt "Smelter.STRINGS.OPTIONS.WOOD_TO_CARBON.NAME"
-msgid "{WOOD} to {CARBON}"
-msgstr ""
-
-#. Smelter.STRINGS.OPTIONS.WOOD_TO_CARBON.TOOLTIP
-msgctxt "Smelter.STRINGS.OPTIONS.WOOD_TO_CARBON.TOOLTIP"
-msgid "Available at {KILN}"
-msgstr ""
-

@@ -83,13 +83,13 @@ namespace CarouselCentrifuge
             return workChore;
         }
 
-        protected override void OnStartWork(Worker worker)
+        protected override void OnStartWork(WorkerBase worker)
         {
             base.OnStartWork(worker);
             operational.SetActive(true, false);
         }
 
-        protected override void OnCompleteWork(Worker worker)
+        protected override void OnCompleteWork(WorkerBase worker)
         {
             base.OnCompleteWork(worker);
             bool flag = (Random.Range(0f, 100f) > vomitChancePercent);
@@ -133,13 +133,13 @@ namespace CarouselCentrifuge
             chore = CreateChore();
         }
 
-        protected override void OnStopWork(Worker worker)
+        protected override void OnStopWork(WorkerBase worker)
         {
             base.OnStopWork(worker);
             operational.SetActive(false, false);
         }
 
-        public bool GetWorkerPriority(Worker worker, out int priority)
+        public bool GetWorkerPriority(WorkerBase worker, out int priority)
         {
             priority = basePriority;
             if (worker.TryGetComponent<Effects>(out var effects))

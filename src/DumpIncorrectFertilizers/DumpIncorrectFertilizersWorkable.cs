@@ -22,7 +22,7 @@
             SetWorkTime(1f);
         }
 
-        protected override void OnCompleteWork(Worker worker)
+        protected override void OnCompleteWork(WorkerBase worker)
         {
             IrrigationMonitor.Instance.DumpIncorrectFertilizers(storage, plot.Occupant);
             base.OnCompleteWork(worker);

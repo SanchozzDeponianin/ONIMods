@@ -116,7 +116,7 @@ namespace BuildableGeneShuffler
             }
 
             public override Vector3 GetFacingTarget() => transform.GetPosition() + Vector3.left;
-            public override bool InstantlyFinish(Worker worker) => false;
+            public override bool InstantlyFinish(WorkerBase worker) => false;
         }
 
         internal static ChoreType PrepareGeneShuffler;

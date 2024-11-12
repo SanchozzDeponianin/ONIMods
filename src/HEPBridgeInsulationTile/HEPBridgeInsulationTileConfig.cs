@@ -3,6 +3,7 @@ using TUNING;
 using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
+using PeterHan.PLib.Core;
 using static STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEREDIRECTOR;
 
 namespace HEPBridgeInsulationTile
@@ -12,11 +13,12 @@ namespace HEPBridgeInsulationTile
         public const string ID = "HighEnergyParticleWallBridgeRedirector"; // legacy
         public static readonly Tag secodary_material = TagManager.Create(MATERIALS.EXTRUDABLE[0]);
 
-        public override string[] GetDlcIds() => Utils.GetDlcIds(DlcManager.AVAILABLE_EXPANSION1_ONLY);
+        public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(DlcManager.EXPANSION1);
 
         public override BuildingDef CreateBuildingDef()
         {
             string anim = HEPBridgeInsulationTileOptions.Instance.use_old_anim ? "wallbridge_orb_transporter_kanim" : "radbolt_joint_plate_insulated_kanim";
+            PGameUtils.CopySoundsToAnim(anim, "orb_transporter_kanim");
             var def = BuildingTemplates.CreateBuildingDef(
                 id: ID,
                 width: 3,

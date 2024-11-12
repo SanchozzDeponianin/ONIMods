@@ -83,7 +83,7 @@ namespace Smelter
 
         // газообразные продукты нужно выпускать в атмосферу
         // ограничимся только теми постройкаи куда мы добавили такие рецепты
-        private static readonly List<string> fabricators = new List<string>() { SmelterConfig.ID, MetalRefineryConfig.ID, KilnConfig.ID };
+        private static readonly List<string> fabricators = new List<string>() { SmelterConfig.ID, MetalRefineryConfig.ID };
 
         [HarmonyPatch(typeof(ComplexFabricator), "SpawnOrderProduct")]
         private static class ComplexFabricator_SpawnOrderProduct

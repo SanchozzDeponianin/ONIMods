@@ -7,7 +7,6 @@ using TUNING;
 using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;

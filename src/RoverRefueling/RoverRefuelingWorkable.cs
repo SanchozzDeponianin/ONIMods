@@ -38,7 +38,7 @@ namespace RoverRefueling
             SetOffsetTable(OffsetGroups.BuildReachabilityTable(new CellOffset[] { offset }, OffsetGroups.InvertedStandardTable, null));
         }
 
-        protected override void OnStartWork(Worker worker)
+        protected override void OnStartWork(WorkerBase worker)
         {
             battery = Db.Get().Amounts.InternalChemicalBattery.Lookup(worker);
             worker.TryGetComponent<PrimaryElement>(out primaryElement);
@@ -46,7 +46,7 @@ namespace RoverRefueling
                 effects.Add(RoverRefuelingPatches.RefuelingEffect, false);
         }
 
-        protected override void OnStopWork(Worker worker)
+        protected override void OnStopWork(WorkerBase worker)
         {
             battery = null;
             primaryElement = null;
@@ -54,7 +54,7 @@ namespace RoverRefueling
                 effects.Remove(RoverRefuelingPatches.RefuelingEffect);
         }
 
-        protected override bool OnWorkTick(Worker worker, float dt)
+        protected override bool OnWorkTick(WorkerBase worker, float dt)
         {
             if (battery.value >= battery.GetMax())
                 return true;

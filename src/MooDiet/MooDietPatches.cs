@@ -28,19 +28,16 @@ namespace MooDiet
             Utils.InitLocalization(typeof(STRINGS));
         }
 
+        // эффект при поедании цветов
         public const string MOO_FLOWER_FED = "MooFlowerFed";
 
-        // эффект при поедании цветов
-        [HarmonyPatch(typeof(ModifierSet), "LoadEffects")]
-        private static class ModifierSet_LoadEffects
+        [PLibMethod(RunAt.AfterDbInit)]
+        private static void AfterDbInit()
         {
-            private static void Postfix(ModifierSet __instance)
-            {
-                var effect = new Effect(MOO_FLOWER_FED, NAME, TOOLTIP, 1f, false, false, true);
-                effect.Add(new AttributeModifier(__instance.Amounts.Beckoning.deltaAttribute.Id,
-                    -MooTuning.WELLFED_EFFECT * MooDietOptions.Instance.flower_diet.beckoning_penalty, NAME));
-                __instance.effects.Add(effect);
-            }
+            var effect = new Effect(MOO_FLOWER_FED, NAME, TOOLTIP, 1f, false, false, true);
+            effect.Add(new AttributeModifier(Db.Get().Amounts.Beckoning.deltaAttribute.Id,
+                -MooTuning.WELLFED_EFFECT * MooDietOptions.Instance.flower_diet.beckoning_penalty, NAME));
+            Db.Get().effects.Add(effect);
         }
 
         // расширяем диету
@@ -53,14 +50,14 @@ namespace MooDiet
                 public Tag output_ID;
                 public float calories_multiplier;
                 public float output_multiplier;
-                public bool eatsPlantsDirectly;
-                public FoodInfo(string id, Tag output_ID, float calories_multiplier = 1f, float output_multiplier = 1f, bool eatsPlantsDirectly = false)
+                public Diet.Info.FoodType food_type;
+                public FoodInfo(string id, Tag output_ID, float calories_multiplier = 1f, float output_multiplier = 1f, Diet.Info.FoodType food_type = Diet.Info.FoodType.EatSolid)
                 {
                     ID = id;
                     this.output_ID = output_ID;
                     this.calories_multiplier = calories_multiplier;
                     this.output_multiplier = output_multiplier;
-                    this.eatsPlantsDirectly = eatsPlantsDirectly;
+                    this.food_type = food_type;
                 }
             }
             public const string PalmeraTreePlant = "PalmeraTreePlant";
@@ -86,7 +83,7 @@ namespace MooDiet
                         }
                         diet_info.consumedTags.Remove(GasGrassHarvestedConfig.ID);
                         diet_info.consumedTags.Add(GasGrassConfig.ID);
-                        Traverse.Create(diet_info).Property<bool>(nameof(Diet.Info.eatsPlantsDirectly)).Value = true;
+                        Traverse.Create(diet_info).Property<Diet.Info.FoodType>(nameof(Diet.Info.foodType)).Value = Diet.Info.FoodType.EatPlantDirectly;
                     }
                     // добавляем новые варианты к существующей диете
                     var new_foods = new List<FoodInfo>()
@@ -101,7 +98,7 @@ namespace MooDiet
                     {
                         new_foods.Add(new FoodInfo(PalmeraTreePlant, ElementLoader.FindElementByHash(SimHashes.Hydrogen).tag,
                             MooDietOptions.Instance.palmera_diet.palmera_per_cow / MooConfig.DAYS_PLANT_GROWTH_EATEN_PER_CYCLE,
-                            eatsPlantsDirectly: true));
+                            food_type: Diet.Info.FoodType.EatPlantDirectly));
                     }
                     if (MooDietOptions.Instance.palmera_diet.eat_berry && Assets.TryGetPrefab(PalmeraBerry) != null
                         && CROPS.CROP_TYPES.FindIndex(m => m.cropId == PalmeraBerry) != -1)
@@ -116,15 +113,18 @@ namespace MooDiet
                         // просто разделим параметры на среднюю урожайность растения в день
                         // а также, для цветов - поделим калорийность на фактор увеличения числа растений
                         float crop_per_cycle = 1f;
-                        if (!food.eatsPlantsDirectly)
+                        if (food.food_type != Diet.Info.FoodType.EatPlantDirectly)
                         {
                             var cropVal = CROPS.CROP_TYPES.Find(m => m.cropId == food.ID);
                             crop_per_cycle = Constants.SECONDS_PER_CYCLE / cropVal.cropDuration * cropVal.numProduced;
                         }
                         new_diet.RemoveAll(info => info.consumedTags.Contains(food.ID)); // удаляем дупликаты от посторонних модов.
-                        new_diet.Add(new Diet.Info(new HashSet<Tag>() { food.ID }, food.output_ID,
-                            diet_info.caloriesPerKg / crop_per_cycle / food.calories_multiplier,
-                            diet_info.producedConversionRate / crop_per_cycle / food.calories_multiplier * food.output_multiplier));
+                        new_diet.Add(new Diet.Info(
+                            consumed_tags: new HashSet<Tag>() { food.ID },
+                            produced_element: food.output_ID,
+                            calories_per_kg: diet_info.caloriesPerKg / crop_per_cycle / food.calories_multiplier,
+                            produced_conversion_rate: diet_info.producedConversionRate / crop_per_cycle / food.calories_multiplier * food.output_multiplier,
+                            food_type: food.food_type));
                     }
                     var hybridDiet = new Diet(new_diet.ToArray());
                     ccm_def.diet = hybridDiet;

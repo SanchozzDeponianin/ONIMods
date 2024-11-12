@@ -50,7 +50,7 @@ namespace BuildableGeneShuffler
             }
         }
 
-        public void SpawnItemsFromConstruction(Worker chore_worker)
+        public void SpawnItemsFromConstruction(WorkerBase chore_worker)
         {
             if (isBuilded && !destroyed)
             {

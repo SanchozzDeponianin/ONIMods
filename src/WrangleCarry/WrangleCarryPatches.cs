@@ -70,7 +70,7 @@ namespace WrangleCarry
         [HarmonyPatch(typeof(Capturable), "OnCompleteWork")]
         private static class Capturable_OnCompleteWork
         {
-            private static void Postfix(Capturable __instance, Worker worker)
+            private static void Postfix(Capturable __instance, WorkerBase worker)
             {
                 if (__instance.TryGetComponent<Pickupable>(out var pickupable) && pickupable.IsReachable())
                     return;

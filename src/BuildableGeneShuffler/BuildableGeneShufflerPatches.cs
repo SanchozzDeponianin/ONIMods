@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
@@ -93,7 +92,7 @@ namespace BuildableGeneShuffler
         // патчим массу строительных материалов для возврата при разрушении
         // немного хакновато, и затрагивает все постройки, но ладно
         // просто лень городить собственный спавн всех материалов
-        [HarmonyPatch(typeof(Deconstructable), nameof(Deconstructable.SpawnItemsFromConstruction), typeof(float), typeof(byte), typeof(int), typeof(Worker))]
+        [HarmonyPatch(typeof(Deconstructable), nameof(Deconstructable.SpawnItemsFromConstruction), typeof(float), typeof(byte), typeof(int), typeof(WorkerBase))]
         private static class Deconstructable_SpawnItemsFromConstruction
         {
             private static float[] InjectMass(float[] mass, Deconstructable deconstructable)
