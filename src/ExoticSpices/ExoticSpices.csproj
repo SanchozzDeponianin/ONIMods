@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Festive Halloween Spices</Title>
     <Description>Adds some exotic Spices with extraordinary effects to the Spice Grinder.</Description>
-    <ModVersion>1.0.5</ModVersion>
+    <ModVersion>1.0.6</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

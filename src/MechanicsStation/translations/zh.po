@@ -78,11 +78,6 @@ msgstr ""
 "每级<style=\"KKeyword\">{MACHINERY}</style>属性会给<style=\"KKeyword"
 "\">{MACHINE_TINKER}</style>效果增加持续时间百分比"
 
-#. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKERABLE_WORKTIME.NAME
-msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKERABLE_WORKTIME.NAME"
-msgid "The time required to tune up buildings, seconds"
-msgstr "调整建筑所需多少秒时间"
-
 #. MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.NAME
 msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.NAME"
 msgid "<style=\"KKeyword\">{MACHINERY_SPEED}</style> +X% value"

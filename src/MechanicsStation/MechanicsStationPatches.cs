@@ -45,9 +45,11 @@ namespace MechanicsStation
         [HarmonyPatch(typeof(MachinePartsConfig), nameof(MachinePartsConfig.CreatePrefab))]
         private static class MachinePartsConfig_CreatePrefab
         {
-            private static void Postfix(ref GameObject __result)
+            private static void Postfix(GameObject __result)
             {
-                __result.AddOrGet<KPrefabID>().AddTag(GameTags.MiscPickupable);
+                KPrefabID prefabID = __result.AddOrGet<KPrefabID>();
+                prefabID.AddTag(GameTags.IndustrialProduct);
+                prefabID.AddTag(GameTags.MiscPickupable);
                 __result.AddOrGet<EntitySplitter>();
             }
         }
@@ -116,7 +118,7 @@ namespace MechanicsStation
         [HarmonyPatch(typeof(Assets), nameof(Assets.AddBuildingDef))]
         private static class Assets_AddBuildingDef
         {
-            private static void Prefix(ref BuildingDef def)
+            private static void Prefix(BuildingDef def)
             {
                 var go = def.BuildingComplete;
                 if (go != null)
@@ -213,15 +215,14 @@ namespace MechanicsStation
 
         // нефтяная скважина
         // она не является обычной постройкой, она в другом слое присоединяемых построек, поэтому не участвует в подсистеме комнат
-        // объявляем растением саму нефтяную дырку, чтобы она получала сообщения о комнатах
+        // добавъяляем тэг нефтяной дырке, чтобы она получала сообщения о комнатах
         // и перенаправляем сообщения в скважину
-
         [HarmonyPatch(typeof(OilWellConfig), nameof(OilWellConfig.CreatePrefab))]
         private static class OilWellConfig_CreatePrefab
         {
-            private static void Postfix(ref GameObject __result)
+            private static void Postfix(GameObject __result)
             {
-                __result.AddTag(GameTags.Plant);
+                __result.AddTag(GameTags.RoomProberBuilding);
             }
         }
 

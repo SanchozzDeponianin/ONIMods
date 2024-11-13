@@ -20,7 +20,6 @@ namespace MechanicsStation
         public const string MACHINE_TINKER_EFFECT_NAME = "Machine_Tinker";
         public const float MACHINE_TINKER_EFFECT_DURATION = 2f;
         public const float MACHINE_TINKER_EFFECT_DURATION_PER_SKILL = 0.05f;
-        public const float MACHINE_TINKERABLE_WORKTIME = 20f;
         public const string REQUIRED_ROLE_PERK = "CanMachineTinker";
 
         private static SkillPerk CanMachineTinker;
@@ -165,21 +164,18 @@ namespace MechanicsStation
             tinkerable.tinkerMaterialTag = MechanicsStationConfig.TINKER_TOOLS;
             tinkerable.tinkerMaterialAmount = 1f;
             tinkerable.addedEffect = MACHINE_TINKER_EFFECT_NAME;
-            tinkerable.requiredSkillPerk = REQUIRED_ROLE_PERK;
-            tinkerable.SetWorkTime(MACHINE_TINKERABLE_WORKTIME);
-            tinkerable.choreTypeTinker = Db.Get().ChoreTypes.MachineTinker.IdHash;
-            tinkerable.choreTypeFetch = Db.Get().ChoreTypes.MachineFetch.IdHash;
-            // увеличение времени эффекта
             tinkerable.effectAttributeId = Db.Get().Attributes.Machinery.Id;
             tinkerable.effectMultiplier = MACHINE_TINKER_EFFECT_DURATION_PER_SKILL;
-
-            // а это для корректного изменения времени работы после изменения в настройках
+            tinkerable.requiredSkillPerk = REQUIRED_ROLE_PERK;
+            tinkerable.SetWorkTime(TUNING.BUILDINGS.WORK_TIME_SECONDS.SHORT_WORK_TIME);
+            tinkerable.choreTypeTinker = Db.Get().ChoreTypes.MachineTinker.IdHash;
+            tinkerable.choreTypeFetch = Db.Get().ChoreTypes.MachineFetch.IdHash;
+            tinkerable.boostSymbolNames = null;
             go.GetComponent<KPrefabID>().prefabSpawnFn += delegate (GameObject prefab)
             {
                 if (prefab.TryGetComponent<Tinkerable>(out var _tinkerable))
                 {
-                    _tinkerable.workTime = MechanicsStationOptions.Instance.machine_tinkerable_worktime;
-                    _tinkerable.WorkTimeRemaining = Mathf.Min(_tinkerable.WorkTimeRemaining, _tinkerable.workTime);
+                    _tinkerable.SetWorkTime(TUNING.BUILDINGS.WORK_TIME_SECONDS.SHORT_WORK_TIME);
                     _tinkerable.effectMultiplier = MechanicsStationOptions.Instance.machine_tinker_effect_duration_per_skill / 100;
                 }
             };

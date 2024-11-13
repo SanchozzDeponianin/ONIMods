@@ -28,12 +28,6 @@ namespace MechanicsStation
         [JsonProperty]
         [Option(Format = "F1")]
         [Limit(2.5, 10)]
-
         public float machine_tinker_effect_duration_per_skill { get; set; } = MACHINE_TINKER_EFFECT_DURATION_PER_SKILL * 100;
-
-        [JsonProperty]
-        [Option(Format = "F0")]
-        [Limit(BUILDINGS.WORK_TIME_SECONDS.SHORT_WORK_TIME, BUILDINGS.WORK_TIME_SECONDS.VERY_LONG_WORK_TIME)]
-        public float machine_tinkerable_worktime { get; set; } = MACHINE_TINKERABLE_WORKTIME;
     }
 }

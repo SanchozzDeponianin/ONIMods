@@ -1,7 +1,6 @@
 ﻿using System;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.UI;
@@ -89,7 +88,7 @@ namespace AttributeRestrictions
         // Арргхх!!! хармону через жёппу патчит методы шаблонных классов.
         // хотел сделать через WorkChore<Workable>.GetConstructors()
         // а придется вот так, внедрять свою прекондицию при добавлении прекондиции рабочего расписания
-        [HarmonyPatch(typeof(Chore), nameof(Chore.AddPrecondition))]
+        [HarmonyPatch(typeof(StandardChoreBase), nameof(Chore.AddPrecondition))]
         private static class Chore_AddPrecondition
         {
             private static void Postfix(Chore __instance, Chore.Precondition precondition, object data)

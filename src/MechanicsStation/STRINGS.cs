@@ -77,10 +77,6 @@ namespace MechanicsStation
             {
                 public static LocString NAME = $"The {UI.FormatAsKeyWord(MACHINE_TINKER)} effect +X% duration per {UI.FormatAsKeyWord(MACHINERY)} attribute level";
             }
-            public class MACHINE_TINKERABLE_WORKTIME
-            {
-                public static LocString NAME = "The time required to tune up buildings, seconds";
-            }
         }
 
         internal static void DoReplacement()

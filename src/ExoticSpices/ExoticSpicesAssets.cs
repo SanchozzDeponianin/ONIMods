@@ -65,6 +65,7 @@ namespace ExoticSpices
                 is_profession: false,
                 base_value: 0));
             JoyReactionExtraChance.SetFormatter(new PercentAttributeFormatter());
+            MinionConfig.ATTRIBUTES = MinionConfig.ATTRIBUTES.Append(JoyReactionExtraChance.Id);
 
             const string desc = "Spices";
             var PhosphoRufusExtraChance = new AttributeModifier(

@@ -17,7 +17,7 @@ namespace SuitRecharger
         private readonly ConduitPortInfo liquidWasteOutputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 0));
         private readonly ConduitPortInfo gasWasteOutputPort = new ConduitPortInfo(ConduitType.Gas, new CellOffset(1, 0));
 
-        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
+        public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(base.GetRequiredDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {
@@ -50,7 +50,7 @@ namespace SuitRecharger
 
             var o2_consumer = go.AddOrGet<ConduitConsumer>();
             o2_consumer.conduitType = ConduitType.Gas;
-            o2_consumer.consumptionRate = ConduitFlow.MAX_GAS_MASS;
+            o2_consumer.consumptionRate = ConduitFlow.MAX_LIQUID_MASS; // для софместимости с модами на увеличение потока в трубах
             o2_consumer.capacityTag = GameTags.Oxygen;
             o2_consumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
             o2_consumer.forceAlwaysSatisfied = true;

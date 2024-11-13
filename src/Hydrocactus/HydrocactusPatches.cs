@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using ProcGen;
 using TUNING;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
 using PeterHan.PLib.Options;
 

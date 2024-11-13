@@ -561,6 +561,19 @@ namespace BetterPlantTending
             }
         }
 
+        // чтобы жучинкусы могли достать до растений в декоративных горшках с пола
+        // также как они это могут с плантербохом
+        [HarmonyPatch(typeof(BuildingConfigManager), nameof(BuildingConfigManager.ConfigurePost))]
+        private static class BuildingConfigManager_ConfigurePost
+        {
+            private static void Postfix()
+            {
+                foreach (var go in Assets.GetPrefabsWithComponent<PlantablePlot>())
+                    if (go.TryGetComponent(out PlantablePlot plot) && plot.HasDepositTag(GameTags.DecorSeed))
+                        plot.tagOnPlanted = GameTags.PlantedOnFloorVessel;
+            }
+        }
+
         // вопервых исправление неконсистентности поглощения твердых удобрений засохшими растениями после загрузки сейфа
         // патчим FertilizationMonitor чтобы был больше похож на IrrigationMonitor
         // вовторых останавливаем поглощения воды/удобрений при других причинах отсутствии роста,

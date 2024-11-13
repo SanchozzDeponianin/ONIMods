@@ -14,7 +14,7 @@ namespace MechanicsStation
         public const float MASS_PER_TINKER = 5f;
         public const float OUTPUT_TEMPERATURE = 308.15f;
 
-        public override string[] GetDlcIds() => Utils.GetDlcIds(base.GetDlcIds());
+        public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(base.GetRequiredDlcIds());
 
         public override BuildingDef CreateBuildingDef()
         {
@@ -22,7 +22,7 @@ namespace MechanicsStation
                 id: ID,
                 width: 2,
                 height: 2,
-                anim: "mechanicstation_kanim", // "craftingstation_kanim",
+                anim: "mechanicstation_kanim",
                 hitpoints: BUILDINGS.HITPOINTS.TIER1,
                 construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER2,
                 construction_mass: BUILDINGS.CONSTRUCTION_MASS_KG.TIER3,
@@ -60,20 +60,22 @@ namespace MechanicsStation
             tinkerStation.outputTemperature = OUTPUT_TEMPERATURE;
             tinkerStation.requiredSkillPerk = REQUIRED_ROLE_PERK;
             tinkerStation.choreType = Db.Get().ChoreTypes.MachineTinker.IdHash;
-            tinkerStation.useFilteredStorage = true;
             tinkerStation.fetchChoreType = Db.Get().ChoreTypes.MachineFetch.IdHash;
+            tinkerStation.useFilteredStorage = true;
+            tinkerStation.SetWorkTime(BUILDINGS.WORK_TIME_SECONDS.SHORT_WORK_TIME);
             var roomTracker = go.AddOrGet<RoomTracker>();
             roomTracker.requiredRoomType = Db.Get().RoomTypes.MachineShop.Id;
             roomTracker.requirement = RoomTracker.Requirement.Recommended;
             Prioritizable.AddRef(go);
             go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject gameObject)
             {
-                if (gameObject.TryGetComponent<TinkerStation>(out var component))
+                if (gameObject.TryGetComponent<TinkerStation>(out var station))
                 {
-                    component.AttributeConverter = Db.Get().AttributeConverters.MachinerySpeed;
-                    component.AttributeExperienceMultiplier = DUPLICANTSTATS.ATTRIBUTE_LEVELING.MOST_DAY_EXPERIENCE;
-                    component.SkillExperienceSkillGroup = Db.Get().SkillGroups.Technicals.Id;
-                    component.SkillExperienceMultiplier = SKILLS.MOST_DAY_EXPERIENCE;
+                    station.AttributeConverter = Db.Get().AttributeConverters.MachinerySpeed;
+                    station.AttributeExperienceMultiplier = DUPLICANTSTATS.ATTRIBUTE_LEVELING.MOST_DAY_EXPERIENCE;
+                    station.SkillExperienceSkillGroup = Db.Get().SkillGroups.Technicals.Id;
+                    station.SkillExperienceMultiplier = SKILLS.MOST_DAY_EXPERIENCE;
+                    station.SetWorkTime(BUILDINGS.WORK_TIME_SECONDS.SHORT_WORK_TIME);
                 }
             };
             SymbolOverrideControllerUtil.AddToPrefab(go);

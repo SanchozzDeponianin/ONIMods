@@ -90,6 +90,7 @@ namespace ExoticSpices
         }
 
         // даём дуплику дополнительный шанс обрадоваться
+#if false
         [HarmonyPatch(typeof(MinionConfig), nameof(MinionConfig.AddMinionAmounts))]
         private static class MinionConfig_AddMinionAmounts
         {
@@ -98,6 +99,7 @@ namespace ExoticSpices
                 modifiers.initialAttributes.Add(JoyReactionExtraChance.Id);
             }
         }
+#endif
 
         [HarmonyPatch(typeof(JoyBehaviourMonitor.Instance), nameof(JoyBehaviourMonitor.Instance.ShouldBeOverjoyed))]
         private static class JoyBehaviourMonitor_Instance_ShouldBeOverjoyed
@@ -114,6 +116,7 @@ namespace ExoticSpices
         }
 
         // прикручиваем красявости
+#if false
         [HarmonyPatch(typeof(RationalAi), nameof(RationalAi.InitializeStates))]
         private static class RationalAi_InitializeStates
         {
@@ -124,6 +127,23 @@ namespace ExoticSpices
                     .ToggleStateMachine(smi => new DupeEffectLightController.Instance(smi.master, defLight))
                     .ToggleStateMachine(smi => new DupeEffectFlatulence.Instance(smi.master))
                     .ToggleStateMachine(smi => new DupeEffectZombie.Instance(smi.master));
+            }
+        }
+#endif
+        [HarmonyPatch(typeof(BaseMinionConfig), nameof(BaseMinionConfig.BaseOnSpawn))]
+        private static class BaseMinionConfig_BaseOnSpawn
+        {
+            private static DupeEffectLightController.Def defLight = new DupeEffectLightController.Def();
+            private static void Prefix(Tag duplicantModel, ref System.Func<RationalAi.Instance, StateMachine.Instance>[] rationalAiSM)
+            {
+                if (duplicantModel == GameTags.Minions.Models.Standard)
+                {
+                    rationalAiSM = rationalAiSM.Append(new System.Func<RationalAi.Instance, StateMachine.Instance>[] {
+                        smi => new DupeEffectLightController.Instance(smi.master, defLight),
+                        smi => new DupeEffectFlatulence.Instance(smi.master),
+                        smi => new DupeEffectZombie.Instance(smi.master)
+                    });
+                }
             }
         }
 
@@ -145,7 +165,7 @@ namespace ExoticSpices
         [HarmonyPatch(typeof(ToiletWorkableUse), "OnCompleteWork")]
         private static class ToiletWorkableUse_OnCompleteWork
         {
-            private static void Postfix(Worker worker)
+            private static void Postfix(WorkerBase worker)
             {
                 if (worker.TryGetComponent<Effects>(out var effects) && effects.HasEffect(GASSY_MOO_SPICE))
                     CreateEmoteChore(worker, ButtScratchEmote, 0.75f);

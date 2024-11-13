@@ -22,7 +22,7 @@ namespace CorpseOnPedestal
         {
             private static IEnumerable<MethodBase> TargetMethods()
             {
-                yield return typeof(MinionConfig).GetMethod(nameof(MinionConfig.CreatePrefab));
+                yield return typeof(BaseMinionConfig).GetMethod(nameof(BaseMinionConfig.BaseMinion));
                 yield return typeof(BaseRoverConfig).GetMethod(nameof(BaseRoverConfig.BaseRover));
             }
 
@@ -80,6 +80,25 @@ namespace CorpseOnPedestal
             }
         }
 
+        // учтём все виды дупликов и гоботов, с прицелом на новое длц
+        private static HashSet<Tag> AllMinions = new HashSet<Tag>();
+        private static HashSet<Tag> AllRobots = new HashSet<Tag>();
+        private static bool IsMinion(Tag tag) => AllMinions.Contains(tag);
+        private static bool IsRobot(Tag tag) => AllRobots.Contains(tag);
+        private static bool IsMinionOrRobot(Tag tag) => IsMinion(tag) || IsRobot(tag);
+
+        [HarmonyPatch(typeof(BuildingConfigManager), nameof(BuildingConfigManager.ConfigurePost))]
+        private static class BuildingConfigManager_ConfigurePost
+        {
+            private static void Postfix()
+            {
+                foreach (var minion in Assets.GetPrefabsWithTag(GameTags.BaseMinion))
+                    AllMinions.Add(minion.PrefabID());
+                foreach (var robot in Assets.GetPrefabsWithTag(GameTags.Robot))
+                    AllRobots.Add(robot.PrefabID());
+            }
+        }
+
         // так как игра не учитывает дупликов и гоботов в мировом инвентаре, посчитаем их сами
         private static Components.Cmps<RobotAi.Instance> DeadRobotsIdentities = new Components.Cmps<RobotAi.Instance>();
 
@@ -108,7 +127,7 @@ namespace CorpseOnPedestal
                 if (___targetReceptacle != null)
                 {
                     float amount = 0f;
-                    if (tag == GameTags.Minion)
+                    if (IsMinion(tag))
                     {
                         int world_id = ___targetReceptacle.GetMyParentWorldId();
                         foreach (var minion in Components.MinionIdentities.Items)
@@ -123,7 +142,7 @@ namespace CorpseOnPedestal
                         __result = amount;
                         return false;
                     }
-                    else if (tag == ScoutRoverConfig.ID || tag == MorbRoverConfig.ID)
+                    else if (IsRobot(tag))
                     {
                         int world_id = ___targetReceptacle.GetMyParentWorldId();
                         foreach (var robot in DeadRobotsIdentities.Items)
@@ -150,7 +169,7 @@ namespace CorpseOnPedestal
         {
             private static bool Prefix(Tag prefabTag, ref Sprite __result)
             {
-                if (prefabTag == GameTags.Minion)
+                if (IsMinion(prefabTag))
                 {
                     __result = Assets.GetSprite("sadDupe");
                     return false;
@@ -165,20 +184,20 @@ namespace CorpseOnPedestal
         {
             private static void Prefix(Tag entityTag, ref Tag additionalFilterTag)
             {
-                if (entityTag == GameTags.Minion)
+                if (IsMinion(entityTag))
                     additionalFilterTag = GameTags.Corpse;
-                else if (entityTag == ScoutRoverConfig.ID || entityTag == MorbRoverConfig.ID)
+                else if (IsRobot(entityTag))
                     additionalFilterTag = GameTags.Dead;
             }
 
             private static void Postfix(Tag entityTag, FetchChore ___fetchChore)
             {
-                if (entityTag == GameTags.Minion && ___fetchChore != null)
+                if (___fetchChore != null && IsMinion(entityTag))
                     ___fetchChore.AddPrecondition(ChorePreconditions.instance.IsNotARobot);
             }
         }
 
-        // чуть пониже
+        // разместить чуть пониже
         [HarmonyPatch(typeof(SingleEntityReceptacle), "PositionOccupyingObject")]
         private static class SingleEntityReceptacle_PositionOccupyingObject
         {
@@ -186,14 +205,47 @@ namespace CorpseOnPedestal
             {
                 if (__instance.Occupant != null)
                 {
-                    var id = __instance.Occupant.PrefabID();
-                    if (id == GameTags.Minion || id == ScoutRoverConfig.ID || id == MorbRoverConfig.ID)
+                    var tag = __instance.Occupant.PrefabID();
+                    if (IsMinionOrRobot(tag))
                     {
                         var pos = __instance.Occupant.transform.GetPosition();
-                        float offcetY = (id == GameTags.Minion) ? 0.25f : 0.35f;
+                        float offcetY = IsMinion(tag) ? 0.25f : 0.35f;
                         pos.y -= offcetY;
                         __instance.Occupant.transform.SetPosition(pos);
                     }
+                }
+            }
+        }
+
+        // для красивого падения при освобождении
+        [HarmonyPatch(typeof(SingleEntityReceptacle), "ClearOccupant")]
+        private static class SingleEntityReceptacle_ClearOccupant
+        {
+            private class PositionInfo
+            {
+                public GameObject go;
+                public Vector3 position;
+            }
+
+            private static void Prefix(SingleEntityReceptacle __instance, ref PositionInfo __state)
+            {
+                if (__instance.Occupant != null && IsMinionOrRobot(__instance.Occupant.PrefabID()))
+                {
+                    __state = new PositionInfo() { go = __instance.Occupant, position = __instance.Occupant.transform.GetPosition() };
+                    __state.position.z = Grid.GetLayerZ(Grid.SceneLayer.Ore);
+                }
+                else
+                    __state = null;
+            }
+
+            private static void Postfix(SingleEntityReceptacle __instance, PositionInfo __state)
+            {
+                if (__state != null && __state.go != null)
+                {
+                    __state.go.transform.SetPosition(__state.position);
+                    var smi = __state.go.GetSMI<FallWhenDeadMonitor.Instance>();
+                    if (!smi.IsNullOrStopped() && smi.IsInsideState(smi.sm.standing))
+                        smi.GoTo(smi.sm.falling);
                 }
             }
         }

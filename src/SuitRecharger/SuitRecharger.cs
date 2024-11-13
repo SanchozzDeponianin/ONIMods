@@ -40,6 +40,7 @@ namespace SuitRecharger
             id = nameof(IsSuitEquipped),
             description = IS_SUIT_EQUIPPED,
             sortOrder = -1,
+            canExecuteOnAnyThread = true,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
                 return context.consumerState.prefabid.HasTag(GameTags.HasSuitTank);
@@ -176,6 +177,7 @@ namespace SuitRecharger
             id = nameof(NotCurrentlyRecharging),
             description = CURRENTLY_RECHARGING,
             sortOrder = 0,
+            canExecuteOnAnyThread = true,
             fn = delegate (ref Chore.Precondition.Context context, object data)
             {
                 bool result = true;

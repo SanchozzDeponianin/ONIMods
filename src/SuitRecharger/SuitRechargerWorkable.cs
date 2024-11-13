@@ -105,17 +105,17 @@ namespace SuitRecharger
             workerStatusItem = SuitRecharging;
         }
 
-        protected override void OnStartWork(Worker worker)
+        protected override void OnStartWork(WorkerBase worker)
         {
             SetWorkTime(float.PositiveInfinity);
             repairCost = default;
             var suit = worker.GetComponent<MinionIdentity>().GetEquipment().GetAssignable(Db.Get().AssignableSlots.Suit);
             if (suit != null)
             {
-                suit.TryGetComponent<SuitTank>(out suitTank);
-                suit.TryGetComponent<JetSuitTank>(out jetSuitTank);
-                suit.TryGetComponent<LeadSuitTank>(out leadSuitTank);
-                suit.TryGetComponent<Durability>(out durability);
+                suit.TryGetComponent(out suitTank);
+                suit.TryGetComponent(out jetSuitTank);
+                suit.TryGetComponent(out leadSuitTank);
+                suit.TryGetComponent(out durability);
                 teleportSuitTank = suit.GetComponent("TeleportSuitMod.TeleportSuitTank");
 
                 durability.ApplyEquippedDurability(worker.GetComponent<MinionResume>());
@@ -140,7 +140,7 @@ namespace SuitRecharger
             elapsedTime = 0;
         }
 
-        protected override void OnStopWork(Worker worker)
+        protected override void OnStopWork(WorkerBase worker)
         {
             energyConsumer.BaseWattageRating = energyConsumer.WattsNeededWhenActive;
             operational.SetActive(false, false);
@@ -165,13 +165,13 @@ namespace SuitRecharger
             durability = null;
         }
 
-        protected override void OnCompleteWork(Worker worker)
+        protected override void OnCompleteWork(WorkerBase worker)
         {
             if (worker != null)
                 CleanAndBreakSuit(worker);
         }
 
-        protected override bool OnWorkTick(Worker worker, float dt)
+        protected override bool OnWorkTick(WorkerBase worker, float dt)
         {
             elapsedTime += dt;
             if (elapsedTime <= warmupTime) // ничего не заряжаем во время начальной анимации
@@ -194,7 +194,7 @@ namespace SuitRecharger
             return oxygen_charged && fuel_charged && battery_charged && teleport_charged;
         }
 
-        public override bool InstantlyFinish(Worker worker)
+        public override bool InstantlyFinish(WorkerBase worker)
         {
             return false;
         }
@@ -293,7 +293,7 @@ namespace SuitRecharger
             return true;
         }
 
-        private void CleanAndBreakSuit(Worker worker)
+        private void CleanAndBreakSuit(WorkerBase worker)
         {
             if (suitTank != null)
             {
