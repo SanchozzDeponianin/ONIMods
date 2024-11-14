@@ -30,9 +30,12 @@
   <!-- вкоряченные ресурсы -->
   <Target Name="EmbeddedResources" BeforeTargets="PreBuildEvent">
     <ItemGroup>
-      <EmbeddedResource Include="$(ProjectDir)/sprites/*.png" />
-      <EmbeddedResource Include="$(ProjectDir)/AudioSheets/*.csv" />
+      <SpriteFiles Include="$(ProjectDir)/sprites/**/*.png" />
+      <AudioSheets Include="$(ProjectDir)/AudioSheets/**/*.csv" />
+      <EmbeddedResource Include="@(SpriteFiles)" LogicalName="sprites/%(SpriteFiles.RecursiveDir)%(SpriteFiles.Filename)%(SpriteFiles.Extension)" />
+      <EmbeddedResource Include="@(AudioSheets)" LogicalName="AudioSheets/%(AudioSheets.RecursiveDir)%(AudioSheets.Filename)%(AudioSheets.Extension)" />
       <EmbeddedResource Include="$(ProjectDir)/../SFXTagsGlobal.csv" LogicalName="SFXTagsGlobal.csv" />
+      <EmbeddedResource LogicalName="$([System.String]::new('%(LogicalName)').Replace('\','/'))" />
     </ItemGroup>
   </Target>
 

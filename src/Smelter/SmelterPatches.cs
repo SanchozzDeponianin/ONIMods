@@ -27,8 +27,8 @@ namespace Smelter
         {
             Utils.InitLocalization(typeof(STRINGS));
             PGameUtils.CopySoundsToAnim(SmelterConfig.ANIM, "smelter_kanim");
-            Utils.LoadEmbeddedAudioSheet("Smelter.AudioSheets.SFXTags_Buildings.csv", "SFXTags_Buildings");
-            Utils.LoadEmbeddedAudioSheet("Smelter.AudioSheets.SFXTags_Duplicants.csv", "SFXTags_Duplicants");
+            Utils.LoadEmbeddedAudioSheet("AudioSheets/SFXTags_Buildings.csv");
+            Utils.LoadEmbeddedAudioSheet("AudioSheets/SFXTags_Duplicants.csv");
         }
 
         [PLibMethod(RunAt.AfterDbInit)]

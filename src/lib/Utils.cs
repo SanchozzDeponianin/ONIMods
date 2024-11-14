@@ -352,8 +352,10 @@ namespace SanchozzONIMods.Lib
             }
         }
 
-        public static void LoadEmbeddedAudioSheet(string path, string name, string defaultType = "SoundEvent")
+        public static void LoadEmbeddedAudioSheet(string path, string name = null, string defaultType = "SoundEvent")
         {
+            if (string.IsNullOrEmpty(name))
+                name = Path.GetFileNameWithoutExtension(path);
             var assembly = Assembly.GetCallingAssembly();
             try
             {
@@ -377,8 +379,10 @@ namespace SanchozzONIMods.Lib
             }
         }
 
-        public static void LoadAudioSheetFromFile(string path, string name, string defaultType = "SoundEvent")
+        public static void LoadAudioSheetFromFile(string path, string name = null, string defaultType = "SoundEvent")
         {
+            if (string.IsNullOrEmpty(name))
+                name = Path.GetFileNameWithoutExtension(path);
             try
             {
                 if (!File.Exists(path))

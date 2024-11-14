@@ -30,11 +30,11 @@ namespace MoreEmotions
         private static void BeforeDbInit()
         {
             Utils.InitLocalization(typeof(STRINGS));
-            Utils.LoadEmbeddedAudioSheet("MoreEmotions.AudioSheets.SFXTags_Duplicants.csv", "SFXTags_Duplicants");
+            Utils.LoadEmbeddedAudioSheet("AudioSheets/SFXTags_Duplicants.csv");
 #if DEBUG
             var path = System.IO.Path.Combine(Utils.modInfo.rootDirectory, "AudioSheets", "SFXTags_Duplicants.csv");
             if (System.IO.File.Exists(path))
-                Utils.LoadAudioSheetFromFile(path, "SFXTags_Duplicants");
+                Utils.LoadAudioSheetFromFile(path);
 #endif
         }
 

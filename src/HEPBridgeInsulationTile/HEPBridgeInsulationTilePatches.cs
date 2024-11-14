@@ -27,7 +27,7 @@ namespace HEPBridgeInsulationTile
         private static void LoadSprite()
         {
             const string name = "ui_extrudable";
-            var sprite = PUIUtils.LoadSprite($"HEPBridgeInsulationTile.sprites.{name}.png");
+            var sprite = PUIUtils.LoadSprite($"sprites/{name}.png");
             sprite.name = name;
             Assets.Sprites.Add(name, sprite);
         }

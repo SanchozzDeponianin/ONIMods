@@ -47,7 +47,7 @@ namespace ExoticSpices
         {
             foreach (var name in new string[] { SPRITE_PHOSPHO_RUFUS, SPRITE_GASSYMOO, SPRITE_ZOMBIE_SPORES })
             {
-                var sprite = PUIUtils.LoadSprite($"ExoticSpices.sprites.{name}.png");
+                var sprite = PUIUtils.LoadSprite($"sprites/{name}.png");
                 sprite.name = name;
                 Assets.Sprites.Add(name, sprite);
             }

@@ -29,7 +29,7 @@ namespace ReBuildableAETN
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
-        private static void Localize()
+        private static void BeforeDbInit()
         {
             Utils.InitLocalization(typeof(STRINGS));
             LoadSprite();
@@ -39,7 +39,7 @@ namespace ReBuildableAETN
         private static void LoadSprite()
         {
             const string name = "ui_buildingneutroniumcore";
-            var sprite = PUIUtils.LoadSprite($"ReBuildableAETN.sprites.{name}.png");
+            var sprite = PUIUtils.LoadSprite($"sprites/{name}.png");
             sprite.name = name;
             Assets.Sprites.Add(name, sprite);
         }
