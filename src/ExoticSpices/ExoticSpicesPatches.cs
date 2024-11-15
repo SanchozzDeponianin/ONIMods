@@ -90,16 +90,14 @@ namespace ExoticSpices
         }
 
         // даём дуплику дополнительный шанс обрадоваться
-#if false
-        [HarmonyPatch(typeof(MinionConfig), nameof(MinionConfig.AddMinionAmounts))]
-        private static class MinionConfig_AddMinionAmounts
+        [HarmonyPatch(typeof(MinionConfig), nameof(MinionConfig.GetAttributes))]
+        private static class MinionConfig_GetAttributes
         {
-            private static void Postfix(Modifiers modifiers)
+            private static void Postfix(ref string[] __result)
             {
-                modifiers.initialAttributes.Add(JoyReactionExtraChance.Id);
+                __result = __result.Append(JoyReactionExtraChance.Id);
             }
         }
-#endif
 
         [HarmonyPatch(typeof(JoyBehaviourMonitor.Instance), nameof(JoyBehaviourMonitor.Instance.ShouldBeOverjoyed))]
         private static class JoyBehaviourMonitor_Instance_ShouldBeOverjoyed
@@ -116,34 +114,17 @@ namespace ExoticSpices
         }
 
         // прикручиваем красявости
-#if false
-        [HarmonyPatch(typeof(RationalAi), nameof(RationalAi.InitializeStates))]
-        private static class RationalAi_InitializeStates
+        [HarmonyPatch(typeof(MinionConfig), MethodType.Constructor)]
+        private static class MinionConfig_Constructor
         {
-            private static void Postfix(RationalAi __instance)
+            private static void Postfix(MinionConfig __instance)
             {
-                var defLight = new DupeEffectLightController.Def();
-                __instance.alive
-                    .ToggleStateMachine(smi => new DupeEffectLightController.Instance(smi.master, defLight))
-                    .ToggleStateMachine(smi => new DupeEffectFlatulence.Instance(smi.master))
-                    .ToggleStateMachine(smi => new DupeEffectZombie.Instance(smi.master));
-            }
-        }
-#endif
-        [HarmonyPatch(typeof(BaseMinionConfig), nameof(BaseMinionConfig.BaseOnSpawn))]
-        private static class BaseMinionConfig_BaseOnSpawn
-        {
-            private static DupeEffectLightController.Def defLight = new DupeEffectLightController.Def();
-            private static void Prefix(Tag duplicantModel, ref System.Func<RationalAi.Instance, StateMachine.Instance>[] rationalAiSM)
-            {
-                if (duplicantModel == GameTags.Minions.Models.Standard)
-                {
-                    rationalAiSM = rationalAiSM.Append(new System.Func<RationalAi.Instance, StateMachine.Instance>[] {
-                        smi => new DupeEffectLightController.Instance(smi.master, defLight),
+                __instance.RATIONAL_AI_STATE_MACHINES = __instance.RATIONAL_AI_STATE_MACHINES.Append(
+                    new System.Func<RationalAi.Instance, StateMachine.Instance>[] {
+                        smi => new DupeEffectLightController.Instance(smi.master, new DupeEffectLightController.Def()),
                         smi => new DupeEffectFlatulence.Instance(smi.master),
                         smi => new DupeEffectZombie.Instance(smi.master)
                     });
-                }
             }
         }
 
