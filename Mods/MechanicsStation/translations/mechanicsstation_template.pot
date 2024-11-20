@@ -3,6 +3,11 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. MechanicsStation.STRINGS.BUILDINGS.PREFABS.MECHANICSSTATION.DESC
+msgctxt "MechanicsStation.STRINGS.BUILDINGS.PREFABS.MECHANICSSTATION.DESC"
+msgid "Duplicants can improve the efficiency of buildings in the any room.\nJust allow them to do this by clicking on the <style=\"KKeyword\">{ALLOW}</style> button on those buildings."
+msgstr ""
+
 #. MechanicsStation.STRINGS.BUILDINGS.PREFABS.MECHANICSSTATION.EFFECT
 msgctxt "MechanicsStation.STRINGS.BUILDINGS.PREFABS.MECHANICSSTATION.EFFECT"
 msgid "Produces <link=\"MACHINEPARTS\">{MACHINE_PARTS}</link> to improve building production efficiency.\n\nAssigned Duplicants must possess the <link=\"TECHNICALS1\">{MACHINE_TECHNICIAN}</link> skill.\n\nThis building is a necessary component of the {MACHINE_SHOP} room."
@@ -20,7 +25,7 @@ msgstr ""
 
 #. MechanicsStation.STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP
 msgctxt "MechanicsStation.STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP"
-msgid "A skilled Duplicant has jerry rigged this <style=\"KKeyword\">Building</style> to temporarily run faster"
+msgid "A skilled Duplicant has jerry rigged this <style=\"KKeyword\">Building</style> to temporarily run faster\n\nApplying this effect consumed one of <style=\"KKeyword\">{MACHINE_PARTS}</style>"
 msgstr ""
 
 #. MechanicsStation.STRINGS.OPTIONS.CRAFTING_SPEED_MODIFIER.NAME
@@ -41,11 +46,6 @@ msgstr ""
 #. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION_PER_SKILL.NAME
 msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION_PER_SKILL.NAME"
 msgid "The <style=\"KKeyword\">{MACHINE_TINKER}</style> effect +X% duration per <style=\"KKeyword\">{MACHINERY}</style> attribute level"
-msgstr ""
-
-#. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKERABLE_WORKTIME.NAME
-msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKERABLE_WORKTIME.NAME"
-msgid "The time required to tune up buildings, seconds"
 msgstr ""
 
 #. MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.NAME

@@ -12,6 +12,7 @@ namespace MechanicsStation
         private const string MACHINERY_SPEED = "{MACHINERY_SPEED}";
         private const string MACHINE_TINKER = "{MACHINE_TINKER}";
         private const string MACHINE_SHOP = "{MACHINE_SHOP}";
+        private const string ALLOW = "{ALLOW}";
 
         public class BUILDINGS
         {
@@ -19,6 +20,8 @@ namespace MechanicsStation
             {
                 public class MECHANICSSTATION
                 {
+                    public static LocString DESC = $"Duplicants can improve the efficiency of buildings in the any room.\nJust allow them to do this by clicking on the {UI.FormatAsKeyWord(ALLOW)} button on those buildings.";
+
                     public static LocString EFFECT = string.Concat(new string[]
                     {
                         $"Produces {UI.FormatAsLink(MACHINE_PARTS, "MACHINE_PARTS")} to improve building production efficiency.\n\n",
@@ -47,7 +50,7 @@ namespace MechanicsStation
             {
                 public class MACHINETINKER
                 {
-                    public static LocString TOOLTIP = $"A skilled Duplicant has jerry rigged this {UI.FormatAsKeyWord("Building")} to temporarily run faster";
+                    public static LocString TOOLTIP = $"A skilled Duplicant has jerry rigged this {UI.FormatAsKeyWord("Building")} to temporarily run faster\n\nApplying this effect consumed one of {UI.FormatAsKeyWord(MACHINE_PARTS)}";
                 }
             }
         }
@@ -88,14 +91,14 @@ namespace MechanicsStation
                 { MACHINERY_SPEED, global::STRINGS.DUPLICANTS.ATTRIBUTES.MACHINERYSPEED.NAME },
                 { MACHINE_TECHNICIAN, global::STRINGS.DUPLICANTS.ROLES.MACHINE_TECHNICIAN.NAME },
                 { MACHINE_TINKER, global::STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.NAME },
-                { MACHINE_SHOP, ROOMS.TYPES.MACHINE_SHOP.NAME }
+                { MACHINE_SHOP, ROOMS.TYPES.MACHINE_SHOP.NAME },
+                { ALLOW, UI.USERMENUACTIONS.TINKER.ALLOW },
             };
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
 
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
             LocString.CreateLocStringKeys(typeof(DUPLICANTS));
 
-            Strings.Add($"STRINGS.BUILDINGS.PREFABS.{MechanicsStationConfig.ID.ToUpperInvariant()}.DESC", global::STRINGS.BUILDINGS.PREFABS.MACHINESHOP.DESC);
             Strings.Add($"STRINGS.BUILDINGS.PREFABS.{MechanicsStationConfig.ID.ToUpperInvariant()}.NAME", global::STRINGS.BUILDINGS.PREFABS.MACHINESHOP.NAME);
         }
     }

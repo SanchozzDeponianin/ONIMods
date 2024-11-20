@@ -112,7 +112,9 @@
   <Choose>
     <When Condition=" '$(DistributeMod)' == 'true' ">
       <ItemGroup>
-        <Reference Include="0Harmony" HintPath="$(GameFolder)/0Harmony.dll" />
+        <!-- чтобы была документация
+        <Reference Include="0Harmony" HintPath="$(GameFolder)/0Harmony.dll" /> -->
+        <PackageReference Include="Lib.Harmony" Version="2.2.2" />
         <Reference Include="Newtonsoft.Json" HintPath="$(GameFolder)/Newtonsoft.Json.dll" />
         <Reference Include="netstandard" HintPath="$(GameFolder)/netstandard.dll" />
         <Reference Include="System" HintPath="$(GameFolder)/System.dll" />

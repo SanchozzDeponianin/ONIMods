@@ -7,6 +7,7 @@ using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Shared;
 using PeterHan.PLib.Core;
+using PeterHan.PLib.Detours;
 
 namespace MechanicsStation
 {
@@ -158,6 +159,7 @@ namespace MechanicsStation
         }
 
         // сделать постройку улучшаемой
+        private static IDetouredField<Tinkerable, bool> UserMenuAllowed = PDetours.DetourFieldLazy<Tinkerable, bool>("userMenuAllowed");
         private static Tinkerable MakeMachineTinkerable(GameObject go)
         {
             var tinkerable = Tinkerable.MakePowerTinkerable(go);
@@ -171,12 +173,13 @@ namespace MechanicsStation
             tinkerable.choreTypeTinker = Db.Get().ChoreTypes.MachineTinker.IdHash;
             tinkerable.choreTypeFetch = Db.Get().ChoreTypes.MachineFetch.IdHash;
             tinkerable.boostSymbolNames = null;
-            go.GetComponent<KPrefabID>().prefabSpawnFn += delegate (GameObject prefab)
+            go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject prefab)
             {
                 if (prefab.TryGetComponent<Tinkerable>(out var _tinkerable))
                 {
                     _tinkerable.SetWorkTime(TUNING.BUILDINGS.WORK_TIME_SECONDS.SHORT_WORK_TIME);
                     _tinkerable.effectMultiplier = MechanicsStationOptions.Instance.machine_tinker_effect_duration_per_skill / 100;
+                    UserMenuAllowed.Set(_tinkerable, false); // по умолчанию выключено
                 }
             };
             return tinkerable;

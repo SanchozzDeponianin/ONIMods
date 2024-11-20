@@ -93,6 +93,55 @@ namespace MechanicsStation
             }
         }
 
+        // работать в любой комнате, и даже если нет комнаты
+        [HarmonyPatch(typeof(Tinkerable), "HasCorrectRoom")]
+        private static class Tinkerable_HasCorrectRoom
+        {
+            private static bool Prefix(Tinkerable __instance, ref bool __result)
+            {
+                if (__instance.tinkerMaterialTag == MechanicsStationConfig.TINKER_TOOLS)
+                {
+                    __result = true;
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        // показывать кнопку даже если нет комнаты
+        [HarmonyPatch(typeof(Tinkerable), "OnRefreshUserMenu")]
+        private static class Tinkerable_OnRefreshUserMenu
+        {
+            /*
+            --- if (this.roomTracker.IsInCorrectRoom())
+            +++ if (this.HasCorrectRoom())
+            */
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var roomTracker = typeof(Tinkerable).GetFieldSafe("roomTracker", false);
+                var IsInRoom = typeof(RoomTracker).GetMethodSafe(nameof(RoomTracker.IsInCorrectRoom), false);
+                var HasRoom = typeof(Tinkerable).GetMethodSafe("HasCorrectRoom", false);
+                if (roomTracker != null && IsInRoom != null && HasRoom != null)
+                {
+                    for (int i = 0; i < instructions.Count; i++)
+                    {
+                        if (instructions[i].LoadsField(roomTracker) && instructions[i + 1].Calls(IsInRoom))
+                        {
+                            instructions[i + 1].operand = HasRoom;
+                            instructions.RemoveAt(i);
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
         // добавление построек для улучшения
         // todo: добавлять постройки из длц по мере необходимости
         private static readonly List<string> BuildingWithElementConverterStopList = new List<string>()
