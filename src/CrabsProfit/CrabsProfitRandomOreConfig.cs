@@ -58,6 +58,7 @@ namespace CrabsProfit
             weights = new Dictionary<SimHashes, float>()
             {
                 { SimHashes.AluminumOre,    opt.AluminumOre},
+                { SimHashes.Cinnabar,       opt.Cinnabar},
                 { SimHashes.Cobaltite,      opt.Cobaltite},
                 { SimHashes.Cuprite,        opt.Cuprite},
                 { SimHashes.Electrum,       opt.Electrum},
@@ -65,7 +66,6 @@ namespace CrabsProfit
                 { SimHashes.GoldAmalgam,    opt.GoldAmalgam},
                 { SimHashes.IronOre,        opt.IronOre},
                 { SimHashes.Lead,           opt.Lead},
-                { SimHashes.Mercury,        opt.Mercury},
                 { SimHashes.Radium,         opt.Radium},
                 { SimHashes.Rust,           opt.Rust},
                 { SimHashes.UraniumOre,     opt.UraniumOre},

@@ -116,7 +116,12 @@ namespace CrabsProfit
             [JsonProperty]
             [Option]
             [Limit(min_normal, max)]
-            public int Wolframite { get; set; } = 4;
+            public int Wolframite { get; set; } = 5;
+
+            [JsonProperty]
+            [Option]
+            [Limit(min_normal, max)]
+            public int Cinnabar { get; set; } = 5;
 
             [JsonIgnore]
             [Option]
@@ -145,11 +150,6 @@ namespace CrabsProfit
             [Option]
             [Limit(min_rare, max)]
             public int FoolsGold { get; set; } = 0;
-
-            [JsonProperty]
-            [Option]
-            [Limit(min_rare, max)]
-            public int Mercury { get; set; } = 0;
 
             [JsonProperty]
             [Option]
