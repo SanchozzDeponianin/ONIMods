@@ -353,20 +353,28 @@ namespace BetterPlantTending
         }
 
         // научиваем белочек делать экстракцию декоративных безурожайных семян
+        // а также доставать растений в горшках и ящиках
         [HarmonyPatch(typeof(ClimbableTreeMonitor.Instance), "FindClimbableTree")]
         private static class ClimbableTreeMonitor_Instance_FindClimbableTree
         {
+            private static bool CanReachBelow(Navigator navigator, int cell, KMonoBehaviour plant)
+            {
+                return navigator.CanReach(cell) || (plant.HasTag(GameTags.PlantedOnFloorVessel) && navigator.CanReach(Grid.CellBelow(cell)));
+            }
             private static void AddPlant(List<KMonoBehaviour> list, KMonoBehaviour plant)
             {
                 if (plant != null && plant.TryGetComponent<ExtraSeedProducer>(out var producer) && producer.ExtraSeedAvailable)
                 {
-                    list?.Add(plant);
+                    list.Add(plant);
                 }
             }
             /*
-            var targets = ListPool<KMonoBehaviour, ClimbableTreeMonitor>.Allocate(); 
+            var targets = ListPool<KMonoBehaviour, ClimbableTreeMonitor>.Allocate();
             ...
-                var budding_trunk = target.GetComponent<BuddingTrunk>();
+        ---     if (navigator.CanReach(cell))
+        +++     if (CanReachBelow(navigator, cell, target))
+            ...
+                var trunk = target.GetComponent<ForestTreeSeedMonitor>();
 			    var locker = target.GetComponent<StorageLocker>();
         +++     AddPlant(targets, target);
             ...
@@ -379,31 +387,66 @@ namespace BetterPlantTending
             {
                 var allocate = typeof(ListPool<KMonoBehaviour, ClimbableTreeMonitor>).GetMethodSafe(nameof(ListPool<KMonoBehaviour, ClimbableTreeMonitor>.Allocate), true);
                 var getComponent = typeof(Component).GetMethod(nameof(Component.GetComponent), Type.EmptyTypes).MakeGenericMethod(typeof(StorageLocker));
+                var canReach = typeof(Navigator).GetMethodSafe(nameof(Navigator.CanReach), false, typeof(int));
+                var canReachBelow = typeof(ClimbableTreeMonitor_Instance_FindClimbableTree).GetMethodSafe(nameof(CanReachBelow), true, PPatchTools.AnyArguments);
                 var addPlant = typeof(ClimbableTreeMonitor_Instance_FindClimbableTree).GetMethodSafe(nameof(AddPlant), true, PPatchTools.AnyArguments);
+                bool r1 = false, r2 = false;
                 if (allocate != null && getComponent != null && addPlant != null)
                 {
-                    CodeInstruction ldloc_list = null;
+                    CodeInstruction ldloc_list = null, ldloc_target = null;
                     for (int i = 0; i < instructions.Count; i++)
                     {
-                        if (instructions[i].Calls(allocate) && instructions[i + 1].IsStloc())
+                        if (ldloc_list == null && instructions[i].Calls(allocate) && instructions[i + 1].IsStloc())
                         {
                             ldloc_list = TranspilerUtils.GetMatchingLoadInstruction(instructions[i + 1]);
-                            log.Step(1);
                             continue;
                         }
-                        if (ldloc_list != null && instructions[i].Calls(getComponent) && instructions[i - 1].IsLdloc())
+                        if (ldloc_target == null && instructions[i].Is(OpCodes.Isinst, typeof(KMonoBehaviour)) && instructions[i + 1].IsStloc())
                         {
-                            var ldloc_target = new CodeInstruction(instructions[i - 1]);
-                            ++i;
-                            instructions.Insert(++i, ldloc_list);
-                            instructions.Insert(++i, ldloc_target);
-                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, addPlant));
-                            log.Step(2);
-                            return true;
+                            ldloc_target = TranspilerUtils.GetMatchingLoadInstruction(instructions[i + 1]);
+                            continue;
+                        }
+                        if (ldloc_list != null && ldloc_target != null)
+                        {
+                            if (instructions[i].Calls(canReach))
+                            {
+                                instructions[i].operand = canReachBelow;
+                                instructions.Insert(i++, ldloc_target);
+                                r1 = true;
+                                log.Step(1);
+                                continue;
+                            }
+                            if (instructions[i].Calls(getComponent))
+                            {
+                                ++i;
+                                instructions.Insert(++i, ldloc_list);
+                                instructions.Insert(++i, ldloc_target);
+                                instructions.Insert(++i, new CodeInstruction(OpCodes.Call, addPlant));
+                                r2 = true;
+                                log.Step(2);
+                                break;
+                            }
                         }
                     }
                 }
-                return false;
+                return r1 && r2;
+            }
+        }
+
+        [HarmonyPatch(typeof(TreeClimbStates), "GetClimbableCell")]
+        private static class TreeClimbStates_GetClimbableCell
+        {
+            private static void Postfix(TreeClimbStates.Instance smi, ref int __result)
+            {
+                var plant = smi.sm.target.Get(smi);
+                if (plant != null && plant.HasTag(GameTags.PlantedOnFloorVessel) && smi.gameObject.TryGetComponent(out Navigator navigator))
+                {
+                    int below = Grid.CellBelow(__result);
+                    int cost = navigator.GetNavigationCost(__result);
+                    int cost_below = navigator.GetNavigationCost(below);
+                    if (cost_below != PathProber.InvalidCost && (cost == PathProber.InvalidCost || cost_below < cost))
+                        __result = below;
+                }
             }
         }
 
@@ -558,6 +601,115 @@ namespace BetterPlantTending
                     }
                 }
                 return result1 && result2;
+            }
+        }
+
+        // чтобы жучинкусы могли достать до растений с любой соседней клетки
+        // а не только слева справа от самой нижней или верхней (для растущих вниз)
+        // чтобы могли убобрить свисающие с потолка пинчи
+        [HarmonyPatch(typeof(CropTendingStates), "FindCrop")]
+        private static class CropTendingStates_FindCrop_Mk2
+        {
+            /*
+                var prefabID = crop.GetComponent<KPrefabID>();
+                ...
+                int cell = Grid.PosToCell(crop);
+                int[] cells;
+            +++ if (GetOccupiedCells(prefabID, ref cells))
+            +++     goto label;
+                cells = new int[] { Grid.CellLeft(cell), Grid.CellRight(cell) };
+                if (prefabID.HasTag(GameTags.PlantedOnFloorVessel))
+                {
+                    cells = new int[] { Grid.CellLeft(cell), Grid.CellRight(cell), Grid.CellDownLeft(cell), Grid.CellDownRight(cell) };
+                }
+            +++ label:
+                int num4 = 100;
+                int num5 = Grid.InvalidCell;
+            */
+            // массив клетки слева и справа от реально занятых растением клеток, плюс ещё две снизу если растение в горшке
+            private static bool GetOccupiedCells(KPrefabID plant, ref int[] cells)
+            {
+                if (plant != null && plant.TryGetComponent(out OccupyArea area))
+                {
+                    int pos = Grid.PosToCell(plant);
+                    bool vessel = plant.HasTag(GameTags.PlantedOnFloorVessel);
+                    var offsets = area.OccupiedCellsOffsets;
+                    int count = offsets.Length;
+                    int[] array;
+                    if (vessel)
+                        array = new int[(count + area.GetWidthInCells()) * 2];
+                    else
+                        array = new int[count * 2];
+                    int i = 0;
+                    for (int j = 0; j < count; j++)
+                    {
+                        int cell = Grid.OffsetCell(pos, offsets[j]);
+                        array[i++] = Grid.CellLeft(cell);
+                        array[i++] = Grid.CellRight(cell);
+                    }
+                    if (vessel)
+                    {
+                        for (int k = 0; k < count; k++)
+                        {
+                            var offset_below = new CellOffset(offsets[k].x, offsets[k].y - 1);
+                            if (Array.IndexOf(offsets, offset_below) == -1)
+                            {
+                                int cell = Grid.OffsetCell(pos, offset_below);
+                                array[i++] = Grid.CellLeft(cell);
+                                array[i++] = Grid.CellRight(cell);
+                            }
+                        }
+                    }
+                    cells = array;
+                    return true;
+                }
+                return false;
+            }
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
+            {
+                return TranspilerUtils.Wrap(instructions, original, IL, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
+            {
+                var getKPrefabID = typeof(Component).GetMethodSafe(nameof(Component.GetComponent), false).MakeGenericMethod(typeof(KPrefabID));
+                var posToCell = typeof(Grid).GetMethodSafe(nameof(Grid.PosToCell), true, typeof(KMonoBehaviour));
+                var cellRight = typeof(Grid).GetMethodSafe(nameof(Grid.CellRight), true, typeof(int));
+                var invalidCell = typeof(Grid).GetFieldSafe(nameof(Grid.InvalidCell), true);
+                var getCells = typeof(CropTendingStates_FindCrop_Mk2).GetMethodSafe(nameof(GetOccupiedCells), true, PPatchTools.AnyArguments);
+
+                if (getKPrefabID == null || posToCell == null || cellRight == null || invalidCell == null || getCells == null)
+                    return false;
+
+                int i = instructions.FindIndex(inst => inst.Calls(getKPrefabID));
+                if (i == -1 || !instructions[i + 1].IsStloc())
+                    return false;
+                var local_KPrefabID = (LocalBuilder)instructions[i + 1].operand;
+
+                int j = instructions.FindIndex(i, inst => inst.Calls(posToCell));
+                if (j == -1 || !instructions[j + 1].IsStloc())
+                    return false;
+
+                int k = instructions.FindIndex(j, inst => inst.Calls(cellRight));
+                if (k == -1 || !(instructions[k + 1].opcode == OpCodes.Stelem_I4) || !instructions[k + 2].IsStloc())
+                    return false;
+                var local_cells = (LocalBuilder)instructions[k + 2].operand;
+
+                int m = instructions.FindIndex(k, inst => inst.LoadsField(invalidCell));
+                if (m == -1 || !instructions[m + 1].IsStloc())
+                    return false;
+
+                int n = instructions.FindLastIndex(m, inst => inst.IsStloc(local_cells));
+                if (n == -1)
+                    return false;
+
+                var label = IL.DefineLabel();
+                instructions[n + 1].labels.Add(label);
+                j++;
+                instructions.Insert(++j, TranspilerUtils.GetLoadLocalInstruction(local_KPrefabID.LocalIndex));
+                instructions.Insert(++j, TranspilerUtils.GetLoadLocalInstruction(local_cells.LocalIndex, true));
+                instructions.Insert(++j, new CodeInstruction(OpCodes.Call, getCells));
+                instructions.Insert(++j, new CodeInstruction(OpCodes.Brtrue, label));
+                return true;
             }
         }
 
