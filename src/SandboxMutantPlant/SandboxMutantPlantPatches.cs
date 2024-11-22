@@ -64,9 +64,10 @@ namespace SandboxMutantPlant
         // исследование - для неизвестных мутаций
         private static void OnRefreshUserMenu(MutantPlant mutant)
         {
-            if (Game.Instance.SandboxModeActive && mutant != null)
+            if (Game.Instance.SandboxModeActive && mutant != null && mutant.TryGetComponent(out KPrefabID prefabID))
             {
-                if (mutant.IsOriginal || mutant.HasTag(GameTags.Seed) || mutant.HasTag(GameTags.CropSeed))
+                if ((mutant.IsOriginal && !prefabID.HasTag(GameTags.PlantBranch))
+                    || prefabID.HasTag(GameTags.Seed) || prefabID.HasTag(GameTags.CropSeed))
                 {
                     var binfo = new KIconButtonMenu.ButtonInfo("action_select_research", MUTATOR.NAME, mutant.Mutator, Utils.MaxAction, null, null, null, MUTATOR.TOOLTIP, true);
                     Game.Instance.userMenu.AddButton(mutant.gameObject, binfo, 1f);
