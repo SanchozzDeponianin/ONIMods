@@ -220,6 +220,71 @@ namespace BetterPlantTending
             }
         }
 
+        // подавим нотификацию когда собирается гнилой мутантный урожай
+        private static RotPile.States.BoolParameter suppress_notification;
+
+        [HarmonyPatch(typeof(RotPile.States), nameof(RotPile.States.InitializeStates))]
+        private static class RotPile_States_InitializeStates
+        {
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+            private static void Postfix(RotPile.States __instance)
+            {
+                suppress_notification = __instance.AddParameter(nameof(suppress_notification), new RotPile.States.BoolParameter());
+            }
+        }
+
+        [HarmonyPatch(typeof(RotPile), nameof(RotPile.TryCreateNotification))]
+        private static class RotPile_TryCreateNotification
+        {
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+            private static bool Prefix(RotPile __instance) => !suppress_notification.Get(__instance.smi);
+        }
+
+        [HarmonyPatch(typeof(Crop), nameof(Crop.SpawnSomeFruit))]
+        private static class Crop_SpawnSomeFruit
+        {
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+            /*
+                var go = GameUtil.KInstantiate(Assets.GetPrefab(cropID), blabla...);
+                ...
+                go.SetActive(true);
+            +++ SuppressNotification(go, cropID);
+                ...
+            */
+            private static void SuppressNotification(GameObject crop, Tag cropID)
+            {
+                if (cropID == RotPileConfig.ID && crop.TryGetComponent(out RotPile rotPile) && !rotPile.smi.IsNullOrDestroyed())
+                    suppress_notification.Set(true, rotPile.smi);
+            }
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+            private static bool transpiler(List<CodeInstruction> instructions, MethodBase method)
+            {
+                var cropID = method.GetParameters().FirstOrDefault(param => param.ParameterType == typeof(Tag) && param.Name == "cropID");
+                var setActive = typeof(GameObject).GetMethodSafe(nameof(GameObject.SetActive), false, typeof(bool));
+                var suppress = typeof(Crop_SpawnSomeFruit).GetMethodSafe(nameof(SuppressNotification), true, PPatchTools.AnyArguments);
+                if (cropID == null || setActive == null || suppress == null)
+                    return false;
+
+                int i = instructions.FindIndex(inst => inst.opcode == OpCodes.Call && inst.operand is MethodInfo kInstantiate
+                    && kInstantiate.DeclaringType == typeof(GameUtil) && kInstantiate.Name == nameof(GameUtil.KInstantiate));
+                if (i == -1 || !instructions[i + 1].IsStloc())
+                    return false;
+                var ldloc_go = TranspilerUtils.GetMatchingLoadInstruction(instructions[i + 1]);
+
+                i = instructions.FindIndex(inst => inst.Calls(setActive));
+                if (i == -1)
+                    return false;
+
+                instructions.Insert(++i, ldloc_go);
+                instructions.Insert(++i, TranspilerUtils.GetLoadArgInstruction(cropID));
+                instructions.Insert(++i, new CodeInstruction(OpCodes.Call, suppress));
+                return true;
+            }
+        }
+
         // дополнительные семена безурожайных растений
         [HarmonyPatch(typeof(EntityTemplates), nameof(EntityTemplates.CreateAndRegisterSeedForPlant))]
         private static class EntityTemplates_CreateAndRegisterSeedForPlant
@@ -715,15 +780,12 @@ namespace BetterPlantTending
 
         // чтобы жучинкусы могли достать до растений в декоративных горшках с пола
         // также как они это могут с плантербохом
-        [HarmonyPatch(typeof(BuildingConfigManager), nameof(BuildingConfigManager.ConfigurePost))]
-        private static class BuildingConfigManager_ConfigurePost
+        [PLibMethod(RunAt.BeforeDbPostProcess)]
+        private static void BeforeDbPostProcess()
         {
-            private static void Postfix()
-            {
-                foreach (var go in Assets.GetPrefabsWithComponent<PlantablePlot>())
-                    if (go.TryGetComponent(out PlantablePlot plot) && plot.HasDepositTag(GameTags.DecorSeed))
-                        plot.tagOnPlanted = GameTags.PlantedOnFloorVessel;
-            }
+            foreach (var go in Assets.GetPrefabsWithComponent<PlantablePlot>())
+                if (go.TryGetComponent(out PlantablePlot plot) && plot.HasDepositTag(GameTags.DecorSeed))
+                    plot.tagOnPlanted = GameTags.PlantedOnFloorVessel;
         }
 
         // вопервых исправление неконсистентности поглощения твердых удобрений засохшими растениями после загрузки сейфа
