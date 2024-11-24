@@ -13,34 +13,35 @@ namespace SmartLogicDoors
 {
     internal sealed class SmartLogicDoorsPatches : KMod.UserMod2
     {
-        private static Harmony harmony;
         public override void OnLoad(Harmony harmony)
         {
             if (Utils.LogModVersion()) return;
-            base.OnLoad(harmony);
-            SmartLogicDoorsPatches.harmony = harmony;
             new PPatchManager(harmony).RegisterPatchClass(typeof(SmartLogicDoorsPatches));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
-        private static void BeforeDbInit()
+        private static void BeforeDbInit(Harmony harmony)
         {
             Utils.InitLocalization(typeof(STRINGS));
             // отложенный патчинг. чтобы не высвать раньше времени статический коструктор Door
-            harmony.PatchTranspile(typeof(Door), nameof(Door.OnLogicValueChanged),
-                new HarmonyMethod(typeof(Door_OnLogicValueChanged), nameof(Door_OnLogicValueChanged.Transpiler)));
-            harmony.Patch(typeof(Door), "OnCopySettings", prefix:
-                new HarmonyMethod(typeof(Door_OnCopySettings), nameof(Door_OnCopySettings.Prefix)));
+            harmony.PatchAll();
         }
 
-        // добавление сидескреена
-        [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
-        private static class DetailsScreen_OnPrefabInit
+        // добавляем компонент в почти все двери после инициализации всех построек
+        [PLibMethod(RunAt.BeforeDbPostProcess)]
+        private static void BeforeDbPostProcess()
         {
-            private static void Postfix()
+            foreach (var go in Assets.GetPrefabsWithComponent<Door>())
             {
-                PUIUtils.AddSideScreenContent<SmartLogicDoorSideScreen>();
+                if (go.TryGetComponent(out Door door) && door.allowAutoControl && go.TryGetComponent(out LogicPorts _))
+                    go.AddOrGet<SmartLogicDoor>();
             }
+        }
+
+        [PLibMethod(RunAt.OnDetailsScreenInit)]
+        private static void OnDetailsScreenInit()
+        {
+            PUIUtils.AddSideScreenContent<SmartLogicDoorSideScreen>();
         }
 
         // аррргхх !!! ну почему сортировка сидэскреенов сделана через жёппу ? такая боль добавить свой экран в нужное место
@@ -56,31 +57,16 @@ namespace SmartLogicDoors
             }
         }
 
-        // добавляем компонент в почти все двери после инициализации всех построек
-        [HarmonyPatch(typeof(BuildingConfigManager), nameof(BuildingConfigManager.ConfigurePost))]
-        private static class BuildingConfigManager_ConfigurePost
-        {
-            private static void Postfix()
-            {
-                foreach (var go in Assets.GetPrefabsWithComponent<Door>())
-                {
-                    if (go.GetComponent<Door>().allowAutoControl && go.GetComponent<LogicPorts>() != null)
-                        go.AddOrGet<SmartLogicDoor>();
-                }
-            }
-        }
-
         // при изменении сигнала, заменяем хардкоженые параметры состояния двери на наши настроеные
-        //[HarmonyPatch(typeof(Door), nameof(Door.OnLogicValueChanged))]
+        [HarmonyPatch(typeof(Door), nameof(Door.OnLogicValueChanged))]
         private static class Door_OnLogicValueChanged
         {
             private static Door.ControlState GetDoorState(Door door, bool IsActive)
             {
-                var sld = door.GetComponent<SmartLogicDoor>();
-                if (sld == null)
-                    return IsActive ? Door.ControlState.Opened : Door.ControlState.Locked;
-                else
+                if (door.TryGetComponent(out SmartLogicDoor sld))
                     return IsActive ? sld.GreenState : sld.RedState;
+                else
+                    return IsActive ? Door.ControlState.Opened : Door.ControlState.Locked;
             }
             /*
             --- this.requestedState = (LogicCircuitNetwork.IsBitActive(0, newValue) ? Door.ControlState.Opened : Door.ControlState.Locked);
@@ -134,22 +120,17 @@ namespace SmartLogicDoors
         // копирование настроек
         // сдесь, чтобы блокировать нежелательное изменение состояния двери
         // если к ней подключен логический провод
-        //[HarmonyPatch(typeof(Door), "OnCopySettings")]
+        [HarmonyPatch(typeof(Door), "OnCopySettings")]
         private static class Door_OnCopySettings
         {
             internal static bool Prefix(Door __instance, object data)
             {
-                var @this = __instance.GetComponent<SmartLogicDoor>();
-                if (@this != null)
+                if (data is GameObject go && go.TryGetComponent(out SmartLogicDoor other) && __instance.TryGetComponent(out SmartLogicDoor @this))
                 {
-                    var other = ((GameObject)data)?.GetComponent<SmartLogicDoor>();
-                    if (other != null)
-                    {
-                        @this.GreenState = other.GreenState;
-                        @this.RedState = other.RedState;
-                        if (@this.ApplyControlState())
-                            return false;
-                    }
+                    @this.GreenState = other.GreenState;
+                    @this.RedState = other.RedState;
+                    if (@this.ApplyControlState())
+                        return false;
                 }
                 return true;
             }

@@ -49,14 +49,10 @@ namespace SuitRecharger
             SuitRecharger.CheckDifficultySetting();
         }
 
-        // добавление сидескреена
-        [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
-        private static class DetailsScreen_OnPrefabInit
+        [PLibMethod(RunAt.OnDetailsScreenInit)]
+        private static void OnDetailsScreenInit()
         {
-            private static void Postfix()
-            {
-                PUIUtils.AddSideScreenContent<SuitRechargerSideScreen>();
-            }
+            PUIUtils.AddSideScreenContent<SuitRechargerSideScreen>();
         }
 
         // при наполнении пустого костюма - восстанавливаем дыхательный компонент в нормальное состояние

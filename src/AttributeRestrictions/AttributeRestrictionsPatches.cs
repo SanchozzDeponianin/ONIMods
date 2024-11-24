@@ -23,66 +23,57 @@ namespace AttributeRestrictions
             Utils.InitLocalization(typeof(STRINGS));
         }
 
-        // добавление сидескреена
-        [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
-        private static class DetailsScreen_OnPrefabInit
+        // добавляем компонент после инициализации всех построек
+        [PLibMethod(RunAt.BeforeDbPostProcess)]
+        private static void BeforeDbPostProcess()
         {
-            private static void Postfix()
+            // фабрикаторы
+            foreach (var go in Assets.GetPrefabsWithComponent<ComplexFabricator>())
             {
-                PUIUtils.AddSideScreenContent<AttributeRestrictionSideScreen>();
+                if (go.TryGetComponent(out ComplexFabricator fabricator) && fabricator.duplicantOperated)
+                    go.AddOrGet<AttributeRestriction>().workable = go.GetComponent<ComplexFabricatorWorkable>();
             }
+
+            // ранч-станции
+            foreach (var go in Assets.GetPrefabsWithTag(RoomConstraints.ConstraintTags.RanchStationType))
+            {
+                if (go.GetDef<RanchStation.Def>() != null)
+                    go.AddOrGet<AttributeRestriction>();
+            }
+
+            // вертилятор
+            var fan = Assets.GetBuildingDef(IceCooledFanConfig.ID).BuildingComplete;
+            var fan_re = fan.AddOrGet<AttributeRestriction>();
+            fan_re.workable = fan.GetComponent<IceCooledFanWorkable>();
+            fan_re.isBelow = true;
+
+            // дуплячячье колесо
+            var gen = Assets.GetBuildingDef(ManualGeneratorConfig.ID).BuildingComplete;
+            var gen_re = gen.AddOrGet<AttributeRestriction>();
+            gen_re.workable = gen.GetComponent<ManualGenerator>();
+            gen_re.isBelow = true;
+            if (AttributeRestrictionsOptions.Instance.attribute == ManualGeneratorAttribute.Athletics)
+                gen_re.overrideAttribute = Db.Get().Attributes.Athletics.IdHash;
+
+            // самогонный аппарат
+            var oil = Assets.GetBuildingDef(OilRefineryConfig.ID).BuildingComplete;
+            var oil_re = oil.AddOrGet<AttributeRestriction>();
+            oil_re.overrideAttribute = Db.Get().Attributes.Machinery.IdHash;
+            oil_re.isBelow = true;
+            oil.GetComponent<KPrefabID>().prefabSpawnFn += (gmo) =>
+            {
+                if (gmo.TryGetComponent<AttributeRestriction>(out var restriction)
+                    && gmo.TryGetComponent<OilRefinery.WorkableTarget>(out var workable))
+                {
+                    restriction.workable = workable;
+                }
+            };
         }
 
-        // добавляем компонент после инициализации всех построек
-        [HarmonyPatch(typeof(BuildingConfigManager), nameof(BuildingConfigManager.ConfigurePost))]
-        private static class BuildingConfigManager_ConfigurePost
+        [PLibMethod(RunAt.OnDetailsScreenInit)]
+        private static void OnDetailsScreenInit()
         {
-            [HarmonyPriority(Priority.Low)]
-            private static void Postfix()
-            {
-                // фабрикаторы
-                foreach (var go in Assets.GetPrefabsWithComponent<ComplexFabricator>())
-                {
-                    var fabricator = go.GetComponent<ComplexFabricator>();
-                    if (fabricator != null && fabricator.duplicantOperated)
-                        go.AddOrGet<AttributeRestriction>().workable = go.GetComponent<ComplexFabricatorWorkable>();
-                }
-
-                // ранч-станции
-                foreach (var go in Assets.GetPrefabsWithTag(RoomConstraints.ConstraintTags.RanchStationType))
-                {
-                    if (go.GetDef<RanchStation.Def>() != null)
-                        go.AddOrGet<AttributeRestriction>();
-                }
-
-                // вертилятор
-                var fan = Assets.GetBuildingDef(IceCooledFanConfig.ID).BuildingComplete;
-                var fan_re = fan.AddOrGet<AttributeRestriction>();
-                fan_re.workable = fan.GetComponent<IceCooledFanWorkable>();
-                fan_re.isBelow = true;
-
-                // дуплячячье колесо
-                var gen = Assets.GetBuildingDef(ManualGeneratorConfig.ID).BuildingComplete;
-                var gen_re = gen.AddOrGet<AttributeRestriction>();
-                gen_re.workable = gen.GetComponent<ManualGenerator>();
-                gen_re.isBelow = true;
-                if (AttributeRestrictionsOptions.Instance.attribute == ManualGeneratorAttribute.Athletics)
-                    gen_re.overrideAttribute = Db.Get().Attributes.Athletics.IdHash;
-
-                // самогонный аппарат
-                var oil = Assets.GetBuildingDef(OilRefineryConfig.ID).BuildingComplete;
-                var oil_re = oil.AddOrGet<AttributeRestriction>();
-                oil_re.overrideAttribute = Db.Get().Attributes.Machinery.IdHash;
-                oil_re.isBelow = true;
-                oil.GetComponent<KPrefabID>().prefabSpawnFn += (gmo) =>
-                {
-                    if (gmo.TryGetComponent<AttributeRestriction>(out var restriction)
-                        && gmo.TryGetComponent<OilRefinery.WorkableTarget>(out var workable))
-                    {
-                        restriction.workable = workable;
-                    }
-                };
-            }
+            PUIUtils.AddSideScreenContent<AttributeRestrictionSideScreen>();
         }
 
         // Арргхх!!! хармону через жёппу патчит методы шаблонных классов.

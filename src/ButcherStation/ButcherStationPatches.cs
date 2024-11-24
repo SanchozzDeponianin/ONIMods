@@ -17,12 +17,10 @@ namespace ButcherStation
 {
     internal sealed class ButcherStationPatches : KMod.UserMod2
     {
-        private static Harmony harmony;
         public static AttributeConverter RanchingEffectExtraMeat;
 
         public override void OnLoad(Harmony harmony)
         {
-            ButcherStationPatches.harmony = harmony;
             if (Utils.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(ButcherStationPatches));
@@ -36,7 +34,7 @@ namespace ButcherStation
         }
 
         [PLibMethod(RunAt.AfterDbInit)]
-        private static void AddBuildingsAndModifier()
+        private static void AddBuildingsAndModifier(Harmony harmony)
         {
             ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, FishingStationConfig.ID, BUILD_SUBCATEGORY.ranching, MilkingStationConfig.ID);
             ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, ButcherStationConfig.ID, BUILD_SUBCATEGORY.ranching, MilkingStationConfig.ID);
@@ -52,7 +50,7 @@ namespace ButcherStation
                 base_value: 0f,
                 formatter: formatter,
                 available_dlcs: DlcManager.AVAILABLE_ALL_VERSIONS);
-            RoomsExpandedCompat();
+            RoomsExpandedCompat(harmony);
         }
 
         [PLibMethod(RunAt.OnStartGame)]
@@ -61,14 +59,10 @@ namespace ButcherStation
             RanchingEffectExtraMeat.multiplier = ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
         }
 
-        // добавление сидескреена
-        [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
-        private static class DetailsScreen_OnPrefabInit
+        [PLibMethod(RunAt.OnDetailsScreenInit)]
+        private static void OnDetailsScreenInit()
         {
-            private static void Postfix()
-            {
-                PUIUtils.AddSideScreenContent<ButcherStationSideScreen>();
-            }
+            PUIUtils.AddSideScreenContent<ButcherStationSideScreen>();
         }
 
         // добавляем тэги для убиваемых животных
@@ -356,7 +350,7 @@ namespace ButcherStation
         // применяем патч для ранчстанций
         public static bool RoomsExpandedFound { get; private set; } = false;
         public static RoomType AquariumRoom { get; private set; }
-        private static void RoomsExpandedCompat()
+        private static void RoomsExpandedCompat(Harmony harmony)
         {
             var db = Db.Get();
             var RoomsExpanded = PPatchTools.GetTypeSafe("RoomsExpanded.RoomTypes_AllModded");
