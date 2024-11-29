@@ -63,7 +63,7 @@ namespace ButcherStation
         {
             var def = go.AddOrGetDef<RanchStation.Def>();
             def.IsCritterEligibleToBeRanchedCb = ButcherStation.IsCreatureEligibleToBeButchedCB;
-            def.OnRanchCompleteCb = (creature_go) => ButcherStation.ButchCreature(creature_go);
+            def.OnRanchCompleteCb = (creature_go, worker) => ButcherStation.ButchCreature(creature_go, worker);
             def.RancherInteractAnim = "anim_interacts_shearingstation_kanim";
             def.RanchedPreAnim = "hit";
             def.RanchedLoopAnim = "hit";

@@ -81,9 +81,11 @@ namespace ArtifactCarePackages
         }
 
         // подправляем текст в экране выбора, чтобы показать параметры декора
+        // todo: удалить когда У53 усё
         [HarmonyPatch(typeof(CarePackageContainer), "GetCurrentQuantity")]
         internal static class CarePackageContainer_GetCurrentQuantity
         {
+            private static bool Prepare() => Utils.GameVersion <= 643502u; //ненада на У54 и выше
             private static void Postfix(CarePackageInfo ___info, ref string __result)
             {
                 var a = Assets.GetPrefab(___info.id.ToTag())?.GetComponent<SpaceArtifact>()?.GetArtifactTier();

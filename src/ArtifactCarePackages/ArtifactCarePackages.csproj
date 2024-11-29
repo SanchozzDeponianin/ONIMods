@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Artifacts in Care Packages</Title>
     <Description>Allows to get Artifacts in Care Packages</Description>
-    <ModVersion>1.2.5</ModVersion>
+    <ModVersion>1.2.6</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

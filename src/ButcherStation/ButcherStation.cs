@@ -194,7 +194,7 @@ namespace ButcherStation
                     && butcherStation.IsCreatureEligibleToBeButched(creature_go);
         }
 
-        public static void ButchCreature(GameObject creature_go, bool moveCreatureToButcherStation = false)
+        public static void ButchCreature(GameObject creature_go, WorkerBase worker, bool moveCreatureToButcherStation = false)
         {
             bool kill = true;
             var targetRanchStation = creature_go.GetSMI<RanchableMonitor.Instance>()?.TargetRanchStation;
@@ -211,11 +211,10 @@ namespace ButcherStation
                     if (creature_go.TryGetComponent<Baggable>(out var baggable))
                         baggable.SetWrangled();
                 }
-                if (kill && creature_go.TryGetComponent<ExtraMeatSpawner>(out var extraMeatSpawner))
+                if (kill && worker != null && creature_go.TryGetComponent<ExtraMeatSpawner>(out var extraMeatSpawner))
                 {
-                    var smi = targetRanchStation.GetSMI<RancherChore.RancherChoreStates.Instance>();
-                    var rancher = smi.sm.rancher.Get(smi);
-                    extraMeatSpawner.dropMultiplier = rancher.GetAttributes().Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() * ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
+                    float attribute = worker.GetAttributes()?.Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() ?? 0f;
+                    extraMeatSpawner.dropMultiplier = attribute * ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
                 }
             }
             if (kill)

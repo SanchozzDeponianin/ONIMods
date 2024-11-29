@@ -63,7 +63,7 @@ namespace ExoticSpices
                     this.emitter = emitter;
                     emitter.RemoveFromGrid();
                 }
-                public void Run(object context) => emitter.UpdateLitCells();
+                public void Run(object context, int threadIndex) => emitter.UpdateLitCells();
                 public void Finish() => emitter.AddToGrid(false);
             }
 

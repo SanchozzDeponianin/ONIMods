@@ -200,7 +200,7 @@
 
   <!-- при необходимости архивируем ранее существующие потроха -->
   <Target Name="Archiving" AfterTargets="DetermineInstallFolder" Condition=" '$(DistributeMod)' == 'true' And '$(NeededArchiving)' == 'true' ">
-    <Message Importance="high" Text="Found mod for Previous Game version $(PreviousGameVersion)-$(PreviousBuildNumber)" />
+    <Warning Text="Found mod for Previous Game version $(PreviousGameVersion)-$(PreviousBuildNumber)" />
 
     <PropertyGroup Condition=" '$(PreviousGameVersion)' == '??' ">
       <ArchiveFolder>$(InstallRootFolder)/archived_versions/previous_$(PreviousBuildNumber)</ArchiveFolder>
@@ -210,7 +210,7 @@
       <ArchiveFolder>$(InstallRootFolder)/archived_versions/previous_$(PreviousGameVersion)</ArchiveFolder>
     </PropertyGroup>
 
-    <Message Importance="high" Text="Archiving into '$(ArchiveFolder)'" />
+    <Warning Text="Archiving into '$(ArchiveFolder)'" />
 
     <ItemGroup>
       <FilesToArchive Include="$(InstallRootFolder)/**/*" Exclude="$(InstallRootFolder)/archived_versions/**/*;$(InstallRootFolder)/mod.yaml" />
