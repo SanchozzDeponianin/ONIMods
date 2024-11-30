@@ -301,7 +301,7 @@ namespace SuitRecharger
                 if (recharger.liquidWastePipeOK)
                 {
                     var list = ListPool<GameObject, SuitRecharger>.Allocate();
-                    suitTank.storage.Find(GameTags.AnyWater, list);
+                    suitTank.storage.Find(GameTags.Liquid, list);
                     if (list.Count > 0)
                     {
                         foreach (var go in list)

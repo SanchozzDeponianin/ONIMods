@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using KMod;
-using STRINGS;
 using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
@@ -55,47 +54,16 @@ namespace SuitRecharger
             PUIUtils.AddSideScreenContent<SuitRechargerSideScreen>();
         }
 
-        // при наполнении пустого костюма - восстанавливаем дыхательный компонент в нормальное состояние
-        // чтобы дупель не задохнулся на ровном месте
-        [HarmonyPatch(typeof(SuitSuffocationMonitor), nameof(SuitSuffocationMonitor.InitializeStates))]
-        private static class SuitSuffocationMonitor_InitializeStates
-        {
-            private static void Postfix(SuitSuffocationMonitor __instance)
-            {
-                __instance.nooxygen.Transition(__instance.satisfied, smi => !smi.IsTankEmpty(), UpdateRate.SIM_200ms);
-            }
-        }
-
         // задача "подышать" не учитывает цену пути до дыхабельной клетки
         // добавим эту проверку, чтобы задыхающийся дупель мог "подышать" или использовать зарядник 
         // в зависимости от того что ближе
         [HarmonyPatch(typeof(BreathMonitor), "CreateRecoverBreathChore")]
         private static class BreathMonitor_CreateRecoverBreathChore
         {
-            private static readonly Chore.Precondition RecoverBreathUpdateCost = new Chore.Precondition
-            {
-                id = nameof(RecoverBreathUpdateCost),
-                description = DUPLICANTS.CHORES.PRECONDITIONS.CAN_MOVE_TO,
-                sortOrder = 10,
-                fn = delegate (ref Chore.Precondition.Context context, object data)
-                {
-                    if (context.consumerState.consumer == null)
-                        return false;
-                    var smi = (BreathMonitor.Instance)data;
-                    if (smi == null)
-                        return false;
-                    if (context.consumerState.consumer.GetNavigationCost(smi.GetRecoverCell(), out int num))
-                    {
-                        context.cost += num;
-                        return true;
-                    }
-                    return false;
-                }
-            };
-
             private static void Postfix(Chore __result, BreathMonitor.Instance smi)
             {
-                __result.AddPrecondition(RecoverBreathUpdateCost, smi);
+                System.Func<int> GetCell = () => smi.GetRecoverCell();
+                __result.AddPrecondition(ChorePreconditions.instance.CanMoveToDynamicCell, GetCell);
             }
         }
 
