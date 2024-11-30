@@ -1,0 +1,40 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. LargeTelescope.STRINGS.OPTIONS.ADD_GLASS.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.ADD_GLASS.NAME"
+msgid "Add Glass to the construction cost of the {ENCLOSED_TELESCOPE}"
+msgstr "Добавить Стекло к стоимости постройки '{ENCLOSED_TELESCOPE}'"
+
+#. LargeTelescope.STRINGS.OPTIONS.ANALYZE_CLUSTER_RADIUS.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.ANALYZE_CLUSTER_RADIUS.NAME"
+msgid "Scan Radius, hex"
+msgstr "Радиус сканирования, хексы"
+
+#. LargeTelescope.STRINGS.OPTIONS.ANALYZE_CLUSTER_RADIUS.TOOLTIP
+msgctxt "LargeTelescope.STRINGS.OPTIONS.ANALYZE_CLUSTER_RADIUS.TOOLTIP"
+msgid "Unmodded radius = 4\nA small Telescope has a radius = 3"
+msgstr "Немодифицированый радиус = 4\nМалый телескоп имеет радиус = 3"
+
+#. LargeTelescope.STRINGS.OPTIONS.EFFICIENCY_MULTIPLIER.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.EFFICIENCY_MULTIPLIER.NAME"
+msgid "Scan Workspeed modifier, +X%"
+msgstr "Модификатор скорости сканирования, +Х%"
+
+#. LargeTelescope.STRINGS.OPTIONS.NOT_REQUIRE_GAS_PIPE.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.NOT_REQUIRE_GAS_PIPE.NAME"
+msgid "Make the Gas Pipe connection requirement optional instead of mandatory"
+msgstr "Сделать подключение к газовой трубе необязательным"
+
+#. LargeTelescope.STRINGS.OPTIONS.PROHIBIT_INSIDE_ROCKET.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.PROHIBIT_INSIDE_ROCKET.NAME"
+msgid "Prohibit the construction of the {ENCLOSED_TELESCOPE} inside a Rocket"
+msgstr "Запретить строить {ENCLOSED_TELESCOPE} внутри Ракеты"
+
+#. LargeTelescope.STRINGS.OPTIONS.VANILLA_ADD_GLASS.NAME
+msgctxt "LargeTelescope.STRINGS.OPTIONS.VANILLA_ADD_GLASS.NAME"
+msgid "Add Glass to the construction cost of the {VANILLA_TELESCOPE}"
+msgstr "Добавить Стекло к стоимости постройки '{VANILLA_TELESCOPE}'"
+
