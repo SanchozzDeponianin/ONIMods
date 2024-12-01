@@ -10,17 +10,18 @@ namespace AthleticsGenerator
     {
 #pragma warning disable CS0649
         [MyCmpReq]
-        Generator generator;
+        private Generator generator;
 
         [MyCmpReq]
-        ManualGenerator manualGenerator;
+        private ManualGenerator manualGenerator;
 
         [MyCmpReq]
-        Operational operational;
+        private Operational operational;
 #pragma warning restore CS0649
 
-        AttributeModifier modifier;
-        MeterController meter;
+        private AttributeModifier modifier;
+        private AttributeConverterInstance converter;
+        private MeterController meter;
 
         protected override void OnPrefabInit()
         {
@@ -38,14 +39,12 @@ namespace AthleticsGenerator
                 UpdateMeter();
             }
             manualGenerator.OnWorkableEventCB += OnWorkableEvent;
-            Subscribe((int)GameHashes.WorkableStopWork, OnWorkableStopWork);
         }
 
         protected override void OnCleanUp()
         {
             if (manualGenerator != null)
                 manualGenerator.OnWorkableEventCB -= OnWorkableEvent;
-            Unsubscribe((int)GameHashes.WorkableStopWork, OnWorkableStopWork);
             base.OnCleanUp();
         }
 
@@ -54,40 +53,41 @@ namespace AthleticsGenerator
             Action<object> handler = _ => UpdateModifier();
             if (ev == Workable.WorkableEvent.WorkStarted)
             {
-                UpdateModifier();
                 if (workable != null && workable.worker != null)
                 {
-                    workable.worker.Subscribe((int)GameHashes.LevelUp, handler);
-                    workable.worker.Subscribe((int)GameHashes.EffectAdded, handler);
-                    workable.worker.Subscribe((int)GameHashes.EffectRemoved, handler);
-                    workable.worker.Subscribe((int)GameHashes.SicknessAdded, handler);
-                    workable.worker.Subscribe((int)GameHashes.SicknessCured, handler);
+                    converter = workable.worker.GetAttributeConverter(AthleticsGeneratorPatches.ManualGeneratorPower.Id);
+                    var real_worker = converter.gameObject;
+                    real_worker.Subscribe((int)GameHashes.LevelUp, handler);
+                    real_worker.Subscribe((int)GameHashes.EffectAdded, handler);
+                    real_worker.Subscribe((int)GameHashes.EffectRemoved, handler);
+                    real_worker.Subscribe((int)GameHashes.SicknessAdded, handler);
+                    real_worker.Subscribe((int)GameHashes.SicknessCured, handler);
                 }
+                UpdateModifier();
             }
             else if (ev == Workable.WorkableEvent.WorkStopped)
             {
-                if (workable != null && workable.worker != null)
+                if (converter != null && !converter.isNull)
                 {
-                    workable.worker.Unsubscribe((int)GameHashes.LevelUp, handler);
-                    workable.worker.Unsubscribe((int)GameHashes.EffectAdded, handler);
-                    workable.worker.Unsubscribe((int)GameHashes.EffectRemoved, handler);
-                    workable.worker.Unsubscribe((int)GameHashes.SicknessAdded, handler);
-                    workable.worker.Unsubscribe((int)GameHashes.SicknessCured, handler);
+                    var real_worker = converter.gameObject;
+                    real_worker.Unsubscribe((int)GameHashes.LevelUp, handler);
+                    real_worker.Unsubscribe((int)GameHashes.EffectAdded, handler);
+                    real_worker.Unsubscribe((int)GameHashes.EffectRemoved, handler);
+                    real_worker.Unsubscribe((int)GameHashes.SicknessAdded, handler);
+                    real_worker.Unsubscribe((int)GameHashes.SicknessCured, handler);
+                    converter = null;
                 }
-                modifier.SetValue(0f);
+                UpdateModifier();
             }
         }
 
-        private void OnWorkableStopWork(object _) => UpdateMeter();
-
         private void UpdateModifier()
         {
-            if (manualGenerator.worker != null)
-            {
-                float bonus = AthleticsGeneratorPatches.ManualGeneratorPower.Lookup(manualGenerator.worker).Evaluate();
-                modifier.SetValue(bonus / generator.BaseWattageRating * 100f);
-                UpdateMeter();
-            }
+            if (converter != null && !converter.isNull)
+                modifier.SetValue(converter.Evaluate() / generator.BaseWattageRating * 100f);
+            else
+                modifier.SetValue(0f);
+            UpdateMeter();
         }
 
         private void UpdateMeter()
