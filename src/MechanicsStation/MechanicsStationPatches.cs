@@ -35,6 +35,19 @@ namespace MechanicsStation
             Init();
         }
 
+        [PLibMethod(RunAt.BeforeDbPostProcess)]
+        private static void BeforeDbPostProcess()
+        {
+            HashedString effect = MACHINE_TINKER_EFFECT_NAME;
+            foreach (var go in Assets.GetPrefabsWithComponent<Tinkerable>())
+            {
+                if (go.TryGetComponent(out Tinkerable tinkerable) && tinkerable.tinkerMaterialTag == MechanicsStationConfig.TINKER_TOOLS)
+                {
+                    go.AddOrGet<MachineTinkerFreezeEffectDuration>().effectsToFreeze.Add(effect);
+                }
+            }
+        }
+
         [PLibMethod(RunAt.OnStartGame)]
         private static void OnStartGame()
         {
@@ -64,10 +77,10 @@ namespace MechanicsStation
                 return tags;
             }
             /*
-        	    HashSet<Tag> hashSet = new HashSet<Tag>();
+                HashSet<Tag> hashSet = new HashSet<Tag>();
             +++ hashSet.Add(MachinePartsConfig.ID);
-	            if (this.keepAdditionalTag != Tag.Invalid)
-		            hashSet.Add(this.keepAdditionalTag);
+                if (this.keepAdditionalTag != Tag.Invalid)
+                    hashSet.Add(this.keepAdditionalTag);
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
@@ -154,6 +167,7 @@ namespace MechanicsStation
             AirFilterConfig.ID,                 // бесполезно и бессмысленно
             AtmoicGardenConfig.ID,              // вообще недоделанная хрень
             RadiationLightConfig.ID,            // бесполезно. todo: в будующем сделать повышение радиации
+            "RemoteWorkTerminal",               // бесполезно и бессмысленно
         };
 
         private static readonly List<string> BuildingWithComplexFabricatorWorkableStopList = new List<string>()

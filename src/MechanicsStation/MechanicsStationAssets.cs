@@ -209,4 +209,11 @@ namespace MechanicsStation
             return tinkerable;
         }
     }
+
+    // чтобы эта опция применялась без перезагрузки
+    [SkipSaveFileSerialization]
+    public class MachineTinkerFreezeEffectDuration : OperationalNotActiveFreezeEffectDuration
+    {
+        protected override bool ShouldFreeze => MechanicsStationOptions.Instance.machine_tinker_freeze_effect_duration && base.ShouldFreeze;
+    }
 }

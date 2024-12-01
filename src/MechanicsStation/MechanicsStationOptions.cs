@@ -29,5 +29,9 @@ namespace MechanicsStation
         [Option(Format = "F1")]
         [Limit(2.5, 10)]
         public float machine_tinker_effect_duration_per_skill { get; set; } = MACHINE_TINKER_EFFECT_DURATION_PER_SKILL * 100;
+
+        [JsonProperty]
+        [Option]
+        public bool machine_tinker_freeze_effect_duration { get; set; } = true;
     }
 }

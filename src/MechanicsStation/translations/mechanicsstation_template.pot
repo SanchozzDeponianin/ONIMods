@@ -48,6 +48,11 @@ msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION_PER_SKI
 msgid "The <style=\"KKeyword\">{MACHINE_TINKER}</style> effect +X% duration per <style=\"KKeyword\">{MACHINERY}</style> attribute level"
 msgstr ""
 
+#. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_FREEZE_EFFECT_DURATION.NAME
+msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_FREEZE_EFFECT_DURATION.NAME"
+msgid "The <style=\"KKeyword\">{MACHINE_TINKER}</style> effect Time Remaining does not expire if the Building is idle"
+msgstr ""
+
 #. MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.NAME
 msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.NAME"
 msgid "<style=\"KKeyword\">{MACHINERY_SPEED}</style> +X% value"

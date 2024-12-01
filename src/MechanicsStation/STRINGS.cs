@@ -80,6 +80,10 @@ namespace MechanicsStation
             {
                 public static LocString NAME = $"The {UI.FormatAsKeyWord(MACHINE_TINKER)} effect +X% duration per {UI.FormatAsKeyWord(MACHINERY)} attribute level";
             }
+            public class MACHINE_TINKER_FREEZE_EFFECT_DURATION
+            {
+                public static LocString NAME = $"The {UI.FormatAsKeyWord(MACHINE_TINKER)} effect Time Remaining does not expire if the Building is idle";
+            }
         }
 
         internal static void DoReplacement()

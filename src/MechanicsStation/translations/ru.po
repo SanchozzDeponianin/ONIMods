@@ -48,6 +48,11 @@ msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_EFFECT_DURATION_PER_SKI
 msgid "The <style=\"KKeyword\">{MACHINE_TINKER}</style> effect +X% duration per <style=\"KKeyword\">{MACHINERY}</style> attribute level"
 msgstr "Длительность эффекта <style=\"KKeyword\">{MACHINE_TINKER}</style> +X% за уровень аттрибута <style=\"KKeyword\">{MACHINERY}</style>"
 
+#. MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_FREEZE_EFFECT_DURATION.NAME
+msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINE_TINKER_FREEZE_EFFECT_DURATION.NAME"
+msgid "The <style=\"KKeyword\">{MACHINE_TINKER}</style> effect Time Remaining does not expire if the Building is idle"
+msgstr "Время действия эффекта <style=\"KKeyword\">{MACHINE_TINKER}</style> не истекает, если постройка простаивает"
+
 #. MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.NAME
 msgctxt "MechanicsStation.STRINGS.OPTIONS.MACHINERY_SPEED_MODIFIER.NAME"
 msgid "<style=\"KKeyword\">{MACHINERY_SPEED}</style> +X% value"
@@ -79,12 +84,12 @@ msgstr "Скорость работы машины"
 #. STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.NAME
 msgctxt "STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.NAME"
 msgid "Engie's Jerry Rig"
-msgstr "Инженерная настройка"
+msgstr "Инженерная модернизация"
 
 #. STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.MACHINE_PARTS.DESC
 msgctxt "STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.MACHINE_PARTS.DESC"
 msgid "Specialized Parts crafted by a professional engineer.\n\n<style=\"KKeyword\">Jerry Rig</style> machine buildings to increase their efficiency."
-msgstr "Специальные детали и механизмы, сделанные профессиональным инженером.\n\n<style=\"KKeyword\">Инженерная настройка</style> машины увеличивает её эффективность."
+msgstr "Специальные детали и механизмы, сделанные профессиональным инженером.\n\n<style=\"KKeyword\">Инженерная модернизация</style> машины увеличивает её эффективность."
 
 #. STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.MACHINE_PARTS.NAME
 msgctxt "STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.MACHINE_PARTS.NAME"
