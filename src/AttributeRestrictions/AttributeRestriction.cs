@@ -42,7 +42,7 @@ namespace AttributeRestrictions
                 Attribute attribute;
                 if (restriction != null && restriction.isEnabled && (attribute = restriction.requiredAttribute) != null)
                 {
-                    var value = attribute.Lookup(context.consumerState.gameObject).GetTotalValue();
+                    var value = context.consumerState.resume?.GetAttributes()?.Get(attribute)?.GetTotalValue() ?? 0f;
                     return restriction.isBelow ? value <= restriction.requiredAttributeLevel : value >= restriction.requiredAttributeLevel;
                 }
                 return true;

@@ -39,12 +39,14 @@ namespace AthleticsGenerator
                 UpdateMeter();
             }
             manualGenerator.OnWorkableEventCB += OnWorkableEvent;
+            Subscribe((int)GameHashes.WorkableStopWork, OnWorkableStopWork);
         }
 
         protected override void OnCleanUp()
         {
             if (manualGenerator != null)
                 manualGenerator.OnWorkableEventCB -= OnWorkableEvent;
+            Unsubscribe((int)GameHashes.WorkableStopWork, OnWorkableStopWork);
             base.OnCleanUp();
         }
 
@@ -89,6 +91,8 @@ namespace AthleticsGenerator
                 modifier.SetValue(0f);
             UpdateMeter();
         }
+
+        private void OnWorkableStopWork(object _) => UpdateMeter();
 
         private void UpdateMeter()
         {
