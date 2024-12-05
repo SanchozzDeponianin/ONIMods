@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Butcher &amp; Fishing Stations</Title>
     <Description>Adds a new Stations allows the Ranchers to control the population and butchering too old, surplus, or unwanted Critters.</Description>
-    <ModVersion>1.8.4</ModVersion>
+    <ModVersion>1.8.5</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
