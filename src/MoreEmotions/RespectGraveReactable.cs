@@ -40,6 +40,12 @@ namespace MoreEmotions
                 RegisterEmoteStepCallbacks("react_no_hat", null, AddEffect);
             }
             base.InternalBegin();
+            if (reactor.HasTag(GameTags.Minions.Models.Bionic)
+                && reactor.TryGetComponent(out SymbolOverrideController syoc)
+                && Assets.TryGetAnim("anim_bionic_bury_dupe_kanim", out var kAnim))
+            {
+                syoc.AddBuildOverride(kAnim.GetData(), 1);
+            }
         }
 
         private static void AddEffect(GameObject reactor)
@@ -47,6 +53,17 @@ namespace MoreEmotions
             if (MoreEmotionsOptions.Instance.respect_grave_add_effect
                 && !reactor.IsNullOrDestroyed() && reactor.TryGetComponent(out Effects effects))
                 effects.Add(RespectGrave, true);
+        }
+
+        public override void InternalEnd()
+        {
+            if (reactor != null && reactor.HasTag(GameTags.Minions.Models.Bionic)
+                && reactor.TryGetComponent(out SymbolOverrideController syoc)
+                && Assets.TryGetAnim("anim_bionic_bury_dupe_kanim", out var kAnim))
+            {
+                syoc.RemoveBuildOverride(kAnim.GetData(), 1);
+            }
+            base.InternalEnd();
         }
     }
 }
