@@ -73,6 +73,16 @@ namespace ControlYourRobots
             }
         }
 
+        // запретить хоронить трупов (иначе вылетает при поднятии тела)
+        [HarmonyPatch(typeof(Grave.StatesInstance), nameof(Grave.StatesInstance.CreateFetchTask))]
+        private static class Grave_StatesInstance_CreateFetchTask
+        {
+            private static void Postfix(FetchChore ___chore)
+            {
+                ___chore.AddPrecondition(ChorePreconditions.instance.IsNotARobot, FetchDroneConfig.ID);
+            }
+        }
+
         // иди туды и вкл выкл
         [HarmonyPatch(typeof(RobotAi), nameof(RobotAi.InitializeStates))]
         private static class RobotAi_InitializeStates
