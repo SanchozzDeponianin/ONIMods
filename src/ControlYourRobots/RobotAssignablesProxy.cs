@@ -39,10 +39,15 @@ namespace ControlYourRobots
 
         private void CleanupLimbo(object _)
         {
+            // не надо для летунов (самоликвидировать созданное лишнее если юзер запускал предыдущюю версию мода)
+            // todo: убрать, когда мб будем добавлять контроль дверей для летунов
+            if (PrefabID != FetchDroneConfig.ID)
+            {
             // остаться должен только один (с)
             foreach (var item in Cmps.Items)
                 if (item == this)
                     return;
+            }
             Util.KDestroyGameObject(gameObject);
         }
 

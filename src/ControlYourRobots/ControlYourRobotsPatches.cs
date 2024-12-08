@@ -56,16 +56,19 @@ namespace ControlYourRobots
                 if (ControlYourRobotsOptions.Instance.low_power_mode_enable)
                 {
                     float rate = batteryDepletionRate * (1f - ControlYourRobotsOptions.Instance.low_power_mode_value / 100f);
-                    IdleBatteryModifiers[id] = new AttributeModifier(batteryType.deltaAttribute.Id, rate,
-                        global::STRINGS.CREATURES.STATUSITEMS.IDLE.NAME);
+                    IdleBatteryModifiers[id] = new AttributeModifier(batteryType.deltaAttribute.Id, rate, CREATURES.STATUSITEMS.IDLE.NAME);
                 }
                 __result.AddOrGet<RobotPersonalPriorityProxy>();
-                // поправим небольшой косячок клеев
-                if (DlcManager.FeatureClusterSpaceEnabled())
+                // поправим небольшой косячок клеев (гоботам была разрешена Rocketry)
+                // а также разрешим LifeSupport
+                var trait = Db.Get().traits.TryGet(id + "BaseTrait");
+                if (trait != null)
                 {
-                    var trait = Db.Get().traits.TryGet(id + "BaseTrait");
-                    if (trait != null)
-                        trait.disabledChoreGroups = trait.disabledChoreGroups.AddItem(Db.Get().ChoreGroups.Rocketry).ToArray();
+                    var disabled = trait.disabledChoreGroups.ToList();
+                    disabled.Remove(Db.Get().ChoreGroups.LifeSupport);
+                    if (DlcManager.FeatureClusterSpaceEnabled())
+                        disabled.Add(Db.Get().ChoreGroups.Rocketry);
+                    trait.disabledChoreGroups = disabled.ToArray();
                 }
             }
         }
@@ -88,7 +91,19 @@ namespace ControlYourRobots
                 var suspended = (SuspendedStates)__instance.CreateState(name, __instance.alive, new SuspendedStates());
 
                 __instance.alive.normal
-                    .ToggleStateMachine(smi => new MoveToLocationMonitor.Instance(smi.master)) // иди туды
+                    // иди туды, но не для летуна
+                    //.ToggleStateMachine(smi => new MoveToLocationMonitor.Instance(smi.master))
+                    .Enter(smi =>
+                    {
+                        if (!smi.HasTag(GameTags.Robots.Models.FetchDrone))
+                            new MoveToLocationMonitor.Instance(smi.master);
+                    })
+                    .Exit(smi =>
+                    {
+                        var move_monitor = smi.GetSMI<MoveToLocationMonitor.Instance>();
+                        if (!move_monitor.IsNullOrStopped())
+                            move_monitor.StopSM("");
+                    })
                     .TagTransition(RobotSuspend, suspended, false);
 
                 suspended
@@ -139,6 +154,23 @@ namespace ControlYourRobots
             {
                 if (!smi.IsNullOrStopped() && smi.gameObject.TryGetComponent<KSelectable>(out var selectable))
                     selectable.SetStatusItem(Db.Get().StatusItemCategories.Main, null, null);
+            }
+        }
+
+        // иди туды, для летуна
+        [HarmonyPatch(typeof(RobotElectroBankMonitor), nameof(RobotElectroBankMonitor.InitializeStates))]
+        private static class RobotElectroBankMonitor_InitializeStates
+        {
+            private static void Postfix(RobotElectroBankMonitor __instance)
+            {
+                __instance.powered
+                    .ToggleStateMachine(smi => new MoveToLocationMonitor.Instance(smi.master))
+                    .Toggle(nameof(RefreshUserMenu), RefreshUserMenu, RefreshUserMenu);
+            }
+
+            private static void RefreshUserMenu(RobotElectroBankMonitor.Instance smi)
+            {
+                Game.Instance.userMenu.Refresh(smi.master.gameObject);
             }
         }
 
@@ -250,7 +282,8 @@ namespace ControlYourRobots
             private static Tag[] Robot_AI_Tags = { GameTags.Robot, GameTags.DupeBrain };
             private static void Postfix(CreatureBrain __instance)
             {
-                if (__instance.HasAllTags(Robot_AI_Tags) && __instance.TryGetComponent<Navigator>(out var navigator))
+                if (__instance.HasAllTags(Robot_AI_Tags) && __instance.TryGetComponent<Navigator>(out var navigator)
+                    && navigator.NavGridName == "RobotNavGrid") // не для летуна
                     navigator.SetAbilities(new RobotPathFinderAbilities(navigator));
             }
         }
