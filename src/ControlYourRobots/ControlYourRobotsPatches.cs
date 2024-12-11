@@ -51,6 +51,7 @@ namespace ControlYourRobots
             private static void Postfix(GameObject __result, string id, float batteryDepletionRate, Amount batteryType)
             {
                 __result.AddOrGet<RobotTurnOffOn>();
+                __result.AddOrGetDef<MoveToLocationMonitor.Def>().invalidTagsForMoveTo = new Tag[] { GameTags.Dead, GameTags.Stored, RobotSuspend };
                 __result.AddOrGet<Movable>(); // переносить спящего
                 SuspendedBatteryModifiers[id] = new AttributeModifier(batteryType.deltaAttribute.Id, batteryDepletionRate, NAME);
                 if (ControlYourRobotsOptions.Instance.low_power_mode_enable)
@@ -70,6 +71,25 @@ namespace ControlYourRobots
                         disabled.Add(Db.Get().ChoreGroups.Rocketry);
                     trait.disabledChoreGroups = disabled.ToArray();
                 }
+            }
+        }
+
+        [HarmonyPatch(typeof(BaseRoverConfig), nameof(BaseRoverConfig.OnSpawn))]
+        private static class BaseRoverConfig_OnSpawn
+        {
+            // ровер не должен заряжаться при переносе
+            private static void FixEffect(GameObject go)
+            {
+                const string effect = "ScoutBotCharging";
+                if (go.TryGetComponent(out Effects effects) && effects.HasEffect(effect))
+                    effects.Remove(effect);
+            }
+
+            private static void Postfix(GameObject inst)
+            {
+                var movable = inst.AddOrGet<Movable>();
+                movable.tagRequiredForMove = GameTags.Creatures.Deliverable;
+                movable.onPickupComplete += FixEffect;
             }
         }
 
@@ -101,24 +121,12 @@ namespace ControlYourRobots
                 var suspended = (SuspendedStates)__instance.CreateState(name, __instance.alive, new SuspendedStates());
 
                 __instance.alive.normal
-                    // иди туды, но не для летуна
-                    //.ToggleStateMachine(smi => new MoveToLocationMonitor.Instance(smi.master))
-                    .Enter(smi =>
-                    {
-                        if (!smi.HasTag(GameTags.Robots.Models.FetchDrone))
-                            new MoveToLocationMonitor.Instance(smi.master);
-                    })
-                    .Exit(smi =>
-                    {
-                        var move_monitor = smi.GetSMI<MoveToLocationMonitor.Instance>();
-                        if (!move_monitor.IsNullOrStopped())
-                            move_monitor.StopSM("");
-                    })
                     .TagTransition(RobotSuspend, suspended, false);
 
                 suspended
                     .TagTransition(RobotSuspend, __instance.alive.normal, true)
                     .DefaultState(suspended.satisfied)
+                    .ToggleTag(GameTags.Creatures.Deliverable)
                     .ToggleStatusItem(NAME, TOOLTIP)
                     .ToggleAttributeModifier("save battery",
                         smi => SuspendedBatteryModifiers[smi.PrefabID()],
@@ -133,10 +141,6 @@ namespace ControlYourRobots
                     .ScheduleActionNextFrame("Clean StatusItem", CleanStatusItem)
                     .Exit(smi =>
                     {
-                        // отменить перемещение при просыпании
-                        var movable = smi.GetComponent<Movable>();
-                        if (movable != null && movable.StorageProxy != null)
-                            movable.StorageProxy.GetComponent<CancellableMove>().OnCancel(movable);
                         smi.GetComponent<Navigator>().Unpause(name);
                         smi.RefreshUserMenu();
                     });
@@ -157,6 +161,9 @@ namespace ControlYourRobots
                 suspended.moved
                     .PlayAnim("in_storage")
                     .TagTransition(GameTags.Stored, suspended.satisfied, true);
+
+                __instance.dead
+                    .ToggleTag(GameTags.Creatures.Deliverable);
             }
 
             // очищаем лишний StatusItem который может появиться при прерывании выполнения FetchAreaChore
@@ -167,107 +174,22 @@ namespace ControlYourRobots
             }
         }
 
-        // иди туды, для летуна
-        [HarmonyPatch(typeof(RobotElectroBankMonitor), nameof(RobotElectroBankMonitor.InitializeStates))]
-        private static class RobotElectroBankMonitor_InitializeStates
-        {
-            private static void Postfix(RobotElectroBankMonitor __instance)
-            {
-                __instance.powered
-                    .ToggleStateMachine(smi => new MoveToLocationMonitor.Instance(smi.master))
-                    .Toggle(nameof(RefreshUserMenu), RefreshUserMenu, RefreshUserMenu);
-            }
-
-            private static void RefreshUserMenu(RobotElectroBankMonitor.Instance smi)
-            {
-                Game.Instance.userMenu.Refresh(smi.master.gameObject);
-            }
-        }
-
-        // скрываем кнопку MoveTo для перемещения объектов если это робот и он не выключен
-        private static bool IsRobotAndNotSuspend(KPrefabID kPrefabID)
-        {
-            return kPrefabID.HasTag(GameTags.Robot) && !kPrefabID.HasTag(RobotSuspend) && !kPrefabID.HasTag(GameTags.Dead);
-        }
-
-        [HarmonyPatch(typeof(Movable), "OnRefreshUserMenu")]
-        private static class Movable_OnRefreshUserMenu
-        {
-            private static bool Prefix(Pickupable ___pickupable)
-            {
-                return !IsRobotAndNotSuspend(___pickupable.KPrefabID);
-            }
-        }
-
         // для совместимости с MassMoveTo. отменить перемещение если это робот и он не выключен
         //[HarmonyPatch(typeof(Movable), nameof(Movable.MoveToLocation))]
         private static class Movable_MoveToLocation_Kompot
         {
             private static readonly Action<Movable> ClearStorageProxy = typeof(Movable).Detour<Action<Movable>>("ClearStorageProxy");
+            private static readonly Func<Movable, bool> HasTagRequiredToMove = typeof(Movable).Detour<Func<Movable, bool>>("HasTagRequiredToMove");
 
-            internal static bool Prefix(Movable __instance, Pickupable ___pickupable)
+            internal static bool Prefix(Movable __instance)
             {
-                if (__instance != null && IsRobotAndNotSuspend(___pickupable.KPrefabID))
+                if (__instance != null && !HasTagRequiredToMove(__instance))
                 {
                     if (!__instance.IsMarkedForMove && __instance.StorageProxy != null)
                         ClearStorageProxy(__instance);
                     return false;
                 }
                 return true;
-            }
-        }
-
-        // если команда MoveTo применена к выключенному роботу
-        // патчим чору, чтобы его переносили как кусок ресурса, а не как жеготное, так как у роботов нет некоторых компонентов
-        [HarmonyPatch(typeof(MovePickupableChore), MethodType.Constructor)]
-        [HarmonyPatch(new Type[] { typeof(IStateMachineTarget), typeof(GameObject), typeof(Action<Chore>) })]
-        private static class MovePickupableChore_Constructor
-        {
-            /*
-        --- if (pickupable.GetComponent<CreatureBrain>())
-        +++ if (pickupable.GetComponent<CreatureBrain>() && !pickupable.HasTag(GameTags.Robot))
-            {
-                AddPrecondition(blabla);
-                AddPrecondition(blabla);
-            }
-            else
-            {
-                AddPrecondition(blabla);
-            }
-            */
-            private static Component IsNotRobot(Component cmp)
-            {
-                if (cmp != null && cmp.HasTag(GameTags.Robot))
-                    return null;
-                return cmp;
-            }
-
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
-            {
-                return TranspilerUtils.Wrap(instructions, original, transpiler);
-            }
-
-            private static bool transpiler(List<CodeInstruction> instructions, MethodBase original)
-            {
-                var gc = typeof(GameObject).GetMethodSafe(nameof(GameObject.GetComponent), false)
-                    ?.MakeGenericMethod(typeof(CreatureBrain));
-                var inject = typeof(MovePickupableChore_Constructor)
-                    .GetMethodSafe(nameof(IsNotRobot), true, typeof(Component));
-                if (gc != null && inject != null)
-                {
-                    int n = 0;
-                    for (int i = 0; i < instructions.Count; i++)
-                    {
-                        if (instructions[i].Calls(gc))
-                        {
-                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, inject));
-                            n++;
-                        }
-                    }
-                    if (n > 0)
-                        return true;
-                }
-                return false;
             }
         }
 
