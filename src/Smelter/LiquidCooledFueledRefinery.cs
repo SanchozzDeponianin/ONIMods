@@ -14,16 +14,12 @@ namespace Smelter
         {
             public Chore emptyChore;
 
-            public StatesInstance(LiquidCooledFueledRefinery master) : base(master)
-            {
-            }
+            public StatesInstance(LiquidCooledFueledRefinery master) : base(master) { }
 
             public void CreateEmptyChore()
             {
                 if (emptyChore != null)
-                {
                     emptyChore.Cancel("dupe");
-                }
                 emptyChore = new WorkChore<SmelterWorkableEmpty>(
                     chore_type: Db.Get().ChoreTypes.EmptyStorage,
                     target: master.GetComponent<SmelterWorkableEmpty>(),
@@ -31,6 +27,7 @@ namespace Smelter
                     only_when_operational: false,
                     ignore_building_assignment: true
                     );
+                emptyChore.AddPrecondition(ChorePreconditions.instance.IsNotARobot);
             }
 
             public void CancelEmptyChore()
