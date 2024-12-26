@@ -54,6 +54,7 @@
   <PropertyGroup Condition=" '$(UsesPublicise)' == 'true' ">
     <PublicisedFolder>$(MSBuildProjectDirectory)/../../bin/Publicised/$(Platform)</PublicisedFolder>
     <DefineConstants>$(DefineConstants);PUBLICISED</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <!-- подключаем DLL: -->

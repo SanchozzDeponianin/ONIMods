@@ -116,6 +116,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DumpIncorrectFertilizers", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PotatoElectrobanks", "PotatoElectrobanks\PotatoElectrobanks.csproj", "{0F48DDC4-869F-444D-92DD-B2939F5129D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupplyToClosest", "SupplyToClosest\SupplyToClosest.csproj", "{504A094E-1FF0-4173-B234-4968F90382CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Backup = Debug|Backup
@@ -500,6 +502,14 @@ Global
 		{0F48DDC4-869F-444D-92DD-B2939F5129D4}.Release|Backup.Build.0 = Release|Backup
 		{0F48DDC4-869F-444D-92DD-B2939F5129D4}.Release|Steam.ActiveCfg = Release|Steam
 		{0F48DDC4-869F-444D-92DD-B2939F5129D4}.Release|Steam.Build.0 = Release|Steam
+		{504A094E-1FF0-4173-B234-4968F90382CC}.Debug|Backup.ActiveCfg = Debug|Backup
+		{504A094E-1FF0-4173-B234-4968F90382CC}.Debug|Backup.Build.0 = Debug|Backup
+		{504A094E-1FF0-4173-B234-4968F90382CC}.Debug|Steam.ActiveCfg = Debug|Steam
+		{504A094E-1FF0-4173-B234-4968F90382CC}.Debug|Steam.Build.0 = Debug|Steam
+		{504A094E-1FF0-4173-B234-4968F90382CC}.Release|Backup.ActiveCfg = Release|Backup
+		{504A094E-1FF0-4173-B234-4968F90382CC}.Release|Backup.Build.0 = Release|Backup
+		{504A094E-1FF0-4173-B234-4968F90382CC}.Release|Steam.ActiveCfg = Release|Steam
+		{504A094E-1FF0-4173-B234-4968F90382CC}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
