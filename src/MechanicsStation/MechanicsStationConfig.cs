@@ -62,7 +62,7 @@ namespace MechanicsStation
             tinkerStation.choreType = Db.Get().ChoreTypes.MachineTinker.IdHash;
             tinkerStation.fetchChoreType = Db.Get().ChoreTypes.MachineFetch.IdHash;
             tinkerStation.useFilteredStorage = true;
-            tinkerStation.SetWorkTime(BUILDINGS.WORK_TIME_SECONDS.SHORT_WORK_TIME);
+            tinkerStation.toolProductionTime = BUILDINGS.WORK_TIME_SECONDS.SHORT_WORK_TIME;
             var roomTracker = go.AddOrGet<RoomTracker>();
             roomTracker.requiredRoomType = Db.Get().RoomTypes.MachineShop.Id;
             roomTracker.requirement = RoomTracker.Requirement.Recommended;
@@ -75,7 +75,7 @@ namespace MechanicsStation
                     station.AttributeExperienceMultiplier = DUPLICANTSTATS.ATTRIBUTE_LEVELING.MOST_DAY_EXPERIENCE;
                     station.SkillExperienceSkillGroup = Db.Get().SkillGroups.Technicals.Id;
                     station.SkillExperienceMultiplier = SKILLS.MOST_DAY_EXPERIENCE;
-                    station.SetWorkTime(BUILDINGS.WORK_TIME_SECONDS.SHORT_WORK_TIME);
+                    station.toolProductionTime = BUILDINGS.WORK_TIME_SECONDS.SHORT_WORK_TIME;
                 }
             };
             SymbolOverrideControllerUtil.AddToPrefab(go);

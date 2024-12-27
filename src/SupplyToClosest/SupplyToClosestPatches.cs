@@ -99,6 +99,12 @@ namespace SupplyToClosest
                 var failed = ListPool<Chore.Precondition.Context, ChoreConsumer>.Allocate();
                 do_search_better.Set(true, smi);
                 GlobalChoreProvider_Patch.CollectOnlyFetchChores(GlobalChoreProvider.Instance, consumerState, succeeded, failed);
+                // вызов выше не собирает чоры, которые уже кем то выполняются
+                // todo: возможно, всё же стоит выбрать чоры которые выполняет этот дупель, с целью сравнения
+                /*
+                foreach (var sub_chore in smi.chores)
+                    sub_chore.CollectChoresFromGlobalChoreProvider(consumerState, succeeded, failed, false);
+                */
                 do_search_better.Set(false, smi);
                 succeeded.Sort();
                 Chore.Precondition.Context candidat_context = default;
@@ -254,8 +260,9 @@ namespace SupplyToClosest
                     {
                         var currentChore = areaChore.smi.rootChore;
 #if DEBUG
-                        Debug.LogFormat("{0}\tDriver: {1}", UI.StripLinkFormatting(context.chore.gameObject.name),
-                            UI.StripLinkFormatting(context.chore.driver?.gameObject?.name ?? "null"));
+                        Debug.LogFormat("{0}\tDriver: {1}\toverrideTarget: {2}",
+                            UI.StripLinkFormatting(context.chore.gameObject.name),
+                            context.chore.driver, context.chore.overrideTarget);
                         const string log = "{0}\t{1}\t<==>\t{2}";
                         Debug.LogFormat(log, "priority_class", context.masterPriority.priority_class, currentChore.masterPriority.priority_class);
                         Debug.LogFormat(log, "PersonalPriority", context.personalPriority,

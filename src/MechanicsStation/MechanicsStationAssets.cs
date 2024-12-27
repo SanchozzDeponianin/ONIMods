@@ -23,7 +23,7 @@ namespace MechanicsStation
         public const float MACHINE_TINKER_EFFECT_DURATION_PER_SKILL = 0.05f;
         public const string REQUIRED_ROLE_PERK = "CanMachineTinker";
 
-        private static SkillPerk CanMachineTinker;
+        internal static SkillPerk CanMachineTinker;
         internal static Attribute CraftingSpeed;
         private static AttributeModifier MachinerySpeedModifier;
         private static AttributeModifier CraftingSpeedModifier;

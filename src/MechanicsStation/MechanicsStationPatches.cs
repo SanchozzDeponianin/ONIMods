@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using Database;
 using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
@@ -64,6 +65,19 @@ namespace MechanicsStation
                 prefabID.AddTag(GameTags.IndustrialProduct);
                 prefabID.AddTag(GameTags.MiscPickupable);
                 __result.AddOrGet<EntitySplitter>();
+            }
+        }
+
+        // перк для биониклов
+        [HarmonyPatch]
+        private static class BionicUpgrade_SkilledWorker_Def_Constructor
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID);
+            private static MethodBase TargetMethod() => typeof(BionicUpgrade_SkilledWorker.Def).GetConstructors()[0];
+            private static void Prefix(string upgradeID, ref SkillPerk[] skillPerks)
+            {
+                if (upgradeID == BionicUpgradeComponentConfig.Booster_Op1)
+                    skillPerks = (skillPerks ?? new SkillPerk[0]).Append(CanMachineTinker);
             }
         }
 
