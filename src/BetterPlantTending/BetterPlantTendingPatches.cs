@@ -780,12 +780,18 @@ namespace BetterPlantTending
 
         // чтобы жучинкусы могли достать до растений в декоративных горшках с пола
         // также как они это могут с плантербохом
+        // плюс с проверкой если сторонний мод добавил декоратифные семена в фермерские блоки
         [PLibMethod(RunAt.BeforeDbPostProcess)]
         private static void BeforeDbPostProcess()
         {
             foreach (var go in Assets.GetPrefabsWithComponent<PlantablePlot>())
-                if (go.TryGetComponent(out PlantablePlot plot) && plot.HasDepositTag(GameTags.DecorSeed))
+            {
+                if (go.TryGetComponent(out PlantablePlot plot) && plot.HasDepositTag(GameTags.DecorSeed)
+                    && !go.TryGetComponent(out SimCellOccupier _))
+                {
                     plot.tagOnPlanted = GameTags.PlantedOnFloorVessel;
+                }
+            }
         }
 
         // вопервых исправление неконсистентности поглощения твердых удобрений засохшими растениями после загрузки сейфа
