@@ -333,6 +333,22 @@ namespace MechanicsStation
             }
         }
 
+        // исправляем подсчёт еды в специях, чтобы не считать несъедобные шестерёнки
+        // для предотвращения краша если шестерёнку принесли раньше еды
+        [HarmonyPatch(typeof(SpiceGrinder.StatesInstance), nameof(SpiceGrinder.StatesInstance.AvailableFood), MethodType.Getter)]
+        private static class SpiceGrinder_StatesInstance_AvailableFood
+        {
+            private static bool Prefix(Storage ___foodStorage, ref float __result)
+            {
+                if (___foodStorage != null)
+                    // округление как в Storage.MassStored()
+                    __result = Mathf.RoundToInt(___foodStorage.GetMassAvailable(GameTags.Edible) * 1000f) / 1000f;
+                else
+                    __result = 0f;
+                return false;
+            }
+        }
+
         // древний окаменелостъ. до окончания раскопок никаких шестеренок!
         [HarmonyPatch(typeof(FossilMine), nameof(FossilMine.SetActiveState))]
         private static class FossilMine_SetActiveState
