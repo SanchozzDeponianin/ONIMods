@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
@@ -27,7 +26,7 @@ namespace NoManualDelivery
             if (NoManualDeliveryOptions.Instance.AllowTransferArmPickupGasLiquid)
             {
                 STORAGEFILTERS.SOLID_TRANSFER_ARM_CONVEYABLE = STORAGEFILTERS.SOLID_TRANSFER_ARM_CONVEYABLE
-                    .Concat(STORAGEFILTERS.GASES).Concat(STORAGEFILTERS.LIQUIDS).ToArray();
+                    .Append(STORAGEFILTERS.GASES).Append(STORAGEFILTERS.LIQUIDS);
                 BuildingToMakeAutomatable.AddRange(BuildingToMakeAutomatableWithTransferArmPickupGasLiquid);
             }
 
@@ -35,7 +34,7 @@ namespace NoManualDelivery
             AlwaysCouldBePickedUpByMinionTags = new Tag[] { GameTags.Creatures.Deliverable };
             if (NoManualDeliveryOptions.Instance.AllowAlwaysPickupEdible)
             {
-                AlwaysCouldBePickedUpByMinionTags = AlwaysCouldBePickedUpByMinionTags.Concat(STORAGEFILTERS.FOOD).AddItem(GameTags.MedicalSupplies).ToArray();
+                AlwaysCouldBePickedUpByMinionTags = AlwaysCouldBePickedUpByMinionTags.Append(STORAGEFILTERS.FOOD).Append(GameTags.MedicalSupplies);
             }
         }
 
@@ -75,6 +74,10 @@ namespace NoManualDelivery
             RailGunPayloadOpenerConfig.ID,
             // из ДЛЦ2:
             IceKettleConfig.ID,
+            // из ДЛЦ3:
+            ElectrobankChargerConfig.ID,
+            LargeElectrobankDischargerConfig.ID,
+            SmallElectrobankDischargerConfig.ID,
 
             // из модов:
             // Aquatic Farm https://steamcommunity.com/sharedfiles/filedetails/?id=1910961538
@@ -119,26 +122,22 @@ namespace NoManualDelivery
         };
 
         // добавляем компонент к постройкам
-        [HarmonyPatch(typeof(BuildingConfigManager), nameof(BuildingConfigManager.ConfigurePost))]
-        private static class BuildingConfigManager_ConfigurePost
+        [PLibMethod(RunAt.BeforeDbPostProcess)]
+        private static void BeforeDbPostProcess()
         {
-            [HarmonyPriority(Priority.Low)]
-            private static void Postfix()
+            foreach (var def in Assets.BuildingDefs)
             {
-                foreach (var def in Assets.BuildingDefs)
+                var go = def?.BuildingComplete;
+                if (go != null)
                 {
-                    var go = def?.BuildingComplete;
-                    if (go != null)
+                    if (
+                        BuildingToMakeAutomatable.Contains(def.PrefabID)
+                        || (go.TryGetComponent<ManualDeliveryKG>(out _) && (go.TryGetComponent<ElementConverter>(out _) || go.TryGetComponent<EnergyGenerator>(out _)) && !go.TryGetComponent<ResearchCenter>(out _))
+                        || go.TryGetComponent<ComplexFabricator>(out _)
+                        || go.TryGetComponent<TinkerStation>(out _)
+                        )
                     {
-                        if (
-                            BuildingToMakeAutomatable.Contains(def.PrefabID)
-                            || (go.TryGetComponent<ManualDeliveryKG>(out _) && (go.TryGetComponent<ElementConverter>(out _) || go.TryGetComponent<EnergyGenerator>(out _)) && !go.TryGetComponent<ResearchCenter>(out _))
-                            || go.TryGetComponent<ComplexFabricator>(out _)
-                            || go.TryGetComponent<TinkerStation>(out _)
-                            )
-                        {
-                            go.AddOrGet<Automatable2>();
-                        }
+                        go.AddOrGet<Automatable2>();
                     }
                 }
             }
