@@ -78,7 +78,7 @@ namespace SupplyToClosest
                     return;
                 already_searched.Set(true, smi);
                 var rootChore = smi.rootChore;
-                if (rootChore == null)
+                if (rootChore == null || rootChore.destination == null)
                     return;
                 var consumerState = smi.rootContext.consumerState;
                 if (consumerState == null || consumerState.hasSolidTransferArm || consumerState.consumer.IsWithinReach(rootChore.destination))

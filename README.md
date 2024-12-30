@@ -4,8 +4,9 @@ Steam Workshop: https://steamcommunity.com/profiles/76561198341359629/myworkshop
 Last tested on game version: **646687**
 
 Limited support for so-called beta versions:
-*Public_Testing* - Do not wait for a quick release of fixes if something breaks.
-*Public_Previous_Update* - Previously working mods should theoretically continue to work, but: there are no new mods, no updates, no new features, no fixes.
+
++ *Public_Testing* - Do not wait for a quick release of fixes if something breaks.
++ *Public_Previous_Update* - Previously working mods should theoretically continue to work, but: there are no new mods, no updates, no new features, no fixes.
 
 # Local Downloads
 Steam users: Before trying a local download or reporting an issue, use [PeterHan's Mod Updater](https://steamcommunity.com/sharedfiles/filedetails/?id=2018291283)  to see if the mod is out of date.
@@ -14,7 +15,7 @@ Steam sometimes serves outdated mod versions, and Oxygen Not Included is also av
 
 ![Location where local mods should be installed](Docs/localmods.png)
 
-+ Windows: `%USERPROFILE%\Documents\Klei\OxygenNotIncluded\mods\local` Replace the documents path with the path to your Documents folder if this folder has been redirected.
++ Windows: `%USERPROFILE%\Documents\Klei\OxygenNotIncluded\mods\Local` Replace the documents path with the path to your Documents folder if this folder has been redirected.
 + Mac OS: `/Users/user name/Library/Application Support/unity.Klei.Oxygen Not Included/mods/Local` Replace user name with your user name.
 + Linux: `~/.config/unity3d/Klei/Oxygen Not Included/mods/Local`
 
