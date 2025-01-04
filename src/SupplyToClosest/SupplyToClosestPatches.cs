@@ -185,6 +185,12 @@ namespace SupplyToClosest
         {
             private static MethodBase TargetMethod()
             {
+                // меняем прекондицию для флудо чтобы выполнялась гарантированно после FetchChore.IsFetchTargetAvailable
+                // как оно вообще работает с параметрами по умолчанию ?
+                var flydo_can = FetchChore.CanFetchDroneComplete;
+                flydo_can.sortOrder = 1;
+                flydo_can.canExecuteOnAnyThread = false;
+                Traverse.Create<FetchChore>().Field<Chore.Precondition>(nameof(FetchChore.CanFetchDroneComplete)).Value = flydo_can;
                 return typeof(FetchChore).GetConstructors()[0];
             }
 
@@ -202,6 +208,7 @@ namespace SupplyToClosest
             -2  ChorePreconditions.IsMoreSatisfyingEarly | FindBetterChore_IsMoreSatisfying
             -1  FindBetterChore_IsFetchablePickup
             0   FetchChore.IsFetchTargetAvailable
+            1   FetchChore.CanFetchDroneComplete
             1   FindBetterChore_IsCloseEnough
 
             todo: нужно ли проверять близость здесь ? без проверки дупли смогут относить на новые более приоритетные цели
