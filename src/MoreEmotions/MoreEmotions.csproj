@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>More Emotions</Title>
     <Description>.</Description>
-    <ModVersion>1.3.3</ModVersion>
+    <ModVersion>1.4.0</ModVersion>
     <UsesPLib>true</UsesPLib>
     <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>

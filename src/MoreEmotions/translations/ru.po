@@ -58,6 +58,16 @@ msgctxt "MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_SLEEP_ANIMS.NAME"
 msgid "Alternative variants of sleeping on a Bed animation"
 msgstr "Альтернативные варианты анимации сна на кровати"
 
+#. MoreEmotions.STRINGS.OPTIONS.CONTAMINATED_FOOD_EMOTE.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.CONTAMINATED_FOOD_EMOTE.NAME"
+msgid "Yuck! Microbes!"
+msgstr "Фуу! Микробы!"
+
+#. MoreEmotions.STRINGS.OPTIONS.CONTAMINATED_FOOD_EMOTE.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.OPTIONS.CONTAMINATED_FOOD_EMOTE.TOOLTIP"
+msgid "The emotion when a Duplicant eating contaminated Food"
+msgstr "Эмоция, когда дупликант съел заражённую пищу"
+
 #. MoreEmotions.STRINGS.OPTIONS.DOUBLE_GREETING.NAME
 msgctxt "MoreEmotions.STRINGS.OPTIONS.DOUBLE_GREETING.NAME"
 msgid "Two \"Dual\" greetings with fists and hands"

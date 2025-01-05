@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Klei.AI;
+using TUNING;
 using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
@@ -583,6 +584,48 @@ namespace MoreEmotions
                     .SetEmote(MoreMinionEmotes.Instance.MoonWalk).SetThought(Db.Get().Thoughts.Chatty)
                     .RegisterEmoteStepCallbacks("floor_floor_moonwalk_1_0_pre", __instance.BeginReacting, null);
                 return false;
+            }
+        }
+
+        // возвращаем анимацию заражённой еды
+        // но прикрутим её также к другим возможным источникам - типа коффее
+        private static GermExposureMonitor.State react_contaminated_food;
+
+        [HarmonyPatch(typeof(GermExposureMonitor), nameof(GermExposureMonitor.InitializeStates))]
+        private static class GermExposureMonitor_InitializeStates
+        {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.contaminated_food_emote;
+            private static void Postfix(GermExposureMonitor __instance)
+            {
+                react_contaminated_food = __instance.CreateState(nameof(react_contaminated_food), __instance.root);
+                react_contaminated_food.ToggleChore(CreateEmoteChore, __instance.root);
+            }
+
+            private static Chore CreateEmoteChore(GermExposureMonitor.Instance smi)
+            {
+                return new EmoteChore(smi.master, Db.Get().ChoreTypes.EmoteHighPriority, Db.Get().Emotes.Minion.FoodPoisoning,
+                    KAnim.PlayMode.Once, flip_x: smi.GetComponent<Facing>().GetFacing());
+            }
+        }
+
+        [HarmonyPatch(typeof(GermExposureMonitor.Instance), nameof(GermExposureMonitor.Instance.InjectDisease))]
+        private static class GermExposureMonitor_Instance_InjectDisease
+        {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.contaminated_food_emote;
+            private static void Postfix(GermExposureMonitor.Instance __instance, Disease disease, int count, Sickness.InfectionVector vector)
+            {
+                if (vector == Sickness.InfectionVector.Digestion && __instance.IsInsideState(__instance.sm.root))
+                {
+                    foreach (var exposureType in GERM_EXPOSURE.TYPES)
+                    {
+                        if (disease.id == exposureType.germ_id && count > exposureType.exposure_threshold
+                            && __instance.IsExposureValidForTraits(exposureType))
+                        {
+                            __instance.GoTo(react_contaminated_food);
+                            break;
+                        }
+                    }
+                }
             }
         }
     }

@@ -74,6 +74,11 @@ namespace MoreEmotions
                 public static LocString NAME = "Enable debuff";
                 public static LocString TOOLTIP = "";
             }
+            public class CONTAMINATED_FOOD_EMOTE
+            {
+                public static LocString NAME = "Yuck! Microbes!";
+                public static LocString TOOLTIP = "The emotion when a Duplicant eating contaminated Food";
+            }
             public class STARVATION_EMOTE
             {
                 public static LocString NAME = "Very hungry emotion";

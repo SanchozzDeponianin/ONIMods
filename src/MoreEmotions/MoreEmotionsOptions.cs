@@ -43,6 +43,10 @@ namespace MoreEmotions
 
         [JsonProperty]
         [Option]
+        public bool contaminated_food_emote { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
         public bool starvation_emote { get; set; } = true;
 
         [JsonProperty]
