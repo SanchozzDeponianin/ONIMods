@@ -95,6 +95,12 @@ namespace SupplyToClosest
                 cashed_path_cost.Set(root_cost, smi);
                 GlobalChoreProvider_Patch.UpdateFetchesWithoutClearables(GlobalChoreProvider.Instance, consumerState.navigator.PathProber);
                 consumerState.Refresh();
+                // поскольку выбранный для переноса кусок уже имеет резервацию (как минимум этим же дупликом)
+                // если этот кусок достаточно мал, то его UnreservedAmount == 0ф
+                // и FetchManager.IsFetchablePickup будет кидать False
+                // перед поиском отменим резервацию
+                var reservation = smi.reservations[0];
+                reservation.Cleanup();
                 var succeeded = ListPool<Chore.Precondition.Context, ChoreConsumer>.Allocate();
                 var failed = ListPool<Chore.Precondition.Context, ChoreConsumer>.Allocate();
                 do_search_better.Set(true, smi);
@@ -177,6 +183,12 @@ namespace SupplyToClosest
                         already_searched.Set(true, new_chore.smi);
                     consumerState.choreDriver.SetChore(candidat_context);
                 }
+                else
+                {
+                    // нафсякий вернём резервацию как было
+                    reservation.handle = reservation.pickupable.Reserve(nameof(FetchAreaChore), consumerState.gameObject, reservation.amount);
+                    smi.reservations[0] = reservation;
+                }
             }
         }
 
@@ -228,6 +240,7 @@ namespace SupplyToClosest
                         && do_search_better.Get(areaChore.smi))
                     {
                         context.isAttemptingOverride = true;
+                        context.choreTypeForPermission = areaChore.smi.rootContext.choreTypeForPermission;
                     }
                     return true;
                 }
