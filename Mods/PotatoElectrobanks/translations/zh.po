@@ -6,7 +6,7 @@ msgstr ""
 #. PotatoElectrobanks.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.ELECTROBANK_POTATO.DESC
 msgctxt "PotatoElectrobanks.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.ELECTROBANK_POTATO.DESC"
 msgid "A disposable <link=\"ELECTROBANK\">Bio Power Bank</link> made with {0}.\n\nDuplicants can produce new <link=\"ELECTROBANK\">Bio Power Banks</link> at the <link=\"CRAFTINGTABLE\">Crafting Station</link>.\n\nMust be kept dry."
-msgstr "用{0}制成的一次性<link=\"ELECTROBANK\">生物移动电源</link>。\n\n复制人可以在<link=\"CRAFTINGTABLE\">工作台</link>生物发电库</link>。\n\n必须保持干燥。"
+msgstr "一种由{0}制成的一次性<link=\"ELECTROBANK\">生物移动电源</link>。\n\n复制人可以在<link=\"CRAFTINGTABLE\">工作台</link>生产新的<link=\"ELECTROBANK\">生物移动电源</link>。\n\n必须保持干燥。"
 
 #. PotatoElectrobanks.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.ELECTROBANK_POTATO.NAME
 msgctxt "PotatoElectrobanks.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.ELECTROBANK_POTATO.NAME"
