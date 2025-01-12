@@ -11,7 +11,8 @@ namespace ControlYourRobots
 
             public void CreateFx()
             {
-                fx = FXHelpers.CreateEffect("sleep_zzz_fx_kanim", gameObject.transform.GetPosition() + new Vector3(0f, 0f, -0.1f), gameObject.transform, true, Grid.SceneLayer.FXFront, false);
+                float offsety = this.PrefabID() == FetchDroneConfig.ID ? -0.75f : 0f;
+                fx = FXHelpers.CreateEffect("sleep_zzz_fx_kanim", gameObject.transform.GetPosition() + new Vector3(0f, offsety, -0.1f), gameObject.transform, true, Grid.SceneLayer.FXFront, false);
                 fx.Play("working_loop", KAnim.PlayMode.Loop);
             }
 

@@ -39,22 +39,28 @@ namespace ControlYourRobots
 
         private void CleanupLimbo(object _)
         {
-            // не надо для летунов (самоликвидировать созданное лишнее если юзер запускал предыдущюю версию мода)
-            // todo: убрать, когда мб будем добавлять контроль дверей для летунов
-            if (PrefabID != FetchDroneConfig.ID)
-            {
+            handle.ClearScheduler();
+            // самоликвидировать созданное лишнее если юзер запускал предыдущюю версию мода
+            // или отключил контроль дверей для летунов
             // остаться должен только один (с)
             foreach (var item in Cmps.Items)
+            {
                 if (item == this)
+                {
+                    if (PrefabID == FetchDroneConfig.ID)
+                    {
+                        if (!ControlYourRobotsOptions.Instance.flydo_can_pass_door)
+                            break;
+                        if (ControlYourRobotsOptions.Instance.restrict_flydo_by_default)
+                            Game.Instance.Trigger(FlydoPatches.FirstFludoWasAppeared, this);
+                    }
                     return;
+                }
             }
             Util.KDestroyGameObject(gameObject);
         }
 
-        protected override void OnCleanUp()
-        {
-            handle.ClearScheduler();
-        }
+        protected override void OnCleanUp() { }
 
         private void OnQueueDestroyObject(object data)
         {

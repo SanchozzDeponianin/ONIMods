@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Control your Robots</Title>
     <Description>.</Description>
-    <ModVersion>1.4.5</ModVersion>
+    <ModVersion>1.5.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -32,6 +32,8 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="Door1x1TransitionLayer.cs" />
+    <Compile Include="FlydoPatches.cs" />
     <Compile Include="RobotPersonalPriorityProxy.cs" />
     <Compile Include="RobotIdentity.cs" />
     <Compile Include="RobotAssignablesProxy.cs" />

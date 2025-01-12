@@ -3,6 +3,11 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_PASS_DOOR.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_PASS_DOOR.NAME"
+msgid "Flydo can pass through Doors"
+msgstr "Флудо может проходить через двери"
+
 #. ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_ENABLE.NAME
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_ENABLE.NAME"
 msgid "Enable energy saving mode when idling"
@@ -17,6 +22,21 @@ msgstr "Когда робот при бездействии просто сто�
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_VALUE.NAME"
 msgid "Battery consumption rate in energy saving mode, % of nominal value"
 msgstr "Скорость расхода батареи в режиме энергосбережения, % от номинала"
+
+#. ControlYourRobots.STRINGS.OPTIONS.RESTRICT_FLYDO_BY_DEFAULT.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.RESTRICT_FLYDO_BY_DEFAULT.NAME"
+msgid "Prohibit Flydo's access to Doors by default"
+msgstr "Запретить доступ Flydo к дверям по умолчанию"
+
+#. ControlYourRobots.STRINGS.OPTIONS.RESTRICT_FLYDO_BY_DEFAULT.TOOLTIP
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.RESTRICT_FLYDO_BY_DEFAULT.TOOLTIP"
+msgid "If enabled, the mod will automatically deny Flydo access\non all non-configured Doors for performance reasons."
+msgstr "Если включено, мод автоматически запретит доступ Flydo\nко всем ненастроенным дверям по соображениям производительности."
+
+#. ControlYourRobots.STRINGS.OPTIONS.ZZZ_ICON_ENABLE.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.ZZZ_ICON_ENABLE.NAME"
+msgid "Enable ZZZ status icon when sleeping"
+msgstr "Включить ZZZ-иконку статуса в спящем режиме"
 
 #. ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.NAME
 msgctxt "ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.NAME"

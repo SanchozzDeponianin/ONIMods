@@ -36,7 +36,7 @@ namespace ControlYourRobots
         }
 
         public static Tag RobotSuspend = TagManager.Create(nameof(RobotSuspend));
-        private static Dictionary<Tag, AttributeModifier> SuspendedBatteryModifiers = new Dictionary<Tag, AttributeModifier>();
+        public static Dictionary<Tag, AttributeModifier> SuspendedBatteryModifiers = new Dictionary<Tag, AttributeModifier>();
         private static Dictionary<Tag, AttributeModifier> IdleBatteryModifiers = new Dictionary<Tag, AttributeModifier>();
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -85,11 +85,20 @@ namespace ControlYourRobots
                     effects.Remove(effect);
             }
 
+            // анимация до/после переноса
+            private static void PlayAnim(GameObject go)
+            {
+                if (go.TryGetComponent(out KBatchedAnimController kbac))
+                    kbac.Play("in_storage", KAnim.PlayMode.Once);
+            }
+
             private static void Postfix(GameObject inst)
             {
                 var movable = inst.AddOrGet<Movable>();
                 movable.tagRequiredForMove = GameTags.Creatures.Deliverable;
                 movable.onPickupComplete += FixEffect;
+                movable.onPickupComplete += PlayAnim;
+                movable.onDeliveryComplete += PlayAnim;
             }
         }
 
@@ -103,7 +112,7 @@ namespace ControlYourRobots
             }
         }
 
-        // иди туды и вкл выкл
+        // вкл выкл
         [HarmonyPatch(typeof(RobotAi), nameof(RobotAi.InitializeStates))]
         private static class RobotAi_InitializeStates
         {
@@ -113,6 +122,30 @@ namespace ControlYourRobots
                 public RobotAi.State satisfied;
                 public RobotAi.State moved;
 #pragma warning restore CS0649
+            }
+
+            private static Func<RobotAi.Instance, StateMachine.Instance>[] SuspendedRoversStateMachines;
+            private static Func<RobotAi.Instance, StateMachine.Instance>[] SuspendedFlydosStateMachines;
+            private static StatusItem RobotSleeping;
+
+            static RobotAi_InitializeStates()
+            {
+                var fx = new Func<RobotAi.Instance, StateMachine.Instance>[] {
+                    (RobotAi.Instance smi) => new RobotSleepFX.Instance(smi.master)
+                };
+                var fall = new Func<RobotAi.Instance, StateMachine.Instance>[] {
+                    (RobotAi.Instance smi) => new FallWhenDeadMonitor.Instance(smi.master)
+                };
+                SuspendedFlydosStateMachines = fx;
+                SuspendedRoversStateMachines = fx.Append(fall);
+                RobotSleeping = new StatusItem(nameof(RobotSleeping), NAME, TOOLTIP, "status_item_exhausted",
+                    StatusItem.IconType.Custom, NotificationType.Neutral, false, default(HashedString),
+                    showWorldIcon: ControlYourRobotsOptions.Instance.zzz_icon_enable);
+            }
+
+            private static Func<RobotAi.Instance, StateMachine.Instance>[] GetSuspendedStateMachines(RobotAi.Instance smi)
+            {
+                return smi.PrefabID() == FetchDroneConfig.ID ? SuspendedFlydosStateMachines : SuspendedRoversStateMachines;
             }
 
             private static void Postfix(RobotAi __instance)
@@ -127,7 +160,7 @@ namespace ControlYourRobots
                     .TagTransition(RobotSuspend, __instance.alive.normal, true)
                     .DefaultState(suspended.satisfied)
                     .ToggleTag(GameTags.Creatures.Deliverable)
-                    .ToggleStatusItem(NAME, TOOLTIP)
+                    .ToggleStatusItem(RobotSleeping)
                     .ToggleAttributeModifier("save battery",
                         smi => SuspendedBatteryModifiers[smi.PrefabID()],
                         smi => SuspendedBatteryModifiers.ContainsKey(smi.PrefabID()))
@@ -138,6 +171,7 @@ namespace ControlYourRobots
                         smi.GetComponent<Storage>().DropAll();
                         smi.RefreshUserMenu();
                     })
+                    .PlayAnim("in_storage")
                     .ScheduleActionNextFrame("Clean StatusItem", CleanStatusItem)
                     .Exit(smi =>
                     {
@@ -146,10 +180,8 @@ namespace ControlYourRobots
                     });
 
                 suspended.satisfied
-                    .PlayAnim("in_storage")
                     .TagTransition(GameTags.Stored, suspended.moved, false)
-                    .ToggleStateMachine(smi => new RobotSleepFX.Instance(smi.master))
-                    .ToggleStateMachine(smi => new FallWhenDeadMonitor.Instance(smi.master))
+                    .ToggleStateMachineList(GetSuspendedStateMachines)
                     .Enter(smi =>
                     {
                         // принудительно "роняем" робота чтобы он не зависал в воздухе после перемещения
@@ -159,7 +191,6 @@ namespace ControlYourRobots
                     });
 
                 suspended.moved
-                    .PlayAnim("in_storage")
                     .TagTransition(GameTags.Stored, suspended.satisfied, true);
 
                 __instance.dead
@@ -215,7 +246,7 @@ namespace ControlYourRobots
             private static void Postfix(CreatureBrain __instance)
             {
                 if (__instance.HasAllTags(Robot_AI_Tags) && __instance.TryGetComponent<Navigator>(out var navigator)
-                    && navigator.NavGridName == "RobotNavGrid") // не для летуна
+                    && (navigator.NavGridName == "RobotNavGrid" || navigator.NavGridName == FlydoPatches.FlydoGrid))
                     navigator.SetAbilities(new RobotPathFinderAbilities(navigator));
             }
         }
