@@ -1,11 +1,18 @@
-﻿using TUNING;
+﻿using Klei.AI;
+using TUNING;
+using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.PatchManager;
-using UnityEngine;
 
 namespace PotatoElectrobanks
 {
+    using BionicModifierParameter = StateMachinesExtensions.NonSerializedObjectParameter
+        <BionicBatteryMonitor, BionicBatteryMonitor.Instance, IStateMachineTarget, BionicBatteryMonitor.Def, AttributeModifier>;
+
+    using FlydoModifierParameter = StateMachinesExtensions.NonSerializedObjectParameter
+        <RobotElectroBankMonitor, RobotElectroBankMonitor.Instance, IStateMachineTarget, RobotElectroBankMonitor.Def, AttributeModifier>;
+
     internal sealed class PotatoElectrobanksPatches : KMod.UserMod2
     {
         public static readonly Tag PotatoPortableBattery = TagManager.Create(nameof(PotatoPortableBattery));
@@ -124,6 +131,97 @@ namespace PotatoElectrobanks
                     && electrobank.TryGetComponent(out PotatoElectrobank potato) && potato.garbage.IsValid)
                 {
                     electrobank = Assets.GetPrefab(potato.garbage);
+                }
+            }
+        }
+
+        // также в основном для красоты
+        // отображаемая максимальная величина заряда биониклов и флудов
+        // гвоздями прибита к величине кратной 120 кДж
+        // внесем коррективы в зависимости от установленной батарейки
+        // чтобы не отображалось как "380 кДж / 120 кДж"
+        private static BionicModifierParameter bionic_battery_max_capacity_fix;
+
+        [HarmonyPatch(typeof(BionicBatteryMonitor), nameof(BionicBatteryMonitor.InitializeStates))]
+        private static class BionicBatteryMonitor_InitializeStates
+        {
+            private static void Postfix(BionicBatteryMonitor __instance)
+            {
+                bionic_battery_max_capacity_fix = __instance.AddParameter(nameof(bionic_battery_max_capacity_fix),
+                    new BionicModifierParameter());
+            }
+        }
+
+        [HarmonyPatch(typeof(BionicBatteryMonitor.Instance), nameof(BionicBatteryMonitor.Instance.UpdateCapacityAmount))]
+        private static class BionicBatteryMonitor_Instance_UpdateCapacityAmount
+        {
+            private static void Postfix(BionicBatteryMonitor.Instance __instance)
+            {
+                // оригинальный код стирает все модификаторы, так что просто создадим новый
+                var modifier = new AttributeModifier(Db.Get().Amounts.BionicInternalBattery.maxAttribute.Id, 0f, "fix", false, false, false);
+                bionic_battery_max_capacity_fix.Set(modifier, __instance);
+                __instance.BionicBattery.maxAttribute.Add(modifier);
+            }
+        }
+
+        [HarmonyPatch(typeof(BionicBatteryMonitor.Instance), nameof(BionicBatteryMonitor.Instance.RefreshCharge))]
+        private static class BionicBatteryMonitor_Instance_RefreshCharge
+        {
+            private static void Prefix(BionicBatteryMonitor.Instance __instance)
+            {
+                var modifier = bionic_battery_max_capacity_fix.Get(__instance);
+                if (modifier != null)
+                {
+                    float delta = 0f;
+                    for (int i = 0; i < __instance.storage.Count; i++)
+                    {
+                        var go = __instance.storage.items[i];
+                        if (go != null && go.TryGetComponent(out PotatoElectrobank potato))
+                            delta += potato.maxCapacity - Electrobank.capacity;
+                    }
+                    modifier.SetValue(delta);
+                }
+            }
+        }
+
+        // тожесамое для флудо
+        private static FlydoModifierParameter robot_battery_max_capacity_fix;
+
+        [HarmonyPatch(typeof(RobotElectroBankMonitor), nameof(RobotElectroBankMonitor.InitializeStates))]
+        private static class RobotElectroBankMonitor_InitializeStates
+        {
+            private static void Postfix(RobotElectroBankMonitor __instance)
+            {
+                robot_battery_max_capacity_fix = __instance.AddParameter(nameof(robot_battery_max_capacity_fix),
+                    new FlydoModifierParameter());
+            }
+        }
+
+        [HarmonyPatch(typeof(RobotElectroBankMonitor.Instance), nameof(RobotElectroBankMonitor.Instance.ElectroBankStorageChange))]
+        private static class RobotElectroBankMonitor_Instance_ElectroBankStorageChange
+        {
+            private static void Prefix(RobotElectroBankMonitor.Instance __instance, ref Electrobank __state)
+            {
+                __state = __instance.electrobank;
+                if (robot_battery_max_capacity_fix.Get(__instance) == null)
+                {
+                    var modifier = new AttributeModifier(Db.Get().Amounts.InternalElectroBank.maxAttribute.Id, 0f, "fix", false, false, false);
+                    robot_battery_max_capacity_fix.Set(modifier, __instance);
+                    __instance.bankAmount.maxAttribute.Add(modifier);
+                }
+            }
+            private static void Postfix(RobotElectroBankMonitor.Instance __instance, Electrobank __state)
+            {
+                if (__state != __instance.electrobank)
+                {
+                    var modifier = robot_battery_max_capacity_fix.Get(__instance);
+                    if (modifier != null)
+                    {
+                        if (__instance.electrobank != null && __instance.electrobank is PotatoElectrobank potato)
+                            modifier.SetValue(potato.maxCapacity - Electrobank.capacity);
+                        else
+                            modifier.SetValue(0f);
+                    }
                 }
             }
         }

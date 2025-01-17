@@ -42,7 +42,7 @@ namespace PotatoElectrobanks
             итого 120 кг спирта в цикл
             или 90 кг сахара
             */
-            list.Add(CreateElectrobank(ID_Sucrose, "Sucrose", 20f,
+            list.Add(CreateElectrobank(ID_Sucrose, "Sucrose", 40f,
                 "electrobank_sucrose_kanim", DlcManager.DLC3));
             // светляк
             list.Add(CreateElectrobank(ID_Shinebug_Egg, LightBugConfig.EGG_ID, 5f,
