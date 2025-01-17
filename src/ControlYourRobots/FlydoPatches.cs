@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using Klei.AI;
@@ -21,7 +20,7 @@ namespace ControlYourRobots
         public const string FlydoGrid = "FludooGrid1x1";
 
         [HarmonyPatch(typeof(GameNavGrids), MethodType.Constructor)]
-        [HarmonyPatch(new Type[] { typeof(Pathfinding) })]
+        [HarmonyPatch(new System.Type[] { typeof(Pathfinding) })]
         private static class GameNavGrids_Constructor
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
@@ -216,6 +215,48 @@ namespace ControlYourRobots
             {
                 __instance.powered.EventHandlerTransition(GameHashes.TagsChanged, __instance.powerdown.pre, OnTagsGotoSleep);
                 __instance.powerdown.dead.EventHandlerTransition(GameHashes.TagsChanged, __instance.powerup.grounded, OnTagsGotoWakeUp);
+            }
+        }
+
+        [HarmonyPatch]
+        private static class FetchChore_CanFetchDroneComplete
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
+                && ControlYourRobotsOptions.Instance.flydo_can_for_itself;
+
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                var list = new List<MethodBase>();
+                var method = FetchChore.CanFetchDroneComplete.fn.Method;
+                if (method != null)
+                    list.Add(method);
+                return list;
+            }
+            /*
+                if (blablabla
+            ---     && !(kmonoBehaviour.gameObject == context.consumerState.gameObject)
+                    && blablabla)
+            */
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var gameObject = typeof(ChoreConsumerState).GetFieldSafe(nameof(ChoreConsumerState.gameObject), false);
+                var op_Equality = typeof(Object).GetMethodSafe("op_Equality", true, typeof(Object), typeof(Object));
+                if (gameObject != null && op_Equality != null)
+                {
+                    int i = instructions.FindIndex(inst => inst.LoadsField(gameObject));
+                    if (i != -1 && instructions[++i].Calls(op_Equality))
+                    {
+                        instructions.Insert(++i, new CodeInstruction(OpCodes.Pop));
+                        instructions.Insert(++i, new CodeInstruction(OpCodes.Ldc_I4_0));
+                        return true;
+                    }
+                }
+                return false;
             }
         }
     }

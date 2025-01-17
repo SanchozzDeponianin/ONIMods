@@ -22,17 +22,9 @@ namespace ControlYourRobots
         public override void OnLoad(Harmony harmony)
         {
             if (Utils.LogModVersion()) return;
-            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(ControlYourRobotsPatches));
             new POptions().RegisterOptions(this, typeof(ControlYourRobotsOptions));
             ControlYourRobotsOptions.Reload();
-        }
-
-        public override void OnAllModsLoaded(Harmony harmony, IReadOnlyList<KMod.Mod> mods)
-        {
-            if (PPatchTools.GetTypeSafe("MassMoveTo.ModAssets") != null)
-                harmony.Patch(typeof(Movable).GetMethodSafe(nameof(Movable.MoveToLocation), false, typeof(int)),
-                    prefix: new HarmonyMethod(typeof(Movable_MoveToLocation_Kompot), nameof(Movable_MoveToLocation_Kompot.Prefix)));
         }
 
         public static Tag RobotSuspend = TagManager.Create(nameof(RobotSuspend));
@@ -40,9 +32,13 @@ namespace ControlYourRobots
         private static Dictionary<Tag, AttributeModifier> IdleBatteryModifiers = new Dictionary<Tag, AttributeModifier>();
 
         [PLibMethod(RunAt.BeforeDbInit)]
-        private static void BeforeDbInit()
+        private static void BeforeDbInit(Harmony harmony)
         {
             Utils.InitLocalization(typeof(STRINGS));
+            harmony.PatchAll();
+            if (PPatchTools.GetTypeSafe("MassMoveTo.ModAssets") != null)
+                harmony.Patch(typeof(Movable).GetMethodSafe(nameof(Movable.MoveToLocation), false, typeof(int)),
+                    prefix: new HarmonyMethod(typeof(Movable_MoveToLocation_Kompot), nameof(Movable_MoveToLocation_Kompot.Prefix)));
         }
 
         [HarmonyPatch(typeof(BaseRoverConfig), nameof(BaseRoverConfig.BaseRover))]

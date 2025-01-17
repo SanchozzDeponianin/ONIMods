@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Control your Robots</Title>
     <Description>.</Description>
-    <ModVersion>1.5.0</ModVersion>
+    <ModVersion>1.5.1</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

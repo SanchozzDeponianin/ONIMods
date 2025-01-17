@@ -31,5 +31,10 @@ namespace ControlYourRobots
         [Option]
         [RequireDLC(DlcManager.DLC3_ID)]
         public bool restrict_flydo_by_default { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        [RequireDLC(DlcManager.DLC3_ID)]
+        public bool flydo_can_for_itself { get; set; } = true;
     }
 }

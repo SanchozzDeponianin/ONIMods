@@ -3,6 +3,11 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_FOR_ITSELF.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_FOR_ITSELF.NAME"
+msgid "Flydo can pick up the Power Bank for itself"
+msgstr ""
+
 #. ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_PASS_DOOR.NAME
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_PASS_DOOR.NAME"
 msgid "Flydo can pass through Doors"
