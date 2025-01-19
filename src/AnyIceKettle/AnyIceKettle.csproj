@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Any Ice Liquefier</Title>
     <Description>.</Description>
-    <ModVersion>1.0.0</ModVersion>
+    <ModVersion>1.1.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -20,6 +20,9 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\lib\BaseOptions.cs">
+      <Link>BaseOptions.cs</Link>
+    </Compile>
     <Compile Include="..\lib\TranspilerUtils.cs">
       <Link>TranspilerUtils.cs</Link>
     </Compile>
@@ -28,6 +31,8 @@
     </Compile>
     <Compile Include="AnyIceKettlePatches.cs" />
     <Compile Include="AnyIceKettle.cs" />
+    <Compile Include="AnyIceKettleOptions.cs" />
+    <Compile Include="STRINGS.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

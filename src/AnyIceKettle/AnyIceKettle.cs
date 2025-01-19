@@ -45,9 +45,15 @@ namespace AnyIceKettle
         {
             if (IceOres == null)
             {
-                IceOres = Assets.GetPrefabsWithTag(GameTags.IceOre)
-                    .Select(go => ElementLoader.FindElementByTag(go.PrefabID()))
-                    .Where(element => element != null).ToArray();
+                var ores = ElementLoader.FindElements(element => element.IsSolid && element.HasTag(GameTags.IceOre));
+                if (AnyIceKettleOptions.Instance.melt_resin)
+                    ores.Add(ElementLoader.FindElementByHash(SimHashes.SolidResin));
+                if (AnyIceKettleOptions.Instance.melt_gunk)
+                    ores.Add(ElementLoader.FindElementByHash(SimHashes.Gunk));
+                if (AnyIceKettleOptions.Instance.melt_phytooil)
+                    ores.Add(ElementLoader.FindElementByHash(SimHashes.FrozenPhytoOil));
+                ores.RemoveAll(element => element == null);
+                IceOres = ores.ToArray();
             }
             base.OnPrefabInit();
             chosenIce = IceKettleConfig.TARGET_ELEMENT_TAG;
@@ -68,7 +74,11 @@ namespace AnyIceKettle
                     ice_mdkg = mdkg;
             }
             ice_mdkg.RequestedItemTag = chosenIce;
-            ElementToMelt.Set(kettle, ElementLoader.GetElement(chosenIce));
+            var ice = ElementLoader.GetElement(chosenIce);
+            ElementToMelt.Set(kettle, ice);
+            // если юзер отключил настройки
+            if (!IceOres.Contains(ice))
+                SetChosenIce(IceKettleConfig.TARGET_ELEMENT_TAG);
         }
 
         private void OnCopySettings(object data)

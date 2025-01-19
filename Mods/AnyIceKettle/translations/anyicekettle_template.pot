@@ -1,0 +1,10 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. AnyIceKettle.STRINGS.OPTIONS.LABEL.NAME
+msgctxt "AnyIceKettle.STRINGS.OPTIONS.LABEL.NAME"
+msgid "Allow melting of some non-Ice stuff"
+msgstr ""
+

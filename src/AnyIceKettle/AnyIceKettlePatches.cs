@@ -8,6 +8,7 @@ using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
+using PeterHan.PLib.Options;
 
 namespace AnyIceKettle
 {
@@ -18,6 +19,15 @@ namespace AnyIceKettle
             if (Utils.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(AnyIceKettlePatches));
+            if (DlcManager.IsContentSubscribed(DlcManager.EXPANSION1_ID) || DlcManager.IsContentSubscribed(DlcManager.DLC3_ID))
+                new POptions().RegisterOptions(this, typeof(AnyIceKettleOptions));
+            AnyIceKettleOptions.Reload();
+        }
+
+        [PLibMethod(RunAt.BeforeDbInit)]
+        private static void BeforeDbInit()
+        {
+            Utils.InitLocalization(typeof(STRINGS));
         }
 
         // заменяем тоолтип
