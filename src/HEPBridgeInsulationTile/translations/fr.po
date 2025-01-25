@@ -3,15 +3,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Ventulus\n"
+"Last-Translator: Pholith\n"
 "Language-Team: \n"
-"Language: zh_CN\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
 "Application: Oxygen Not IncludedPOT Version: 2.0\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.5\n"
 
 #. HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.DESC
 #| msgid ""
@@ -19,7 +18,7 @@ msgctxt ""
 "HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS."
 "HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.DESC"
 msgid ""
-msgstr "允许辐射粒子穿墙而过。"
+msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.EFFECT
 #| msgid ""
@@ -28,8 +27,6 @@ msgctxt ""
 "HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.EFFECT"
 msgid ""
 msgstr ""
-"接收来自<link=\"HIGHENERGYPARTICLESPAWNER\">辐射粒子发生器</link>的<link="
-"\"RADIATION\">辐射粒子</link>并使其穿墙而过。其他材料和元素会被挡住。"
 
 #. HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.NAME
 msgctxt ""
@@ -39,31 +36,32 @@ msgid ""
 "<link=\"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR\">Insulated "
 "{HEPBRIDGETILE_NAME}</link>"
 msgstr ""
-"<link=\"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR\">绝热{HEPBRIDGETILE_NAME}</"
-"link>"
+"<link=\"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR\">{HEPBRIDGETILE_NAME} "
+"Isolée</link>"
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.ADVANCEDNUCLEARRESEARCH.NAME
 #| msgid ""
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.ADVANCEDNUCLEARRESEARCH.NAME"
 msgid ""
-msgstr "进阶材料科学研究"
+msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.NUCLEARREFINEMENT.NAME
 #| msgid ""
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.NUCLEARREFINEMENT.NAME"
 msgid ""
-msgstr "辐射精炼"
+msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.NUCLEARSTORAGE.NAME
 #| msgid ""
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.NUCLEARSTORAGE.NAME"
 msgid ""
-msgstr "放射性污染物"
+msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.NAME
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.NAME"
 msgid "<style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style> require Research"
-msgstr "<style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style>需要研究"
+msgstr ""
+"Recherche requise pour <style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style>"
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.TOOLTIP
 #| msgid ""
@@ -75,7 +73,9 @@ msgstr ""
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.NAME"
 msgid ""
 "<style=\"KKeyword\">Insulated {HEPBRIDGETILE_NAME}</style> require Research"
-msgstr "<style=\"KKeyword\">绝热{HEPBRIDGETILE_NAME}</style>需要研究"
+msgstr ""
+"Recherche requise pour <style=\"KKeyword\">{HEPBRIDGETILE_NAME} Isolée</"
+"style>"
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.TOOLTIP
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.TOOLTIP"
@@ -85,12 +85,12 @@ msgid ""
 "will require Research equal to or higher \n"
 "than <style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style>."
 msgstr ""
-"选项的用户界面是不完善的。\n"
-"游戏中，<style=\"KKeyword\">绝热{HEPBRIDGETILE_NAME}</style> \n"
-"需要的研究条件等于或高于\n"
+"L'interface des options est imparfaite.\n"
+"En jeu, <style=\"KKeyword\">{HEPBRIDGETILE_NAME} Isolée</style>\n"
+"nécessitera une recherche égale ou supérieure à \n"
 "<style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style>."
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.USE_OLD_ANIM.NAME
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.USE_OLD_ANIM.NAME"
 msgid "Use animation from early version of the mod"
-msgstr "使用早期MOD版本的的动画"
+msgstr "Utilise l'animation de la version alpha du mod"

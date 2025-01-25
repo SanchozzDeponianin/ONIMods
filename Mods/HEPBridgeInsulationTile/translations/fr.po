@@ -1,34 +1,58 @@
 msgid ""
 msgstr ""
-"Application: Oxygen Not Included"
-"POT Version: 2.0"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Pholith\n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Application: Oxygen Not IncludedPOT Version: 2.0\n"
+"X-Generator: Poedit 3.5\n"
 
 #. HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.DESC
-msgctxt "HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.DESC"
+#| msgid ""
+msgctxt ""
+"HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS."
+"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.DESC"
 msgid ""
 msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.EFFECT
-msgctxt "HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.EFFECT"
+#| msgid ""
+msgctxt ""
+"HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS."
+"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.EFFECT"
 msgid ""
 msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.NAME
-msgctxt "HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.NAME"
-msgid "<link=\"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR\">Insulated {HEPBRIDGETILE_NAME}</link>"
+msgctxt ""
+"HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS."
+"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.NAME"
+msgid ""
+"<link=\"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR\">Insulated "
+"{HEPBRIDGETILE_NAME}</link>"
 msgstr ""
+"<link=\"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR\">{HEPBRIDGETILE_NAME} "
+"Isolée</link>"
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.ADVANCEDNUCLEARRESEARCH.NAME
+#| msgid ""
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.ADVANCEDNUCLEARRESEARCH.NAME"
 msgid ""
 msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.NUCLEARREFINEMENT.NAME
+#| msgid ""
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.NUCLEARREFINEMENT.NAME"
 msgid ""
 msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.NUCLEARSTORAGE.NAME
+#| msgid ""
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.NUCLEARSTORAGE.NAME"
 msgid ""
 msgstr ""
@@ -37,23 +61,36 @@ msgstr ""
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.NAME"
 msgid "<style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style> require Research"
 msgstr ""
+"Recherche requise pour <style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style>"
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.TOOLTIP
+#| msgid ""
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.TOOLTIP"
 msgid ""
 msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.NAME
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.NAME"
-msgid "<style=\"KKeyword\">Insulated {HEPBRIDGETILE_NAME}</style> require Research"
+msgid ""
+"<style=\"KKeyword\">Insulated {HEPBRIDGETILE_NAME}</style> require Research"
 msgstr ""
+"Recherche requise pour <style=\"KKeyword\">{HEPBRIDGETILE_NAME} Isolée</"
+"style>"
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.TOOLTIP
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.TOOLTIP"
-msgid "The Options UI the is imperfect.\nIn-game, <style=\"KKeyword\">Insulated {HEPBRIDGETILE_NAME}</style> \nwill require Research equal to or higher \nthan <style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style>."
+msgid ""
+"The Options UI the is imperfect.\n"
+"In-game, <style=\"KKeyword\">Insulated {HEPBRIDGETILE_NAME}</style> \n"
+"will require Research equal to or higher \n"
+"than <style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style>."
 msgstr ""
+"L'interface des options est imparfaite.\n"
+"En jeu, <style=\"KKeyword\">{HEPBRIDGETILE_NAME} Isolée</style>\n"
+"nécessitera une recherche égale ou supérieure à \n"
+"<style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style>."
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.USE_OLD_ANIM.NAME
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.USE_OLD_ANIM.NAME"
 msgid "Use animation from early version of the mod"
-msgstr ""
+msgstr "Utilise l'animation de la version alpha du mod"
