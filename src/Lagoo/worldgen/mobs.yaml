@@ -1,0 +1,23 @@
+MobLookupTable:
+  # keys to remove from in-memory structure when this file is loaded
+  remove: []
+  # elements to add from in-memory structure when this file is loaded
+  add:
+    med_SquirrelLagoo:
+      prefabName: SquirrelLagoo
+      location: Air
+      selectMethod: Centroid
+      density:
+        min: 0.06
+        max: 0.07
+      width: 1
+      height: 1
+    low_SquirrelLagoo:
+      prefabName: SquirrelLagoo
+      location: Air
+      selectMethod: Centroid
+      density:
+        min: 0.015
+        max: 0.018
+      width: 1
+      height: 1
