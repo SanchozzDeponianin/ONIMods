@@ -33,3 +33,8 @@ msgctxt "Lagoo.STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO.NAME"
 msgid "<link=\"SQUIRREL\">Lagoo</link>"
 msgstr ""
 
+#. Lagoo.STRINGS.OPTIONS.WARM_TOUCH_DURATION.NAME
+msgctxt "Lagoo.STRINGS.OPTIONS.WARM_TOUCH_DURATION.NAME"
+msgid "<style=\"KKeyword\">Frost Resistant</style> effect duration after hugging, cycles"
+msgstr ""
+

@@ -21,12 +21,16 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\lib\BaseOptions.cs">
+      <Link>BaseOptions.cs</Link>
+    </Compile>
     <Compile Include="..\lib\KAnimGroupManager.cs">
       <Link>KAnimGroupManager.cs</Link>
     </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
+    <Compile Include="LagooOptions.cs" />
     <Compile Include="STRINGS.cs" />
     <Compile Include="LagooPatches.cs" />
     <Compile Include="LagooTuning.cs" />

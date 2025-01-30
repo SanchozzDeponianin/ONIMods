@@ -7,6 +7,7 @@ using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.PatchManager;
+using PeterHan.PLib.Options;
 
 namespace Lagoo
 {
@@ -27,6 +28,7 @@ namespace Lagoo
             if (Utils.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(LagooPatches));
+            new POptions().RegisterOptions(this, typeof(LagooOptions));
             var kagm = new KAnimGroupManager();
             kagm.RegisterAnims(squirrel_kanim, lagoo_kanim);
             kagm.RegisterAnims(baby_squirrel_kanim, baby_lagoo_kanim);
@@ -163,13 +165,16 @@ namespace Lagoo
         [HarmonyPatch(typeof(HugMinionReactable), nameof(HugMinionReactable.ApplyEffects))]
         private static class HugMinionReactable_ApplyEffects
         {
+            private static readonly HashedString WarmTouch = "WarmTouch";
             private static void Prefix(GameObject ___gameObject, GameObject ___reactor)
             {
                 if (___gameObject.PrefabID() == ID && ___reactor.TryGetComponent(out Effects effects))
                 {
-                    var effect = effects.Add("WarmTouch", true);
+                    var effect = effects.Get(WarmTouch);
+                    if (effect == null)
+                        effect = effects.Add(WarmTouch, true);
                     if (effect != null)
-                        effect.timeRemaining = 3f * Constants.SECONDS_PER_CYCLE;
+                        effect.timeRemaining = Mathf.Max(effect.timeRemaining, LagooOptions.Instance.warm_touch_duration * Constants.SECONDS_PER_CYCLE);
                 }
             }
         }

@@ -28,6 +28,13 @@ namespace Lagoo
                 }
             }
         }
+        public class OPTIONS
+        {
+            public class WARM_TOUCH_DURATION
+            {
+                public static LocString NAME = $"{FormatAsKeyWord("Frost Resistant")} effect duration after hugging, cycles";
+            }
+        }
 
         internal static void DoReplacement()
         {
