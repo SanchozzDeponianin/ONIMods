@@ -50,6 +50,14 @@ namespace SquirrelGenerator
             }
         }
 
+        public class MISC
+        {
+            public class TAGS
+            {
+                public static LocString SEED_DESC = $"Seeds can be used not only to grow {UI.FormatAsLink("Plants", "PLANTS")}, but also to attract the attention of some {UI.FormatAsLink("Creatures", "SQUIRREL")}.";
+            }
+        }
+
         public class OPTIONS
         {
             public class GENERATORWATTAGERATING
@@ -100,6 +108,7 @@ namespace SquirrelGenerator
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
             OPTIONS.SEARCHMAXINTERVAL.TOOLTIP = OPTIONS.SEARCHMININTERVAL.TOOLTIP;
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
+            LocString.CreateLocStringKeys(typeof(MISC));
         }
     }
 }

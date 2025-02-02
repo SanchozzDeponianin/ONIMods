@@ -38,6 +38,10 @@ msgctxt "SquirrelGenerator.STRINGS.CREATURES.STATUSITEMS.EXCITED_TO_RUN_IN_WHEEL
 msgid "This creature has discovered an entertaining mechanical thing and is very interested"
 msgstr "Это существо обнаружило занятную механическую штуковину и очень заинтересовано"
 
+#. SquirrelGenerator.STRINGS.MISC.TAGS.SEED_DESC
+msgctxt "SquirrelGenerator.STRINGS.MISC.TAGS.SEED_DESC"
+msgid "Seeds can be used not only to grow <link=\"PLANTS\">Plants</link>, but also to attract the attention of some <link=\"SQUIRREL\">Creatures</link>."
+msgstr "Семена можно использовать не только для выращивания <link=\"PLANTS\">растений</link>, но и для привлечения внимания некоторых <link=\"SQUIRREL\">существ</link>."
 
 #. SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGERATING.NAME
 msgctxt "SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGERATING.NAME"

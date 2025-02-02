@@ -5,6 +5,7 @@ using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
+using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
 
@@ -12,28 +13,26 @@ namespace SquirrelGenerator
 {
     internal sealed class SquirrelGeneratorPatches : KMod.UserMod2
     {
-        private static Harmony harmonyInstance;
-
         public override void OnLoad(Harmony harmony)
         {
             if (Utils.LogModVersion()) return;
             base.OnLoad(harmony);
-            harmonyInstance = harmony;
             new PPatchManager(harmony).RegisterPatchClass(typeof(SquirrelGeneratorPatches));
             new POptions().RegisterOptions(this, typeof(SquirrelGeneratorOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
-        private static void Localize()
+        private static void BeforeDbInit()
         {
             Utils.InitLocalization(typeof(STRINGS));
         }
 
         [PLibMethod(RunAt.AfterDbInit)]
-        private static void AddBuilding()
+        private static void AfterDbInit()
         {
             ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Power, SquirrelGeneratorConfig.ID, BUILD_SUBCATEGORY.generators, ManualGeneratorConfig.ID);
             Utils.AddBuildingToTechnology("Ranching", SquirrelGeneratorConfig.ID);
+            GameTags.MaterialBuildingElements.Add(GameTags.Seed);
         }
 
         // добавить белкам новое поведение
@@ -116,20 +115,58 @@ namespace SquirrelGenerator
             }
         }
 
-        // патч совместимости для мода Lagoo (https://steamcommunity.com/sharedfiles/filedetails/?id=2025986309)
-        [PLibMethod(RunAt.AfterModsLoad, RequireAssembly = "LagooMerged", RequireType = "Lagoo.BaseLagooConfig")]
-        private static void LagooPatch()
+
+        // чтобы нельзя было строить из мутантовых семян
+        [HarmonyPatch(typeof(Constructable), "OnSpawn")]
+        private static class Constructable_OnSpawn
         {
-            var BaseLagooConfig = PPatchTools.GetTypeSafe("Lagoo.BaseLagooConfig", "LagooMerged");
-            if (BaseLagooConfig != null)
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+
+            private static readonly IDetouredField<FetchOrder2, Tag[]> FORBIDDEN_TAGS
+                = PDetours.DetourField<FetchOrder2, Tag[]>(nameof(FetchOrder2.ForbiddenTags));
+
+            private static FetchList2 InjectForbiddenTag(FetchList2 fetchList, Constructable constructable)
             {
-                PUtil.LogDebug("'Lagoo' found, trying to apply a compatibility patch.");
+                if (constructable.PrefabID() == BuildingConfigManager.GetUnderConstructionName(SquirrelGeneratorConfig.ID))
+                {
+                    Tag[] forbidden_tags;
+                    foreach (var fetchOrder in fetchList.FetchOrders)
+                    {
+                        if (fetchOrder.ForbiddenTags == null)
+                            forbidden_tags = new Tag[1] { GameTags.MutatedSeed };
+                        else
+                            forbidden_tags = fetchOrder.ForbiddenTags.Append(GameTags.MutatedSeed);
+                        FORBIDDEN_TAGS.Set(fetchOrder, forbidden_tags);
+                    }
+                }
+                return fetchList;
+            }
 
-                var postfix = new HarmonyMethod(typeof(BaseSquirrelConfig_BaseSquirrel), nameof(BaseSquirrelConfig_BaseSquirrel.Postfix));
-                harmonyInstance.Patch(BaseLagooConfig, "BaseLagoo", null, postfix);
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return TranspilerUtils.Wrap(instructions, original, transpiler);
+            }
 
-                var transpiler = new HarmonyMethod(typeof(BaseSquirrelConfig_BaseSquirrel), nameof(BaseSquirrelConfig_BaseSquirrel.Transpiler));
-                harmonyInstance.PatchTranspile(BaseLagooConfig, "BaseLagoo", transpiler);
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var fetchList = typeof(Constructable).GetFieldSafe("fetchList", false);
+                var submit = typeof(FetchList2).GetMethodSafe(nameof(FetchList2.Submit), false, typeof(System.Action), typeof(bool));
+                var injectForbiddenTag = typeof(Constructable_OnSpawn).GetMethodSafe(nameof(InjectForbiddenTag), true, PPatchTools.AnyArguments);
+                if (fetchList != null && submit != null && injectForbiddenTag != null)
+                {
+                    int j = instructions.FindIndex(inst => inst.Calls(submit));
+                    if (j != -1)
+                    {
+                        int i = instructions.FindLastIndex(j, inst => inst.LoadsField(fetchList));
+                        if (i != -1)
+                        {
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                            instructions.Insert(++i, new CodeInstruction(OpCodes.Call, injectForbiddenTag));
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
         }
     }
