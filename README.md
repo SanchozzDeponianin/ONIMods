@@ -42,6 +42,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Smelter](https://steamcommunity.com/sharedfiles/filedetails/?id=2350553957) | Adds a new Smelter building designed to smelt metals in the early game, and a few new recipes. | Yes | Yes |
 | [Squirrel Wheel](https://steamcommunity.com/sharedfiles/filedetails/?id=2086704949) | Adds a new Squirrel Wheel building that your Pips can use to running, and you will get a small profit of bonus electricity power. | Yes | Yes |
 | [Suit Recharger](https://steamcommunity.com/sharedfiles/filedetails/?id=2688074001) | Allows Duplicants to recharge all kinds of their Suits and Oxygen Masks without taking them off. | Yes | Yes |
+| [Transit Tubes Expanded](https://steamcommunity.com/sharedfiles/filedetails/?id=3430960564) | Adds a new Transit Tube Insulated, Ladder, Fire Pole Crossing buildings and several tweaks for the Transit Tube system.| Yes | Yes |
 
 ## Tweaks
 |  **Name**  |  **Description**  |  **Vanilla**  |  **Spaced Out! DLC**  |

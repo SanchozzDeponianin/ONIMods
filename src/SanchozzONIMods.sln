@@ -120,6 +120,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SupplyToClosest", "SupplyTo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lagoo", "Lagoo\Lagoo.csproj", "{5FCF22FC-5DE5-4389-BB95-7ED458BCEC28}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelTubesExpanded", "TravelTubesExpanded\TravelTubesExpanded.csproj", "{8FC5E143-38EC-4DB7-845B-902AA975D77C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Backup = Debug|Backup
@@ -520,6 +522,14 @@ Global
 		{5FCF22FC-5DE5-4389-BB95-7ED458BCEC28}.Release|Backup.Build.0 = Release|Backup
 		{5FCF22FC-5DE5-4389-BB95-7ED458BCEC28}.Release|Steam.ActiveCfg = Release|Steam
 		{5FCF22FC-5DE5-4389-BB95-7ED458BCEC28}.Release|Steam.Build.0 = Release|Steam
+		{8FC5E143-38EC-4DB7-845B-902AA975D77C}.Debug|Backup.ActiveCfg = Debug|Backup
+		{8FC5E143-38EC-4DB7-845B-902AA975D77C}.Debug|Backup.Build.0 = Debug|Backup
+		{8FC5E143-38EC-4DB7-845B-902AA975D77C}.Debug|Steam.ActiveCfg = Debug|Steam
+		{8FC5E143-38EC-4DB7-845B-902AA975D77C}.Debug|Steam.Build.0 = Debug|Steam
+		{8FC5E143-38EC-4DB7-845B-902AA975D77C}.Release|Backup.ActiveCfg = Release|Backup
+		{8FC5E143-38EC-4DB7-845B-902AA975D77C}.Release|Backup.Build.0 = Release|Backup
+		{8FC5E143-38EC-4DB7-845B-902AA975D77C}.Release|Steam.ActiveCfg = Release|Steam
+		{8FC5E143-38EC-4DB7-845B-902AA975D77C}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

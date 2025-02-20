@@ -1,0 +1,55 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.DESC
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.DESC"
+msgid "Tube crossings can run transit tubes through ladders and fire poles."
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.EFFECT
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.EFFECT"
+msgid "Allows <link=\"TRAVELTUBE\">Transit Tubes</link> to be run through ladders and fire poles.\n\nFunctions as <link=\"FIREPOLE\">Fire Pole</link>."
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.NAME
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.NAME"
+msgid "<link=\"TRAVELTUBEFIREPOLEBRIDGE\">Transit Tube Fire Pole Crossing</link>"
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEINSULATEDWALLBRIDGE.DESC
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEINSULATEDWALLBRIDGE.DESC"
+msgid "Tube crossings can run transit tubes through walls without leaking gas or liquid.\nThe low thermal conductivity of insulated crossing slows any heat passing through them."
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEINSULATEDWALLBRIDGE.EFFECT
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEINSULATEDWALLBRIDGE.EFFECT"
+msgid "Allows <link=\"TRAVELTUBE\">Transit Tubes</link> to be run through wall and floor tile.\n\nFunctions as <link=\"INSULATIONTILE\">Insulated Tile</link>."
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEINSULATEDWALLBRIDGE.NAME
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEINSULATEDWALLBRIDGE.NAME"
+msgid "<link=\"TRAVELTUBEINSULATEDWALLBRIDGE\">Transit Tube Insulated Crossing</link>"
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBELADDERBRIDGE.DESC
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBELADDERBRIDGE.DESC"
+msgid "Tube crossings can run transit tubes through ladders and fire poles."
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBELADDERBRIDGE.EFFECT
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBELADDERBRIDGE.EFFECT"
+msgid "Allows <link=\"TRAVELTUBE\">Transit Tubes</link> to be run through ladders and fire poles.\n\nFunctions as <link=\"LADDER\">Ladder</link>."
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBELADDERBRIDGE.NAME
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBELADDERBRIDGE.NAME"
+msgid "<link=\"TRAVELTUBELADDERBRIDGE\">Transit Tube Ladder Crossing</link>"
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.OPTIONS.KJOULES_PER_LAUNCH.NAME
+msgctxt "TravelTubesExpanded.STRINGS.OPTIONS.KJOULES_PER_LAUNCH.NAME"
+msgid "Transit Tube Access <style=\"KKeyword\">Power</style> consumption per launch, kJ"
+msgstr ""
+
