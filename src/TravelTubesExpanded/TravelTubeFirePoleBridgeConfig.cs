@@ -48,7 +48,7 @@ namespace TravelTubesExpanded
             ladder.upwardsMovementSpeedMultiplier = 0.25f;
             ladder.downwardsMovementSpeedMultiplier = 4f;
             go.AddOrGet<AnimTileable>();
-            go.AddOrGet<BuildingHP>().destroyOnDamaged = true;
+            go.AddOrGet<BuildingHP>().destroyOnDamaged = false;
             go.AddOrGet<TravelTubeBridge>();
             go.AddOrGet<OccupyArea>().objectLayers = new ObjectLayer[] { ObjectLayer.FoundationTile };
         }

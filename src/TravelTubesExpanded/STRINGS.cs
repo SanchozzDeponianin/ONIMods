@@ -8,6 +8,12 @@ namespace TravelTubesExpanded
         {
             public class PREFABS
             {
+                public class TRAVELTUBEBUNKERWALLBRIDGE
+                {
+                    public static LocString NAME = UI.FormatAsLink("Transit Tube Bunker Crossing", "TRAVELTUBEBUNKERWALLBRIDGE");
+                    public static LocString DESC = "Tube crossings can run transit tubes through walls without leaking gas or liquid.\nCan withstand extreme pressures and impacts.";
+                    public static LocString EFFECT = $"Allows {UI.FormatAsLink("Transit Tubes", "TRAVELTUBE")} to be run through wall and floor tile.\n\nFunctions as {UI.FormatAsLink("Bunker Tile", "BUNKERTILE")}.";
+                }
                 public class TRAVELTUBEINSULATEDWALLBRIDGE
                 {
                     public static LocString NAME = UI.FormatAsLink("Transit Tube Insulated Crossing", "TRAVELTUBEINSULATEDWALLBRIDGE");

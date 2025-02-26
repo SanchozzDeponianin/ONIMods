@@ -3,6 +3,21 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEBUNKERWALLBRIDGE.DESC
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEBUNKERWALLBRIDGE.DESC"
+msgid "Tube crossings can run transit tubes through walls without leaking gas or liquid.\nCan withstand extreme pressures and impacts."
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEBUNKERWALLBRIDGE.EFFECT
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEBUNKERWALLBRIDGE.EFFECT"
+msgid "Allows <link=\"TRAVELTUBE\">Transit Tubes</link> to be run through wall and floor tile.\n\nFunctions as <link=\"BUNKERTILE\">Bunker Tile</link>."
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEBUNKERWALLBRIDGE.NAME
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEBUNKERWALLBRIDGE.NAME"
+msgid "<link=\"TRAVELTUBEBUNKERWALLBRIDGE\">Transit Tube Bunker Crossing</link>"
+msgstr ""
+
 #. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.DESC
 msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.DESC"
 msgid "Tube crossings can run transit tubes through ladders and fire poles."

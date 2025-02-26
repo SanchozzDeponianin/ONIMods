@@ -32,7 +32,8 @@ namespace TravelTubesExpanded
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()
         {
-            var ids = new string[] { TravelTubeInsulatedWallBridgeConfig.ID, TravelTubeLadderBridgeConfig.ID, TravelTubeFirePoleBridgeConfig.ID };
+            var ids = new string[] { TravelTubeInsulatedWallBridgeConfig.ID, TravelTubeBunkerWallBridgeConfig.ID,
+                TravelTubeLadderBridgeConfig.ID, TravelTubeFirePoleBridgeConfig.ID };
             for (int i = ids.Length - 1; i >= 0; i--)
                 ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Base, ids[i], BUILD_SUBCATEGORY.transport, TravelTubeWallBridgeConfig.ID);
             Utils.AddBuildingToTechnology("TravelTubes", ids);
