@@ -4,7 +4,7 @@
     <Title>Vitals Display Rads</Title>
     <Description>.</Description>
     <ModVersion>1.0.1</ModVersion>
-    <SupportedContent>EXPANSION1_ID</SupportedContent>
+    <RequiredDlcIds>EXPANSION1_ID</RequiredDlcIds>
     <UsesPLib>false</UsesPLib>
     <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>

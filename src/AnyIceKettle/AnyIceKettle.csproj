@@ -4,6 +4,7 @@
     <Title>Any Ice Liquefier</Title>
     <Description>.</Description>
     <ModVersion>1.1.0</ModVersion>
+    <RequiredDlcIds>DLC2_ID</RequiredDlcIds>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

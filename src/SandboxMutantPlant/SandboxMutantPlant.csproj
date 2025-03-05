@@ -4,7 +4,7 @@
     <Title>Sandbox: Mutant Plants</Title>
     <Description>Allows to quickly receive mutant Seeds and Plants in the Sandbox mode</Description>
     <ModVersion>1.1.4</ModVersion>
-    <SupportedContent>EXPANSION1_ID</SupportedContent>
+    <RequiredDlcIds>EXPANSION1_ID</RequiredDlcIds>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>

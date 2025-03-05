@@ -4,6 +4,7 @@
     <Title>Potato Power Banks</Title>
     <Description>.</Description>
     <ModVersion>1.0.2</ModVersion>
+    <RequiredDlcIds>DLC3_ID</RequiredDlcIds>
     <UsesPLib>true</UsesPLib>
     <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>
