@@ -30,10 +30,13 @@
 
   <!-- основные свойства -->
   <PropertyGroup>
-    <!-- SupportedContent = ALL,VANILLA_ID,EXPANSION1_ID -->
-    <SupportedContent Condition=" '$(SupportedContent)' == '' ">ALL</SupportedContent>
     <APIVersion>2</APIVersion>
     <ModVersion Condition=" '$(ModVersion)' == '' ">1.0.0</ModVersion>
+    <!-- VANILLA_ID, EXPANSION1_ID, DLC2_ID, DLC3_ID -->
+    <!--
+    <RequiredDlcIds></RequiredDlcIds>
+    <ForbiddenDlcIds></ForbiddenDlcIds>
+    -->
     <DistributeMod Condition=" '$(DistributeMod)' != 'false' ">true</DistributeMod>
     <UsesPLib Condition=" '$(UsesPLib)' != 'true' ">false</UsesPLib>
     <UsesPublicise Condition=" '$(UsesPublicise)' != 'true' ">false</UsesPublicise>
@@ -68,13 +71,6 @@
   <ItemGroup>
     <PackageReference Include="MSBuildTasks" Version="1.5.0.235" />
   </ItemGroup>
-  <Choose>
-    <When Condition=" '$(DistributeMod)' == 'true' ">
-      <ItemGroup>
-        <PackageReference Include="Cairath.ONIMetadataFileGenerator" Version="1.0.0" />
-      </ItemGroup>
-    </When>
-  </Choose>
   <Choose>
     <When Condition=" '$(UsesPLib)' == 'true' ">
       <ItemGroup>

@@ -74,9 +74,9 @@
     </ItemGroup>
     <MakeDir Directories="$(PublicisedFolder)" Condition = "!Exists('$(PublicisedFolder)')" />
     <Publicise
-		   InputAssemblies="@(PubliciseInputAssemblies)"
-		   OutputPath="$(PublicisedFolder)"
-		   PubliciseCompilerGenerated="false"/>
+       InputAssemblies="@(PubliciseInputAssemblies)"
+       OutputPath="$(PublicisedFolder)"
+       PubliciseCompilerGenerated="false"/>
   </Target>
 
   <!-- подчищаем при очистке -->
@@ -104,20 +104,26 @@
   </Target>
 
   <!-- создание ямлов файлов  -->
+  <UsingTask
+    Condition=" '$(DistributeMod)' == 'true' "
+    TaskName="SanchozzONIMods.WriteYamlFiles"
+    AssemblyFile="$(MSBuildTasksHelperDLL)" />
+
   <Target Name="WriteYamlFiles" BeforeTargets="PreBuildEvent"  AfterTargets="GetKleiAssemblyInfo" Condition=" '$(DistributeMod)' == 'true' ">
     <PropertyGroup>
       <ModInfoFile>$(IntermediateOutputPath)/mod_info.yaml</ModInfoFile>
       <ModDescriptionFile>$(IntermediateOutputPath)/mod.yaml</ModDescriptionFile>
     </PropertyGroup>
 
-    <GenerateMetadataFiles
+    <SanchozzONIMods.WriteYamlFiles
       OutputPath="$(IntermediateOutputPath)"
 
       Title="$(Title)"
       Description="$(Description)"
       StaticID="Sanchozz.ONIMods.$(AssemblyName)"
       
-      SupportedContent="$(SupportedContent)"
+      RequiredDlcIds="$(RequiredDlcIds)"
+      ForbiddenDlcIds="$(ForbiddenDlcIds)"
       MinimumSupportedBuild="$(BuildNumber)"
       Version="$(ModVersion)"
       APIVersion="$(APIVersion)"

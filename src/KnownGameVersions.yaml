@@ -11,3 +11,5 @@ KnownVersions:
   MinimumBuildNumber: 640445
 - GameVersion: U54
   MinimumBuildNumber: 644175
+- GameVersion: U55
+  MinimumBuildNumber: 658361

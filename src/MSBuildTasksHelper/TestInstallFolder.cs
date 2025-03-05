@@ -86,7 +86,7 @@ namespace SanchozzONIMods
                 }
 
                 // считываем существующий инфо файл
-                var deserializer = new DeserializerBuilder().Build();
+                var deserializer = new DeserializerBuilder().IgnoreUnmatchedProperties().Build();
                 var modInfo = deserializer.Deserialize<ModInfo>(File.ReadAllText(RootModInfoFile));
                 PreviousBuildNumber = modInfo.minimumSupportedBuild;
                 PreviousGameVersion = GetKleiAssemblyInfo.INVALID;
