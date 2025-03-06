@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Title>Varicoloured Balloons</Title>
-    <Description>Adds more different colors and variations of balloons.</Description>
+    <Description>Total randomization of the Balloon skin, choosing from all available (unlocked) skins if the Duplicant Artist has the assignment of a default red skin.</Description>
     <ModVersion>2.0.1</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>

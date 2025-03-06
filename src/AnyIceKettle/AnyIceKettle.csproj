@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Title>Any Ice Liquefier</Title>
-    <Description>.</Description>
+    <Description>Allows you to choose which type of Ice will heat the Ice Liquefier.</Description>
     <ModVersion>1.1.0</ModVersion>
     <RequiredDlcIds>DLC2_ID</RequiredDlcIds>
     <UsesPLib>true</UsesPLib>

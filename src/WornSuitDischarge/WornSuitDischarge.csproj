@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Title>Worn Suit doesn't drop Canister</Title>
-    <Description>A Worn Suits does not drop the Canisters. Oxygen and Kerosene are returned to the Suit Dock for later reuse.</Description>
+    <Description>Discharges Worn Suits don't drops the Canisters when unequipping. Oxygen and Petroleum are returned to the Suit Dock for later reuse.</Description>
     <ModVersion>1.1.5</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>

@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Title>Potato Power Banks</Title>
-    <Description>.</Description>
+    <Description>Adds five new Potato Power Banks exclusive for Bionics and Flydo.</Description>
     <ModVersion>1.0.2</ModVersion>
     <RequiredDlcIds>DLC3_ID</RequiredDlcIds>
     <UsesPLib>true</UsesPLib>

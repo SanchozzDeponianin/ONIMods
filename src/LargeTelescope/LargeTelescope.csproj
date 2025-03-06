@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Title>Enclosed Telescope Tune-Up</Title>
-    <Description>Tuning of a Enclosed Telescope: increased the radius and scanning speed, adjusted requirements, some improvements and bug fixes.</Description>
+    <Description>Tuning of a Enclosed Telescope: increased the radius and scanning speed, adjusted requirements, some improvements.</Description>
     <ModVersion>2.1.4</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>

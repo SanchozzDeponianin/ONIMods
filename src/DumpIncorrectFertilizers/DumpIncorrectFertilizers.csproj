@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Title>Auto Drop Wrong Liquid</Title>
-    <Description>.</Description>
+    <Description>Now an errand to empty the Hydroponic Farms storage of the wrong liquid is created automatically.</Description>
     <ModVersion>1.0.1</ModVersion>
     <UsesPLib>false</UsesPLib>
   </PropertyGroup>

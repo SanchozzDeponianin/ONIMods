@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Title>Lagoo</Title>
-    <Description>.</Description>
+    <Description>Lagoo is a deeply mutated Pip, adapted to survive in a harsh cold climate.</Description>
     <ModVersion>1.0.0</ModVersion>
     <UsesPLib>true</UsesPLib>
     <UsesPublicise>true</UsesPublicise>

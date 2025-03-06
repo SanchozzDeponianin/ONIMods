@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Title>Rebuildable AETN</Title>
-    <Description>Allows you to disassemble and build AETN in another place</Description>
+    <Description>Allows you to disassemble and build AETN in another place.</Description>
     <ModVersion>1.1.17</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>

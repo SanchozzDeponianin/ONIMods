@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Title>Insulated Radbolt Joint Plate</Title>
-    <Description>Adds a Insulated variant of Radbolt Joint Plate</Description>
+    <Description>Adds a Insulated variant of Radbolt Joint Plate.</Description>
     <ModVersion>2.0.9</ModVersion>
     <RequiredDlcIds>EXPANSION1_ID</RequiredDlcIds>
     <UsesPLib>true</UsesPLib>

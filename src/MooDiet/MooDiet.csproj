@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Title>Gassy Moo Eat Flowers</Title>
-    <Description>.</Description>
+    <Description>Now Gassy Moo can eat Balm Lily Flowers and harvested Gas Grass.</Description>
     <ModVersion>1.0.4</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>

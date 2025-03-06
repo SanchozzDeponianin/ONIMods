@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Title>Relic Hunter</Title>
-    <Description>.</Description>
+    <Description>Unlocks the Relic Hunter trait that exists in vanilla but is not used. A duplicant with this trait almost always finds Artifacts when traveling to other planets.</Description>
     <ModVersion>1.2.2</ModVersion>
     <ForbiddenDlcIds>EXPANSION1_ID</ForbiddenDlcIds>
   </PropertyGroup>

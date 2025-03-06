@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Title>Vitals Display Rads</Title>
-    <Description>.</Description>
+    <Description>The Vitals screen now shows the amount of Absorbed Rad Dose.</Description>
     <ModVersion>1.0.1</ModVersion>
     <RequiredDlcIds>EXPANSION1_ID</RequiredDlcIds>
     <UsesPLib>false</UsesPLib>

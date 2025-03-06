@@ -2,7 +2,7 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Title>Athletic Manual Generator</Title>
-    <Description>.</Description>
+    <Description>Now the Manual Generator produces more energy the higher the level of the Duplicant's Athletics attribute.</Description>
     <ModVersion>1.0.5</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
