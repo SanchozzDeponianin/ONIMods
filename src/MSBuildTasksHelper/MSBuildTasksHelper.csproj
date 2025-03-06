@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>MSBuildTasksHelper</Title>
     <Description>.</Description>
-    <ModVersion>1.3.0</ModVersion>
+    <ModVersion>1.4.0</ModVersion>
     <DistributeMod>false</DistributeMod>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -28,6 +28,7 @@
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.34.2" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FindTooOldArchivedVersions.cs" />
     <Compile Include="WriteYamlFiles.cs" />
     <Compile Include="KnownGameVersions.cs" />
     <Compile Include="Mod.cs" />

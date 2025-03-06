@@ -247,4 +247,25 @@
     <Copy SourceFiles="$(ModDescriptionFile)" DestinationFolder="$(InstallRootFolder)" />
     <Copy SourceFiles="$(ProjectDir)/Preview.png" DestinationFiles="$(InstallFolder)/preview.png" Condition=" $(CopyPreview) == true " />
   </Target>
+
+  <!-- ищем и очищаем старые ненужные архивы -->
+  <UsingTask
+    Condition=" '$(DistributeMod)' == 'true' "
+    TaskName="SanchozzONIMods.FindTooOldArchivedVersions"
+    AssemblyFile="$(MSBuildTasksHelperDLL)" />
+
+  <Target Name="CleanTooOldArchivedVersions" AfterTargets="CopyArtifactsToInstallFolder" Condition=" '$(DistributeMod)' == 'true' ">
+    <ItemGroup>
+      <ArchivedModInfoFiles Include="$(InstallRootFolder)/archived_versions/**/mod_info.yaml" />
+    </ItemGroup>
+
+    <SanchozzONIMods.FindTooOldArchivedVersions
+      RootModInfoFile="$(InstallRootFolder)/mod_info.yaml"
+      KnownGameVersionsFile="$(ProjectDir)/../KnownGameVersions.yaml"
+      ArchivedModInfoFiles="@(ArchivedModInfoFiles)" >
+      <Output TaskParameter="TooOldArchivedVersions" ItemName="TooOldArchivedVersions" />
+    </SanchozzONIMods.FindTooOldArchivedVersions>
+
+    <RemoveDir Directories="@(TooOldArchivedVersions)" />
+  </Target>
 </Project>
