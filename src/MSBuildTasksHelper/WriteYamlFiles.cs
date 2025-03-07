@@ -42,14 +42,14 @@ namespace SanchozzONIMods
 
             var modInfo = new ModInfo
             {
-                requiredDlcIds = !string.IsNullOrEmpty(RequiredDlcIds) ? RequiredDlcIds.Split(',') : null,
-                forbiddenDlcIds = !string.IsNullOrEmpty(ForbiddenDlcIds) ? ForbiddenDlcIds.Split(',') : null,
+                requiredDlcIds = !string.IsNullOrEmpty(RequiredDlcIds) ? RequiredDlcIds.Split(',') : Array.Empty<string>(),
+                forbiddenDlcIds = !string.IsNullOrEmpty(ForbiddenDlcIds) ? ForbiddenDlcIds.Split(',') : Array.Empty<string>(),
                 minimumSupportedBuild = MinimumSupportedBuild,
                 APIVersion = APIVersion,
                 version = Version
             };
 
-            var serializer = new SerializerBuilder().Build();
+            var serializer = new SerializerBuilder().ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitEmptyCollections).Build();
             var modYaml = serializer.Serialize(mod);
             var modInfoYaml = serializer.Serialize(modInfo);
 

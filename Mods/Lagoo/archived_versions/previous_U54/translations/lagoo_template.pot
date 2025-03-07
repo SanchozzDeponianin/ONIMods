@@ -1,0 +1,40 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. Lagoo.STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO.BABY.DESC
+msgctxt "Lagoo.STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO.BABY.DESC"
+msgid "A little purring Lagoonie.\n\nIn time it will mature into a fully grown <link=\"SQUIRREL\">Lagoo</link>."
+msgstr ""
+
+#. Lagoo.STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO.BABY.NAME
+msgctxt "Lagoo.STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO.BABY.NAME"
+msgid "<link=\"SQUIRREL\">Lagoonie</link>"
+msgstr ""
+
+#. Lagoo.STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO.DESC
+msgctxt "Lagoo.STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO.DESC"
+msgid "Lagoo is a deeply mutated Pip, adapted to survive in a harsh cold climate. Sometimes It can even devour very <link=\"SULFUR\">inedible things</link>.\n\nLagoo knows a lot about warm hugs and is ready to share its warmth with Duplicants."
+msgstr ""
+
+#. Lagoo.STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO.EGG_DESC
+msgctxt "Lagoo.STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO.EGG_DESC"
+msgid "This is not a Dirt. It's a <link=\"SQUIRREL\">Lagoo Egg</link>."
+msgstr ""
+
+#. Lagoo.STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO.EGG_NAME
+msgctxt "Lagoo.STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO.EGG_NAME"
+msgid "<link=\"SQUIRREL\">Lagoo Egg</link>"
+msgstr ""
+
+#. Lagoo.STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO.NAME
+msgctxt "Lagoo.STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO.NAME"
+msgid "<link=\"SQUIRREL\">Lagoo</link>"
+msgstr ""
+
+#. Lagoo.STRINGS.OPTIONS.WARM_TOUCH_DURATION.NAME
+msgctxt "Lagoo.STRINGS.OPTIONS.WARM_TOUCH_DURATION.NAME"
+msgid "<style=\"KKeyword\">Frost Resistant</style> effect duration after hugging, cycles"
+msgstr ""
+
