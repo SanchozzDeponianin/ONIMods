@@ -1,23 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Title>Butcher &amp; Fishing Stations</Title>
     <Description>Adds a new Stations allows the Ranchers to control the population and butchering too old, surplus, or unwanted Critters.</Description>
     <ModVersion>1.8.6</ModVersion>
     <UsesPLib>true</UsesPLib>
-  </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{38B1CE90-937D-4FD2-BDDD-B143A5269BAC}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ButcherStation</RootNamespace>
-    <AssemblyName>ButcherStation</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\BaseOptions.cs">
@@ -35,15 +22,5 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
-    <Compile Include="ButcherStation.cs" />
-    <Compile Include="ButcherStationOptions.cs" />
-    <Compile Include="ButcherStationSideScreen.cs" />
-    <Compile Include="ExtraMeatSpawner.cs" />
-    <Compile Include="FishingStationConfig.cs" />
-    <Compile Include="ButcherStationConfig.cs" />
-    <Compile Include="ButcherStationPatches.cs" />
-    <Compile Include="FishingStationGuide.cs" />
-    <Compile Include="STRINGS.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

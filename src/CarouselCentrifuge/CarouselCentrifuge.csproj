@@ -1,23 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Title>Carousel</Title>
     <Description>Adds a new recreation building. Funny dizzy entertainment. Sometimes too dizzy...</Description>
     <ModVersion>1.3.11</ModVersion>
     <UsesPLib>true</UsesPLib>
-  </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6AC50009-E4BB-40F1-9996-B965A9F5AB45}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CarouselCentrifuge</RootNamespace>
-    <AssemblyName>CarouselCentrifuge</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\BaseOptions.cs">
@@ -26,11 +13,5 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
-    <Compile Include="CarouselCentrifugeConfig.cs" />
-    <Compile Include="CarouselCentrifugePatches.cs" />
-    <Compile Include="CarouselCentrifugeWorkable.cs" />
-    <Compile Include="CarouselCentrifugeOptions.cs" />
-    <Compile Include="STRINGS.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

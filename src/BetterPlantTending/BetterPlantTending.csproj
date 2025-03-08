@@ -1,23 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Title>Better Farming Effects and Tweaks</Title>
     <Description>Provides a number of improvements for how your Farmers, Worms and Beetles take care of plants.</Description>
     <ModVersion>2.2.8</ModVersion>
     <UsesPLib>true</UsesPLib>
-  </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D9C6A940-106C-42E4-BA4D-F3E92EFA5340}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BetterPlantTending</RootNamespace>
-    <AssemblyName>BetterPlantTending</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\BaseOptions.cs">
@@ -32,17 +19,5 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
-    <Compile Include="BetterPlantTendingOptions.cs" />
-    <Compile Include="BetterPlantTendingPatches.cs" />
-    <Compile Include="BetterPlantTendingAssets.cs" />
-    <Compile Include="TreesPatches.cs" />
-    <Compile Include="ExtendedFertilizationIrrigationMonitor.cs" />
-    <Compile Include="TendedSaltPlant.cs" />
-    <Compile Include="ExtraSeedProducer.cs" />
-    <Compile Include="STRINGS.cs" />
-    <Compile Include="TendedColdBreather.cs" />
-    <Compile Include="TendedPlant.cs" />
-    <Compile Include="TendedOxyfern.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

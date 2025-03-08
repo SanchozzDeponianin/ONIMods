@@ -1,24 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Title>Any Ice Liquefier</Title>
     <Description>Allows you to choose which type of Ice will heat the Ice Liquefier.</Description>
     <ModVersion>1.1.0</ModVersion>
     <RequiredDlcIds>DLC2_ID</RequiredDlcIds>
     <UsesPLib>true</UsesPLib>
-  </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1F0C835B-653C-4BAA-BAD0-A1D551D9D972}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AnyIceKettle</RootNamespace>
-    <AssemblyName>AnyIceKettle</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\BaseOptions.cs">
@@ -30,10 +17,5 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
-    <Compile Include="AnyIceKettlePatches.cs" />
-    <Compile Include="AnyIceKettle.cs" />
-    <Compile Include="AnyIceKettleOptions.cs" />
-    <Compile Include="STRINGS.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

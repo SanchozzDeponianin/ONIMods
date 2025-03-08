@@ -1,16 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
 
-  <Target Name="ClearGameFolderCopyLocal" AfterTargets="ResolveAssemblyReferences">
+  <Target Name="ResolveGameDllReferences" BeforeTargets="ResolveAssemblyReferences" >
+    <ItemGroup>
+      <Reference Condition=" '%(Reference.HintPath)' == '' And Exists('$(GameFolder)/%(Identity).dll') " 
+                 HintPath="$(GameFolder)/%(Identity).dll" />
+    </ItemGroup>
+  </Target>
+  
+  <!-- константы для компилятора и прочее -->
+  <Target Name="DefineConstants" AfterTargets="ResolveAssemblyReferences">
+    <PropertyGroup>
+      <AssemblyVersion>$(ModVersion)</AssemblyVersion>
+      <Version>$(ModVersion)</Version>
+      <FileVersion>$(ModVersion)</FileVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Platform)' == 'Steam' ">
+      <DefineConstants>$(DefineConstants);STEAM</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Platform)' != 'Steam' ">
+      <DefineConstants>$(DefineConstants);BACKUP</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(UsesPLib)' == 'true' ">
+      <DefineConstants>$(DefineConstants);USESPLIB</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(UsesPublicise)' == 'true' ">
+      <DefineConstants>$(DefineConstants);PUBLICISED</DefineConstants>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
     <ItemGroup>
       <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" />
     </ItemGroup>
-  </Target>
-
-  <Target Name="SetPlatform" BeforeTargets="CoreCompile">
-    <PropertyGroup>
-      <PlatformTarget>AnyCPU</PlatformTarget>
-    </PropertyGroup>
   </Target>
 
   <Target Name="CheckDependencies" BeforeTargets="PrepareForBuild">
@@ -18,13 +40,6 @@
       <ErrorText>First you need to compile the 'MSBuildTasksHelper' project.</ErrorText>
     </PropertyGroup>
     <Error Condition=" '$(DistributeMod)' == 'true' And !Exists('$(MSBuildTasksHelperDLL)') " Text="$(ErrorText)" />
-  </Target>
-
-  <!-- определяем константы для компилятора -->
-  <Target Name="DefineConstants" BeforeTargets="CoreCompile">
-    <PropertyGroup Condition=" '$(UsesPLib)' == 'true' ">
-      <DefineConstants>$(DefineConstants);USESPLIB</DefineConstants>
-    </PropertyGroup>
   </Target>
 
   <!-- вкоряченные ресурсы -->
@@ -36,34 +51,6 @@
       <EmbeddedResource Include="@(AudioSheets)" LogicalName="AudioSheets/%(AudioSheets.RecursiveDir)%(AudioSheets.Filename)%(AudioSheets.Extension)" />
       <EmbeddedResource Include="$(ProjectDir)/../SFXTagsGlobal.csv" LogicalName="SFXTagsGlobal.csv" />
       <EmbeddedResource LogicalName="$([System.String]::new('%(LogicalName)').Replace('\','/'))" />
-    </ItemGroup>
-  </Target>
-
-  <!-- обновляем сведения о сборке -->
-  <Target Name="AssemblyInfo" BeforeTargets="PreBuildEvent" Outputs="UpdatedAssemblyInfoFiles">
-    <ItemGroup>
-      <AssemblyInfoFiles Include="$(ProjectDir)/Properties/AssemblyInfo.cs"/>
-    </ItemGroup>
-    <MakeDir Directories="%(AssemblyInfoFiles.RelativeDir)" Condition = "!Exists('%(AssemblyInfoFiles.RelativeDir)')" />
-    <Touch Files="%(AssemblyInfoFiles.RelativeDir).gitkeep" AlwaysCreate="true" />
-    <Attrib Files="%(AssemblyInfoFiles.FullPath)" Normal="true" />
-    <AssemblyInfo
-        CodeLanguage="CS"
-        OutputFile="%(AssemblyInfoFiles.FullPath)"
-        AssemblyTitle="$(Title)"
-        AssemblyDescription="$(Description)"
-        AssemblyConfiguration="$(Configuration)"
-        AssemblyCompany="$(Company)"
-        AssemblyProduct="$(Product)"
-        AssemblyCopyright="$(Copyright)"
-        AssemblyTrademark=""
-        AssemblyVersion="$(ModVersion)"
-        AssemblyFileVersion="$(ModVersion)"
-        ComVisible="false" >
-      <Output TaskParameter="OutputFile" ItemName="UpdatedAssemblyInfoFiles"/>
-    </AssemblyInfo>
-    <ItemGroup>
-      <Compile Include="%(UpdatedAssemblyInfoFiles.FullPath)" />
     </ItemGroup>
   </Target>
 

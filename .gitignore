@@ -3,7 +3,6 @@
 /Mods/Gronehog/
 /src/BigRedButton/
 **/Test/
-**/Properties/AssemblyInfo*.cs
 [Cc]onfig.json
 
 ## Ignore Visual Studio temporary files, build results, and

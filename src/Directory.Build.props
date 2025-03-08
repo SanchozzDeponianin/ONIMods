@@ -3,19 +3,21 @@
   <Import Condition=" !Exists('Directory.Build.props.user') " Project="Directory.Build.props.default" />
   <Import Condition=" Exists('Directory.Build.props.user') " Project="Directory.Build.props.user" />
 
-  <!-- затычки. а то без них студия сума сходит и самодеятельностью занимается -->
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Steam' " />
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Backup' " />
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Steam' " />
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Backup' " />
-
   <!-- конфигурации -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <Platforms>Steam;Backup</Platforms>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>9.0</LangVersion>
+    <OutputType>Library</OutputType>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -23,7 +25,6 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -41,23 +42,16 @@
     <UsesPLib Condition=" '$(UsesPLib)' != 'true' ">false</UsesPLib>
     <UsesPublicise Condition=" '$(UsesPublicise)' != 'true' ">false</UsesPublicise>
     <MSBuildTasksHelperDLL>$(MSBuildProjectDirectory)/../../bin/MSBuildTasksHelper.dll</MSBuildTasksHelperDLL>
+    <PublicisedFolder>$(MSBuildProjectDirectory)/../../bin/Publicised/$(Platform)</PublicisedFolder>
   </PropertyGroup>
 
   <!-- выбор пути где лежат соответсвующие файлы игры -->
   <PropertyGroup Condition=" '$(Platform)' == 'Steam' ">
     <GameFolder>$(GameFolderSteam)</GameFolder>
-    <DefineConstants>$(DefineConstants);STEAM</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Platform)' != 'Steam' ">
     <GameFolder>$(GameFolderBackup)</GameFolder>
-    <DefineConstants>$(DefineConstants);BACKUP</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(UsesPublicise)' == 'true' ">
-    <PublicisedFolder>$(MSBuildProjectDirectory)/../../bin/Publicised/$(Platform)</PublicisedFolder>
-    <DefineConstants>$(DefineConstants);PUBLICISED</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <!-- подключаем DLL: -->
@@ -68,80 +62,56 @@
   </ItemDefinitionGroup>
 
   <!-- вспомогательные средства для сборки -->
-  <ItemGroup>
-    <PackageReference Include="MSBuildTasks" Version="1.5.0.235" />
+  <ItemGroup Condition=" '$(UsesPLib)' == 'true' ">
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.34.2" />
   </ItemGroup>
-  <Choose>
-    <When Condition=" '$(UsesPLib)' == 'true' ">
-      <ItemGroup>
-        <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.34.2" />
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Choose>
-    <When Condition=" '$(UsesPublicise)' == 'true' ">
-      <ItemGroup>
-        <PackageReference Include="Aze.Publicise.MSBuild.Task" Version="1.1.0" />
-      </ItemGroup>
-    </When>
-  </Choose>
+
+  <ItemGroup Condition=" '$(UsesPublicise)' == 'true' ">
+    <PackageReference Include="Aze.Publicise.MSBuild.Task" Version="1.1.0" />
+  </ItemGroup>
 
   <!-- DLL игры -->
   <!-- нормальные -->
-  <Choose>
-    <When Condition=" '$(DistributeMod)' == 'true' And '$(UsesPublicise)' != 'true' ">
-      <ItemGroup>
-        <Reference Include="Assembly-CSharp" HintPath="$(GameFolder)/Assembly-CSharp.dll" />
-        <Reference Include="Assembly-CSharp-firstpass" HintPath="$(GameFolder)/Assembly-CSharp-firstpass.dll" />
-      </ItemGroup>
-    </When>
-  </Choose>
+  <ItemGroup Condition=" '$(DistributeMod)' == 'true' And '$(UsesPublicise)' != 'true' ">
+    <Reference Include="Assembly-CSharp" HintPath="$(GameFolder)/Assembly-CSharp.dll" />
+    <Reference Include="Assembly-CSharp-firstpass" HintPath="$(GameFolder)/Assembly-CSharp-firstpass.dll" />
+  </ItemGroup>
+
   <!-- либо публицырованые -->
-  <Choose>
-    <When Condition=" '$(DistributeMod)' == 'true' And '$(UsesPublicise)' == 'true' ">
-      <ItemGroup>
-        <Reference Include="Assembly-CSharp" HintPath="$(PublicisedFolder)/Assembly-CSharp_public.dll" />
-        <Reference Include="Assembly-CSharp-firstpass" HintPath="$(PublicisedFolder)/Assembly-CSharp-firstpass_public.dll" />
-      </ItemGroup>
-    </When>
-  </Choose>
+  <ItemGroup Condition=" '$(DistributeMod)' == 'true' And '$(UsesPublicise)' == 'true' ">
+    <Reference Include="Assembly-CSharp" HintPath="$(PublicisedFolder)/Assembly-CSharp_public.dll" />
+    <Reference Include="Assembly-CSharp-firstpass" HintPath="$(PublicisedFolder)/Assembly-CSharp-firstpass_public.dll" />
+  </ItemGroup>
+
   <!-- и остальные -->
-  <Choose>
-    <When Condition=" '$(DistributeMod)' == 'true' ">
-      <ItemGroup>
-        <!-- чтобы была документация
-        <Reference Include="0Harmony" HintPath="$(GameFolder)/0Harmony.dll" /> -->
-        <PackageReference Include="Lib.Harmony" Version="2.2.2" />
-        <Reference Include="Newtonsoft.Json" HintPath="$(GameFolder)/Newtonsoft.Json.dll" />
-        <Reference Include="netstandard" HintPath="$(GameFolder)/netstandard.dll" />
-        <Reference Include="System" HintPath="$(GameFolder)/System.dll" />
-        <Reference Include="UnityEngine" HintPath="$(GameFolder)/UnityEngine.dll" />
-        <Reference Include="UnityEngine.CoreModule" HintPath="$(GameFolder)/UnityEngine.CoreModule.dll" />
-        <Reference Include="UnityEngine.ImageConversionModule" HintPath="$(GameFolder)/UnityEngine.ImageConversionModule.dll" />
-        <Reference Include="UnityEngine.TextRenderingModule" HintPath="$(GameFolder)/UnityEngine.TextRenderingModule.dll" />
-        <Reference Include="UnityEngine.UI" HintPath="$(GameFolder)/UnityEngine.UI.dll" />
-        <Reference Include="UnityEngine.UIModule" HintPath="$(GameFolder)/UnityEngine.UIModule.dll" />
-        <Reference Include="Unity.TextMeshPro" HintPath="$(GameFolder)/Unity.TextMeshPro.dll" />
-        <Reference Include="FMODUnity" HintPath="$(GameFolder)/FMODUnity.dll" />
-      </ItemGroup>
-    </When>
-  </Choose>
+  <ItemGroup Condition=" '$(DistributeMod)' == 'true' ">
+    <!-- чтобы была документация
+    <Reference Include="0Harmony" HintPath="$(GameFolder)/0Harmony.dll" /> -->
+    <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+    <Reference Include="Newtonsoft.Json" HintPath="$(GameFolder)/Newtonsoft.Json.dll" />
+    <Reference Include="netstandard" HintPath="$(GameFolder)/netstandard.dll" />
+    <Reference Include="System" HintPath="$(GameFolder)/System.dll" />
+    <Reference Include="UnityEngine" HintPath="$(GameFolder)/UnityEngine.dll" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(GameFolder)/UnityEngine.CoreModule.dll" />
+    <Reference Include="UnityEngine.ImageConversionModule" HintPath="$(GameFolder)/UnityEngine.ImageConversionModule.dll" />
+    <Reference Include="UnityEngine.TextRenderingModule" HintPath="$(GameFolder)/UnityEngine.TextRenderingModule.dll" />
+    <Reference Include="UnityEngine.UI" HintPath="$(GameFolder)/UnityEngine.UI.dll" />
+    <Reference Include="UnityEngine.UIModule" HintPath="$(GameFolder)/UnityEngine.UIModule.dll" />
+    <Reference Include="Unity.TextMeshPro" HintPath="$(GameFolder)/Unity.TextMeshPro.dll" />
+    <Reference Include="FMODUnity" HintPath="$(GameFolder)/FMODUnity.dll" />
+  </ItemGroup>
 
   <!-- PLib -->
-  <Choose>
-    <When Condition=" '$(DistributeMod)' == 'true' And '$(UsesPLib)' == 'true' ">
-      <ItemGroup>
-        <Reference Include="PLibCore" HintPath="$(PLibFolder)/PLibCore.dll" />
-        <Reference Include="PLibActions" HintPath="$(PLibFolder)/PLibActions.dll" />
-        <Reference Include="PLibAVC" HintPath="$(PLibFolder)/PLibAVC.dll" />
-        <Reference Include="PLibBuildings" HintPath="$(PLibFolder)/PLibBuildings.dll" />
-        <Reference Include="PLibDatabase" HintPath="$(PLibFolder)/PLibDatabase.dll" />
-        <Reference Include="PLibLighting" HintPath="$(PLibFolder)/PLibLighting.dll" />
-        <Reference Include="PLibOptions" HintPath="$(PLibFolder)/PLibOptions.dll" />
-        <Reference Include="PLibUI" HintPath="$(PLibFolder)/PLibUI.dll" />
-      </ItemGroup>
-    </When>
-  </Choose>
+  <ItemGroup Condition=" '$(DistributeMod)' == 'true' And '$(UsesPLib)' == 'true' ">
+    <Reference Include="PLibCore" HintPath="$(PLibFolder)/PLibCore.dll" />
+    <Reference Include="PLibActions" HintPath="$(PLibFolder)/PLibActions.dll" />
+    <Reference Include="PLibAVC" HintPath="$(PLibFolder)/PLibAVC.dll" />
+    <Reference Include="PLibBuildings" HintPath="$(PLibFolder)/PLibBuildings.dll" />
+    <Reference Include="PLibDatabase" HintPath="$(PLibFolder)/PLibDatabase.dll" />
+    <Reference Include="PLibLighting" HintPath="$(PLibFolder)/PLibLighting.dll" />
+    <Reference Include="PLibOptions" HintPath="$(PLibFolder)/PLibOptions.dll" />
+    <Reference Include="PLibUI" HintPath="$(PLibFolder)/PLibUI.dll" />
+  </ItemGroup>
 
   <!-- сведения о сборке -->
   <PropertyGroup>

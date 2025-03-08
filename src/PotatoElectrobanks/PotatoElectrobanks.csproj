@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Title>Potato Power Banks</Title>
     <Description>Adds five new Potato Power Banks exclusive for Bionics and Flydo.</Description>
@@ -8,19 +8,6 @@
     <UsesPLib>true</UsesPLib>
     <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0F48DDC4-869F-444D-92DD-B2939F5129D4}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PotatoElectrobanks</RootNamespace>
-    <AssemblyName>PotatoElectrobanks</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\StateMachinesExtensions.cs">
       <Link>StateMachinesExtensions.cs</Link>
@@ -28,10 +15,5 @@
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
-    <Compile Include="PotatoElectrobank.cs" />
-    <Compile Include="STRINGS.cs" />
-    <Compile Include="PotatoElectrobankConfig.cs" />
-    <Compile Include="PotatoElectrobanksPatches.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
