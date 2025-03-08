@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
@@ -161,15 +162,18 @@ namespace NoManualDelivery
         private static Tag[] AlwaysCouldBePickedUpByMinionTags = new Tag[0];
 
         // разрешить дупликам забирать жеготных из инкубатора, всегда хватать еду, всегда брать воду из чайника
-        [HarmonyPatch(typeof(Pickupable), nameof(Pickupable.CouldBePickedUpByMinion))]
+        [HarmonyPatch(typeof(Pickupable), nameof(Pickupable.CouldBePickedUpByMinion), new Type[] { typeof(int) })]
         private static class Pickupable_CouldBePickedUpByMinion
         {
-            private static bool Prefix(Pickupable __instance, GameObject carrier, ref bool __result)
+            private static Func<Pickupable, int, bool> CouldBePickedUpCommon =
+                typeof(Pickupable).Detour<Func<Pickupable, int, bool>>("CouldBePickedUpCommon");
+
+            private static bool Prefix(Pickupable __instance, int carrierID, ref bool __result)
             {
                 if (__instance.KPrefabID.HasAnyTags(AlwaysCouldBePickedUpByMinionTags)
                     || (NoManualDeliveryOptions.Instance.AllowAlwaysPickupKettle && __instance.targetWorkable is IceKettleWorkable))
                 {
-                    __result = __instance.CouldBePickedUpByTransferArm(carrier);
+                    __result = CouldBePickedUpCommon(__instance, carrierID);
                     return false;
                 }
                 return true;
@@ -183,8 +187,8 @@ namespace NoManualDelivery
             /*
             if ( блаблабла && 
                 item.GetComponent<Pickupable>()
-        ---         .CouldBePickedUpByMinion(base.gameObject)
-        +++         .CouldBePickedUpByTransferArm(base.gameObject)
+        ---         .CouldBePickedUpByMinion(base.GetComponent<KPrefabID>().InstanceID)
+        +++         .CouldBePickedUpCommon(base.GetComponent<KPrefabID>().InstanceID)
                )
             {
                 блаблабла
@@ -196,11 +200,11 @@ namespace NoManualDelivery
 
             private static bool transpiler(List<CodeInstruction> instructions)
             {
-                var CouldBePickedUpByMinion = typeof(Pickupable).GetMethodSafe(nameof(Pickupable.CouldBePickedUpByMinion), false, typeof(GameObject));
-                var CouldBePickedUpByTransferArm = typeof(Pickupable).GetMethodSafe(nameof(Pickupable.CouldBePickedUpByTransferArm), false, typeof(GameObject));
-                if (CouldBePickedUpByMinion != null && CouldBePickedUpByTransferArm != null)
+                var CouldBePickedUpByMinion = typeof(Pickupable).GetMethodSafe(nameof(Pickupable.CouldBePickedUpByMinion), false, typeof(int));
+                var CouldBePickedUpCommon = typeof(Pickupable).GetMethodSafe("CouldBePickedUpCommon", false, typeof(int));
+                if (CouldBePickedUpByMinion != null && CouldBePickedUpCommon != null)
                 {
-                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, CouldBePickedUpByMinion, CouldBePickedUpByTransferArm).ToList();
+                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, CouldBePickedUpByMinion, CouldBePickedUpCommon).ToList();
                     return true;
                 }
                 return false;
@@ -388,6 +392,17 @@ namespace NoManualDelivery
             {
                 if (__instance is IceKettleWorkable && !worker.UsesMultiTool())
                     __result.overrideAnims = null;
+            }
+        }
+
+        // ящег-збрасыватель
+        // пофиксим ручное переключение вкл/выкл
+        [HarmonyPatch(typeof(ObjectDispenser), "Toggle")]
+        internal static class AutomaticDispenser_Toggle
+        {
+            private static void Postfix(ObjectDispenser.Instance ___smi, bool ___switchedOn)
+            {
+                ___smi.SetSwitchState(___switchedOn);
             }
         }
     }

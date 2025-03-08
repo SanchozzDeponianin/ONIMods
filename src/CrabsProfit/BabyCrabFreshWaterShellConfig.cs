@@ -5,12 +5,14 @@ using SanchozzONIMods.Lib;
 namespace CrabsProfit
 {
     using static STRINGS.ITEMS.INDUSTRIAL_PRODUCTS;
-    public class BabyCrabFreshWaterShellConfig : IEntityConfig
+    public class BabyCrabFreshWaterShellConfig : IEntityConfig, IHasDlcRestrictions
     {
         public const string ID = "BabyCrabFreshWaterShell";
         public static readonly Tag TAG = TagManager.Create(ID, BABY_CRAB_SHELL.VARIANT_FRESH_WATER.NAME);
 
-        public string[] GetDlcIds() => Utils.GetDlcIds(DlcManager.AVAILABLE_ALL_VERSIONS);
+        public virtual string[] GetDlcIds() => null;
+        public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
+        public string[] GetForbiddenDlcIds() => null;
 
         public GameObject CreatePrefab()
         {

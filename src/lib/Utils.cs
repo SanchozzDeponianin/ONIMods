@@ -324,7 +324,7 @@ namespace SanchozzONIMods.Lib
 
         private static readonly string[] VERY_SPECIAL = new string[] { "VerySpecial" };
 
-        public static string[] GetDlcIds(string[] dlcIds) => GlobalAudioSheet.IsValid ? dlcIds : VERY_SPECIAL;
+        public static string[] GetDlcIds(string[] dlcIds = null) => GlobalAudioSheet.IsValid ? dlcIds : VERY_SPECIAL;
 
         // загружаем таблицы звуков
 #if USESPLIB

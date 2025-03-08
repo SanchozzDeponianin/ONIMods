@@ -48,8 +48,7 @@ namespace ButcherStation
                 attribute: Db.Get().Attributes.Ranching,
                 multiplier: ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f,
                 base_value: 0f,
-                formatter: formatter,
-                available_dlcs: DlcManager.AVAILABLE_ALL_VERSIONS);
+                formatter: formatter);
             RoomsExpandedCompat(harmony);
         }
 

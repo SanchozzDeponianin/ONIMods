@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Supply to Closest</Title>
     <Description>Forces Duplicants to choose a closer storage when performing delivery orders.</Description>
-    <ModVersion>0.3.0</ModVersion>
+    <ModVersion>1.0.0</ModVersion>
     <UsesPLib>true</UsesPLib>
     <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>

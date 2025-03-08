@@ -86,7 +86,7 @@ namespace GraveyardKeeper
                 PlantsToSpawn.AddRange(SingleHarvestPlants);
             if (GraveyardKeeperOptions.Instance.regular_plants)
                 PlantsToSpawn.AddRange(RegularPlants);
-            PlantsToSpawn.RemoveAll(tag => !SaveLoader.Instance.IsDlcListActiveForCurrentSave(Assets.GetPrefab(tag).GetComponent<KPrefabID>().requiredDlcIds));
+            PlantsToSpawn.RemoveAll(tag => !Game.IsCorrectDlcActiveForCurrentSave(Assets.GetPrefab(tag).GetComponent<KPrefabID>()));
             if (PlantsToSpawn.Count == 0)
                 PlantsToSpawn.Add(EvilFlowerConfig.ID);
             modifiedPlantableCellQuery = new PlantableCellQuery();
@@ -265,7 +265,7 @@ namespace GraveyardKeeper
         {
             private static void Postfix(FetchChore ___chore)
             {
-                ___chore.forbiddenTags = ___chore.forbiddenTags.AddItem(GameTags.Creatures.ReservedByCreature).ToArray();
+                ___chore.forbiddenTags = ___chore.forbiddenTags.Append(GameTags.Creatures.ReservedByCreature);
                 ___chore.forbidHash = FetchChore.ComputeHashCodeForTags(___chore.forbiddenTags);
             }
         }

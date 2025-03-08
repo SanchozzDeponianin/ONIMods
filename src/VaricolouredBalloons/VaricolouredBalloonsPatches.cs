@@ -34,7 +34,7 @@ namespace VaricolouredBalloons
             // поэтому, сгенерируем уникальный batchTag от name
             var kAnimFile = Assets.GetAnim(animFile);
             Traverse.Create(kAnimFile).Field<HashedString>("_batchTag").Value = kAnimFile.name;
-            return new BalloonArtistFacadeResource(id, string.Empty, string.Empty, PermitRarity.Universal, animFile, type, DlcManager.AVAILABLE_ALL_VERSIONS);
+            return new BalloonArtistFacadeResource(id, string.Empty, string.Empty, PermitRarity.Universal, animFile, type);
         }
 
         [PLibMethod(RunAt.AfterDbInit)]

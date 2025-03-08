@@ -12,7 +12,7 @@ namespace Lagoo
     using static STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO;
 
     [EntityConfigOrder(1)]
-    public class LagooConfig : IEntityConfig
+    public class LagooConfig : IEntityConfig, IHasDlcRestrictions
     {
         public const string ID = "SquirrelLagoo";
         public const string TRAIT_ID = ID + "BaseTrait";
@@ -21,7 +21,9 @@ namespace Lagoo
         public const string ANIM_PREFIX = "lagoo_";
         private const int EGG_SORT_ORDER = 0;
 
-        public string[] GetDlcIds() => Utils.GetDlcIds(DlcManager.AVAILABLE_ALL_VERSIONS);
+        public virtual string[] GetDlcIds() => null;
+        public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
+        public string[] GetForbiddenDlcIds() => null;
 
         public static GameObject CreateSquirrelLagoo(string id, string name, string desc, string anim_file, bool is_baby)
         {
@@ -88,9 +90,9 @@ namespace Lagoo
             var prefab = CreateSquirrelLagoo(ID, NAME, DESC, squirrel_kanim, false);
             const float fertility_cycles = CREATURES.LIFESPAN.TIER3 * CREATURES.FERTILITY_TIME_BY_LIFESPAN;
             const float incubation_cycles = CREATURES.LIFESPAN.TIER3 * CREATURES.INCUBATION_TIME_BY_LIFESPAN;
-            EntityTemplates.ExtendEntityToFertileCreature(prefab, EGG_ID, EGG_NAME, EGG_DESC,
+            EntityTemplates.ExtendEntityToFertileCreature(prefab, this, EGG_ID, EGG_NAME, EGG_DESC,
                 egg_squirrel_kanim, SquirrelTuning.EGG_MASS, BABY_ID, fertility_cycles, incubation_cycles,
-                EGG_CHANCES_LAGOO, GetDlcIds(), EGG_SORT_ORDER);
+                EGG_CHANCES_LAGOO, EGG_SORT_ORDER);
             SquirrelTuning.EGG_CHANCES_BASE.Add(new FertilityMonitor.BreedingChance() { egg = EGG_ID, weight = 0f });
             SquirrelTuning.EGG_CHANCES_HUG.Add(new FertilityMonitor.BreedingChance() { egg = EGG_ID, weight = 0f });
             return prefab;

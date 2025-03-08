@@ -7,9 +7,11 @@ namespace Lagoo
     using static STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO;
 
     [EntityConfigOrder(3)]
-    public class BabyLagooConfig : IEntityConfig
+    public class BabyLagooConfig : IEntityConfig, IHasDlcRestrictions
     {
-        public string[] GetDlcIds() => Utils.GetDlcIds(DlcManager.AVAILABLE_ALL_VERSIONS);
+        public virtual string[] GetDlcIds() => null;
+        public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
+        public string[] GetForbiddenDlcIds() => null;
 
         public GameObject CreatePrefab()
         {

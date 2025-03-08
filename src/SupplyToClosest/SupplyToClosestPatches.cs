@@ -186,7 +186,7 @@ namespace SupplyToClosest
                 else
                 {
                     // нафсякий вернём резервацию как было
-                    reservation.handle = reservation.pickupable.Reserve(nameof(FetchAreaChore), consumerState.gameObject, reservation.amount);
+                    reservation.handle = reservation.pickupable.Reserve(nameof(FetchAreaChore), consumerState.prefabid.InstanceID, reservation.amount);
                     smi.reservations[0] = reservation;
                 }
             }

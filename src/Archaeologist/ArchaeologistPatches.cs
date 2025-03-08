@@ -27,7 +27,6 @@ namespace Archaeologist
                     id = Archaeologist,
                     statBonus = -DUPLICANTSTATS.SMALL_STATPOINT_BONUS,
                     rarity = DUPLICANTSTATS.RARITY_EPIC,
-                    dlcId = DlcManager.VANILLA_ID,
                     mutuallyExclusiveTraits = new List<string> { "CantResearch", "Uncultured" }
                 });
             }

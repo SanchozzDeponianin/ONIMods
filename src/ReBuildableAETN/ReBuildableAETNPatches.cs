@@ -83,8 +83,8 @@ namespace ReBuildableAETN
             {
                 __result.ShowInBuildMenu = true;
                 __result.ViewMode = OverlayModes.GasConduits.ID;
-                __result.MaterialCategory = MATERIALS.REFINED_METALS.AddItem(MaterialBuildingTag.Name).ToArray();
-                __result.Mass = __result.Mass.AddItem(2).ToArray();
+                __result.MaterialCategory = MATERIALS.REFINED_METALS.Append(MaterialBuildingTag.Name);
+                __result.Mass = __result.Mass.Append(2);
                 if (ReBuildableAETNOptions.Instance.AddLogicPort)
                     __result.LogicInputPorts = LogicOperationalController.CreateSingleInputPortList(new CellOffset(1, 0));
             }
@@ -144,14 +144,12 @@ namespace ReBuildableAETN
         [HarmonyPatch(typeof(Constructable), "OnSpawn")]
         private static class Constructable_OnSpawn
         {
-            private static bool Prepare()
-            {
-                return DlcManager.IsExpansion1Active();
-            }
+            private static bool Prepare() => DlcManager.IsExpansion1Active();
 
             private static void InjectForbiddenTag(FetchList2 fetchList, Tag tag, Tag[] forbidden_tags, float amount, Operational.State operationalRequirement)
             {
-                forbidden_tags = (forbidden_tags ?? new Tag[0]).AddItem(GameTags.CharmedArtifact).ToArray();
+                if (tag == MaterialBuildingTag)
+                    forbidden_tags = (forbidden_tags ?? new Tag[0]).Append(GameTags.CharmedArtifact);
                 fetchList.Add(tag, forbidden_tags, amount, operationalRequirement);
             }
 
@@ -238,13 +236,14 @@ namespace ReBuildableAETN
         {
             private static void Postfix(GameObject inst)
             {
-                IEnumerable<string> x = new string[] { FieldRationConfig.ID };
+                var databank = DatabankHelper.ID;
+                var loot = new string[] { FieldRationConfig.ID };
                 for (int i = 0; i < 25; i++)
                 {
-                    x = x.AddItem(ResearchDatabankConfig.ID);
+                    loot = loot.Append(databank);
                 }
                 var component = inst.GetComponent<SetLocker>();
-                component.possible_contents_ids = new string[][] { x.ToArray() };
+                component.possible_contents_ids = new string[][] { loot };
                 component.ChooseContents();
             }
         }

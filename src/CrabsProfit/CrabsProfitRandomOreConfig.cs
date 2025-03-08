@@ -6,12 +6,14 @@ using SanchozzONIMods.Lib;
 namespace CrabsProfit
 {
     using static STRINGS.ITEMS.INDUSTRIAL_PRODUCTS;
-    public class CrabsProfitRandomOreConfig : IEntityConfig
+    public class CrabsProfitRandomOreConfig : IEntityConfig, IHasDlcRestrictions
     {
         public const string ID = "CrabsProfitRandomOre";
         public static readonly Tag TAG = TagManager.Create(ID);
 
-        public string[] GetDlcIds() => Utils.GetDlcIds(DlcManager.AVAILABLE_ALL_VERSIONS);
+        public virtual string[] GetDlcIds() => null;
+        public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
+        public string[] GetForbiddenDlcIds() => null;
 
         public GameObject CreatePrefab()
         {

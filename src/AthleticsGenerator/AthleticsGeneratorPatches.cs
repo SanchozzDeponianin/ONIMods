@@ -32,7 +32,7 @@ namespace AthleticsGenerator
             var formatter = new StandardAttributeFormatter(GameUtil.UnitClass.Power, GameUtil.TimeSlice.None);
             ManualGeneratorPower = Db.Get().AttributeConverters.Create(nameof(ManualGeneratorPower), "Manual Generator Power",
                 STRINGS.DUPLICANTS.ATTRIBUTES.ATHLETICS.POWERMODIFIER, Db.Get().Attributes.Athletics,
-                AthleticsGeneratorOptions.Instance.watts_per_level, 0f, formatter, DlcManager.AVAILABLE_ALL_VERSIONS);
+                AthleticsGeneratorOptions.Instance.watts_per_level, 0f, formatter);
         }
 
         [HarmonyPatch(typeof(ManualGeneratorConfig), nameof(ManualGeneratorConfig.CreateBuildingDef))]

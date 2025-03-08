@@ -21,7 +21,7 @@ namespace RoverRefueling
             return go;
         }
 
-        public string[] GetDlcIds() => DlcManager.AVAILABLE_ALL_VERSIONS;
+        public virtual string[] GetDlcIds() => null;
         public void OnPrefabInit(GameObject inst) { }
         public void OnSpawn(GameObject inst) { }
     }

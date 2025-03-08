@@ -6,7 +6,7 @@ using SanchozzONIMods.Lib;
 namespace ReBuildableAETN
 {
     [EntityConfigOrder(2)]
-    public class MassiveHeatSinkCoreConfig : IEntityConfig
+    public class MassiveHeatSinkCoreConfig : IEntityConfig, IHasDlcRestrictions
     {
         public const string ID = "MassiveHeatSinkCore";
         public const float MASS = 50f;
@@ -14,7 +14,9 @@ namespace ReBuildableAETN
         public static Tag tag = TagManager.Create(ID);
         public static Tag MaterialBuildingTag = TagManager.Create("BuildingNeutroniumCore");
 
-        public string[] GetDlcIds() => Utils.GetDlcIds(DlcManager.AVAILABLE_ALL_VERSIONS);
+        public virtual string[] GetDlcIds() => null;
+        public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
+        public string[] GetForbiddenDlcIds() => null;
 
         public static readonly ArtifactTier TIER_CORE = new ArtifactTier(
             STRINGS.UI.SPACEARTIFACTS.ARTIFACTTIERS.TIER_CORE.key, DECOR.BONUS.TIER7, 0);

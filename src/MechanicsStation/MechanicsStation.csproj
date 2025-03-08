@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Mechanics Station</Title>
     <Description>Adds a new Mechanics Station, with which engineers could improve the performance of various buildings.</Description>
-    <ModVersion>1.4.2</ModVersion>
+    <ModVersion>1.4.3</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

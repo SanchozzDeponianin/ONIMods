@@ -221,6 +221,16 @@ namespace BetterPlantTending
         }
 
         // подавим нотификацию когда собирается гнилой мутантный урожай
+        [HarmonyPatch(typeof(RotPile), nameof(RotPile.TryCreateNotification))]
+        private static class RotPile_TryCreateNotification
+        {
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+            private static bool Prefix(RotPile __instance)
+            {
+                return __instance.GetProperName() != global::STRINGS.ITEMS.FOOD.ROTPILE.NAME;
+            }
+        }
+#if false
         private static RotPile.States.BoolParameter suppress_notification;
 
         [HarmonyPatch(typeof(RotPile.States), nameof(RotPile.States.InitializeStates))]
@@ -284,11 +294,18 @@ namespace BetterPlantTending
                 return true;
             }
         }
+#endif
 
         // дополнительные семена безурожайных растений
-        [HarmonyPatch(typeof(EntityTemplates), nameof(EntityTemplates.CreateAndRegisterSeedForPlant))]
+        [HarmonyPatch]
         private static class EntityTemplates_CreateAndRegisterSeedForPlant
         {
+            private static MethodBase TargetMethod()
+            {
+                return typeof(EntityTemplates).GetOverloadWithMostArguments(nameof(EntityTemplates.CreateAndRegisterSeedForPlant),
+                    true, typeof(GameObject), typeof(IHasDlcRestrictions));
+            }
+
             private static void Postfix(GameObject plant)
             {
                 if (plant.GetComponent<Crop>() == null)
@@ -419,6 +436,7 @@ namespace BetterPlantTending
 
         // научиваем белочек делать экстракцию декоративных безурожайных семян
         // а также доставать растений в горшках и ящиках
+        // todo: клеи это значительно переписали, надо переделывать
         [HarmonyPatch(typeof(ClimbableTreeMonitor.Instance), "FindClimbableTree")]
         private static class ClimbableTreeMonitor_Instance_FindClimbableTree
         {
