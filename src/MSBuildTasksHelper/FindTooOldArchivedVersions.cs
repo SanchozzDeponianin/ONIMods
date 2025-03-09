@@ -79,8 +79,6 @@ namespace SanchozzONIMods
                             candidates.Add(Path.GetDirectoryName(ArchivedVersions[build]));
                     }
                 }
-                if (candidates.Count > 0)
-                    Log.LogWarning("Too Old Archived Versions, delete:\n" + string.Join("\n", candidates));
                 TooOldArchivedVersions = candidates.ToArray();
                 return true;
             }

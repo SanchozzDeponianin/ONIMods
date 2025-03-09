@@ -3,11 +3,11 @@
 
   <Target Name="ResolveGameDllReferences" BeforeTargets="ResolveAssemblyReferences" >
     <ItemGroup>
-      <Reference Condition=" '%(Reference.HintPath)' == '' And Exists('$(GameFolder)/%(Identity).dll') " 
+      <Reference Condition=" '%(Reference.HintPath)' == '' And Exists('$(GameFolder)/%(Identity).dll') "
                  HintPath="$(GameFolder)/%(Identity).dll" />
     </ItemGroup>
   </Target>
-  
+
   <!-- константы для компилятора и прочее -->
   <Target Name="DefineConstants" AfterTargets="ResolveAssemblyReferences">
     <PropertyGroup>
@@ -193,7 +193,7 @@
 
   <!-- при необходимости архивируем ранее существующие потроха -->
   <Target Name="Archiving" AfterTargets="DetermineInstallFolder" Condition=" '$(DistributeMod)' == 'true' And '$(NeededArchiving)' == 'true' ">
-    <Warning Text="Found mod for Previous Game version $(PreviousGameVersion)-$(PreviousBuildNumber)" />
+    <Message Importance="high" Text="Found mod for Previous Game version $(PreviousGameVersion)-$(PreviousBuildNumber)" />
 
     <PropertyGroup Condition=" '$(PreviousGameVersion)' == '??' ">
       <ArchiveFolder>$(InstallRootFolder)/archived_versions/previous_$(PreviousBuildNumber)</ArchiveFolder>
@@ -203,7 +203,7 @@
       <ArchiveFolder>$(InstallRootFolder)/archived_versions/previous_$(PreviousGameVersion)</ArchiveFolder>
     </PropertyGroup>
 
-    <Warning Text="Archiving into '$(ArchiveFolder)'" />
+    <Message Importance="high" Text="Archiving into '$(ArchiveFolder)'" />
 
     <ItemGroup>
       <FilesToArchive Include="$(InstallRootFolder)/**/*" Exclude="$(InstallRootFolder)/archived_versions/**/*;$(InstallRootFolder)/mod.yaml" />
@@ -252,7 +252,10 @@
       ArchivedModInfoFiles="@(ArchivedModInfoFiles)" >
       <Output TaskParameter="TooOldArchivedVersions" ItemName="TooOldArchivedVersions" />
     </SanchozzONIMods.FindTooOldArchivedVersions>
-
+    
+    <Message Importance="high" Text="Found Too Old Archived Versions, delete:" Condition=" '@(TooOldArchivedVersions->Count())' &gt; 0 " />
+    <Message Importance="high" Text="%(TooOldArchivedVersions.Identity)" />
+    
     <RemoveDir Directories="@(TooOldArchivedVersions)" />
   </Target>
 </Project>

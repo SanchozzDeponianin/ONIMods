@@ -364,7 +364,7 @@ namespace SupplyToClosest
             {
 #pragma warning disable CS8321
                 IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original) =>
-                    TranspilerUtils.Wrap(instructions, original, RemoveCollectChores);
+                    TranspilerUtils.Transpile(instructions, original, RemoveCollectChores);
 #pragma warning restore CS8321
                 provider.CollectChores(consumer_state, succeeded, failed_contexts);
             }
@@ -394,7 +394,7 @@ namespace SupplyToClosest
             {
 #pragma warning disable CS8321
                 IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original) =>
-                    TranspilerUtils.Wrap(instructions, original, RemoveClearables);
+                    TranspilerUtils.Transpile(instructions, original, RemoveClearables);
 #pragma warning restore CS8321
                 provider.UpdateFetches(path_prober);
             }

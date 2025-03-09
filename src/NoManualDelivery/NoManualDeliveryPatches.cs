@@ -195,7 +195,7 @@ namespace NoManualDelivery
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
             {
-                return TranspilerUtils.Wrap(instructions, method, transpiler);
+                return TranspilerUtils.Transpile(instructions, method, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)

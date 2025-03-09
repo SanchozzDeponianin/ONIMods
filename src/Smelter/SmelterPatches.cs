@@ -46,7 +46,7 @@ namespace Smelter
         {
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Wrap(instructions, original, transpiler);
+                return TranspilerUtils.Transpile(instructions, original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)

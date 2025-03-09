@@ -133,9 +133,9 @@ namespace TravelTubesExpanded
                     (int)ObjectLayer.FoundationTile, (int)ObjectLayer.TravelTubeConnection, true)
                 */
                 instructions = instructions
-                    .Wrap(original, IL, AddJumpEntranceAndDualBridgeTest)
-                    .Wrap(original, IL, AddTubeAndBridgeExitTest)
-                    .Wrap(original, IL, AddFloorToTubeTest);
+                    .Transpile(original, IL, AddJumpEntranceAndDualBridgeTest)
+                    .Transpile(original, IL, AddTubeAndBridgeExitTest)
+                    .Transpile(original, IL, AddFloorToTubeTest);
                 return instructions;
             }
 

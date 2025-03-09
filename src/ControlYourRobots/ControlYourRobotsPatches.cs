@@ -259,7 +259,7 @@ namespace ControlYourRobots
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Wrap(instructions, original, transpiler);
+                return TranspilerUtils.Transpile(instructions, original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -381,7 +381,7 @@ namespace ControlYourRobots
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Wrap(instructions, original, transpiler);
+                return TranspilerUtils.Transpile(instructions, original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -471,7 +471,7 @@ namespace ControlYourRobots
             // предотвращение краша
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                return TranspilerUtils.Wrap(instructions, original, IL, transpiler);
+                return TranspilerUtils.Transpile(instructions, original, IL, transpiler);
             }
             /*
                 пропускаем эти вызовы методов если переменная является RobotAssignablesProxy

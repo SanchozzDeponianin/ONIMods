@@ -189,7 +189,7 @@ namespace ExoticSpices
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                return TranspilerUtils.Wrap(instructions, original, IL, transpiler);
+                return TranspilerUtils.Transpile(instructions, original, IL, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
@@ -224,7 +224,7 @@ namespace ExoticSpices
         {
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                return TranspilerUtils.Wrap(instructions, original, IL, transpiler);
+                return TranspilerUtils.Transpile(instructions, original, IL, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
