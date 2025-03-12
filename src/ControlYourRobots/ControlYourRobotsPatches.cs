@@ -28,6 +28,7 @@ namespace ControlYourRobots
         }
 
         public static Tag RobotSuspend = TagManager.Create(nameof(RobotSuspend));
+        public static Tag RobotSuspendBehaviour = TagManager.Create(nameof(RobotSuspendBehaviour));
         public static Dictionary<Tag, AttributeModifier> SuspendedBatteryModifiers = new Dictionary<Tag, AttributeModifier>();
         private static Dictionary<Tag, AttributeModifier> IdleBatteryModifiers = new Dictionary<Tag, AttributeModifier>();
 
@@ -68,6 +69,45 @@ namespace ControlYourRobots
                     trait.disabledChoreGroups = disabled.ToArray();
                 }
             }
+            // подобно FetchDroneConfig
+            /*
+            var chore_table = new ChoreTable.Builder()
+                .Add(new RobotDeathStates.Def(), true, Db.Get().ChoreTypes.Die.priority)
+                .Add(new FallStates.Def(), true, -1)
+                .Add(new DebugGoToStates.Def(), true, -1)
+            +++ .PushInterruptGroup()
+            +++ .Add(new RoverSleepStates.Def(), true, Db.Get().ChoreTypes.Die.priority)
+            +++ .PopInterruptGroup()
+                .Add(new IdleStates.Def блаблабла );
+            */
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return instructions.Transpile(original, transpiler);
+            }
+
+            private static ChoreTable.Builder Inject(ChoreTable.Builder chore_table)
+            {
+                return chore_table
+                    .PushInterruptGroup()
+                    .Add(new RoverSleepStates.Def(), true, Db.Get().ChoreTypes.Die.priority)
+                    .PopInterruptGroup();
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var idle = typeof(IdleStates.Def).GetConstructors()[0];
+                var inject = typeof(BaseRoverConfig_BaseRover).GetMethodSafe(nameof(Inject), true, typeof(ChoreTable.Builder));
+                if (idle != null && inject != null)
+                {
+                    int i = instructions.FindIndex(inst => inst.Is(OpCodes.Newobj, idle));
+                    if (i != -1)
+                    {
+                        instructions.Insert(i, new CodeInstruction(OpCodes.Call, inject));
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
 
         [HarmonyPatch(typeof(BaseRoverConfig), nameof(BaseRoverConfig.OnSpawn))]
@@ -85,7 +125,7 @@ namespace ControlYourRobots
             private static void PlayAnim(GameObject go)
             {
                 if (go.TryGetComponent(out KBatchedAnimController kbac))
-                    kbac.Play("in_storage", KAnim.PlayMode.Once);
+                    kbac.Play(go.HasTag(GameTags.Dead) ? "idle_dead" : "in_storage", KAnim.PlayMode.Once);
             }
 
             private static void Postfix(GameObject inst)
@@ -112,82 +152,28 @@ namespace ControlYourRobots
         [HarmonyPatch(typeof(RobotAi), nameof(RobotAi.InitializeStates))]
         private static class RobotAi_InitializeStates
         {
-            public class SuspendedStates : RobotAi.State
-            {
-#pragma warning disable CS0649
-                public RobotAi.State satisfied;
-                public RobotAi.State moved;
-#pragma warning restore CS0649
-            }
-
-            private static Func<RobotAi.Instance, StateMachine.Instance>[] SuspendedRoversStateMachines;
-            private static Func<RobotAi.Instance, StateMachine.Instance>[] SuspendedFlydosStateMachines;
-            private static StatusItem RobotSleeping;
-
-            static RobotAi_InitializeStates()
-            {
-                var fx = new Func<RobotAi.Instance, StateMachine.Instance>[] {
-                    (RobotAi.Instance smi) => new RobotSleepFX.Instance(smi.master)
-                };
-                var fall = new Func<RobotAi.Instance, StateMachine.Instance>[] {
-                    (RobotAi.Instance smi) => new FallWhenDeadMonitor.Instance(smi.master)
-                };
-                SuspendedFlydosStateMachines = fx;
-                SuspendedRoversStateMachines = fx.Append(fall);
-                RobotSleeping = new StatusItem(nameof(RobotSleeping), NAME, TOOLTIP, "status_item_exhausted",
-                    StatusItem.IconType.Custom, NotificationType.Neutral, false, default(HashedString),
-                    showWorldIcon: ControlYourRobotsOptions.Instance.zzz_icon_enable);
-            }
-
-            private static Func<RobotAi.Instance, StateMachine.Instance>[] GetSuspendedStateMachines(RobotAi.Instance smi)
-            {
-                return smi.PrefabID() == FetchDroneConfig.ID ? SuspendedFlydosStateMachines : SuspendedRoversStateMachines;
-            }
-
             private static void Postfix(RobotAi __instance)
             {
-                const string name = "suspended";
-                var suspended = (SuspendedStates)__instance.CreateState(name, __instance.alive, new SuspendedStates());
+                StatusItem RobotSleeping = new StatusItem(nameof(RobotSleeping), NAME, TOOLTIP, "status_item_exhausted",
+                    StatusItem.IconType.Custom, NotificationType.Neutral, false, default(HashedString),
+                    showWorldIcon: ControlYourRobotsOptions.Instance.zzz_icon_enable);
+
+                var suspended = __instance.CreateState("suspended", __instance.alive);
 
                 __instance.alive.normal
                     .TagTransition(RobotSuspend, suspended, false);
 
                 suspended
                     .TagTransition(RobotSuspend, __instance.alive.normal, true)
-                    .DefaultState(suspended.satisfied)
-                    .ToggleTag(GameTags.Creatures.Deliverable)
                     .ToggleStatusItem(RobotSleeping)
                     .ToggleAttributeModifier("save battery",
                         smi => SuspendedBatteryModifiers[smi.PrefabID()],
                         smi => SuspendedBatteryModifiers.ContainsKey(smi.PrefabID()))
-                    .ToggleBrain(name)
-                    .Enter(smi =>
-                    {
-                        smi.GetComponent<Navigator>().Pause(name);
-                        smi.GetComponent<Storage>().DropAll();
-                        smi.RefreshUserMenu();
-                    })
-                    .PlayAnim("in_storage")
+                    .ToggleStateMachine(smi => new RobotSleepFX.Instance(smi.master))
+                    .ToggleBehaviour(RobotSuspendBehaviour, smi => true)
+                    .Enter(smi => smi.RefreshUserMenu())
                     .ScheduleActionNextFrame("Clean StatusItem", CleanStatusItem)
-                    .Exit(smi =>
-                    {
-                        smi.GetComponent<Navigator>().Unpause(name);
-                        smi.RefreshUserMenu();
-                    });
-
-                suspended.satisfied
-                    .TagTransition(GameTags.Stored, suspended.moved, false)
-                    .ToggleStateMachineList(GetSuspendedStateMachines)
-                    .Enter(smi =>
-                    {
-                        // принудительно "роняем" робота чтобы он не зависал в воздухе после перемещения
-                        var fall_smi = smi.GetSMI<FallWhenDeadMonitor.Instance>();
-                        if (!fall_smi.IsNullOrStopped())
-                            fall_smi.GoTo(fall_smi.sm.falling);
-                    });
-
-                suspended.moved
-                    .TagTransition(GameTags.Stored, suspended.satisfied, true);
+                    .Exit(smi => smi.RefreshUserMenu());
 
                 __instance.dead
                     .ToggleTag(GameTags.Creatures.Deliverable);
@@ -200,6 +186,24 @@ namespace ControlYourRobots
                     selectable.SetStatusItem(Db.Get().StatusItemCategories.Main, null, null);
             }
         }
+
+        // todo: возвращять материалы из убитого флудо
+        // лядь, почему то его масса больше чем в рецепте
+        /*
+        [HarmonyPatch(typeof(RobotAi), nameof(RobotAi.DeleteOnDeath))]
+        private static class RobotAi_DeleteOnDeath
+        {
+            private static void Prefix(RobotAi.Instance smi)
+            {
+                if (((RobotAi.Def)smi.def).DeleteOnDead && smi.gameObject.TryGetComponent(out Deconstructable deconstructable))
+                {
+                    deconstructable.enabled = true;
+                    if (deconstructable.constructionElements == null || deconstructable.constructionElements.Length == 0)
+                        deconstructable.constructionElements = new Tag[] { deconstructable.GetComponent<PrimaryElement>().Element.tag };
+                    deconstructable.SpawnItemsFromConstruction(null);
+                }
+            }
+        }*/
 
         // для совместимости с MassMoveTo. отменить перемещение если это робот и он не выключен
         //[HarmonyPatch(typeof(Movable), nameof(Movable.MoveToLocation))]
@@ -231,6 +235,17 @@ namespace ControlYourRobots
                 ___loop.ToggleAttributeModifier("low power mode",
                         smi => IdleBatteryModifiers[smi.PrefabID()],
                         smi => IdleBatteryModifiers.ContainsKey(smi.PrefabID()));
+            }
+        }
+
+        // не падать когда несут
+        [HarmonyPatch(typeof(FallWhenDeadMonitor.Instance), nameof(FallWhenDeadMonitor.Instance.IsFalling))]
+        private static class FallWhenDeadMonitor_Instance_IsFalling
+        {
+            private static void Postfix(FallWhenDeadMonitor.Instance __instance, ref bool __result)
+            {
+                if (__result && __instance.HasTag(GameTags.Stored))
+                    __result = false;
             }
         }
 

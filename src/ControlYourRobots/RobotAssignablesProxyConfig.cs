@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using SanchozzONIMods.Lib;
 
 namespace ControlYourRobots
 {
@@ -7,7 +6,7 @@ namespace ControlYourRobots
     {
         public static string ID = "RobotAssignablesProxy";
 
-        public string[] GetDlcIds() => Utils.GetDlcIds(DlcManager.AVAILABLE_ALL_VERSIONS);
+        public virtual string[] GetDlcIds() => null;
 
         public GameObject CreatePrefab()
         {

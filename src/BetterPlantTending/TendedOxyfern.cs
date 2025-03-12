@@ -18,6 +18,12 @@ namespace BetterPlantTending
             attributes.Add(fakeGrowingRate);
         }
 
+        protected override void OnSpawn()
+        {
+            base.OnSpawn();
+            ApplyModifier();
+        }
+
         public override void ApplyModifier()
         {
             oxyfern.SetConsumptionRate();

@@ -170,7 +170,7 @@ namespace SanchozzONIMods.Lib
             else return new CodeInstruction(OpCodes.Stloc, index);
         }
 
-        public static CodeInstruction GetLoadArgInstruction(ParameterInfo arg, bool useAddress = false)
+        public static CodeInstruction GetLoadArgInstruction(this ParameterInfo arg, bool useAddress = false)
         {
             if (arg == null)
                 throw new ArgumentNullException(nameof(arg));

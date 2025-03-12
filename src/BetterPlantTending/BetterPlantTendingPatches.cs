@@ -230,71 +230,6 @@ namespace BetterPlantTending
                 return __instance.GetProperName() != global::STRINGS.ITEMS.FOOD.ROTPILE.NAME;
             }
         }
-#if false
-        private static RotPile.States.BoolParameter suppress_notification;
-
-        [HarmonyPatch(typeof(RotPile.States), nameof(RotPile.States.InitializeStates))]
-        private static class RotPile_States_InitializeStates
-        {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
-            private static void Postfix(RotPile.States __instance)
-            {
-                suppress_notification = __instance.AddParameter(nameof(suppress_notification), new RotPile.States.BoolParameter());
-            }
-        }
-
-        [HarmonyPatch(typeof(RotPile), nameof(RotPile.TryCreateNotification))]
-        private static class RotPile_TryCreateNotification
-        {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
-            private static bool Prefix(RotPile __instance) => !suppress_notification.Get(__instance.smi);
-        }
-
-        [HarmonyPatch(typeof(Crop), nameof(Crop.SpawnSomeFruit))]
-        private static class Crop_SpawnSomeFruit
-        {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
-            /*
-                var go = GameUtil.KInstantiate(Assets.GetPrefab(cropID), blabla...);
-                ...
-                go.SetActive(true);
-            +++ SuppressNotification(go, cropID);
-                ...
-            */
-            private static void SuppressNotification(GameObject crop, Tag cropID)
-            {
-                if (cropID == RotPileConfig.ID && crop.TryGetComponent(out RotPile rotPile) && !rotPile.smi.IsNullOrDestroyed())
-                    suppress_notification.Set(true, rotPile.smi);
-            }
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
-            {
-                return TranspilerUtils.Wrap(instructions, original, transpiler);
-            }
-            private static bool transpiler(List<CodeInstruction> instructions, MethodBase method)
-            {
-                var cropID = method.GetParameters().FirstOrDefault(param => param.ParameterType == typeof(Tag) && param.Name == "cropID");
-                var setActive = typeof(GameObject).GetMethodSafe(nameof(GameObject.SetActive), false, typeof(bool));
-                var suppress = typeof(Crop_SpawnSomeFruit).GetMethodSafe(nameof(SuppressNotification), true, PPatchTools.AnyArguments);
-                if (cropID == null || setActive == null || suppress == null)
-                    return false;
-
-                int i = instructions.FindIndex(inst => inst.opcode == OpCodes.Call && inst.operand is MethodInfo kInstantiate
-                    && kInstantiate.DeclaringType == typeof(GameUtil) && kInstantiate.Name == nameof(GameUtil.KInstantiate));
-                if (i == -1 || !instructions[i + 1].IsStloc())
-                    return false;
-                var ldloc_go = TranspilerUtils.GetMatchingLoadInstruction(instructions[i + 1]);
-
-                i = instructions.FindIndex(inst => inst.Calls(setActive));
-                if (i == -1)
-                    return false;
-
-                instructions.Insert(++i, ldloc_go);
-                instructions.Insert(++i, TranspilerUtils.GetLoadArgInstruction(cropID));
-                instructions.Insert(++i, new CodeInstruction(OpCodes.Call, suppress));
-                return true;
-            }
-        }
-#endif
 
         // дополнительные семена безурожайных растений
         [HarmonyPatch]
@@ -436,8 +371,7 @@ namespace BetterPlantTending
 
         // научиваем белочек делать экстракцию декоративных безурожайных семян
         // а также доставать растений в горшках и ящиках
-        // todo: клеи это значительно переписали, надо переделывать
-        [HarmonyPatch(typeof(ClimbableTreeMonitor.Instance), "FindClimbableTree")]
+        [HarmonyPatch(typeof(ClimbableTreeMonitor.Instance), "FindClimbableTreeVisitor")]
         private static class ClimbableTreeMonitor_Instance_FindClimbableTree
         {
             private static bool CanReachBelow(Navigator navigator, int cell, KMonoBehaviour plant)
@@ -452,67 +386,57 @@ namespace BetterPlantTending
                 }
             }
             /*
-            var targets = ListPool<KMonoBehaviour, ClimbableTreeMonitor>.Allocate();
+            var plant = obj as KMonoBehaviour;
             ...
         ---     if (navigator.CanReach(cell))
-        +++     if (CanReachBelow(navigator, cell, target))
+        +++     if (CanReachBelow(navigator, cell, plant))
             ...
                 var trunk = target.GetComponent<ForestTreeSeedMonitor>();
 			    var locker = target.GetComponent<StorageLocker>();
-        +++     AddPlant(targets, target);
+        +++     AddPlant(context.targets, plant);
             ...
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions, TranspilerUtils.Log log)
+
+            private static bool transpiler(List<CodeInstruction> instructions, MethodBase method)
             {
-                var allocate = typeof(ListPool<KMonoBehaviour, ClimbableTreeMonitor>).GetMethodSafe(nameof(ListPool<KMonoBehaviour, ClimbableTreeMonitor>.Allocate), true);
+                var context_type = typeof(ClimbableTreeMonitor.Instance)
+                    .GetNestedType("FindClimableTreeContext", BindingFlags.Public | BindingFlags.NonPublic);
+                var context = method.GetParameters().FirstOrDefault(p => p.ParameterType == context_type);
+                var targets = context_type?.GetFieldSafe("targets", false);
                 var getComponent = typeof(Component).GetMethod(nameof(Component.GetComponent), Type.EmptyTypes).MakeGenericMethod(typeof(StorageLocker));
                 var canReach = typeof(Navigator).GetMethodSafe(nameof(Navigator.CanReach), false, typeof(int));
                 var canReachBelow = typeof(ClimbableTreeMonitor_Instance_FindClimbableTree).GetMethodSafe(nameof(CanReachBelow), true, PPatchTools.AnyArguments);
                 var addPlant = typeof(ClimbableTreeMonitor_Instance_FindClimbableTree).GetMethodSafe(nameof(AddPlant), true, PPatchTools.AnyArguments);
-                bool r1 = false, r2 = false;
-                if (allocate != null && getComponent != null && addPlant != null)
-                {
-                    CodeInstruction ldloc_list = null, ldloc_target = null;
-                    for (int i = 0; i < instructions.Count; i++)
-                    {
-                        if (ldloc_list == null && instructions[i].Calls(allocate) && instructions[i + 1].IsStloc())
-                        {
-                            ldloc_list = TranspilerUtils.GetMatchingLoadInstruction(instructions[i + 1]);
-                            continue;
-                        }
-                        if (ldloc_target == null && instructions[i].Is(OpCodes.Isinst, typeof(KMonoBehaviour)) && instructions[i + 1].IsStloc())
-                        {
-                            ldloc_target = TranspilerUtils.GetMatchingLoadInstruction(instructions[i + 1]);
-                            continue;
-                        }
-                        if (ldloc_list != null && ldloc_target != null)
-                        {
-                            if (instructions[i].Calls(canReach))
-                            {
-                                instructions[i].operand = canReachBelow;
-                                instructions.Insert(i++, ldloc_target);
-                                r1 = true;
-                                log.Step(1);
-                                continue;
-                            }
-                            if (instructions[i].Calls(getComponent))
-                            {
-                                ++i;
-                                instructions.Insert(++i, ldloc_list);
-                                instructions.Insert(++i, ldloc_target);
-                                instructions.Insert(++i, new CodeInstruction(OpCodes.Call, addPlant));
-                                r2 = true;
-                                log.Step(2);
-                                break;
-                            }
-                        }
-                    }
-                }
-                return r1 && r2;
+
+                if (context == null || targets == null || getComponent == null || canReach == null || canReachBelow == null || addPlant == null)
+                    return false;
+
+                int i = instructions.FindIndex(inst => inst.Is(OpCodes.Isinst, typeof(KMonoBehaviour)));
+                if (i == -1 || !instructions[i + 1].IsStloc())
+                    return false;
+                var plant = instructions[i + 1].GetMatchingLoadInstruction();
+
+                i = instructions.FindIndex(i, inst => inst.Calls(canReach));
+                if (i == -1)
+                    return false;
+
+                int j = instructions.FindIndex(i, inst => inst.Calls(getComponent));
+                if (j == -1 || !instructions[j + 1].IsStloc())
+                    return false;
+
+                j += 2;
+                instructions.Insert(j++, context.GetLoadArgInstruction());
+                instructions.Insert(j++, new CodeInstruction(OpCodes.Ldfld, targets));
+                instructions.Insert(j++, plant);
+                instructions.Insert(j++, new CodeInstruction(OpCodes.Call, addPlant));
+
+                instructions.Insert(i++, plant);
+                instructions[i] = new CodeInstruction(OpCodes.Call, canReachBelow);
+                return true;
             }
         }
 

@@ -6,6 +6,7 @@ using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
+using PeterHan.PLib.Detours;
 
 namespace ControlYourRobots
 {
@@ -146,75 +147,58 @@ namespace ControlYourRobots
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID);
 
-            private static bool ShouldSleep(RobotElectroBankMonitor.Instance smi, bool hasElectrobank)
-            {
-                return !hasElectrobank || smi.HasTag(RobotSuspend);
-            }
-
-            private static bool ShouldWakeUp(RobotElectroBankMonitor.Instance smi, bool hasElectrobank) => !ShouldSleep(smi, hasElectrobank);
-
-            /*
-            --- .powered.ParamTransition(hasElectrobank, powerdown.pre, IsFalse);
-            +++ .powered.ParamTransition(hasElectrobank, powerdown.pre, ShouldSleep);
-            
-            --- .powerdown.dead.ParamTransition(hasElectrobank, powerup.grounded, IsTrue);
-            +++ .powerdown.dead.ParamTransition(hasElectrobank, powerup.grounded, ShouldWakeUp);
-            */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
-            {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
-            }
-
-            private static bool transpiler(List<CodeInstruction> instructions)
-            {
-                // todo: довольно грубо. благо что IsFalse и IsTrue ровно по разу там где нам надо
-                // в идеале нужно больше проверок
-                var flags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
-                var is_false = typeof(RobotElectroBankMonitor).GetField("IsFalse", flags);
-                var is_true = typeof(RobotElectroBankMonitor).GetField("IsTrue", flags);
-                var callback = typeof(RobotElectroBankMonitor.Parameter<bool>.Callback).GetConstructors()[0];
-                var sleep = typeof(RobotElectroBankMonitor_InitializeStates).GetMethodSafe(nameof(ShouldSleep), true, PPatchTools.AnyArguments);
-                var wakeup = typeof(RobotElectroBankMonitor_InitializeStates).GetMethodSafe(nameof(ShouldWakeUp), true, PPatchTools.AnyArguments);
-
-                if (is_false != null && is_true != null && callback != null && sleep != null && wakeup != null)
-                {
-                    int i = instructions.FindIndex(inst => inst.opcode == OpCodes.Ldsfld
-                        && inst.operand is FieldInfo info && info.FieldHandle == is_false.FieldHandle);
-                    if (i == -1)
-                        return false;
-                    instructions.RemoveAt(i);
-                    instructions.Insert(i++, new CodeInstruction(OpCodes.Ldnull));
-                    instructions.Insert(i++, new CodeInstruction(OpCodes.Ldftn, sleep));
-                    instructions.Insert(i++, new CodeInstruction(OpCodes.Newobj, callback));
-
-                    i = instructions.FindIndex(inst => inst.opcode == OpCodes.Ldsfld
-                        && inst.operand is FieldInfo info && info.FieldHandle == is_true.FieldHandle);
-                    if (i == -1)
-                        return false;
-                    instructions.RemoveAt(i);
-                    instructions.Insert(i++, new CodeInstruction(OpCodes.Ldnull));
-                    instructions.Insert(i++, new CodeInstruction(OpCodes.Ldftn, wakeup));
-                    instructions.Insert(i++, new CodeInstruction(OpCodes.Newobj, callback));
-                    return true;
-                }
-                return false;
-            }
-
-            private static bool OnTagsGotoSleep(RobotElectroBankMonitor.Instance smi, object data)
-            {
-                return data is TagChangedEventData @event && @event.tag == RobotSuspend && @event.added;
-            }
-
-            private static bool OnTagsGotoWakeUp(RobotElectroBankMonitor.Instance smi, object data)
-            {
-                return data is TagChangedEventData @event && @event.tag == RobotSuspend && !@event.added
-                    && smi.sm.hasElectrobank.Get(smi);
-            }
-
             private static void Postfix(RobotElectroBankMonitor __instance)
             {
-                __instance.powered.EventHandlerTransition(GameHashes.TagsChanged, __instance.powerdown.pre, OnTagsGotoSleep);
-                __instance.powerdown.dead.EventHandlerTransition(GameHashes.TagsChanged, __instance.powerup.grounded, OnTagsGotoWakeUp);
+                __instance.powered.TagTransition(RobotSuspend, __instance.powerdown, false);
+            }
+        }
+
+        // вырубайся немедленно
+        [HarmonyPatch(typeof(RobotElectroBankDeadStates.Instance), MethodType.Constructor)]
+        [HarmonyPatch(new System.Type[] { typeof(Chore<RobotElectroBankDeadStates.Instance>), typeof(RobotElectroBankDeadStates.Def) })]
+        private static class RobotElectroBankDeadStates_Instance_Constructor
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID);
+
+            private static void Postfix(Chore<RobotElectroBankDeadStates.Instance> chore)
+            {
+                chore.choreType.interruptPriority = Db.Get().ChoreTypes.Die.interruptPriority;
+                chore.masterPriority.priority_class = PriorityScreen.PriorityClass.compulsory;
+            }
+        }
+
+        // при включении проверим а есть ли у него батарейка
+        [HarmonyPatch(typeof(RobotElectroBankDeadStates), nameof(RobotElectroBankDeadStates.InitializeStates))]
+        private static class RobotElectroBankDeadStates_InitializeStates
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID);
+
+            private delegate bool ElectrobankDelivered(RobotElectroBankDeadStates.Instance smi);
+
+            private static DetouredMethod<ElectrobankDelivered> IsElectrobankDelivered
+                = typeof(RobotElectroBankDeadStates).DetourLazy<ElectrobankDelivered>(nameof(ElectrobankDelivered));
+
+            private static bool OnWakeUp(RobotElectroBankDeadStates.Instance smi, object data)
+            {
+                return data is TagChangedEventData @event && @event.tag == RobotSuspend && !@event.added
+                    && IsElectrobankDelivered.Invoke(smi);
+            }
+
+            private static void Postfix(RobotElectroBankDeadStates __instance)
+            {
+                __instance.powerdown.EventHandlerTransition(GameHashes.TagsChanged, __instance.powerup.grounded, OnWakeUp);
+            }
+        }
+
+        // а это на случай если батарейку всунули в выключенного
+        [HarmonyPatch(typeof(RobotElectroBankDeadStates), "ElectrobankDelivered")]
+        private static class RobotElectroBankDeadStates_ElectrobankDelivered
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID);
+
+            private static void Postfix(RobotElectroBankDeadStates.Instance smi, ref bool __result)
+            {
+                __result = __result && !smi.HasTag(RobotSuspend);
             }
         }
 
