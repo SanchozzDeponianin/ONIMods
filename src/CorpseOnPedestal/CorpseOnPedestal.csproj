@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Corpses on Pedestals</Title>
     <Description>Now you can "decorate" your base with the corpses of dead Duplicants and discharged Robots, placing them on Pedestals.</Description>
-    <ModVersion>1.0.2</ModVersion>
+    <ModVersion>1.0.3</ModVersion>
     <UsesPLib>false</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
@@ -12,6 +12,9 @@
     </Compile>
     <Compile Include="..\lib\Utils.cs">
       <Link>Utils.cs</Link>
+    </Compile>
+    <Compile Include="..\lib\TranspilerUtils.cs">
+      <Link>TranspilerUtils.cs</Link>
     </Compile>
   </ItemGroup>
 </Project>

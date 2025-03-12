@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
+using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
 using KMod;
@@ -42,7 +43,7 @@ namespace CorpseOnPedestal
             {
                 __instance.dead_creature
                     .Enter(Discover)
-                    .EventHandler(GameHashes.OnStore, smi => smi.GetComponent<KAnimControllerBase>().Play("idle_dead", KAnim.PlayMode.Loop));
+                    .EventHandler(GameHashes.OnStore, PlayDeathAnim);
 
                 DeathMonitor.State pedestal = __instance.CreateState(nameof(pedestal), __instance.dead);
                 __instance.dead
@@ -70,17 +71,77 @@ namespace CorpseOnPedestal
 
             private static void PlayDeathAnim(DeathMonitor.Instance smi)
             {
+                string anim;
                 if (smi.IsDuplicant)
                 {
                     var death = smi.sm.death.Get(smi);
                     if (death == null)
                         death = Db.Get().Deaths.Generic;
-                    smi.GetComponent<KAnimControllerBase>().Play(death.loopAnim, KAnim.PlayMode.Loop);
+                    anim = death.loopAnim;
                 }
+                else
+                    anim = "idle_dead";
+                smi.GetComponent<KAnimControllerBase>().Play(anim, KAnim.PlayMode.Loop);
             }
         }
 
-        // учтём все виды дупликов и гоботов, с прицелом на новое длц
+        // ровер не должен заряжаться кроме как унутре ракеты
+        [HarmonyPatch]
+        private static class ScoutRoverConfig_OnSpawn
+        {
+            private static bool Prepare() => DlcManager.IsExpansion1Active();
+
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                var list = new List<MethodBase>();
+                list.Add(typeof(ScoutRoverConfig).GetMethod(nameof(ScoutRoverConfig.OnSpawn)));
+                foreach (var nested in typeof(ScoutRoverConfig).GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic))
+                {
+                    foreach (var method in nested.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+                    {
+                        if (method.Name.Contains(nameof(ScoutRoverConfig.OnSpawn)))
+                            list.Add(method);
+                    }
+                }
+                return list;
+            }
+
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return instructions.Transpile(original, transpiler);
+            }
+
+            private static Transform IsInsideCargoModule(Transform transform)
+            {
+                if (transform != null)
+                {
+                    var id = transform.PrefabID();
+                    if (id == ScoutModuleConfig.ID || id == ScoutLanderConfig.ID)
+                        return transform;
+                }
+                return null;
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var parent = typeof(Transform).GetProperty(nameof(Transform.parent))?.GetGetMethod();
+                var test = typeof(ScoutRoverConfig_OnSpawn).GetMethod(nameof(IsInsideCargoModule),
+                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+
+                if (parent != null && test != null)
+                {
+                    int i = instructions.FindIndex(inst => inst.Calls(parent));
+                    if (i != -1)
+                    {
+                        instructions.Insert(++i, new CodeInstruction(OpCodes.Call, test));
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        // учтём все виды дупликов и гоботов
         private static HashSet<Tag> AllMinions = new HashSet<Tag>();
         private static HashSet<Tag> AllRobots = new HashSet<Tag>();
         private static bool IsMinion(Tag tag) => AllMinions.Contains(tag);
