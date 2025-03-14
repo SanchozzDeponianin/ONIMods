@@ -107,6 +107,7 @@ namespace NoManualDelivery
 
         private static List<string> BuildingToMakeAutomatableWithTransferArmPickupGasLiquid = new List<string>()
         {
+            AdvancedResearchCenterConfig.ID,
             LiquidPumpingStationConfig.ID,
             LiquidBottlerConfig.ID,
             GasBottlerConfig.ID,
