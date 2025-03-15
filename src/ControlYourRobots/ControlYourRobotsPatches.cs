@@ -138,6 +138,39 @@ namespace ControlYourRobots
             }
         }
 
+        // афтоматически разбирать трупоф
+        [HarmonyPatch(typeof(MorbRoverConfig), nameof(MorbRoverConfig.OnSpawn))]
+        private static class MorbRoverConfig_OnSpawn
+        {
+            private static bool Prepare() => !ControlYourRobotsOptions.Instance.deconstruct_dead_biobot;
+
+            private static void Postfix(MorbRoverConfig __instance, GameObject inst)
+            {
+                inst.Unsubscribe((int)GameHashes.Died, __instance.TriggerDeconstructChoreOnDeath);
+            }
+        }
+
+        [HarmonyPatch(typeof(ScoutRoverConfig), nameof(ScoutRoverConfig.OnSpawn))]
+        private static class ScoutRoverConfig_OnSpawn
+        {
+            private static bool Prepare() => DlcManager.IsExpansion1Active()
+                && ControlYourRobotsOptions.Instance.deconstruct_dead_rover;
+
+            private static void Postfix(GameObject inst)
+            {
+                inst.Subscribe((int)GameHashes.Died, TriggerDeconstructChoreOnDeath);
+            }
+
+            private static void TriggerDeconstructChoreOnDeath(object obj)
+            {
+                if (obj is GameObject go && go != null && go.TryGetComponent(out Deconstructable deconstructable)
+                    && !deconstructable.IsMarkedForDeconstruction())
+                {
+                    deconstructable.QueueDeconstruction(false);
+                }
+            }
+        }
+
         // запретить хоронить трупов (иначе вылетает при поднятии тела)
         [HarmonyPatch(typeof(Grave.StatesInstance), nameof(Grave.StatesInstance.CreateFetchTask))]
         private static class Grave_StatesInstance_CreateFetchTask
@@ -187,12 +220,13 @@ namespace ControlYourRobots
             }
         }
 
-        // todo: возвращять материалы из убитого флудо
-        // лядь, почему то его масса больше чем в рецепте
-        /*
+        //возвращять материалы из убитого флудо
         [HarmonyPatch(typeof(RobotAi), nameof(RobotAi.DeleteOnDeath))]
         private static class RobotAi_DeleteOnDeath
         {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
+                && ControlYourRobotsOptions.Instance.dead_flydo_returns_materials;
+
             private static void Prefix(RobotAi.Instance smi)
             {
                 if (((RobotAi.Def)smi.def).DeleteOnDead && smi.gameObject.TryGetComponent(out Deconstructable deconstructable))
@@ -203,7 +237,7 @@ namespace ControlYourRobots
                     deconstructable.SpawnItemsFromConstruction(null);
                 }
             }
-        }*/
+        }
 
         // для совместимости с MassMoveTo. отменить перемещение если это робот и он не выключен
         //[HarmonyPatch(typeof(Movable), nameof(Movable.MoveToLocation))]

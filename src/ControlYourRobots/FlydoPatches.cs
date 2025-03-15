@@ -25,24 +25,28 @@ namespace ControlYourRobots
         private static class GameNavGrids_Constructor
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && ControlYourRobotsOptions.Instance.flydo_can_pass_door;
+                && (ControlYourRobotsOptions.Instance.flydo_can_pass_door || ControlYourRobotsOptions.Instance.flydo_prefers_straight);
 
             private static void Postfix(GameNavGrids __instance, Pathfinding pathfinding)
             {
                 var flyer = __instance.FlyerGrid1x1;
-                /*
-                Debug.Log("transition\t[void solid valid invalid] critter");
-                var transitions = new NavGrid.Transition[flyer.transitions.Length];
-                for (int i = 0; i < flyer.transitions.Length; i++)
+                NavGrid.Transition[] transitions;
+                if (ControlYourRobotsOptions.Instance.flydo_prefers_straight)
                 {
-                    var transition = flyer.transitions[i];
-                    Debug.LogFormat("{0}\t[{1} {2} {3} {4}] {5}", transition.ToString(), transition.voidOffsets.Length, transition.solidOffsets.Length, transition.validNavOffsets.Length, transition.invalidNavOffsets.Length, transition.isCritter);
-                    transition.isCritter = false;
-                    transitions[i] = transition;
-                }*/
-                var flydo = new NavGrid(FlydoGrid, flyer.transitions, flyer.navTypeData, new CellOffset[] { CellOffset.none },
+                    transitions = new NavGrid.Transition[flyer.transitions.Length];
+                    for (int i = 0; i < flyer.transitions.Length; i++)
+                    {
+                        var transition = flyer.transitions[i];
+                        if (transition.start == NavType.Hover && transition.end == NavType.Hover && transition.y == 0)
+                            transition.cost -= 1;
+                        transitions[i] = transition;
+                    }
+                }
+                else
+                    transitions = flyer.transitions;
+                var flydo = new NavGrid(FlydoGrid, transitions, flyer.navTypeData, new CellOffset[] { CellOffset.none },
                     new NavTableValidator[] {
-                        new GameNavGrids.FlyingValidator(false, false, true),
+                        new GameNavGrids.FlyingValidator(false, false, ControlYourRobotsOptions.Instance.flydo_can_pass_door),
                         new GameNavGrids.SwimValidator() },
                     flyer.updateRangeX, flyer.updateRangeY, flyer.maxLinksPerCell);
                 pathfinding.AddNavGrid(flydo);
@@ -150,20 +154,6 @@ namespace ControlYourRobots
             private static void Postfix(RobotElectroBankMonitor __instance)
             {
                 __instance.powered.TagTransition(RobotSuspend, __instance.powerdown, false);
-            }
-        }
-
-        // вырубайся немедленно
-        [HarmonyPatch(typeof(RobotElectroBankDeadStates.Instance), MethodType.Constructor)]
-        [HarmonyPatch(new System.Type[] { typeof(Chore<RobotElectroBankDeadStates.Instance>), typeof(RobotElectroBankDeadStates.Def) })]
-        private static class RobotElectroBankDeadStates_Instance_Constructor
-        {
-            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID);
-
-            private static void Postfix(Chore<RobotElectroBankDeadStates.Instance> chore)
-            {
-                chore.choreType.interruptPriority = Db.Get().ChoreTypes.Die.interruptPriority;
-                chore.masterPriority.priority_class = PriorityScreen.PriorityClass.compulsory;
             }
         }
 

@@ -41,6 +41,22 @@
             {
                 public static LocString NAME = "Flydo can pick up the Power Bank for itself";
             }
+            public class FLYDO_PREFERS_STRAIGHT
+            {
+                public static LocString NAME = "Flydo prefers a straight movement instead of a zigzag";
+            }
+            public class DEAD_FLYDO_RETURNS_MATERIALS
+            {
+                public static LocString NAME = "Flydo returns the materials from which it was made when destroyed";
+            }
+            public class DECONSTRUCT_DEAD_BIOBOT
+            {
+                public static LocString NAME = "Auto-create the errand to deconstruct a dead Biobot";
+            }
+            public class DECONSTRUCT_DEAD_ROVER
+            {
+                public static LocString NAME = "Auto-create the errand to deconstruct a dead Rover";
+            }
         }
     }
 }

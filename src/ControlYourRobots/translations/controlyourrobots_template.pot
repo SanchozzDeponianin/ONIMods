@@ -3,6 +3,21 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. ControlYourRobots.STRINGS.OPTIONS.DEAD_FLYDO_RETURNS_MATERIALS.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.DEAD_FLYDO_RETURNS_MATERIALS.NAME"
+msgid "Flydo returns the materials from which it was made when destroyed"
+msgstr ""
+
+#. ControlYourRobots.STRINGS.OPTIONS.DECONSTRUCT_DEAD_BIOBOT.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.DECONSTRUCT_DEAD_BIOBOT.NAME"
+msgid "Auto-create the errand to deconstruct a dead Biobot"
+msgstr ""
+
+#. ControlYourRobots.STRINGS.OPTIONS.DECONSTRUCT_DEAD_ROVER.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.DECONSTRUCT_DEAD_ROVER.NAME"
+msgid "Auto-create the errand to deconstruct a dead Rover"
+msgstr ""
+
 #. ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_FOR_ITSELF.NAME
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_FOR_ITSELF.NAME"
 msgid "Flydo can pick up the Power Bank for itself"
@@ -11,6 +26,11 @@ msgstr ""
 #. ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_PASS_DOOR.NAME
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_PASS_DOOR.NAME"
 msgid "Flydo can pass through Doors"
+msgstr ""
+
+#. ControlYourRobots.STRINGS.OPTIONS.FLYDO_PREFERS_STRAIGHT.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_PREFERS_STRAIGHT.NAME"
+msgid "Flydo prefers a straight movement instead of a zigzag"
 msgstr ""
 
 #. ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_ENABLE.NAME

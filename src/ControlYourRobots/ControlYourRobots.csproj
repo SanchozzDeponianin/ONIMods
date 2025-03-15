@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Control your Robots</Title>
     <Description>Adds a couple of features to better control your Robots: "Move To" and "Turn Off/On" buttons, Door Access Control, etc.</Description>
-    <ModVersion>1.5.2</ModVersion>
+    <ModVersion>1.6.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
