@@ -60,7 +60,7 @@ namespace ControlYourRobots
             private static void Postfix(GameObject __result)
             {
                 __result.AddOrGet<RobotTurnOffOn>();
-                if (ControlYourRobotsOptions.Instance.flydo_can_pass_door)
+                if (ControlYourRobotsOptions.Instance.flydo_can_pass_door || ControlYourRobotsOptions.Instance.flydo_prefers_straight)
                     __result.GetComponent<Navigator>().NavGridName = FlydoGrid;
                 // для правильного отображения величины заряда при сне
                 var delta_id = Db.Get().Amounts.InternalElectroBank.deltaAttribute.Id;
