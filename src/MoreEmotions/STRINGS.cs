@@ -31,6 +31,11 @@ namespace MoreEmotions
                     public static LocString NAME = "Respect";
                     public static LocString TOOLTIP = "We honor our dead";
                 }
+                public class CONTUSION
+                {
+                    public static LocString NAME = "Concussion";
+                    public static LocString TOOLTIP = "This Duplicant recently fell from a height and almost crashed";
+                }
             }
         }
 
@@ -117,6 +122,15 @@ namespace MoreEmotions
                 public static LocString NAME = $"The \"Wet Hands\" Emotion";
                 public static LocString TOOLTIP = "Sometimes it happens after mopping or using the Washbasin";
             }
+            public class FALL_CONTUSION_EMOTE
+            {
+                public static LocString NAME = "Animation after falling from a height to the floor";
+            }
+            public class FALL_CONTUSION_ADD_EFFECT
+            {
+                public static LocString NAME = "Enable debuff";
+                public static LocString TOOLTIP = $"If the height was more than {CONTUSION_HEIGHT}\n";
+            }
         }
 
         internal static void PostProcess()
@@ -125,6 +139,8 @@ namespace MoreEmotions
             OPTIONS.FULL_BLADDER_ADD_EFFECT.TOOLTIP.ReplaceText(Effect.CreateFullTooltip(FullBladderLaugh, true));
             OPTIONS.SAW_CORPSE_ADD_EFFECT.TOOLTIP.ReplaceText(Effect.CreateFullTooltip(SawCorpse, true));
             OPTIONS.RESPECT_GRAVE_ADD_EFFECT.TOOLTIP.ReplaceText(Effect.CreateFullTooltip(RespectGrave, true));
+            OPTIONS.FALL_CONTUSION_ADD_EFFECT.TOOLTIP.ReplaceText(OPTIONS.FALL_CONTUSION_ADD_EFFECT.TOOLTIP.text
+                + Effect.CreateFullTooltip(Contusion, true));
             Utils.CreateOptionsLocStringKeys(typeof(STRINGS));
         }
     }

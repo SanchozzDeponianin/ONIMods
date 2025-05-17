@@ -3,6 +3,16 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.CONTUSION.NAME
+msgctxt "MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.CONTUSION.NAME"
+msgid "Concussion"
+msgstr ""
+
+#. MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.CONTUSION.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.CONTUSION.TOOLTIP"
+msgid "This Duplicant recently fell from a height and almost crashed"
+msgstr ""
+
 #. MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.FULL_BLADDER_LAUGH.NAME
 msgctxt "MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.FULL_BLADDER_LAUGH.NAME"
 msgid "Disgraced itself"
@@ -71,6 +81,21 @@ msgstr ""
 #. MoreEmotions.STRINGS.OPTIONS.DOUBLE_GREETING.NAME
 msgctxt "MoreEmotions.STRINGS.OPTIONS.DOUBLE_GREETING.NAME"
 msgid "Two \"Dual\" greetings with fists and hands"
+msgstr ""
+
+#. MoreEmotions.STRINGS.OPTIONS.FALL_CONTUSION_ADD_EFFECT.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.FALL_CONTUSION_ADD_EFFECT.NAME"
+msgid "Enable debuff"
+msgstr ""
+
+#. MoreEmotions.STRINGS.OPTIONS.FALL_CONTUSION_ADD_EFFECT.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.OPTIONS.FALL_CONTUSION_ADD_EFFECT.TOOLTIP"
+msgid "If the height was more than 6\n"
+msgstr ""
+
+#. MoreEmotions.STRINGS.OPTIONS.FALL_CONTUSION_EMOTE.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.FALL_CONTUSION_EMOTE.NAME"
+msgid "Animation after falling from a height to the floor"
 msgstr ""
 
 #. MoreEmotions.STRINGS.OPTIONS.FULL_BLADDER_ADD_EFFECT.NAME

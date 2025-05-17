@@ -5,10 +5,15 @@ namespace MoreEmotions
     using static STRINGS.DUPLICANTS.MODIFIERS;
     internal static class MoreEmotionsEffects
     {
+        public const int CONTUSION_HEIGHT = 6;
+        public const float CONTUSION_ATTRIBUTE_PENALTY = -5f;
+        public const float CONTUSION_DURATION = 30f;
+
         public static Effect StressedCheering;
         public static Effect FullBladderLaugh;
         public static Effect SawCorpse;
         public static Effect RespectGrave;
+        public static Effect Contusion;
 
         public static void Init()
         {
@@ -76,6 +81,31 @@ namespace MoreEmotions
                 value: ModifierSet.ConvertValue(1f, Units.Flat),
                 description: RESPECT_GRAVE.NAME));
             db.effects.Add(RespectGrave);
+
+            // контузия после падения
+            Contusion = new Effect(
+                id: nameof(Contusion),
+                name: CONTUSION.NAME,
+                description: CONTUSION.TOOLTIP,
+                duration: CONTUSION_DURATION,
+                show_in_ui: true,
+                trigger_floating_text: true,
+                is_bad: true);
+            foreach (var attribute in db.Attributes.resources)
+            {
+                if (attribute.ShowInUI == Attribute.Display.Skill)
+                {
+                    Contusion.Add(new AttributeModifier(
+                        attribute_id: attribute.Id,
+                        value: CONTUSION_ATTRIBUTE_PENALTY,
+                        description: CONTUSION.NAME));
+                }
+            }
+            Contusion.Add(new AttributeModifier(
+                attribute_id: db.Amounts.Stress.deltaAttribute.Id,
+                value: ModifierSet.ConvertValue(15f, Units.PerDay),
+                description: CONTUSION.NAME));
+            db.effects.Add(Contusion);
         }
     }
 }

@@ -76,5 +76,13 @@ namespace MoreEmotions
         [JsonProperty]
         [Option]
         public bool wet_hands_emote { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool fall_contusion_emote { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool fall_contusion_add_effect { get; set; } = true;
     }
 }

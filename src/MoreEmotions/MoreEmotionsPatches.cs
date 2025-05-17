@@ -628,5 +628,67 @@ namespace MoreEmotions
                 }
             }
         }
+
+        // контузия при падении
+        [HarmonyPatch(typeof(FallMonitor), nameof(FallMonitor.InitializeStates))]
+        private static class FallMonitor_InitializeStates
+        {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.fall_contusion_emote;
+
+            private static FallMonitor.IntParameter fall_cell;
+            private static FallMonitor.IntParameter fall_height;
+
+            private static void Postfix(FallMonitor __instance)
+            {
+                fall_cell = __instance.AddParameter(nameof(fall_cell), new FallMonitor.IntParameter());
+                fall_height = __instance.AddParameter(nameof(fall_height), new FallMonitor.IntParameter());
+
+                __instance.falling
+                    .Enter(smi => fall_cell.Set(Grid.PosToCell(smi.transform.GetPosition()), smi))
+                    .Exit(smi =>
+                    {
+                        var a = Grid.PosToCell(smi.transform.GetPosition());
+                        var b = fall_cell.Get(smi);
+                        var y = (Grid.IsValidCell(a) && Grid.IsValidCell(b)) ? Grid.GetOffset(a, b).y : 0;
+                        fall_height.Set(y, smi);
+                    });
+
+                if (__instance.landfloor.updateActions != null)
+                    __instance.landfloor.updateActions.Clear(); // убрать GoTo(standing)
+
+                __instance.landfloor
+                    .ToggleBrain(nameof(__instance.landfloor))
+                    .PlayAnim(smi => ShouldContuze(smi) ? "fall_hard_pst" : "fall_pst")
+                    .OnAnimQueueComplete(__instance.standing);
+
+                if (MoreEmotionsOptions.Instance.fall_contusion_add_effect)
+                    __instance.landfloor.Exit(Contuze);
+            }
+
+            private static bool ShouldContuze(FallMonitor.Instance smi)
+            {
+                return smi.shouldPlayEmotes && fall_height.Get(smi) >= CONTUSION_HEIGHT;
+            }
+
+            private static void Contuze(FallMonitor.Instance smi)
+            {
+                if (ShouldContuze(smi) && smi.gameObject.TryGetComponent(out Effects effects))
+                {
+                    var effect = effects.AddOrExtend(Contusion, true);
+                    effect.timeRemaining += (fall_height.Get(smi) - CONTUSION_HEIGHT) * CONTUSION_DURATION / CONTUSION_HEIGHT;
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(BaseMinionConfig), nameof(BaseMinionConfig.BaseRationalAiStateMachines))]
+        private static class BaseMinionConfig_BaseRationalAiStateMachines
+        {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.fall_contusion_emote && MoreEmotionsOptions.Instance.fall_contusion_add_effect;
+
+            private static void Postfix(ref Func<RationalAi.Instance, StateMachine.Instance>[] __result)
+            {
+                __result = __result.Append(smi => new ContusionFX.Instance(smi.master));
+            }
+        }
     }
 }
