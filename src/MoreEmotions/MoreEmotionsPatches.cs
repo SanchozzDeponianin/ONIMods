@@ -74,6 +74,7 @@ namespace MoreEmotions
 
         // пинать нарколептика
         public static GameHashes SleepDisturbedByKick = (GameHashes)Hash.SDBMLower(nameof(SleepDisturbedByKick));
+        private const float STAMINA_THRESHOLD = 0.2f;
 
         [HarmonyPatch(typeof(SleepChore.States), nameof(SleepChore.States.InitializeStates))]
         private static class SleepChore_States_InitializeStates
@@ -88,7 +89,7 @@ namespace MoreEmotions
 
                 __instance.sleep.uninterruptable
                     .EnterTransition(not_so_uninterruptable, smi => !smi.hadPeacefulSleep)
-                    .ToggleReactable(smi => new KickLazyAssReactable(smi.gameObject));
+                    .ToggleReactable(smi => new KickLazyAssReactable(smi.gameObject, smi.hadTerribleSleep));
 
                 not_so_uninterruptable
                     .QueueAnim("working_loop", true)
@@ -101,7 +102,7 @@ namespace MoreEmotions
                             return;
                         }
                         var stamina = Db.Get().Amounts.Stamina.Lookup(smi.gameObject);
-                        if (stamina != null && stamina.value < stamina.GetMax() * 0.2f)
+                        if (stamina != null && stamina.value < stamina.GetMax() * STAMINA_THRESHOLD)
                         {
                             smi.GoTo(interrupt_kick_and_sleep_again);
                             return;
@@ -255,6 +256,32 @@ namespace MoreEmotions
                         anims[0] = anim;
                         Array.Copy(__result, 0, anims, 1, __result.Length);
                         __result = anims;
+                    }
+                }
+            }
+        }
+
+        // альтернативные анимации нарколептика
+        [HarmonyPatch(typeof(SleepChore.StatesInstance), nameof(SleepChore.StatesInstance.SetAnim))]
+        private static class SleepChore_StatesInstance_SetAnim
+        {
+            private static bool Prepare() => MoreEmotionsOptions.Instance.alternative_narcoleptic_anims;
+
+            private static void Postfix(SleepChore.StatesInstance __instance)
+            {
+                if (!__instance.sm.isInterruptable.Get(__instance) && UnityEngine.Random.value < 0.3f)
+                {
+                    var sleepable = __instance.sm.bed.Get<Sleepable>(__instance);
+                    var sleeper = __instance.sm.sleeper.Get(__instance);
+                    if (!sleepable.TryGetComponent(out Building _)
+                        && sleeper.TryGetComponent(out Navigator navigator) && navigator.CurrentNavType == NavType.Floor)
+                    {
+                        var stamina = Db.Get().Amounts.Stamina.Lookup(sleeper);
+                        if (stamina != null && stamina.value > stamina.GetMax() * STAMINA_THRESHOLD)
+                        {
+                            sleepable.overrideAnims = new KAnimFile[] { Assets.GetAnim("anim_sleep_narcoleptic_kanim") };
+                            __instance.hadTerribleSleep = true;
+                        }
                     }
                 }
             }

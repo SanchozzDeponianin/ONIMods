@@ -63,6 +63,11 @@ msgctxt "MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_BINGE_EAT_EMOTE.TOOLTIP"
 msgid "A stressed Binge Eater will sometimes try to bite his hand"
 msgstr ""
 
+#. MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_NARCOLEPTIC_ANIMS.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_NARCOLEPTIC_ANIMS.NAME"
+msgid "Alternative variant of narcoleptic sleeping animation"
+msgstr ""
+
 #. MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_SLEEP_ANIMS.NAME
 msgctxt "MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_SLEEP_ANIMS.NAME"
 msgid "Alternative variants of sleeping on a Bed animation"

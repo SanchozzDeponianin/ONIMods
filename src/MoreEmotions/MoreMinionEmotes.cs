@@ -36,6 +36,9 @@ namespace MoreEmotions
         public Emote FistBump;
         public Emote HighFive;
         public Emote MoonWalk;
+        public Emote Rage;
+        public Emote BreakKick;
+        public Emote BreakPunch;
 
         public MoreMinionEmotes(ResourceSet parent) : base(nameof(MoreMinionEmotes), parent)
         {
@@ -80,6 +83,31 @@ namespace MoreEmotions
                 //new EmoteStep{anim = "floor_floor_moonwalk_1_0_loop"},
                 new EmoteStep{anim = "floor_floor_moonwalk_1_0_pst"}
             }, "anim_react_moonwalk_kanim");
+            Rage = new Emote(this, nameof(Rage), new EmoteStep[]
+            {
+                new EmoteStep{anim = "idle_pre"},
+                new EmoteStep{anim = "rage_pre"},
+                new EmoteStep{anim = "rage_loop"},
+                new EmoteStep{anim = "rage_pst"},
+                new EmoteStep{anim = "idle_pst"},
+            }, "anim_rage_kanim");
+            // эти требуют дополнительных анимов anim_emotes_default_kanim и anim_break_kanim
+            BreakKick = new Emote(this, nameof(BreakKick), new EmoteStep[]
+            {
+                new EmoteStep{anim = "idle_pre"},
+                new EmoteStep{anim = "working_pre"},
+                new EmoteStep{anim = "break_loop_kick"},
+                new EmoteStep{anim = "working_pst"},
+                new EmoteStep{anim = "idle_pst"},
+            }, "anim_rage_kanim");
+            BreakPunch = new Emote(this, nameof(BreakPunch), new EmoteStep[]
+            {
+                new EmoteStep{anim = "idle_pre"},
+                new EmoteStep{anim = "working_pre"},
+                new EmoteStep{anim = "break_loop_punch"},
+                new EmoteStep{anim = "working_pst"},
+                new EmoteStep{anim = "idle_pst"},
+            }, "anim_rage_kanim");
         }
     }
 }

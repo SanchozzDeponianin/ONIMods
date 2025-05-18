@@ -6,7 +6,11 @@ namespace MoreEmotions
     {
         private Schedulable schedulable;
         private KBatchedAnimController kbak;
-        public KickLazyAssReactable(GameObject gameObject) : base(gameObject,
+        private bool secondaryAnimSet = false;
+        private KAnimFile kickKanim;
+        private KAnimFile breakKanim;
+
+        public KickLazyAssReactable(GameObject gameObject, bool punch) : base(gameObject,
             id: "KickLazyAss",
             chore_type: Db.Get().ChoreTypes.Emote,
             range_width: 1,
@@ -17,8 +21,36 @@ namespace MoreEmotions
             initialDelay = 2f;
             gameObject.TryGetComponent(out schedulable);
             gameObject.TryGetComponent(out kbak);
-            SetEmote(MoreMinionEmotes.Instance.Kick);
-            RegisterEmoteStepCallbacks("kick_loop", Trigger, null);
+            if (Random.value < 0.2f) // орать
+            {
+                SetEmote(MoreMinionEmotes.Instance.Rage);
+                RegisterEmoteStepCallbacks("rage_loop", null, Trigger);
+            }
+            else
+            {
+                if (punch) // бить
+                {
+                    secondaryAnimSet = true;
+                    SetEmote(MoreMinionEmotes.Instance.BreakPunch);
+                    RegisterEmoteStepCallbacks("break_loop_punch", null, Trigger);
+                }
+                else if (Random.value < 0.5f) // пинать
+                {
+                    secondaryAnimSet = true;
+                    SetEmote(MoreMinionEmotes.Instance.BreakKick);
+                    RegisterEmoteStepCallbacks("break_loop_kick", null, Trigger);
+                }
+                else // вариант
+                {
+                    SetEmote(MoreMinionEmotes.Instance.Kick);
+                    RegisterEmoteStepCallbacks("kick_loop", null, Trigger);
+                }
+            }
+            if (secondaryAnimSet)
+            {
+                kickKanim = Assets.GetAnim("anim_emotes_default_kanim");
+                breakKanim = Assets.GetAnim("anim_break_kanim");
+            }
         }
 
         private void Trigger(GameObject reactor)
@@ -39,10 +71,20 @@ namespace MoreEmotions
         {
             kbak.SetSceneLayer(Grid.SceneLayer.Creatures);
             base.InternalBegin();
+            if (secondaryAnimSet)
+            {
+                emote.ApplyAnimOverrides(kbac, kickKanim);
+                emote.ApplyAnimOverrides(kbac, breakKanim);
+            }
         }
 
         public override void InternalEnd()
         {
+            if (secondaryAnimSet)
+            {
+                emote.RemoveAnimOverrides(kbac, kickKanim);
+                emote.RemoveAnimOverrides(kbac, breakKanim);
+            }
             base.InternalEnd();
             kbak.SetSceneLayer(Grid.SceneLayer.Move);
         }

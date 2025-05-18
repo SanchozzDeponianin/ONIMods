@@ -59,6 +59,10 @@ namespace MoreEmotions
 
         [JsonProperty]
         [Option]
+        public bool alternative_narcoleptic_anims { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
         public bool saw_corpse_emote { get; set; } = true;
 
         [JsonProperty]

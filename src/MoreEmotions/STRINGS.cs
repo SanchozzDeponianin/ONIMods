@@ -98,6 +98,10 @@ namespace MoreEmotions
             {
                 public static LocString NAME = "Alternative variants of sleeping on a Bed animation";
             }
+            public class ALTERNATIVE_NARCOLEPTIC_ANIMS
+            {
+                public static LocString NAME = "Alternative variant of narcoleptic sleeping animation";
+            }
             public class SAW_CORPSE_EMOTE
             {
                 public static LocString NAME = "The \"Saw Corpse\" Emotion";
