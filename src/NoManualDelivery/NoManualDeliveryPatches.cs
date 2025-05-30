@@ -17,7 +17,7 @@ namespace NoManualDelivery
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(NoManualDeliveryPatches));
             new POptions().RegisterOptions(this, typeof(NoManualDeliveryOptions));

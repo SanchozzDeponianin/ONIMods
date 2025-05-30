@@ -5,7 +5,11 @@ namespace SandboxMutantPlant
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         private const string GENETICANALYSISSTATION = "{GENETICANALYSISSTATION}";
+
         public class UI
         {
             public class USERMENUACTIONS

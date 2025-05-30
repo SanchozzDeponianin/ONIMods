@@ -5,6 +5,9 @@ namespace SuitRecharger
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         public class BUILDINGS
         {
             public class PREFABS

@@ -20,7 +20,7 @@ namespace RoverRefueling
 
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(RoverRefuelingPatches));
             new POptions().RegisterOptions(this, typeof(RoverRefuelingOptions));
@@ -35,7 +35,7 @@ namespace RoverRefueling
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()
         {
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Utilities, RoverRefuelingStationConfig.ID, BUILD_SUBCATEGORY.automated, SweepBotStationConfig.ID);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Utilities, RoverRefuelingStationConfig.ID, BUILD_SUBCATEGORY.automated, SweepBotStationConfig.ID);
             Utils.AddBuildingToTechnology("ArtificialFriends", RoverRefuelingStationConfig.ID);
             var db = Db.Get();
             var rate = ROBOTS.SCOUTBOT.BATTERY_CAPACITY / RoverRefuelingOptions.Instance.charge_time;

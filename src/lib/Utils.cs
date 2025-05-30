@@ -4,6 +4,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using KMod;
 using HarmonyLib;
 #if USESPLIB
 using PeterHan.PLib.Core;
@@ -14,49 +15,19 @@ namespace SanchozzONIMods.Lib
 {
     public static class Utils
     {
-        // информация о моде
-        public class ModInfo
-        {
-            public readonly string assemblyName;
-            public readonly string rootDirectory;
-            public readonly string langDirectory;
-            public readonly string spritesDirectory;
-            public readonly string version;
-            public readonly string fileVersion;
-            public ModInfo()
-            {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                assemblyName = assembly.GetName().Name;
-                rootDirectory = Path.GetDirectoryName(assembly.Location);
-                langDirectory = Path.Combine(rootDirectory, "translations");
-                spritesDirectory = Path.Combine(rootDirectory, "sprites");
-                version = assembly.GetName().Version.ToString();
-                fileVersion = null;
-                var attrs = assembly.GetCustomAttributes(typeof(AssemblyFileVersionAttribute), true);
-                if (attrs != null && attrs.Length > 0)
-                {
-                    var assemblyFileVersion = (AssemblyFileVersionAttribute)attrs[0];
-                    if (assemblyFileVersion != null)
-                        fileVersion = assemblyFileVersion.Version;
-                }
-            }
-        }
+        public static UserMod2 MyMod { get; private set; }
+        public static string MyModName => (MyMod?.assembly ?? Assembly.GetExecutingAssembly()).GetName().Name;
+        public static string MyModPath => MyMod?.path ?? Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-        private static ModInfo _modinfo;
-
-        public static ModInfo modInfo
+        public static bool LogModVersion(this UserMod2 mod)
         {
-            get
-            {
-                if (_modinfo == null)
-                    _modinfo = new ModInfo();
-                return _modinfo;
-            }
-        }
-
-        public static bool LogModVersion()
-        {
-            Debug.LogFormat("Initializing mod {0}, version {1}", modInfo.assemblyName, modInfo.fileVersion ?? "Unknown");
+            MyMod = mod;
+            string version = null;
+            var attrs = (mod?.assembly ?? Assembly.GetExecutingAssembly())
+                .GetCustomAttributes(typeof(AssemblyFileVersionAttribute), true);
+            if (attrs != null && attrs.Length > 0)
+                version = ((AssemblyFileVersionAttribute)attrs[0])?.Version;
+            Debug.LogFormat("Initializing mod {0}, version {1}", MyModName, version ?? "Unknown");
 #if USESPLIB
             PUtil.InitLibrary(false);
 #endif
@@ -103,9 +74,9 @@ namespace SanchozzONIMods.Lib
         }
 
         // "ручной поздний" патчинг. вызывать лучше из префикса Db.Initialize
-        public static void PatchLater(this KMod.UserMod2 @this)
+        public static void PatchLater()
         {
-            @this.mod.loaded_mod_data.harmony.PatchAll(@this.assembly);
+            MyMod.mod.loaded_mod_data.harmony.PatchAll(MyMod.assembly);
         }
 
         // добавляем постройки в технологии
@@ -118,8 +89,17 @@ namespace SanchozzONIMods.Lib
             }
             else
             {
-                Debug.LogWarning($"{modInfo.assemblyName}: Could not find '{tech}' tech.");
+                Debug.LogWarningFormat("[{0}] Could not find '{1}' tech.", MyModName, tech);
             }
+        }
+
+        // добавляем постройки в мюню
+        public static void AddBuildingToPlanScreen(HashedString category, string building_id, string subcategoryID = null,
+            string relativeBuildingId = null, ModUtil.BuildingOrdering ordering = ModUtil.BuildingOrdering.After)
+        {
+            if (!string.IsNullOrEmpty(subcategoryID))
+                TUNING.BUILDINGS.PLANSUBCATEGORYSORTING[building_id] = subcategoryID;
+            ModUtil.AddBuildingToPlanScreen(category, building_id, subcategoryID, relativeBuildingId, ordering);
         }
 
         // получаем длительность анимации в аним файле. или общую длительность нескольких анимаций
@@ -141,53 +121,106 @@ namespace SanchozzONIMods.Lib
         }
 
         // загружаем строки для локализации
-        public static void InitLocalization(Type locstring_tree_root, bool writeStringsTemplate = false)
+        public static void InitLocalization(Type locstring_tree_root)
         {
-            // регистрируемся
-            Localization.RegisterForTranslation(locstring_tree_root);
-
-            if (writeStringsTemplate)  // для записи шаблона
-            {
-                try
-                {
-                    Localization.GenerateStringsTemplate(locstring_tree_root, modInfo.langDirectory);
-                }
-                catch (IOException e)
-                {
-                    Debug.LogWarning($"{modInfo.assemblyName} Failed to write localization template.");
-                    LogExcWarn(e);
-                }
-            }
+            // дегенерируем шоблон для модов в разработке, иначе просто регистрируем
+            if (MyMod.mod.IsDev)
+                WriteTemplate(locstring_tree_root);
+            else
+                Localization.RegisterForTranslation(locstring_tree_root);
 
             // перезагружаем строки
-            var localeCode = Localization.GetLocale()?.Code;
-            if (string.IsNullOrEmpty(localeCode))
-                localeCode = Localization.GetCurrentLanguageCode();
-            if (!string.IsNullOrEmpty(localeCode))
+            var locale_code = Localization.GetLocale()?.Code;
+            if (string.IsNullOrEmpty(locale_code))
+                locale_code = Localization.GetCurrentLanguageCode();
+            if (!string.IsNullOrEmpty(locale_code))
             {
+                locale_code = locale_code.Split('_')[0]; // для кодов вида хх_УУ
                 try
                 {
-                    string langFile = Path.Combine(modInfo.langDirectory, localeCode + ".po");
-                    if (File.Exists(langFile))
+                    string lang_file = Path.Combine(MyModPath, "translations", locale_code + ".po");
+                    if (File.Exists(lang_file))
                     {
 #if DEBUG
-                        Debug.Log($"{modInfo.assemblyName} try load LangFile: {langFile}");
+                        Debug.LogFormat("[{0}] try load LangFile: {1}", ModName, lang_file);
 #endif
-                        Localization.OverloadStrings(Localization.LoadStringsFile(langFile, false));
+                        Localization.OverloadStrings(Localization.LoadStringsFile(lang_file, false));
+                        LocalizeDescription(locstring_tree_root);
                     }
                 }
-                catch (IOException e)
+                catch (Exception e)
                 {
-                    Debug.LogWarning($"{modInfo.assemblyName} Failed to load localization.");
+                    Debug.LogWarningFormat("[{0}] Failed to load localization.", MyModName);
                     LogExcWarn(e);
                 }
             }
 
             // выполняем замену если нужно. тип должен содержать статичный метод "DoReplacement"
-            AccessTools.Method(locstring_tree_root, "DoReplacement", new Type[0])
+            AccessTools.Method(locstring_tree_root, "DoReplacement", Array.Empty<Type>())
                 ?.Invoke(null, null);
 
             CreateOptionsLocStringKeys(locstring_tree_root);
+        }
+
+        private const string TITLE = "MOD_TITLE";
+        private const string DESCRIPTION = "MOD_DESCRIPTION";
+
+        private static void LocalizeDescription(Type locstring_tree_root)
+        {
+            try
+            {
+                // заменяем описание
+                var text = (AccessTools.Field(locstring_tree_root, TITLE)?.GetValue(null) as LocString)?.text;
+                if (!string.IsNullOrEmpty(text))
+                    MyMod.mod.title = text;
+                text = (AccessTools.Field(locstring_tree_root, DESCRIPTION)?.GetValue(null) as LocString)?.text;
+                if (!string.IsNullOrEmpty(text))
+                    MyMod.mod.description = text;
+
+                // игра пересоздает все modManager.mods гдето между Localization.Initialize и Db.Initialize
+                // заменяем тоже, но это не сработает если InitLocalization вызвано вместе с Localization.Initialize
+                var mod = Global.Instance.modManager.mods.Find(mod => mod.label.Match(MyMod.mod.label));
+                if (mod != null)
+                {
+                    mod.title = MyMod.mod.title;
+                    mod.description = MyMod.mod.description;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarningFormat("[{0}] Failed to localize mod description.", MyModName);
+                LogExcWarn(e);
+            }
+        }
+
+        private static void WriteTemplate(Type locstring_tree_root)
+        {
+            try
+            {
+                // пихаем в шоблон описание
+                (AccessTools.Field(locstring_tree_root, TITLE)?.GetValue(null) as LocString)?.ReplaceText(MyMod.mod.title);
+                (AccessTools.Field(locstring_tree_root, DESCRIPTION)?.GetValue(null) as LocString)?.ReplaceText(MyMod.mod.description);
+                // при записи пропустим пустые строки
+                var harmony = new Harmony($"{MyMod.mod.staticID}.{nameof(WriteTemplate)}");
+                var method = typeof(Localization).GetMethod("WriteStringsTemplate", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                var patch = harmony.Patch(method, prefix: new HarmonyMethod(typeof(Utils), nameof(SkipEmpty)));
+                ModUtil.RegisterForTranslation(locstring_tree_root);
+                harmony.Unpatch(method, patch);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarningFormat("[{0}] Failed to write localization template.", MyModName);
+                LogExcWarn(e);
+            }
+        }
+
+        private static void SkipEmpty(Dictionary<string, object> runtime_locstring_tree)
+        {
+            foreach (var key in runtime_locstring_tree.Keys.ToArray())
+            {
+                if (runtime_locstring_tree[key] == null || (runtime_locstring_tree[key] is string value && string.IsNullOrEmpty(value)))
+                    runtime_locstring_tree.Remove(key);
+            }
         }
 
         public static void CreateOptionsLocStringKeys(Type locstring_tree_root)
@@ -233,7 +266,8 @@ namespace SanchozzONIMods.Lib
                 }
                 if (x >= OptionsKeyNames.Length)
                 {
-                    Debug.LogWarning($"{modInfo.assemblyName}: No LocStrings ({string.Join(", ", OptionsKeyNames)}) provided for Options '{type.FullName}'");
+                    Debug.LogWarningFormat("[{0}] No LocStrings ({1}) provided for Options '{2}'",
+                        MyModName, string.Join(", ", OptionsKeyNames), type.FullName);
                 }
             }
             var nestedTypes = type.GetNestedTypes(LocString.data_member_fields);
@@ -264,14 +298,7 @@ namespace SanchozzONIMods.Lib
             if (LocStringText != null)
                 LocStringText.SetValue(locString, newtext);
             else
-            {
-                var message = "Could not write the '{1}' text into the '{0}' LocString";
-#if USESPLIB
-                PUtil.LogWarning(message.F(locString.key, newtext));
-#else
-                Debug.LogWarningFormat(message, locString.key, newtext);
-#endif
-            }
+                Debug.LogWarningFormat("[{0}] Could not write the '{2}' text into the '{1}' LocString", MyModName, locString.key, newtext);
         }
 
         public static void ReplaceText(this LocString locString, string search, string replacement)
@@ -363,7 +390,7 @@ namespace SanchozzONIMods.Lib
                 {
                     if (stream == null)
                     {
-                        Debug.LogWarningFormat($"Could not load AudioSheet: {0}", path);
+                        Debug.LogWarningFormat("[{0}] Could not load AudioSheet: {1}", MyModName, path);
                         return;
                     }
                     using (var reader = new StreamReader(stream, Encoding.UTF8))
@@ -387,7 +414,7 @@ namespace SanchozzONIMods.Lib
             {
                 if (!File.Exists(path))
                 {
-                    Debug.LogWarningFormat($"Could not load AudioSheet: {0}", path);
+                    Debug.LogWarningFormat("[{0}] Could not load AudioSheet: {1}", MyModName, path);
                     return;
                 }
                 var text = File.ReadAllText(path, Encoding.UTF8);

@@ -5,6 +5,9 @@ namespace AttributeRestrictions
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         public class DUPLICANTS
         {
             public class CHORES

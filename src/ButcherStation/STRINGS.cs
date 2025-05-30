@@ -5,6 +5,9 @@ namespace ButcherStation
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         public class BUILDING
         {
             public class STATUSITEMS

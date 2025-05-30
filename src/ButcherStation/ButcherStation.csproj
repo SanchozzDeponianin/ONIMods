@@ -19,8 +19,5 @@
     <Compile Include="..\lib\UI.cs">
       <Link>UI.cs</Link>
     </Compile>
-    <Compile Include="..\lib\Utils.cs">
-      <Link>Utils.cs</Link>
-    </Compile>
   </ItemGroup>
 </Project>

@@ -6,9 +6,4 @@
     <ModVersion>1.2.3</ModVersion>
     <ForbiddenDlcIds>EXPANSION1_ID</ForbiddenDlcIds>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\lib\Utils.cs">
-      <Link>Utils.cs</Link>
-    </Compile>
-  </ItemGroup>
 </Project>

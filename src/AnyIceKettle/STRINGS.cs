@@ -5,6 +5,9 @@ namespace AnyIceKettle
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         public class OPTIONS
         {
             public class LABEL

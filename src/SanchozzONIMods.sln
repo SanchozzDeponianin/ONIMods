@@ -5,7 +5,6 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{477BAC88-9C78-4A44-956A-71F97CF313C4}"
 	ProjectSection(SolutionItems) = preProject
-		lib\BaseConfig.cs = lib\BaseConfig.cs
 		lib\BaseOptions.cs = lib\BaseOptions.cs
 		lib\DurabilityExtensions.cs = lib\DurabilityExtensions.cs
 		lib\EffectsExtensions.cs = lib\EffectsExtensions.cs

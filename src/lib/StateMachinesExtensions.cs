@@ -51,7 +51,7 @@ namespace SanchozzONIMods.Lib
             if (parent_state == null)
                 parent_state = sm.root;
             if (new_state == parent_state)
-                throw new ArgumentException($"[{Utils.modInfo.assemblyName}] The new State should not be a parent for itself.", nameof(parent_state));
+                throw new ArgumentException($"[{Utils.MyModName}] The new State should not be a parent for itself.", nameof(parent_state));
             if (new_state == null)
                 new_state = new GameStateMachine<SM, I, M, D>.State();
             sm.CreateStates(new_state);
@@ -97,7 +97,7 @@ namespace SanchozzONIMods.Lib
             if (!Test(typeof(P).GetGenericArguments(), typeof(SM), typeof(I), typeof(M), typeof(D)))
             {
                 Debug.LogWarningFormat("[{0}] Achtung!!! Attempt to add a Parameter to an unsuitable StateMachine\nname: {1}\nParameter: {2}\nStateMachine: {3}",
-                   Utils.modInfo.assemblyName, name, typeof(P), typeof(SM));
+                   Utils.MyModName, name, typeof(P), typeof(SM));
             }
             AddParameter(sm, parameter, name);
             return parameter;

@@ -7,6 +7,9 @@ namespace SmartLogicDoors
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         private const string OPENED = "{OPENED}";
         private const string LOCKED = "{LOCKED}";
         private const string AUTO = "{AUTO}";

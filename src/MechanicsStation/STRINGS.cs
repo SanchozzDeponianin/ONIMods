@@ -6,6 +6,9 @@ namespace MechanicsStation
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         private const string MACHINERY = "{MACHINERY}";
         private const string MACHINE_PARTS = "{MACHINE_PARTS}";
         private const string MACHINE_TECHNICIAN = "{MACHINE_TECHNICIAN}";

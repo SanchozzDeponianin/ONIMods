@@ -15,7 +15,7 @@ namespace SquirrelGenerator
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(SquirrelGeneratorPatches));
             new POptions().RegisterOptions(this, typeof(SquirrelGeneratorOptions));
@@ -30,7 +30,7 @@ namespace SquirrelGenerator
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()
         {
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Power, SquirrelGeneratorConfig.ID, BUILD_SUBCATEGORY.generators, ManualGeneratorConfig.ID);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Power, SquirrelGeneratorConfig.ID, BUILD_SUBCATEGORY.generators, ManualGeneratorConfig.ID);
             Utils.AddBuildingToTechnology("Ranching", SquirrelGeneratorConfig.ID);
             GameTags.MaterialBuildingElements.Add(GameTags.Seed);
         }

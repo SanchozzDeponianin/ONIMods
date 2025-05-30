@@ -7,7 +7,7 @@ namespace PickupFloppingPacu
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
         }
 

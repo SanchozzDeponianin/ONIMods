@@ -5,9 +5,4 @@
     <Description>Returns the old visual art of the Liquid Reservoir from older "early access" versions of the game.</Description>
     <ModVersion>1.1.1</ModVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\lib\Utils.cs">
-      <Link>Utils.cs</Link>
-    </Compile>
-  </ItemGroup>
 </Project>

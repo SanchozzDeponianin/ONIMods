@@ -12,7 +12,7 @@ namespace Hydrocactus
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             HydrocactusOptions.Reload();
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(HydrocactusPatches));

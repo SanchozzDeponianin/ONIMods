@@ -10,9 +10,6 @@
     <Compile Include="..\lib\StateMachinesExtensions.cs">
       <Link>StateMachinesExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\lib\Utils.cs">
-      <Link>Utils.cs</Link>
-    </Compile>
     <Compile Include="..\lib\TranspilerUtils.cs">
       <Link>TranspilerUtils.cs</Link>
     </Compile>

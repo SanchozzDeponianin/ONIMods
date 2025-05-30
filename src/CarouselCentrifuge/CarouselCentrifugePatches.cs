@@ -14,7 +14,7 @@ namespace CarouselCentrifuge
 
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(CarouselCentrifugePatches));
             new POptions().RegisterOptions(this, typeof(CarouselCentrifugeOptions));
@@ -29,7 +29,7 @@ namespace CarouselCentrifuge
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuildingAndEffects()
         {
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Furniture, CarouselCentrifugeConfig.ID, BUILD_SUBCATEGORY.recreation, EspressoMachineConfig.ID);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Furniture, CarouselCentrifugeConfig.ID, BUILD_SUBCATEGORY.recreation, EspressoMachineConfig.ID);
             string requiredTech = DlcManager.IsExpansion1Active() ? "SpaceProgram" : "ArtificialFriends";
             Utils.AddBuildingToTechnology(requiredTech, CarouselCentrifugeConfig.ID);
 

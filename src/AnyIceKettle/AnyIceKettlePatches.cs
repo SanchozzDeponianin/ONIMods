@@ -16,7 +16,7 @@ namespace AnyIceKettle
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(AnyIceKettlePatches));
             if (DlcManager.IsContentSubscribed(DlcManager.EXPANSION1_ID) || DlcManager.IsContentSubscribed(DlcManager.DLC3_ID))

@@ -5,9 +5,4 @@
     <Description>.</Description>
     <ModVersion>1.1.0</ModVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\lib\Utils.cs">
-      <Link>Utils.cs</Link>
-    </Compile>
-  </ItemGroup>
 </Project>

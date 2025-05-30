@@ -8,7 +8,7 @@ namespace TweakedBiologicalCargoBay
     {
         public override void OnLoad(Harmony harmony)
         {
-            Utils.LogModVersion();
+            this.LogModVersion();
             base.OnLoad(harmony);
         }
 

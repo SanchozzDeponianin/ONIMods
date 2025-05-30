@@ -7,6 +7,9 @@ namespace CrabsProfit
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         private const string CRAB = "{CRAB}";
         private const string CRABWOOD = "{CRABWOOD}";
 

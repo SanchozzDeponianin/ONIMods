@@ -8,7 +8,7 @@ namespace AquaticFarm
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(AquaticFarmPatches));
         }
@@ -23,7 +23,7 @@ namespace AquaticFarm
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuilding()
         {
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Food, AquaticFarmConfig.ID, BUILD_SUBCATEGORY.farming, FarmTileConfig.ID);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Food, AquaticFarmConfig.ID, BUILD_SUBCATEGORY.farming, FarmTileConfig.ID);
             Utils.AddBuildingToTechnology("FineDining", AquaticFarmConfig.ID);
         }
     }

@@ -14,7 +14,7 @@ namespace AthleticsGenerator
 
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             new PPatchManager(harmony).RegisterPatchClass(typeof(AthleticsGeneratorPatches));
             new POptions().RegisterOptions(this, typeof(AthleticsGeneratorOptions));
         }

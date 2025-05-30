@@ -19,7 +19,7 @@ namespace MoreEmotions
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(MoreEmotionsPatches));
             new POptions().RegisterOptions(this, typeof(MoreEmotionsOptions));
@@ -33,7 +33,7 @@ namespace MoreEmotions
             Utils.InitLocalization(typeof(STRINGS));
             Utils.LoadEmbeddedAudioSheet("AudioSheets/SFXTags_Duplicants.csv");
 #if DEBUG
-            var path = System.IO.Path.Combine(Utils.modInfo.rootDirectory, "AudioSheets", "SFXTags_Duplicants.csv");
+            var path = System.IO.Path.Combine(Utils.MyModPath, "AudioSheets", "SFXTags_Duplicants.csv");
             if (System.IO.File.Exists(path))
                 Utils.LoadAudioSheetFromFile(path);
 #endif

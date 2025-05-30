@@ -6,6 +6,9 @@ namespace SquirrelGenerator
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         public const string SQUIRREL = "{Squirrel}";
         public const string WATT = "{WATT}";
         public const string DTU_S = "{DTU_S}";

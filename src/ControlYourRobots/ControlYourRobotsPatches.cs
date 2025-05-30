@@ -21,7 +21,7 @@ namespace ControlYourRobots
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             new PPatchManager(harmony).RegisterPatchClass(typeof(ControlYourRobotsPatches));
             new POptions().RegisterOptions(this, typeof(ControlYourRobotsOptions));
             ControlYourRobotsOptions.Reload();

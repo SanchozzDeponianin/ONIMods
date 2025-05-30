@@ -11,7 +11,7 @@ namespace HEPBridgeInsulationTile
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(HEPBridgeInsulationTilePatches));
             new POptions().RegisterOptions(this, typeof(HEPBridgeInsulationTileOptions));
@@ -35,7 +35,7 @@ namespace HEPBridgeInsulationTile
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuilding()
         {
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.HEP, HEPBridgeInsulationTileConfig.ID, BUILD_SUBCATEGORY.transmissions, HEPBridgeTileConfig.ID);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.HEP, HEPBridgeInsulationTileConfig.ID, BUILD_SUBCATEGORY.transmissions, HEPBridgeTileConfig.ID);
             // заменяем технологию для клеевской пластины
             var klei_tech_current = Db.Get().Techs.TryGetTechForTechItem(HEPBridgeTileConfig.ID);
             var klei_tech_new_id = HEPBridgeInsulationTileOptions.Instance.research_klei.ToString();

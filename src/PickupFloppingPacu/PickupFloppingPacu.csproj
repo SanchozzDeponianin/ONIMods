@@ -6,9 +6,4 @@
     <ModVersion>1.0.1</ModVersion>
     <UsesPLib>false</UsesPLib>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\lib\Utils.cs">
-      <Link>Utils.cs</Link>
-    </Compile>
-  </ItemGroup>
 </Project>

@@ -4,6 +4,9 @@ namespace MooDiet
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         public class CREATURES
         {
             public class MODIFIERS

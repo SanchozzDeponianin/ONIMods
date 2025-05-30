@@ -20,7 +20,7 @@ namespace ReBuildableAETN
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             ReBuildableAETNOptions.Reload();
             new PPatchManager(harmony).RegisterPatchClass(GetType());
             new POptions().RegisterOptions(this, typeof(ReBuildableAETNOptions));
@@ -45,7 +45,7 @@ namespace ReBuildableAETN
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()
         {
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Utilities, MassiveHeatSinkConfig.ID, BUILD_SUBCATEGORY.temperature);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Utilities, MassiveHeatSinkConfig.ID, BUILD_SUBCATEGORY.temperature);
             Utils.AddBuildingToTechnology("Catalytics", MassiveHeatSinkConfig.ID);
             GameTags.MaterialBuildingElements.Add(MaterialBuildingTag);
             // добавляем ядра -выдры- в космос в ванилле

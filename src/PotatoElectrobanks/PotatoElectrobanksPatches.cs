@@ -20,7 +20,7 @@ namespace PotatoElectrobanks
 
         public override void OnLoad(Harmony harmony)
         {
-            if (!DlcManager.IsContentSubscribed(DlcManager.DLC3_ID) || Utils.LogModVersion()) return;
+            if (!DlcManager.IsContentSubscribed(DlcManager.DLC3_ID) || this.LogModVersion()) return;
             new PPatchManager(harmony).RegisterPatchClass(typeof(PotatoElectrobanksPatches));
             base.OnLoad(harmony);
         }

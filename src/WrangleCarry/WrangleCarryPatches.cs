@@ -12,7 +12,7 @@ namespace WrangleCarry
         private static WrangleCarryPatches @this;
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             @this = this;
             harmony.Patch(typeof(Db).GetMethod(nameof(Db.Initialize)), prefix: new HarmonyMethod(typeof(WrangleCarryPatches), nameof(PatchLater)));
         }

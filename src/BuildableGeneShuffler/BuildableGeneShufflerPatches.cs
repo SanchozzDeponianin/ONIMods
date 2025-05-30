@@ -16,7 +16,7 @@ namespace BuildableGeneShuffler
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(BuildableGeneShufflerPatches));
             new POptions().RegisterOptions(this, typeof(BuildableGeneShufflerOptions));
@@ -31,7 +31,7 @@ namespace BuildableGeneShuffler
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuilding()
         {
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Medical, BuildableGeneShufflerConfig.ID, BUILD_SUBCATEGORY.wellness);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Medical, BuildableGeneShufflerConfig.ID, BUILD_SUBCATEGORY.wellness);
             Utils.AddBuildingToTechnology("MedicineIV", BuildableGeneShufflerConfig.ID);
             PGameUtils.CopySoundsToAnim(BuildableGeneShufflerConfig.anim, "geneshuffler_kanim");
             // создаём собственный тип поручения, который имитирует "Use Neural Vacillator"

@@ -15,7 +15,7 @@ namespace Smelter
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(SmelterPatches));
             new POptions().RegisterOptions(this, typeof(SmelterOptions));
@@ -34,7 +34,7 @@ namespace Smelter
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuilding()
         {
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Refining, SmelterConfig.ID, BUILD_SUBCATEGORY.materials, KilnConfig.ID);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Refining, SmelterConfig.ID, BUILD_SUBCATEGORY.materials, KilnConfig.ID);
             Utils.AddBuildingToTechnology("BasicRefinement", SmelterConfig.ID);
         }
 

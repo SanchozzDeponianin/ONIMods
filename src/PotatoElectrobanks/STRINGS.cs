@@ -7,6 +7,9 @@ namespace PotatoElectrobanks
 
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         public class ITEMS
         {
             public class INDUSTRIAL_PRODUCTS

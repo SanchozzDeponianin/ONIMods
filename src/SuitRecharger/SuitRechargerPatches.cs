@@ -15,7 +15,7 @@ namespace SuitRecharger
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(SuitRechargerPatches));
             new POptions().RegisterOptions(this, typeof(SuitRechargerOptions));
@@ -36,7 +36,7 @@ namespace SuitRecharger
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()
         {
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, SuitRechargerConfig.ID, BUILD_SUBCATEGORY.equipment, SuitFabricatorConfig.ID);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, SuitRechargerConfig.ID, BUILD_SUBCATEGORY.equipment, SuitFabricatorConfig.ID);
             Utils.AddBuildingToTechnology("ImprovedGasPiping", SuitRechargerConfig.ID);
             PGameUtils.CopySoundsToAnim("suitrecharger_kanim", "suit_maker_kanim");
             SuitRecharger.Init();

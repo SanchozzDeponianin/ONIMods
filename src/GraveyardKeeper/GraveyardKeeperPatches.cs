@@ -15,7 +15,7 @@ namespace GraveyardKeeper
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(GraveyardKeeperPatches));
             new POptions().RegisterOptions(this, typeof(GraveyardKeeperOptions));

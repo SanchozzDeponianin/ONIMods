@@ -7,6 +7,9 @@ namespace BetterPlantTending
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         private const string COLDBREATHER = "{COLDBREATHER}";
         private const string OXYFERN = "{OXYFERN}";
         private const string GASGRASS = "{GASGRASS}";

@@ -6,8 +6,12 @@ namespace RoverRefueling
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         private const string ROVER = "{ROVER}";
         private const string MODULE = "{MODULE}";
+
         public class BUILDINGS
         {
             public class PREFABS

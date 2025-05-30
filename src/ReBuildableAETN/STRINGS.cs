@@ -7,6 +7,9 @@ namespace ReBuildableAETN
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         private const string MASSIVEHEATSINK = "{MASSIVEHEATSINK}";
         private const string NEUTRONIUM_CORE = "{NEUTRONIUM_CORE}";
         private const string ICYDWARF = "{ICYDWARF}";

@@ -6,6 +6,9 @@ namespace LargeTelescope
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         private const string ENCLOSED_TELESCOPE = "{ENCLOSED_TELESCOPE}";
         private const string VANILLA_TELESCOPE = "{VANILLA_TELESCOPE}";
 

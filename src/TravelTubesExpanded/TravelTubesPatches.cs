@@ -16,7 +16,7 @@ namespace TravelTubesExpanded
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(TravelTubesPatches));
             new POptions().RegisterOptions(this, typeof(TravelTubesOptions));
@@ -35,7 +35,7 @@ namespace TravelTubesExpanded
             var ids = new string[] { TravelTubeInsulatedWallBridgeConfig.ID, TravelTubeBunkerWallBridgeConfig.ID,
                 TravelTubeLadderBridgeConfig.ID, TravelTubeFirePoleBridgeConfig.ID };
             for (int i = ids.Length - 1; i >= 0; i--)
-                ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Base, ids[i], BUILD_SUBCATEGORY.transport, TravelTubeWallBridgeConfig.ID);
+                Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Base, ids[i], BUILD_SUBCATEGORY.transport, TravelTubeWallBridgeConfig.ID);
             Utils.AddBuildingToTechnology("TravelTubes", ids);
         }
 

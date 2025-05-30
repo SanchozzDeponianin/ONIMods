@@ -16,7 +16,7 @@ namespace MechanicsStation
     {
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(MechanicsStationPatches));
             new POptions().RegisterOptions(this, typeof(MechanicsStationOptions));
@@ -31,7 +31,7 @@ namespace MechanicsStation
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuildingAndModifiers()
         {
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, MechanicsStationConfig.ID, BUILD_SUBCATEGORY.industrialstation, PowerControlStationConfig.ID);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, MechanicsStationConfig.ID, BUILD_SUBCATEGORY.industrialstation, PowerControlStationConfig.ID);
             Utils.AddBuildingToTechnology("RefinedObjects", MechanicsStationConfig.ID);
             Init();
         }

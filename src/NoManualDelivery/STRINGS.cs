@@ -7,6 +7,9 @@ namespace NoManualDelivery
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         private const string ALLOWMANUALBUTTON = "{ALLOWMANUALBUTTON}";
         private const string SOLIDTRANSFERARM = "{SOLIDTRANSFERARM}";
         private const string ICEKETTLE = "{ICEKETTLE}";

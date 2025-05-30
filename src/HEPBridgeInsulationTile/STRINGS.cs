@@ -7,7 +7,10 @@ namespace HEPBridgeInsulationTile
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
         private const string HEPBRIDGETILE_NAME = "{HEPBRIDGETILE_NAME}";
+
         public class BUILDINGS
         {
             public class PREFABS

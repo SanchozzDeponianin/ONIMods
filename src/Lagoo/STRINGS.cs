@@ -4,7 +4,11 @@ namespace Lagoo
 {
     public class STRINGS
     {
+        public static LocString MOD_TITLE = "";
+        public static LocString MOD_DESCRIPTION = "";
+
         private const string squirrel = "SQUIRREL";
+
         public class CREATURES
         {
             public class SPECIES

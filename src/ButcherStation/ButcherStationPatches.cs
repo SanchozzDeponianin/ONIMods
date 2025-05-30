@@ -21,7 +21,7 @@ namespace ButcherStation
 
         public override void OnLoad(Harmony harmony)
         {
-            if (Utils.LogModVersion()) return;
+            if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(ButcherStationPatches));
             new POptions().RegisterOptions(this, typeof(ButcherStationOptions));
@@ -36,8 +36,8 @@ namespace ButcherStation
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuildingsAndModifier(Harmony harmony)
         {
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, FishingStationConfig.ID, BUILD_SUBCATEGORY.ranching, MilkingStationConfig.ID);
-            ModUtil.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, ButcherStationConfig.ID, BUILD_SUBCATEGORY.ranching, MilkingStationConfig.ID);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, FishingStationConfig.ID, BUILD_SUBCATEGORY.ranching, MilkingStationConfig.ID);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, ButcherStationConfig.ID, BUILD_SUBCATEGORY.ranching, MilkingStationConfig.ID);
             Utils.AddBuildingToTechnology("AnimalControl", ButcherStationConfig.ID, FishingStationConfig.ID);
 
             var formatter = new ToPercentAttributeFormatter(1f, GameUtil.TimeSlice.None);
