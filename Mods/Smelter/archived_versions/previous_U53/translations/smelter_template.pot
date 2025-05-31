@@ -1,0 +1,120 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.DESC
+msgctxt "Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.DESC"
+msgid ""
+msgstr ""
+
+#. Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.EFFECT
+msgctxt "Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.EFFECT"
+msgid "Produces <link=\"REFINEDMETAL\">Refined Metals</link> from raw <link=\"RAWMETAL\">Metal Ore</link>. Сonsumes <link=\"REFINEDCARBON\">Refined Carbon</link> as fuel.\n\nSignificantly <link=\"HEAT\">Heats</link> the <link=\"ELEMENTSLIQUID\">Liquid</link> piped into it. Must be clean out of too hot liquid, otherwise it will evaporate into the atmosphere.\n\nDuplicants will not fabricate items unless recipes are queued."
+msgstr ""
+
+#. Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.NAME
+msgctxt "Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.NAME"
+msgid "<link=\"SMELTER\">Smelter</link>"
+msgstr ""
+
+#. Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX
+msgctxt "Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX"
+msgid "Allow Overheating"
+msgstr ""
+
+#. Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX_TOOLTIP
+msgctxt "Smelter.STRINGS.BUILDINGS.PREFABS.SMELTER.SIDE_SCREEN_CHECKBOX_TOOLTIP"
+msgid "If enabled, the overheated Coolant will evaporate into the atmosphere\nIf disabled, Duplicants will empty too hot Coolant into bottles"
+msgstr ""
+
+#. Smelter.STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.NAME
+msgctxt "Smelter.STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.NAME"
+msgid "Requires Emptying"
+msgstr ""
+
+#. Smelter.STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.TOOLTIP
+msgctxt "Smelter.STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.TOOLTIP"
+msgid "This building needs to be emptied of <link=\"HEAT\">too hot</link> <link=\"ELEMENTSLIQUID\">Coolant</link> to resume function"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.FEATURES.CATEGORY
+msgctxt "Smelter.STRINGS.OPTIONS.FEATURES.CATEGORY"
+msgid "Enable some features for vanilla buildings"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.KATAIRITE_TO_TUNGSTEN.NAME
+msgctxt "Smelter.STRINGS.OPTIONS.KATAIRITE_TO_TUNGSTEN.NAME"
+msgid "{KATAIRITE} to {TUNGSTEN}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.KATAIRITE_TO_TUNGSTEN.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.KATAIRITE_TO_TUNGSTEN.TOOLTIP"
+msgid "Available at {SMELTER}, {METALREFINERY}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.METALREFINERY_DROP_OVERHEATED_COOLANT.NAME
+msgctxt "Smelter.STRINGS.OPTIONS.METALREFINERY_DROP_OVERHEATED_COOLANT.NAME"
+msgid "{METALREFINERY} will drop the overheated <style=\"KKeyword\">Coolant</style>"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.METALREFINERY_DROP_OVERHEATED_COOLANT.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.METALREFINERY_DROP_OVERHEATED_COOLANT.TOOLTIP"
+msgid "The overheated <style=\"KKeyword\">Coolant</style> is dropped directly into the atmosphere\nThis will help prevent damage to the output Pipe"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.METALREFINERY_REUSE_COOLANT.NAME
+msgctxt "Smelter.STRINGS.OPTIONS.METALREFINERY_REUSE_COOLANT.NAME"
+msgid "{METALREFINERY} will re-use the waste <style=\"KKeyword\">Coolant</style>"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.METALREFINERY_REUSE_COOLANT.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.METALREFINERY_REUSE_COOLANT.TOOLTIP"
+msgid "This can speed up production and reduce <style=\"KKeyword\">Coolant</style> consumption"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.PHOSPHORITE_TO_PHOSPHORUS.NAME
+msgctxt "Smelter.STRINGS.OPTIONS.PHOSPHORITE_TO_PHOSPHORUS.NAME"
+msgid "{PHOSPHORITE} to {PHOSPHORUS}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.PHOSPHORITE_TO_PHOSPHORUS.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.PHOSPHORITE_TO_PHOSPHORUS.TOOLTIP"
+msgid "Available at {SMELTER}, {GLASSFORGE}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.PLASTIC_TO_NAPHTHA.NAME
+msgctxt "Smelter.STRINGS.OPTIONS.PLASTIC_TO_NAPHTHA.NAME"
+msgid "{POLYPROPYLENE} to {NAPHTHA}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.PLASTIC_TO_NAPHTHA.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.PLASTIC_TO_NAPHTHA.TOOLTIP"
+msgid "Available at {SMELTER}, {GLASSFORGE}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.RECIPES.CATEGORY
+msgctxt "Smelter.STRINGS.OPTIONS.RECIPES.CATEGORY"
+msgid "Enable new recipes"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.RESIN_TO_ISORESIN.NAME
+msgctxt "Smelter.STRINGS.OPTIONS.RESIN_TO_ISORESIN.NAME"
+msgid "{RESIN} to {ISORESIN}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.RESIN_TO_ISORESIN.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.RESIN_TO_ISORESIN.TOOLTIP"
+msgid "Available at {SMELTER}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.SULFUR_TO_LIQUIDSULFUR.NAME
+msgctxt "Smelter.STRINGS.OPTIONS.SULFUR_TO_LIQUIDSULFUR.NAME"
+msgid "{SULFUR} to {LIQUIDSULFUR}"
+msgstr ""
+
+#. Smelter.STRINGS.OPTIONS.SULFUR_TO_LIQUIDSULFUR.TOOLTIP
+msgctxt "Smelter.STRINGS.OPTIONS.SULFUR_TO_LIQUIDSULFUR.TOOLTIP"
+msgid "Available at {GLASSFORGE}"
+msgstr ""
+
