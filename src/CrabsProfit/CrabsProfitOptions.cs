@@ -61,6 +61,11 @@ namespace CrabsProfit
 
         [JsonProperty]
         [Option]
+        [Limit(0, 3)]
+        public int BabyCrabFreshWater_Meat { get; set; } = 1;
+
+        [JsonProperty]
+        [Option]
         public ShellMass CrabFreshWater_Shell_Mass { get; set; } = ShellMass.mass400;
 
         [JsonProperty]
@@ -121,16 +126,21 @@ namespace CrabsProfit
             [JsonProperty]
             [Option]
             [Limit(min_normal, max)]
-            public int Cinnabar { get; set; } = 5;
-
-            [JsonIgnore]
-            [Option]
-            public LocText DLC1_Ore => null;
+            public int Cobaltite { get; set; } = 5;
 
             [JsonProperty]
             [Option]
             [Limit(min_normal, max)]
-            public int Cobaltite { get; set; } = 8;
+            public int Cinnabar { get; set; } = 5;
+
+            [JsonProperty]
+            [Option]
+            [Limit(min_normal, max)]
+            public int NickelOre { get; set; } = 5;
+
+            [JsonIgnore]
+            [Option]
+            public LocText DLC1_Ore => null;
 
             [JsonProperty]
             [Option]

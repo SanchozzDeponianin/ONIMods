@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.PatchManager;
@@ -25,14 +26,30 @@ namespace CrabsProfit
 
         private static void AddDrop(GameObject prefab, string drop_id, int count)
         {
-            if (count > 0)
+            if (count > 0 && !string.IsNullOrEmpty(drop_id))
             {
                 var butcherable = prefab.AddOrGet<Butcherable>();
-                var new_drop = new string[count];
-                for (int i = 0; i < count; i++)
-                    new_drop[i] = drop_id;
-                butcherable.SetDrops(butcherable.drops.AddRangeToArray(new_drop));
+                var drops = butcherable.drops ?? new Dictionary<string, float>();
+                if (drops.ContainsKey(drop_id))
+                    drops[drop_id] += count;
+                else
+                    drops[drop_id] = count;
+                butcherable.SetDrops(drops);
             }
+        }
+
+        private static void FixDrop(GameObject prefab)
+        {
+            // drops не сериализируется, а ещё и перезаписывается в EntityTemplates.DeathDropFunction
+            // перезапишем поверх
+            prefab.GetComponent<KPrefabID>().prefabSpawnFn += inst =>
+            {
+                if (inst.TryGetComponent(out Butcherable inst_b) && prefab.TryGetComponent(out Butcherable prefab_b))
+                {
+                    Dictionary<string, float> drops = prefab_b.drops == null ? new() : new(prefab_b.drops);
+                    inst_b.SetDrops(drops);
+                }
+            };
         }
 
         // мясо:
@@ -43,6 +60,7 @@ namespace CrabsProfit
             private static void Postfix(GameObject __result)
             {
                 AddDrop(__result, ShellfishMeatConfig.ID, CrabsProfitOptions.Instance.Crab_Meat);
+                FixDrop(__result);
             }
         }
 
@@ -53,6 +71,7 @@ namespace CrabsProfit
             private static void Postfix(GameObject __result)
             {
                 AddDrop(__result, ShellfishMeatConfig.ID, CrabsProfitOptions.Instance.CrabWood_Meat);
+                FixDrop(__result);
             }
         }
 
@@ -64,17 +83,28 @@ namespace CrabsProfit
             private static void Postfix(GameObject __result)
             {
                 AddDrop(__result, CrabFreshWaterShellConfig.ID, 1);
+                FixDrop(__result);
             }
         }
 
+        // оба
         [HarmonyPatch(typeof(BabyCrabFreshWaterConfig), nameof(BabyCrabFreshWaterConfig.CreatePrefab))]
         private static class BabyCrabFreshWaterConfig_CreatePrefab
         {
-            private static bool Prepare() => CrabsProfitOptions.Instance.CrabFreshWater_Shell_Mass > 0;
+            private static bool Prepare() => CrabsProfitOptions.Instance.CrabFreshWater_Shell_Mass > 0
+                || CrabsProfitOptions.Instance.BabyCrabFreshWater_Meat > 0;
             private static void Postfix(GameObject __result)
             {
-                AddDrop(__result, BabyCrabFreshWaterShellConfig.ID, 1);
-                __result.AddOrGetDef<BabyMonitor.Def>().onGrowDropID = BabyCrabFreshWaterShellConfig.ID;
+                if (CrabsProfitOptions.Instance.BabyCrabFreshWater_Meat > 0)
+                {
+                    AddDrop(__result, ShellfishMeatConfig.ID, CrabsProfitOptions.Instance.BabyCrabFreshWater_Meat);
+                }
+                if (CrabsProfitOptions.Instance.CrabFreshWater_Shell_Mass > 0)
+                {
+                    AddDrop(__result, BabyCrabFreshWaterShellConfig.ID, 1);
+                    __result.AddOrGetDef<BabyMonitor.Def>().onGrowDropID = BabyCrabFreshWaterShellConfig.ID;
+                }
+                FixDrop(__result);
             }
         }
     }

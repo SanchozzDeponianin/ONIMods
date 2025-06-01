@@ -68,6 +68,7 @@ namespace CrabsProfit
                 { SimHashes.GoldAmalgam,    opt.GoldAmalgam},
                 { SimHashes.IronOre,        opt.IronOre},
                 { SimHashes.Lead,           opt.Lead},
+                { SimHashes.NickelOre,      opt.NickelOre},
                 { SimHashes.Radium,         opt.Radium},
                 { SimHashes.Rust,           opt.Rust},
                 { SimHashes.UraniumOre,     opt.UraniumOre},

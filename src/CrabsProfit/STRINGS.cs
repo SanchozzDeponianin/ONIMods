@@ -12,6 +12,7 @@ namespace CrabsProfit
 
         private const string CRAB = "{CRAB}";
         private const string CRABWOOD = "{CRABWOOD}";
+        private const string BABYCRABFRESHWATER = "{BABYCRABFRESHWATER}";
 
         public class ITEMS
         {
@@ -50,6 +51,10 @@ namespace CrabsProfit
             public class CRABWOOD_MEAT
             {
                 public static LocString NAME = $"{CRABWOOD} meat amount, units";
+            }
+            public class BABYCRABFRESHWATER_MEAT
+            {
+                public static LocString NAME = $"{BABYCRABFRESHWATER} meat amount, units";
             }
             public class CRABFRESHWATER_SHELL_MASS
             {
@@ -97,6 +102,7 @@ namespace CrabsProfit
             {
                 {CRAB, UI.FormatAsKeyWord(CREATURES.SPECIES.CRAB.NAME) },
                 {CRABWOOD, UI.FormatAsKeyWord(CREATURES.SPECIES.CRAB.VARIANT_WOOD.NAME) },
+                {BABYCRABFRESHWATER, UI.FormatAsKeyWord(CREATURES.SPECIES.CRAB.VARIANT_FRESH_WATER.BABY.NAME) },
             };
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
             // добавляем строки для опций-чекбоксов

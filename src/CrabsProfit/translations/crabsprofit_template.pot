@@ -33,6 +33,16 @@ msgctxt "CrabsProfit.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.RANDOMORE.NAME"
 msgid "Random Ore"
 msgstr ""
 
+#. CrabsProfit.STRINGS.MOD_DESCRIPTION
+msgctxt "CrabsProfit.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a little Crab Meat to all types of Crabs, as well as a shell for Sanishell, which can be crushed to obtain Metal Ore."
+msgstr ""
+
+#. CrabsProfit.STRINGS.MOD_TITLE
+msgctxt "CrabsProfit.STRINGS.MOD_TITLE"
+msgid "Crabs Profit"
+msgstr ""
+
 #. CrabsProfit.STRINGS.OPTIONS.ARGENTITEORE.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.ARGENTITEORE.NAME"
 msgid "Silver Ore"
@@ -46,6 +56,11 @@ msgstr ""
 #. CrabsProfit.STRINGS.OPTIONS.BABYCRABFRESHWATER_MASS_DIVIDER.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.BABYCRABFRESHWATER_MASS_DIVIDER.NAME"
 msgid "<style=\"KKeyword\">Small Sanishell Molt</style> is less X times"
+msgstr ""
+
+#. CrabsProfit.STRINGS.OPTIONS.BABYCRABFRESHWATER_MEAT.NAME
+msgctxt "CrabsProfit.STRINGS.OPTIONS.BABYCRABFRESHWATER_MEAT.NAME"
+msgid "{BABYCRABFRESHWATER} meat amount, units"
 msgstr ""
 
 #. CrabsProfit.STRINGS.OPTIONS.BASE_ORE.NAME
