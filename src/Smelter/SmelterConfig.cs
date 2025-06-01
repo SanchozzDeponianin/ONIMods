@@ -172,26 +172,22 @@ namespace Smelter
                     new ComplexRecipe.RecipeElement(SimHashes.IgneousRock.CreateTag(), MAGMA),
                     new ComplexRecipe.RecipeElement(SimHashes.ChlorineGas.CreateTag(), CHLORINEGAS)
                 };
-
-                foreach (var phosphorus in new SimHashes[] { SimHashes.Phosphorus, SimHashes.LiquidPhosphorus })
+                var ingredients = new ComplexRecipe.RecipeElement[]
                 {
-                    var ingredients = new ComplexRecipe.RecipeElement[]
-                    {
                         new ComplexRecipe.RecipeElement(SimHashes.Katairite.CreateTag(), TUNGSTEN),
                         new ComplexRecipe.RecipeElement(SimHashes.Salt.CreateTag(), SALT),
-                        new ComplexRecipe.RecipeElement(phosphorus.CreateTag(), PHOSPHORUS)
-                    };
-                    string id = ComplexRecipeManager.MakeRecipeID(MetalRefineryConfig.ID, ingredients, results);
-                    new ComplexRecipe(id, ingredients, results)
-                    {
-                        time = BUILDINGS.FABRICATION_TIME_SECONDS.MODERATE,
-                        description = string.Format(METALREFINERY.RECIPE_DESCRIPTION,
-                            ElementLoader.FindElementByHash(SimHashes.Tungsten).name,
-                            ElementLoader.FindElementByHash(SimHashes.Katairite).name),
-                        nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
-                        fabricators = new List<Tag> { TagManager.Create(MetalRefineryConfig.ID) }
-                    };
-                }
+                        new ComplexRecipe.RecipeElement(new Tag[]{ SimHashes.Phosphorus.CreateTag(), SimHashes.LiquidPhosphorus.CreateTag()}, PHOSPHORUS)
+                };
+                string id = ComplexRecipeManager.MakeRecipeID(MetalRefineryConfig.ID, ingredients, results);
+                new ComplexRecipe(id, ingredients, results)
+                {
+                    time = BUILDINGS.FABRICATION_TIME_SECONDS.MODERATE,
+                    description = string.Format(METALREFINERY.RECIPE_DESCRIPTION,
+                        ElementLoader.FindElementByHash(SimHashes.Tungsten).name,
+                        ElementLoader.FindElementByHash(SimHashes.Katairite).name),
+                    nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
+                    fabricators = new List<Tag> { TagManager.Create(MetalRefineryConfig.ID) }
+                };
             }
 
             // добавляем переплавку фосфора в стеклоплавильню
@@ -241,7 +237,7 @@ namespace Smelter
             }
 
             // добавляем копию рецептов из электроплавильни. кроме стали и наёбия
-            var metalrefinery_recipes = ComplexRecipeManager.Get().recipes
+            var metalrefinery_recipes = ComplexRecipeManager.Get().preProcessRecipes
                 .Where((ComplexRecipe recipe) => recipe.fabricators.Contains(TagManager.Create(MetalRefineryConfig.ID)))
                 .ToList();
             metalrefinery_recipes
@@ -270,7 +266,7 @@ namespace Smelter
                 });
 
             // добавляем копию рецептов из стеклоплавильни с увеличенным временем фабрикации
-            var glassforge_recipes = ComplexRecipeManager.Get().recipes
+            var glassforge_recipes = ComplexRecipeManager.Get().preProcessRecipes
                 .Where((ComplexRecipe recipe) => recipe.fabricators.Contains(TagManager.Create(GlassForgeConfig.ID)))
                 .ToList();
             glassforge_recipes
@@ -320,6 +316,7 @@ namespace Smelter
             if (DlcManager.IsExpansion1Active() && SmelterOptions.Instance.recipes.Resin_To_Isoresin)
             {
                 var resin = ElementLoader.FindElementByHash(SimHashes.Resin);
+                var resin_solid = resin.lowTempTransition;
                 var water = resin.highTempTransition.lowTempTransition;
                 var isoresin = resin.highTempTransitionOreID;
 
@@ -331,7 +328,7 @@ namespace Smelter
                 // побочный продукт вода сохраняется внутри
                 var ingredients = new ComplexRecipe.RecipeElement[]
                 {
-                    new ComplexRecipe.RecipeElement(resin.tag, input)
+                    new ComplexRecipe.RecipeElement(new Tag[]{ resin.tag, resin_solid.tag }, input)
                 };
                 var results = new ComplexRecipe.RecipeElement[]
                 {
@@ -345,23 +342,6 @@ namespace Smelter
                     description = string.Format(GLASSFORGE.RECIPE_DESCRIPTION,
                         ElementLoader.FindElementByHash(isoresin).name,
                         resin.name),
-                    nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
-                    fabricators = new List<Tag> { TagManager.Create(ID) }
-                };
-
-                // и замерзшая резина
-                var resin_solid = resin.lowTempTransition;
-                var ingredients2 = new ComplexRecipe.RecipeElement[]
-                {
-                    new ComplexRecipe.RecipeElement(resin_solid.tag, input)
-                };
-                string id2 = ComplexRecipeManager.MakeRecipeID(ID, ingredients2, results);
-                new ComplexRecipe(id2, ingredients2, results)
-                {
-                    time = BUILDINGS.FABRICATION_TIME_SECONDS.SHORT,
-                    description = string.Format(GLASSFORGE.RECIPE_DESCRIPTION,
-                        ElementLoader.FindElementByHash(isoresin).name,
-                        resin_solid.name),
                     nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
                     fabricators = new List<Tag> { TagManager.Create(ID) }
                 };

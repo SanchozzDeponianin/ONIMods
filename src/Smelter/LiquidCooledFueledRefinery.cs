@@ -12,9 +12,12 @@ namespace Smelter
     {
         public new class StatesInstance : GameStateMachine<States, StatesInstance, LiquidCooledFueledRefinery, object>.GameInstance
         {
-            public Chore emptyChore;
-
             public StatesInstance(LiquidCooledFueledRefinery master) : base(master) { }
+
+            [MyCmpAdd]
+            public ManuallySetRemoteWorkTargetComponent remoteChore;
+
+            public Chore emptyChore;
 
             public void CreateEmptyChore()
             {
@@ -28,6 +31,7 @@ namespace Smelter
                     ignore_building_assignment: true
                     );
                 emptyChore.AddPrecondition(ChorePreconditions.instance.IsNotARobot);
+                remoteChore.SetChore(emptyChore);
             }
 
             public void CancelEmptyChore()
@@ -36,12 +40,14 @@ namespace Smelter
                 {
                     emptyChore.Cancel("Cancelled");
                     emptyChore = null;
+                    remoteChore.SetChore(emptyChore);
                 }
             }
 
             private void OnEmptyComplete(Chore chore)
             {
                 emptyChore = null;
+                remoteChore.SetChore(emptyChore);
                 master.DropAllCoolant();
             }
 
