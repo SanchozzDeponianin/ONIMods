@@ -34,10 +34,7 @@ namespace ReBuildableAETN
         private Deconstructable deconstructable;
 
         [MyCmpReq]
-        private Building building;
-
-        [MyCmpReq]
-        private BuildingComplete buildingComplete;
+        private BuildingComplete building;
 #pragma warning restore CS0649
 
         protected override void OnPrefabInit()
@@ -65,12 +62,12 @@ namespace ReBuildableAETN
             base.OnSpawn();
             // убираем упоминание едра, чтобы в сейф не записывалось, на всякий...
             if (deconstructable != null && deconstructable.constructionElements != null
-                && deconstructable.constructionElements.Contains(MassiveHeatSinkCoreConfig.tag))
+                && deconstructable.constructionElements.Contains(MassiveHeatSinkCoreConfig.TAG))
             {
-                deconstructable.constructionElements = deconstructable.constructionElements.Where(tag => tag != MassiveHeatSinkCoreConfig.tag).ToArray();
+                deconstructable.constructionElements = deconstructable.constructionElements.Where(tag => tag != MassiveHeatSinkCoreConfig.TAG).ToArray();
             }
             // был ли этот аетн построен или заспавнен
-            if (buildingComplete != null && buildingComplete.creationTime > 0)
+            if (building != null && building.creationTime > 0)
             {
                 isConstructed = true;
                 studied = true;

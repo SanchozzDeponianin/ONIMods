@@ -77,12 +77,12 @@ namespace ReBuildableAETN
         [HarmonyPatch(typeof(MassiveHeatSinkConfig), nameof(MassiveHeatSinkConfig.CreateBuildingDef))]
         private static class MassiveHeatSinkConfig_CreateBuildingDef
         {
-            private static void Postfix(ref BuildingDef __result)
+            private static void Postfix(BuildingDef __result)
             {
                 __result.ShowInBuildMenu = true;
                 __result.ViewMode = OverlayModes.GasConduits.ID;
                 __result.MaterialCategory = MATERIALS.REFINED_METALS.Append(MaterialBuildingTag.Name);
-                __result.Mass = __result.Mass.Append(2);
+                __result.Mass = __result.Mass.Append(2 * MASS);
                 if (ReBuildableAETNOptions.Instance.AddLogicPort)
                     __result.LogicInputPorts = LogicOperationalController.CreateSingleInputPortList(new CellOffset(1, 0));
             }
@@ -93,8 +93,12 @@ namespace ReBuildableAETN
         {
             private static void Postfix(GameObject go)
             {
+                // поправим массу
+                var def = go.GetComponent<Building>().Def;
+                go.GetComponent<PrimaryElement>().MassPerUnit = def.Mass[0];
+                def.BuildingUnderConstruction.GetComponent<PrimaryElement>().MassPerUnit = def.Mass[0];
                 // требование навыка для постройки
-                var constructable = go.GetComponent<Building>().Def.BuildingUnderConstruction.GetComponent<Constructable>();
+                var constructable = def.BuildingUnderConstruction.GetComponent<Constructable>();
                 constructable.requiredSkillPerk = Db.Get().SkillPerks.CanDemolish.Id;
                 // требование навыка для разрушения
                 var deconstructable = go.GetComponent<Deconstructable>();
@@ -146,7 +150,7 @@ namespace ReBuildableAETN
 
             private static void InjectForbiddenTag(FetchList2 fetchList, Tag tag, Tag[] forbidden_tags, float amount, Operational.State operationalRequirement)
             {
-                if (tag == MaterialBuildingTag)
+                if (tag == TAG)
                     forbidden_tags = (forbidden_tags ?? new Tag[0]).Append(GameTags.CharmedArtifact);
                 fetchList.Add(tag, forbidden_tags, amount, operationalRequirement);
             }

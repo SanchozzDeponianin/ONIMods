@@ -42,7 +42,7 @@ namespace ReBuildableAETN
 
         internal static GameObject SpawnCore(int cell)
         {
-            var core = GameUtil.KInstantiate(Assets.GetPrefab(MassiveHeatSinkCoreConfig.tag), Grid.CellToPosCBC(cell, Grid.SceneLayer.Ore), Grid.SceneLayer.Ore);
+            var core = GameUtil.KInstantiate(Assets.GetPrefab(MassiveHeatSinkCoreConfig.TAG), Grid.CellToPosCBC(cell, Grid.SceneLayer.Ore), Grid.SceneLayer.Ore);
             core.SetActive(true);
             return core;
         }
