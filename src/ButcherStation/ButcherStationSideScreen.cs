@@ -33,7 +33,7 @@ namespace ButcherStation
 
         protected override void OnPrefabInit()
         {
-            var margin = new RectOffset(6, 6, 6, 6);
+            var margin = new RectOffset(6, 6, 2, 2);
             var baseLayout = gameObject.GetComponent<BoxLayoutGroup>();
             if (baseLayout != null)
                 baseLayout.Params = new BoxLayoutParams()
@@ -46,8 +46,9 @@ namespace ButcherStation
                 Alignment = TextAnchor.MiddleLeft,
                 Direction = PanelDirection.Vertical,
                 Margin = margin,
-                Spacing = 8,
+                Spacing = 2,
                 FlexSize = Vector2.right,
+                BackColor = PUITuning.Colors.Transparent,
             }
                 // ловить лишних не выбранных в фильтре
                 .AddCheckBox(prefix, nameof(wrangle_unselected),

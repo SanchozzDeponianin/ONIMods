@@ -89,7 +89,7 @@ namespace ButcherStation
             }
         }
 
-        // хак чтобы сделать рыб приручаемыми - чтобы ловились на рыбалке
+        // сделать рыб приручаемыми - чтобы ловились на рыбалке
         [HarmonyPatch(typeof(BasePacuConfig), nameof(BasePacuConfig.CreatePrefab))]
         private static class BasePacuConfig_CreatePrefab
         {
@@ -181,7 +181,7 @@ namespace ButcherStation
             }
         }
 
-        // хак, чтобы рыбалка работала, 
+        // чтобы рыбалка работала, 
         // при проверке допустимости жеготного сравнивать его пещеру с пещерой точки призыва, а не комнатой самой постройки
         [HarmonyPatch]
         private static class RanchStation_CanRanchableBeRanchedAtRanchStation
@@ -247,7 +247,7 @@ namespace ButcherStation
             }
         }
 
-        // хак, чтобы пропустить телодвижения жеготного после "ухаживания", чтобы сразу помирало
+        // пропустить телодвижения жеготного после "ухаживания", чтобы сразу помирало
         [HarmonyPatch(typeof(RanchedStates), nameof(RanchedStates.InitializeStates))]
         private static class RanchedStates_InitializeStates
         {
@@ -272,39 +272,6 @@ namespace ButcherStation
                     Grid.CellToXY(fishingStation.TargetRanchCell, out _, out int y);
                     __result.y = y;
                 }
-            }
-        }
-
-        // чисто косметика - подмена анимации пойманого жеготного - ради отловленной живой рыбы
-        [HarmonyPatch(typeof(BaggedStates), nameof(BaggedStates.InitializeStates))]
-        private static class BaggedStates_InitializeStates
-        {
-            private static BaggedStates.State PlayAnimStub(BaggedStates.State @this, string _1, KAnim.PlayMode _2)
-            {
-                return @this;
-            }
-            private static string ChooseBaggedAnim(BaggedStates.Instance smi)
-            {
-                return smi.HasTag(GameTags.SwimmingCreature) ? "flop_loop" : "trussed";
-            }
-            private static void Postfix(BaggedStates __instance)
-            {
-                __instance.bagged.PlayAnim(ChooseBaggedAnim, KAnim.PlayMode.Loop);
-            }
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
-            {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
-            }
-            private static bool transpiler(List<CodeInstruction> instructions)
-            {
-                var PlayAnim = typeof(BaggedStates.State).GetMethodSafe("PlayAnim", false, typeof(string), typeof(KAnim.PlayMode));
-                var Stub = typeof(BaggedStates_InitializeStates).GetMethodSafe(nameof(PlayAnimStub), true, PPatchTools.AnyArguments);
-                if (PlayAnim != null && Stub != null)
-                {
-                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, PlayAnim, Stub).ToList();
-                    return true;
-                }
-                return false;
             }
         }
 
@@ -380,7 +347,7 @@ namespace ButcherStation
             }
         }
 
-        // хак, чтобы заменить жесткокодированую проверку типа комнату "ранчо"
+        // заменить жесткокодированую проверку типа комнату "ранчо"
         // на комнату, заданную в роомтракере - для совместимости с "роом эхпандед"
         //[HarmonyPatch(typeof(RanchStation.Instance), "OnRoomUpdated")]
         private static class RanchStation_OnRoomUpdated

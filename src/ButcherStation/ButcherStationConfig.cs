@@ -72,15 +72,5 @@ namespace ButcherStation
             go.AddOrGet<SkillPerkMissingComplainer>().requiredSkillPerk = Db.Get().SkillPerks.CanWrangleCreatures.Id;
             Prioritizable.AddRef(go);
         }
-
-        public override void ConfigurePost(BuildingDef def)
-        {
-            foreach (var prefab in Assets.GetPrefabsWithComponent<Butcherable>())
-            {
-                var b = prefab.GetComponent<Butcherable>();
-                if (b.drops != null && b.drops.Length > 0)
-                    prefab.AddOrGet<ExtraMeatSpawner>();
-            }
-        }
     }
 }

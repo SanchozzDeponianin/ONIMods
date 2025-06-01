@@ -194,6 +194,16 @@ namespace ButcherStation
                     && butcherStation.IsCreatureEligibleToBeButched(creature_go);
         }
 
+        private static readonly HashSet<string> meats = new HashSet<string>()
+        {
+            MeatConfig.ID,
+            FishMeatConfig.ID,
+            ShellfishMeatConfig.ID,
+            TallowConfig.ID,
+            DinosaurMeatConfig.ID,
+            PrehistoricPacuFilletConfig.ID,
+        };
+
         public static void ButchCreature(GameObject creature_go, WorkerBase worker, bool moveCreatureToButcherStation = false)
         {
             bool kill = true;
@@ -211,14 +221,20 @@ namespace ButcherStation
                     if (creature_go.TryGetComponent<Baggable>(out var baggable))
                         baggable.SetWrangled();
                 }
-                if (kill && worker != null && creature_go.TryGetComponent<ExtraMeatSpawner>(out var extraMeatSpawner))
+                if (kill && worker != null && creature_go.TryGetComponent<Butcherable>(out var butcherable))
                 {
-                    float attribute = worker.GetAttributes()?.Get(Db.Get().Attributes.Ranching.Id).GetTotalValue() ?? 0f;
-                    extraMeatSpawner.dropMultiplier = attribute * ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
+                    if (butcherable.drops != null && butcherable.drops.Count > 0)
+                    {
+                        var multiplier = 1 + ButcherStationPatches.RanchingEffectExtraMeat.Lookup(worker).Evaluate();
+                        foreach (var drop in butcherable.drops.Keys.ToArray())
+                        {
+                            if (meats.Contains(drop))
+                                butcherable.drops[drop] *= multiplier;
+                        }
+                    }
+                    creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);
                 }
             }
-            if (kill)
-                creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);
             if (creature_go.TryGetComponent<CreatureBrain>(out var brain))
                 Game.BrainScheduler.PrioritizeBrain(brain);
         }

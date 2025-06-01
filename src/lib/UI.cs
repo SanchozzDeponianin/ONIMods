@@ -23,7 +23,8 @@ namespace SanchozzONIMods.Lib.UI
             var cb = new PCheckBox(name)
             {
                 CheckColor = PUITuning.Colors.ComponentLightStyle,
-                CheckSize = new Vector2(26f, 26f),
+                CheckSize = new Vector2(24f, 24f),
+                ComponentBackColor = PUITuning.Colors.Transparent,
                 Text = Strings.Get(prefix + ".NAME"),
                 TextAlignment = TextAnchor.MiddleLeft,
                 TextStyle = PUITuning.Fonts.TextDarkStyle,
@@ -93,21 +94,25 @@ namespace SanchozzONIMods.Lib.UI
             {
                 TextStyle = small,
                 Text = string.Format(Strings.Get(prefix + ".MIN_MAX"), min),
+                BackColor = PUITuning.Colors.Transparent,
             };
             var maxLabel = new PLabel("max_" + name)
             {
                 TextStyle = small,
                 Text = string.Format(Strings.Get(prefix + ".MIN_MAX"), max),
+                BackColor = PUITuning.Colors.Transparent,
             };
             var preLabel = new PLabel("pre_" + name)
             {
                 TextStyle = PUITuning.Fonts.TextDarkStyle,
                 Text = Strings.Get(prefix + ".PRE"),
+                BackColor = PUITuning.Colors.Transparent,
             };
             var pstLabel = new PLabel("pst_" + name)
             {
                 TextStyle = PUITuning.Fonts.TextDarkStyle,
                 Text = Strings.Get(prefix + ".PST"),
+                BackColor = PUITuning.Colors.Transparent,
             };
 
             var textField = new PTextField("text_" + name)
@@ -124,7 +129,8 @@ namespace SanchozzONIMods.Lib.UI
                 Direction = PanelDirection.Horizontal,
                 FlexSize = Vector2.right,
                 Margin = margin,
-                Spacing = 4,
+                Spacing = 2,
+                BackColor = PUITuning.Colors.Transparent,
             };
             panel_top.AddChild(minLabel).AddChild(new PSpacer()).AddChild(preLabel)
                 .AddChild(textField).AddChild(pstLabel).AddChild(new PSpacer()).AddChild(maxLabel);
@@ -162,7 +168,8 @@ namespace SanchozzONIMods.Lib.UI
                 Direction = PanelDirection.Horizontal,
                 FlexSize = Vector2.right,
                 Margin = margin,
-                Spacing = 4,
+                Spacing = 2,
+                BackColor = PUITuning.Colors.Transparent,
             };
             panel_bottom.AddChild(slider);
             return parent.AddChild(panel_top).AddChild(panel_bottom);
