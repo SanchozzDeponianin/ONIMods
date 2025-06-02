@@ -15,7 +15,7 @@ namespace SuitRecharger
 
         protected override void OnPrefabInit()
         {
-            var margin = new RectOffset(6, 6, 6, 6);
+            var margin = new RectOffset(6, 6, 2, 2);
             var baseLayout = gameObject.GetComponent<BoxLayoutGroup>();
             if (baseLayout != null)
                 baseLayout.Params = new BoxLayoutParams()
@@ -30,6 +30,7 @@ namespace SuitRecharger
                 Margin = margin,
                 Spacing = 8,
                 FlexSize = Vector2.right,
+                BackColor = PUITuning.Colors.Transparent,
             }
                 // ползун прочности
                 .AddSliderBox(prefix, nameof(durability_threshold), 0f, 100f,
@@ -53,7 +54,8 @@ namespace SuitRecharger
             }
         }
 
-        public override bool IsValidForTarget(GameObject target) => SuitRecharger.durabilityEnabled && target.GetComponent<SuitRecharger>() != null;
+        public override bool IsValidForTarget(GameObject target) =>
+            SuitRecharger.DurabilityMode == SuitRecharger.DurabilitySetting.Enabled && target.GetComponent<SuitRecharger>() != null;
 
         public override void SetTarget(GameObject target)
         {
@@ -62,7 +64,7 @@ namespace SuitRecharger
         }
 
         public override void ClearTarget() => target = null;
-
         public override string GetTitle() => STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE.text;
+        public override int GetSideScreenSortOrder() => 500;
     }
 }

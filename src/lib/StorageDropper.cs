@@ -13,8 +13,7 @@ namespace SanchozzONIMods.Shared
     public class StorageDropper : KMonoBehaviour
     {
         private static readonly EventSystem.IntraObjectHandler<StorageDropper> OnQueueDestroyObjectDelegate =
-            new EventSystem.IntraObjectHandler<StorageDropper>(
-                (StorageDropper component, object data) => component.OnQueueDestroyObject(data));
+            new((component, data) => component.OnQueueDestroyObject(data));
 
         private static EventSystem.IntraObjectHandler<Storage> Storage_OnQueueDestroyObjectDelegate;
         private static Action<Storage, object> Storage_OnQueueDestroyObjectHandler;
@@ -35,8 +34,10 @@ namespace SanchozzONIMods.Shared
             base.OnPrefabInit();
             if (Storage_OnQueueDestroyObjectDelegate == null)
             {
-                Storage_OnQueueDestroyObjectDelegate = Traverse.Create<Storage>().Field<EventSystem.IntraObjectHandler<Storage>>("OnQueueDestroyObjectDelegate").Value;
-                Storage_OnQueueDestroyObjectHandler = Traverse.Create(Storage_OnQueueDestroyObjectDelegate).Field<Action<Storage, object>>("handler").Value;
+                Storage_OnQueueDestroyObjectDelegate = Traverse.Create<Storage>()
+                    .Field<EventSystem.IntraObjectHandler<Storage>>("OnQueueDestroyObjectDelegate").Value;
+                Storage_OnQueueDestroyObjectHandler = Traverse.Create(Storage_OnQueueDestroyObjectDelegate)
+                    .Field<Action<Storage, object>>("handler").Value;
             }
         }
 

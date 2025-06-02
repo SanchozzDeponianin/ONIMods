@@ -1,21 +1,22 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using TUNING;
-using HarmonyLib;
 using SanchozzONIMods.Lib;
 using SanchozzONIMods.Shared;
 
 namespace SuitRecharger
 {
+    using static SuitRecharger;
     public class SuitRechargerConfig : IBuildingConfig
     {
         public const string ID = "SuitRecharger";
         public static float O2_CAPACITY { get; private set; } = 200f;
         public static float FUEL_CAPACITY { get; private set; } = 100f;
 
-        private readonly ConduitPortInfo fuelInputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 2));
-        private readonly ConduitPortInfo liquidWasteOutputPort = new ConduitPortInfo(ConduitType.Liquid, new CellOffset(0, 0));
-        private readonly ConduitPortInfo gasWasteOutputPort = new ConduitPortInfo(ConduitType.Gas, new CellOffset(1, 0));
+        private readonly ConduitPortInfo fuelInputPort = new(ConduitType.Liquid, new CellOffset(0, 2));
+        private readonly ConduitPortInfo liquidWasteOutputPort = new(ConduitType.Liquid, new CellOffset(0, 0));
+        private readonly ConduitPortInfo gasWasteOutputPort = new(ConduitType.Gas, new CellOffset(1, 0));
 
         public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(base.GetRequiredDlcIds());
 
@@ -57,13 +58,14 @@ namespace SuitRecharger
             o2_consumer.OperatingRequirement = Operational.State.Functional;
             o2_consumer.capacityKG = O2_CAPACITY;
 
-            var storage = go.AddOrGet<Storage>();
-            storage.capacityKg = O2_CAPACITY + FUEL_CAPACITY;
-            storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
+            var o2_storage = go.AddOrGet<Storage>();
+            o2_storage.capacityKg = O2_CAPACITY + FUEL_CAPACITY;
+            o2_storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
+            o2_storage.storageID = GameTags.Oxygen;
             go.AddOrGet<StorageDropper>();
 
-            AddManualDeliveryKG(go, GameTags.Oxygen, O2_CAPACITY).SetStorage(storage);
-            AddManualDeliveryKG(go, SimHashes.Petroleum.CreateTag(), FUEL_CAPACITY).SetStorage(storage);
+            AddManualDeliveryKG(go, GameTags.Oxygen, O2_CAPACITY).SetStorage(o2_storage);
+            AddManualDeliveryKG(go, SimHashes.Petroleum.CreateTag(), FUEL_CAPACITY).SetStorage(o2_storage);
             go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject inst)
             {
                 var mdkgs = inst.GetComponents<ManualDeliveryKG>();
@@ -73,6 +75,22 @@ namespace SuitRecharger
                         ManualDeliveryKGPatch.userPaused.Set(mg, true);
                 }
             };
+
+            var repair_storage = go.AddComponent<Storage>();
+            repair_storage.capacityKg = FUEL_CAPACITY;
+            repair_storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
+            repair_storage.storageID = GameTags.NoOxygen;
+
+            var filterable = go.AddOrGet<FlatTagFilterable>();
+            filterable.headerText = STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.FILTER_CATEGORY;
+            filterable.displayOnlyDiscoveredTags = false;
+
+            var treeFilterable = go.AddOrGet<TreeFilterable>();
+            treeFilterable.storageToFilterTag = GameTags.NoOxygen;
+            treeFilterable.dropIncorrectOnFilterChange = false;
+            treeFilterable.filterByStorageCategoriesOnSpawn = false;
+            treeFilterable.autoSelectStoredOnLoad = false;
+            treeFilterable.uiHeight = TreeFilterable.UISideScreenHeight.Short;
 
             var recharger = go.AddOrGet<SuitRecharger>();
             recharger.fuelPortInfo = fuelInputPort;
@@ -119,37 +137,51 @@ namespace SuitRecharger
         public override void ConfigurePost(BuildingDef def)
         {
             // вытаскиваем стоимость ремонта костюмов из рецептов
-            foreach (var recipe in ComplexRecipeManager.Get().recipes)
+            var cost = new List<RepairSuitCost>();
+            foreach (var recipe in ComplexRecipeManager.Get().preProcessRecipes)
             {
-                if (recipe.ingredients[0].material.Name.StartsWith("Worn_"))
+                var worn = recipe.ingredients[0].material;
+                if (worn.IsValid && worn.Name.StartsWith("Worn_"))
                 {
                     var suit = recipe.results[0].material;
-                    var cost = new SuitRecharger.RepairSuitCost();
-                    if (recipe.ingredients.Length > 1)
-                    {
-                        cost.material = recipe.ingredients[1].material;
-                        cost.amount = recipe.ingredients[1].amount;
-                    }
+                    float energy = 0f;
                     if (recipe.fabricators != null && recipe.fabricators.Count > 0)
                     {
                         var fabricator = Assets.GetPrefab(recipe.fabricators[0]);
-                        cost.energy = (fabricator.GetComponent<Building>()?.Def.EnergyConsumptionWhenActive ?? 0f) * recipe.time;
+                        energy = (fabricator.GetComponent<Building>().Def.EnergyConsumptionWhenActive) * recipe.time;
                     }
-                    if (!SuitRecharger.repairSuitCost.ContainsKey(suit))
-                        SuitRecharger.repairSuitCost[suit] = new SuitRecharger.RepairSuitCost[0];
-                    SuitRecharger.repairSuitCost[suit] = SuitRecharger.repairSuitCost[suit].AddToArray(cost);
+                    if (recipe.ingredients.Length > 1)
+                    {
+                        var ingredient = recipe.ingredients[1];
+                        foreach (var possible in ingredient.possibleMaterials)
+                        {
+                            if (possible.IsValid)
+                                cost.Add(new() { material = possible, amount = ingredient.amount, energy = energy });
+                        }
+                    }
+                    if (cost.Count == 0 && energy > 0)
+                    {
+                        cost.Add(new() { energy = energy });
+                    }
+                    if (!AllRepairSuitCost.ContainsKey(suit))
+                        AllRepairSuitCost[suit] = new RepairSuitCost[0];
+                    AllRepairSuitCost[suit] = AllRepairSuitCost[suit].Append(cost);
+                    cost.Clear();
                 }
             }
             // доставкa материалов для ремонта
             const float refill = 0.2f;
             var go = Assets.GetPrefab(ID);
-            var storage = go.AddOrGet<Storage>();
-            var all_costs = SuitRecharger.repairSuitCost.Values.SelectMany(x => x);
-            SuitRecharger.repairMaterials = all_costs.Select(cost => cost.material).Where(tag => tag.IsValid).Distinct().ToList();
-            foreach (var material in SuitRecharger.repairMaterials)
+            var storage = go.GetComponents<Storage>().FirstOrDefault(storage => storage.storageID == GameTags.NoOxygen);
+            var all_costs = AllRepairSuitCost.Values.SelectMany(cost => cost);
+            var all_materials = all_costs.Select(cost => cost.material).Where(tag => tag.IsValid).Distinct().ToList();
+            foreach (var material in all_materials)
             {
-                var amount = all_costs.Where(cost => cost.material == material).Select(cost => cost.amount).Max();
-                AddManualDeliveryKG(go, material, amount / refill, refill, false).SetStorage(storage);
+                if (Assets.TryGetPrefab(material) != null)
+                {
+                    var amount = all_costs.Where(cost => cost.material == material).Select(cost => cost.amount).Max();
+                    AddManualDeliveryKG(go, material, amount / refill, refill, false).SetStorage(storage);
+                }
             }
         }
     }

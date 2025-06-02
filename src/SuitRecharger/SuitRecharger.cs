@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Klei.CustomSettings;
 using KSerialization;
 using TUNING;
@@ -11,18 +12,12 @@ using static SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS;
 
 namespace SuitRecharger
 {
+    using handler = EventSystem.IntraObjectHandler<SuitRecharger>;
     public class SuitRecharger : StateMachineComponent<SuitRecharger.StatesInstance>, ISaveLoadable, ISecondaryInput, ISecondaryOutput
     {
-        private static readonly EventSystem.IntraObjectHandler<SuitRecharger> CheckPipesDelegate =
-            new EventSystem.IntraObjectHandler<SuitRecharger>((SuitRecharger component, object data) => component.CheckPipes(data));
-
-        private static readonly EventSystem.IntraObjectHandler<SuitRecharger> OnStorageChangeDelegate =
-            new EventSystem.IntraObjectHandler<SuitRecharger>(
-                (SuitRecharger component, object data) => component.OnStorageChange(data));
-
-        private static readonly EventSystem.IntraObjectHandler<SuitRecharger> OnCopySettingsDelegate =
-            new EventSystem.IntraObjectHandler<SuitRecharger>(
-                (SuitRecharger component, object data) => component.OnCopySettings(data));
+        private static readonly handler CheckPipesDelegate = new((component, data) => component.CheckPipes(data));
+        private static readonly handler OnStorageChangeDelegate = new((component, data) => component.OnStorageChange(data));
+        private static readonly handler OnCopySettingsDelegate = new((component, data) => component.OnCopySettings(data));
 
         // цена полной починки
         public struct RepairSuitCost
@@ -31,11 +26,11 @@ namespace SuitRecharger
             public float amount;
             public float energy;
         }
-        internal static Dictionary<Tag, RepairSuitCost[]> repairSuitCost = new Dictionary<Tag, RepairSuitCost[]>();
-        internal static List<Tag> repairMaterials = new List<Tag>();
+        public static readonly Dictionary<Tag, RepairSuitCost[]> AllRepairSuitCost = new();
+        public static readonly List<Tag> RepairMaterials = new();
 
         // проверка что костюм действительно надет
-        private static readonly Chore.Precondition IsSuitEquipped = new Chore.Precondition
+        private static readonly Chore.Precondition IsSuitEquipped = new()
         {
             id = nameof(IsSuitEquipped),
             description = IS_SUIT_EQUIPPED,
@@ -56,7 +51,7 @@ namespace SuitRecharger
         }
 
         // проверка возможности ремонта и что костюм имеет достаточную прочность чтобы не сломаться в процессе зарядки
-        private static readonly Chore.Precondition IsSuitHasEnoughDurability = new Chore.Precondition
+        private static readonly Chore.Precondition IsSuitHasEnoughDurability = new()
         {
             id = nameof(IsSuitHasEnoughDurability),
             description = IS_SUIT_HAS_ENOUGH_DURABILITY,
@@ -69,12 +64,12 @@ namespace SuitRecharger
                     && assignable.TryGetComponent<Durability>(out var durability))
                 {
                     float d = durability.GetTrueDurability(context.consumerState.resume);
-                    if (recharger.enableRepair && repairSuitCost.TryGetValue(equippable.def.Id.ToTag(), out var costs))
+                    if (recharger.enableRepair && AllRepairSuitCost.TryGetValue(equippable.def.Id.ToTag(), out var costs))
                     {
                         foreach (var cost in costs)
                         {
                             float need = cost.amount * (1f - d);
-                            recharger.repairMaterialsAvailable.TryGetValue(cost.material, out float available);
+                            recharger.RepairMaterialsAvailable.TryGetValue(cost.material, out float available);
                             if (need <= available)
                                 return true;
                         }
@@ -86,7 +81,7 @@ namespace SuitRecharger
         };
 
         // проверка что костюму требуется заправка.
-        private static readonly Chore.Precondition DoesSuitNeedRecharging = new Chore.Precondition
+        private static readonly Chore.Precondition DoesSuitNeedRecharging = new()
         {
             id = nameof(DoesSuitNeedRecharging),
             description = PRECONDITIONS.DOES_SUIT_NEED_RECHARGING_URGENT,
@@ -110,7 +105,7 @@ namespace SuitRecharger
         };
 
         // проверка что костюму требуется срочная заправка 
-        private static readonly Chore.Precondition DoesSuitNeedRechargingUrgent = new Chore.Precondition
+        private static readonly Chore.Precondition DoesSuitNeedRechargingUrgent = new()
         {
             id = nameof(DoesSuitNeedRechargingUrgent),
             description = PRECONDITIONS.HAS_URGE,
@@ -129,7 +124,7 @@ namespace SuitRecharger
         };
 
         // проверка что кислорода достаточно для полной заправки 
-        private static readonly Chore.Precondition IsEnoughOxygen = new Chore.Precondition
+        private static readonly Chore.Precondition IsEnoughOxygen = new()
         {
             id = nameof(IsEnoughOxygen),
             description = IS_ENOUGH_OXYGEN,
@@ -150,7 +145,7 @@ namespace SuitRecharger
 
         // проверка что топлива достаточно для полной заправки
         // если одновременно требуется заправкa кислорода - то пофиг на топливо
-        private static readonly Chore.Precondition IsEnoughFuel = new Chore.Precondition
+        private static readonly Chore.Precondition IsEnoughFuel = new()
         {
             id = nameof(IsEnoughFuel),
             description = IS_ENOUGH_FUEL,
@@ -172,7 +167,7 @@ namespace SuitRecharger
         };
 
         // проверка что заправка не "уже выполняется"
-        private static readonly Chore.Precondition NotCurrentlyRecharging = new Chore.Precondition
+        private static readonly Chore.Precondition NotCurrentlyRecharging = new()
         {
             id = nameof(NotCurrentlyRecharging),
             description = CURRENTLY_RECHARGING,
@@ -274,7 +269,7 @@ namespace SuitRecharger
                 chore.onExit += (exiting_chore) => smi.activeUseChores.Remove(exiting_chore);
                 chore.AddPrecondition(IsSuitEquipped, null);
                 chore.AddPrecondition(NotCurrentlyRecharging);
-                if (durabilityEnabled)  // не проверять если износ отключен в настройках сложности
+                if (DurabilityMode == DurabilitySetting.Enabled)  // не проверять если износ отключен в настройках сложности
                     chore.AddPrecondition(IsSuitHasEnoughDurability, smi.master);
                 chore.AddPrecondition(IsEnoughOxygen, smi.master);
                 chore.AddPrecondition(IsEnoughFuel, smi.master);
@@ -294,11 +289,17 @@ namespace SuitRecharger
         private Operational operational;
 
         [MyCmpReq]
-        private Storage storage;
+        private FlatTagFilterable filterable;
+
+        [MyCmpReq]
+        private TreeFilterable treeFilterable;
 
         [MyCmpAdd]
         private SuitRechargerWorkable workable;
 #pragma warning restore CS0649
+
+        private Storage o2Storage;
+        private Storage repairStorage;
 
         // керосин
         [SerializeField]
@@ -338,9 +339,12 @@ namespace SuitRecharger
         private float durabilityThreshold;
         public float DurabilityThreshold { get => durabilityThreshold; set => durabilityThreshold = Mathf.Clamp01(value); }
 
-        static private float defaultDurabilityThreshold;
-        static private float durabilityPerCycleGap = 0.2f;
-        static internal bool durabilityEnabled => defaultDurabilityThreshold > 0f;
+        private static float defaultDurabilityThreshold;
+        private static float durabilityPerCycleGap = 0.2f;
+
+        public enum DurabilitySetting { Unknown, Enabled, Disabled }
+        public static DurabilitySetting DurabilityMode = DurabilitySetting.Unknown;
+
 
         [Serialize]
         private bool enableRepair;
@@ -351,9 +355,9 @@ namespace SuitRecharger
 
         public float OxygenAvailable { get; private set; }
         public float FuelAvailable { get; private set; }
-        public Dictionary<Tag, float> repairMaterialsAvailable { get; private set; } = new Dictionary<Tag, float>();
+        public Dictionary<Tag, float> RepairMaterialsAvailable { get; private set; } = new Dictionary<Tag, float>();
 
-        static internal void CheckDifficultySetting()
+        private static void CheckDifficultySetting()
         {
             var currentQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.Durability);
             float durabilityLossDifficultyMod;
@@ -376,6 +380,19 @@ namespace SuitRecharger
                     break;
             }
             defaultDurabilityThreshold = Mathf.Abs(EQUIPMENT.SUITS.OXYGEN_MASK_DECAY * durabilityLossDifficultyMod * durabilityPerCycleGap);
+            DurabilityMode = (defaultDurabilityThreshold > 0f) ? DurabilitySetting.Enabled : DurabilitySetting.Disabled;
+        }
+
+        internal static void ValidateRepairMaterials()
+        {
+            RepairMaterials.Clear();
+            RepairMaterials.AddRange(AllRepairSuitCost.Values.SelectMany(cost => cost)
+                .Select(cost => cost.material).Where(tag => tag.IsValid).Distinct()
+                .Where(tag =>
+                {
+                    var go = Assets.TryGetPrefab(tag);
+                    return go != null && Game.IsCorrectDlcActiveForCurrentSave(go.GetComponent<KPrefabID>());
+                }));
         }
 
         private StatusItem CreateStatusItem(string id, string icon = "")
@@ -393,8 +410,6 @@ namespace SuitRecharger
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
-            DurabilityThreshold = defaultDurabilityThreshold;
-
             if (fuelNoPipeConnectedStatusItem == null)
             {
                 fuelNoPipeConnectedStatusItem = CreateStatusItem("fuelNoPipeConnected", "status_item_need_supply_in");
@@ -408,6 +423,18 @@ namespace SuitRecharger
                 gasWasteNoPipeConnectedStatusItem = CreateStatusItem("gasWasteNoPipeConnected", "status_item_need_supply_out");
             if (gasWastePipeBlockedStatusItem == null)
                 gasWastePipeBlockedStatusItem = CreateStatusItem("gasWastePipeFull", "status_item_no_gas_to_pump");
+
+            foreach (var storage in GetComponents<Storage>())
+            {
+                if (storage.storageID == GameTags.Oxygen)
+                    o2Storage = storage;
+                else if (storage.storageID == GameTags.NoOxygen)
+                    repairStorage = storage;
+            }
+
+            filterable.tagOptions.AddRange(RepairMaterials);
+            filterable.selectedTags.AddRange(RepairMaterials);
+            treeFilterable.OnFilterChanged += _ => UpdateDeliveryComponents();
         }
 
         protected override void OnSpawn()
@@ -443,7 +470,17 @@ namespace SuitRecharger
             Game.Instance.liquidConduitFlow.AddConduitUpdater(OnLiquidConduitUpdate, ConduitFlowPriority.Default);
             Game.Instance.gasConduitFlow.AddConduitUpdater(OnGasConduitUpdate, ConduitFlowPriority.Default);
 
-            repairMaterials.Do(tag => { repairMaterialsAvailable[tag] = 0f; });
+            RepairMaterials.Do(tag => { RepairMaterialsAvailable[tag] = 0f; });
+            // поскольку 1.3.0 добавили второе storage, надо выкинуть всё из первого
+            foreach (var tag in RepairMaterials)
+                o2Storage.Drop(tag);
+            if (DurabilityMode == DurabilitySetting.Unknown)
+                CheckDifficultySetting();
+            if (DurabilityMode == DurabilitySetting.Disabled)
+                enableRepair = false;
+            DurabilityThreshold = defaultDurabilityThreshold;
+            filterable.currentlyUserAssignable = (DurabilityMode == DurabilitySetting.Enabled) && RepairMaterials.Count > 1;
+            treeFilterable.dropIncorrectOnFilterChange = true;
             OnStorageChange();
             UpdateDeliveryComponents();
             smi.StartSM();
@@ -477,7 +514,7 @@ namespace SuitRecharger
             consumer.wrongElementResult = ConduitConsumer.WrongElementResult.Dump;
             consumer.forceAlwaysSatisfied = true;
             consumer.OperatingRequirement = Operational.State.Functional;
-            consumer.storage = storage;
+            consumer.storage = o2Storage;
             var networkManager = Conduit.GetNetworkManager(inputType);
             flowNetworkItem = new FlowUtilityNetwork.NetworkItem(inputType, Endpoint.Sink, inputCell, gameObject);
             networkManager.AddToNetworks(inputCell, flowNetworkItem, true);
@@ -490,7 +527,7 @@ namespace SuitRecharger
             dispenser.conduitType = outputType;
             dispenser.useSecondaryOutput = true;
             dispenser.alwaysDispense = true;
-            dispenser.storage = storage;
+            dispenser.storage = o2Storage;
             var networkManager = Conduit.GetNetworkManager(outputType);
             flowNetworkItem = new FlowUtilityNetwork.NetworkItem(outputType, Endpoint.Source, outputCell, gameObject);
             networkManager.AddToNetworks(outputCell, flowNetworkItem, true);
@@ -529,10 +566,10 @@ namespace SuitRecharger
 
         private void OnStorageChange(object data = null)
         {
-            OxygenAvailable = storage.GetMassAvailable(GameTags.Oxygen);
-            FuelAvailable = storage.GetMassAvailable(fuelTag);
-            foreach (var tag in repairMaterials)
-                repairMaterialsAvailable[tag] = storage.GetMassAvailable(tag);
+            OxygenAvailable = o2Storage.GetMassAvailable(GameTags.Oxygen);
+            FuelAvailable = o2Storage.GetMassAvailable(fuelTag);
+            foreach (var tag in RepairMaterials)
+                RepairMaterialsAvailable[tag] = repairStorage.GetMassAvailable(tag);
             RefreshMeter();
         }
 
@@ -548,13 +585,13 @@ namespace SuitRecharger
             foreach (var mg in mdkgs)
             {
                 if (!mg.allowPause)
-                    mg.Pause(!enableRepair, "repair disable");
-                if (!enableRepair)
                 {
-                    foreach (var tag in repairMaterials)
-                        storage.Drop(tag);
+                    mg.Pause(!enableRepair || !RepairMaterials.Contains(mg.RequestedItemTag)
+                        || !treeFilterable.ContainsTag(mg.RequestedItemTag), "repair disable");
                 }
             }
+            if (!enableRepair)
+                repairStorage.DropAll();
         }
 
         bool ISecondaryInput.HasSecondaryConduitType(ConduitType type)

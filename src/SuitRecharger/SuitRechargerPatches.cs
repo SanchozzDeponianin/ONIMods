@@ -11,6 +11,7 @@ using PeterHan.PLib.UI;
 
 namespace SuitRecharger
 {
+    using static SuitRecharger;
     internal sealed class SuitRechargerPatches : UserMod2
     {
         public override void OnLoad(Harmony harmony)
@@ -39,13 +40,20 @@ namespace SuitRecharger
             Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, SuitRechargerConfig.ID, BUILD_SUBCATEGORY.equipment, SuitFabricatorConfig.ID);
             Utils.AddBuildingToTechnology("ImprovedGasPiping", SuitRechargerConfig.ID);
             PGameUtils.CopySoundsToAnim("suitrecharger_kanim", "suit_maker_kanim");
-            SuitRecharger.Init();
+            Init();
         }
 
         [PLibMethod(RunAt.OnStartGame)]
         private static void OnStartGame()
         {
-            SuitRecharger.CheckDifficultySetting();
+            DurabilityMode = DurabilitySetting.Unknown;
+            ValidateRepairMaterials();
+        }
+
+        [PLibMethod(RunAt.OnEndGame)]
+        private static void OnEndGame()
+        {
+            DurabilityMode = DurabilitySetting.Unknown;
         }
 
         [PLibMethod(RunAt.OnDetailsScreenInit)]
@@ -115,7 +123,7 @@ namespace SuitRecharger
                             if (driver != null)
                             {
                                 var chore = driver.GetCurrentChore();
-                                if (chore != null && (chore.choreType == Db.Get().ChoreTypes.Recharge || chore.choreType == SuitRecharger.RecoverBreathRecharge || chore.choreType == Db.Get().ChoreTypes.RecoverBreath))
+                                if (chore != null && (chore.choreType == Db.Get().ChoreTypes.Recharge || chore.choreType == RecoverBreathRecharge || chore.choreType == Db.Get().ChoreTypes.RecoverBreath))
                                 {
                                     driver.StopChore();
                                 }

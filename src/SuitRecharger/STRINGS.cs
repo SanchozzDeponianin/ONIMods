@@ -59,6 +59,7 @@ namespace SuitRecharger
                 public class SUITRECHARGERSIDESCREEN
                 {
                     public static LocString TITLE = "Suit Durability Threshold";
+                    public static LocString FILTER_CATEGORY = "Accepted Materials to repair";
 
                     public class DURABILITY_THRESHOLD
                     {
@@ -71,7 +72,7 @@ namespace SuitRecharger
                     public class ENABLE_REPAIR
                     {
                         public static LocString NAME = "Enable Suits Repair";
-                        public static LocString TOOLTIP = $"Suits Repair restores their {FormatAsKeyWord("Durability")}, but requires colossal {FormatAsKeyWord("Power")} and conventional materials for repair";
+                        public static LocString TOOLTIP = $"Suits Repair restores their {FormatAsKeyWord("Durability")}, but requires colossal {FormatAsKeyWord("Power")} and conventional materials to repair";
                     }
                 }
             }
