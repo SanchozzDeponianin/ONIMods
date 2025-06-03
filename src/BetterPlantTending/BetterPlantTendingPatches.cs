@@ -24,6 +24,7 @@ namespace BetterPlantTending
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(BetterPlantTendingPatches));
             new POptions().RegisterOptions(this, typeof(BetterPlantTendingOptions));
+            BetterPlantTendingOptions.Reload();
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -36,13 +37,8 @@ namespace BetterPlantTending
         private static void AfterDbInit()
         {
             Init();
-            TreesPatches.SpaceTree_ResolveTooltipCallback_Patch();
-        }
-
-        [PLibMethod(RunAt.OnStartGame)]
-        private static void OnStartGame()
-        {
-            LoadOptions();
+            if (DlcManager.IsContentSubscribed(DlcManager.DLC2_ID))
+                TreesPatches.SpaceTree_ResolveTooltipCallback_Patch();
         }
 
         // Оксихрен
@@ -97,11 +93,10 @@ namespace BetterPlantTending
         {
             private static IEnumerable<MethodBase> TargetMethods()
             {
-                return new List<MethodBase>()
-                {
-                    typeof(SaltPlantConfig).GetMethodSafe(nameof(SaltPlantConfig.CreatePrefab), false),
-                    typeof(FilterPlantConfig).GetMethodSafe(nameof(FilterPlantConfig.CreatePrefab), false),
-                };
+                if (BetterPlantTendingOptions.Instance.saltplant_adjust_gas_consumption)
+                    yield return typeof(SaltPlantConfig).GetMethodSafe(nameof(SaltPlantConfig.CreatePrefab), false);
+                if (DlcManager.IsExpansion1Active() && BetterPlantTendingOptions.Instance.hydrocactus_adjust_gas_consumption)
+                    yield return typeof(FilterPlantConfig).GetMethodSafe(nameof(FilterPlantConfig.CreatePrefab), false);
             }
 
             private static void Postfix(GameObject __result)
@@ -110,19 +105,28 @@ namespace BetterPlantTending
             }
         }
 
+        // todo: blue grass
+        // todo: dino fern
+
+        #region CritterTrapPlant
         // растение-ловушка:
         // производство газа  пропорционально её скорости роста
         [HarmonyPatch(typeof(CritterTrapPlant.StatesInstance), nameof(CritterTrapPlant.StatesInstance.AddGas))]
         private static class CritterTrapPlant_StatesInstance_AddGas
         {
+            private static float base_growth_rate;
+            private static bool Prepare()
+            {
+                base_growth_rate = BetterPlantTendingOptions.Instance.critter_trap_decrease_gas_production_by_wildness
+                    ? CROPS.GROWTH_RATE : CROPS.WILD_GROWTH_RATE;
+                return DlcManager.IsExpansion1Active()
+                    && BetterPlantTendingOptions.Instance.critter_trap_adjust_gas_production;
+            }
+
             private static void Prefix(CritterTrapPlant.StatesInstance __instance, ref float dt)
             {
-                if (BetterPlantTendingOptions.Instance.critter_trap_adjust_gas_production)
-                {
-                    var growth_rate = __instance.master.GetAttributes().Get(Db.Get().Amounts.Maturity.deltaAttribute.Id).GetTotalValue();
-                    var base_growth_rate = BetterPlantTendingOptions.Instance.critter_trap_decrease_gas_production_by_wildness ? CROPS.GROWTH_RATE : CROPS.WILD_GROWTH_RATE;
-                    dt *= growth_rate / base_growth_rate;
-                }
+                var growth_rate = __instance.master.GetAttributes().Get(Db.Get().Amounts.Maturity.deltaAttribute.Id).GetTotalValue();
+                dt *= growth_rate / base_growth_rate;
             }
         }
 
@@ -130,18 +134,24 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(CritterTrapPlant), "OnSpawn")]
         private static class CritterTrapPlant_OnSpawn
         {
+            private static bool Prepare() => DlcManager.IsExpansion1Active()
+                && BetterPlantTendingOptions.Instance.critter_trap_can_give_seeds;
+
             private static void Postfix(CritterTrapPlant __instance)
             {
-                if (BetterPlantTendingOptions.Instance.critter_trap_can_give_seeds)
-                    __instance.GetComponent<SeedProducer>().seedInfo.productionType = SeedProducer.ProductionType.Harvest;
+                __instance.GetComponent<SeedProducer>().seedInfo.productionType = SeedProducer.ProductionType.Harvest;
             }
         }
-
+        #endregion
+        #region SapTree
         // резиногое дерего:
         // делаем дерего убобряемым
         [HarmonyPatch(typeof(SapTreeConfig), nameof(SapTreeConfig.CreatePrefab))]
         private static class SapTreeConfig_CreatePrefab
         {
+            private static bool Prepare() => DlcManager.IsExpansion1Active()
+                && BetterPlantTendingOptions.Instance.allow_tinker_saptree;
+
             private static void Postfix(GameObject __result)
             {
                 Tinkerable.MakeFarmTinkerable(__result);
@@ -155,15 +165,12 @@ namespace BetterPlantTending
                 };
                 prefabID.prefabSpawnFn += go =>
                 {
-                    var tinkerable = go.GetComponent<Tinkerable>();
                     // широкое на широкое, иначе дупли получают по  морде и занимаются хернёй
-                    if (BetterPlantTendingOptions.Instance.allow_tinker_saptree)
+                    if (go.TryGetComponent(out Tinkerable tinkerable))
                     {
                         tinkerable.SetOffsetTable(OffsetGroups.InvertedWideTable);
                         go.GetComponent<Storage>().SetOffsetTable(OffsetGroups.InvertedWideTable);
                     }
-                    else
-                        tinkerable.tinkerMaterialTag = GameTags.Void;
                 };
             }
         }
@@ -172,6 +179,9 @@ namespace BetterPlantTending
         [HarmonyPatch]
         private static class SapTree_StatesInstance_EatFoodItem_Ooze
         {
+            private static bool Prepare() => DlcManager.IsExpansion1Active()
+                && BetterPlantTendingOptions.Instance.allow_tinker_saptree;
+
             private static IEnumerable<MethodBase> TargetMethods()
             {
                 return new List<MethodBase>()
@@ -191,6 +201,9 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(SapTree.StatesInstance), nameof(SapTree.StatesInstance.EatFoodItem))]
         private static class SapTree_StatesInstance_EatFoodItem
         {
+            private static bool Prepare() => DlcManager.IsExpansion1Active()
+                && BetterPlantTendingOptions.Instance.allow_tinker_saptree;
+
             /*
             тут в норме dt = 1 поэтому можно просто умножить. если клеи поменяют, то придется городить чтото посложнее
             --- float mass = pickupable.GetComponent<Edible>().Calories * 0.001f * base.def.kcalorieToKGConversionRatio;
@@ -219,6 +232,7 @@ namespace BetterPlantTending
                 return false;
             }
         }
+        #endregion
 
         // подавим нотификацию когда собирается гнилой мутантный урожай
         [HarmonyPatch(typeof(RotPile), nameof(RotPile.TryCreateNotification))]
@@ -294,8 +308,7 @@ namespace BetterPlantTending
 
             private static readonly Action<Tinkerable> QueueUpdateChore = typeof(Tinkerable).Detour<Action<Tinkerable>>("QueueUpdateChore");
 
-            private static readonly EventSystem.IntraObjectHandler<Tinkerable> OnTagsChanged
-                = new EventSystem.IntraObjectHandler<Tinkerable>((tinkerable, data) =>
+            private static readonly EventSystem.IntraObjectHandler<Tinkerable> OnTagsChanged = new((tinkerable, data) =>
             {
                 if (((TagChangedEventData)data).tag == SpaceTreePlant.SpaceTreeReadyForHarvest)
                     QueueUpdateChore(tinkerable);
@@ -736,6 +749,7 @@ namespace BetterPlantTending
             }
         }
 
+        // todo: перепроверить, особенно с новой лозой
         // вопервых исправление неконсистентности поглощения твердых удобрений засохшими растениями после загрузки сейфа
         // патчим FertilizationMonitor чтобы был больше похож на IrrigationMonitor
         // вовторых останавливаем поглощения воды/удобрений при других причинах отсутствии роста,

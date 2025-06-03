@@ -63,11 +63,6 @@ namespace BetterPlantTending
             {
                 public static LocString NAME = $"The {FARMTINKER} effect gives a bonus to the decor";
             }
-            public class TREE_FIX_TINKERING_BRANCHES
-            {
-                public static LocString NAME = $"Fix tinkering of {WOOD_TREE} branches";
-                public static LocString TOOLTIP = "Usually farmers lose the ability to tinker with them after rebuilding the Greenhouse or reloading the save file";
-            }
             public class TREE_UNLOCK_MUTATION
             {
                 public static LocString NAME = $"Unlock {WOOD_TREE} mutations";
@@ -136,7 +131,7 @@ namespace BetterPlantTending
             }
             public class PIP_REQUIRED_TO_EXTRACT
             {
-                public static LocString NAME = "A {SQUIRREL} is required to extract the seeds";
+                public static LocString NAME = $"A {SQUIRREL} is required to extract the seeds";
                 public static LocString TOOLTIP = "If you turn it off, the seeds themselves will drop after a while";
             }
         }

@@ -9,7 +9,7 @@ namespace BetterPlantTending
         // компонент для ряда дополнительных проверок что надо остановить поглощение удобрений и жидкостей
         // если растение не растёт по иным причинам чем засыхание
 
-        private static readonly handler OnDelegate = new handler((component, data) => component.QueueUpdateAbsorbing());
+        private static readonly handler OnDelegate = new((component, data) => component.QueueUpdateAbsorbing());
 
 #pragma warning disable CS0649
         [MySmiGet]

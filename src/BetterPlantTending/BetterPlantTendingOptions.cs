@@ -8,12 +8,13 @@ namespace BetterPlantTending
 {
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
+    [RestartRequired]
     internal sealed class BetterPlantTendingOptions : BaseOptions<BetterPlantTendingOptions>
     {
         // основные настройки
         [JsonProperty]
         [Option]
-        public bool allow_tinker_decorative { get; set; } = true;
+        public bool allow_tinker_decorative { get; set; } = true; // todo: проверить restart
 
         [JsonProperty]
         [Option]
@@ -27,15 +28,11 @@ namespace BetterPlantTending
 
         [JsonProperty]
         [Option]
-        public bool prevent_tending_grown_or_wilting { get; set; } = true;
+        public bool prevent_tending_grown_or_wilting { get; set; } = true; // todo: проверить restart
 
         [JsonProperty]
         [Option]
-        public bool prevent_fertilization_irrigation_not_growning { get; set; } = true;
-
-        [JsonIgnore]
-        [System.Obsolete]
-        public bool tree_fix_tinkering_branches { get; set; } = true;
+        public bool prevent_fertilization_irrigation_not_growning { get; set; } = true; // todo: проверить restart
 
         [JsonProperty]
         [Option]
@@ -60,6 +57,13 @@ namespace BetterPlantTending
         [JsonProperty]
         [Option]
         public bool saltplant_adjust_gas_consumption { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool hydrocactus_adjust_gas_consumption { get; set; } = true;
+
+        // todo: blue grass
+        // todo: dino fern
 
         [JsonProperty]
         [Option]

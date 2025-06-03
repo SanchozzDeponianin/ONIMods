@@ -17,17 +17,18 @@ namespace BetterPlantTending
 
     internal static class TreesPatches
     {
+        #region ForestTree
         // деревянное дерево
         // разблокируем возможность мутации
         [HarmonyPatch(typeof(ForestTreeSeedMonitor), nameof(ForestTreeSeedMonitor.ExtractExtraSeed))]
         private static class ForestTreeSeedMonitor_ExtractExtraSeed
         {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled()
+                && BetterPlantTendingOptions.Instance.tree_unlock_mutation;
 
             private static GameObject AddMutation(GameObject seed, ForestTreeSeedMonitor trunk)
             {
-                if (BetterPlantTendingOptions.Instance.tree_unlock_mutation
-                    && seed.TryGetComponent(out MutantPlant seed_mutant)
+                if (seed.TryGetComponent(out MutantPlant seed_mutant)
                     && trunk.TryGetComponent(out SeedProducer producer) && producer.RollForMutation())
                 {
                     seed_mutant.Mutate();
@@ -76,7 +77,9 @@ namespace BetterPlantTending
                 return !(__instance.TryGetComponent(out MutantPlant trunk_mutant) && !trunk_mutant.IsOriginal);
             }
         }
-
+        #endregion
+        #region SpaceTree
+        #region can Mutate
         // сиропное дерево
         // разблокируем возможность мутации
         // проверяем и запоминаем когда тюлень поел
@@ -86,7 +89,9 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(CreaturePoopLoot), nameof(CreaturePoopLoot.InitializeStates))]
         private static class CreaturePoopLoot_InitializeStates
         {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled()
+                && DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
+                && BetterPlantTendingOptions.Instance.space_tree_unlock_mutation;
 
             private static void Postfix(CreaturePoopLoot __instance)
             {
@@ -98,8 +103,7 @@ namespace BetterPlantTending
             private static void OnEatSolidComplete(CreaturePoopLoot.Instance smi, object data)
             {
                 var plant = data as KPrefabID;
-                if (BetterPlantTendingOptions.Instance.space_tree_unlock_mutation
-                    && plant != null && plant.TryGetComponent(out MutantPlant mutant) && plant.TryGetComponent(out SeedProducer producer))
+                if (plant != null && plant.TryGetComponent(out MutantPlant mutant) && plant.TryGetComponent(out SeedProducer producer))
                 {
                     if (mutant.IsOriginal)
                     {
@@ -116,7 +120,9 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(CreaturePoopLoot), nameof(CreaturePoopLoot.RollForLoot))]
         private static class CreaturePoopLoot_RollForLoot
         {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled()
+                && DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
+                && BetterPlantTendingOptions.Instance.space_tree_unlock_mutation;
 
             // мутантовое дерево не даёт семена
             // TODO: пока так сойдёт, если в CreaturePoopLoot добавят чтото кроме семян, надо будет менять алгоритм
@@ -133,8 +139,7 @@ namespace BetterPlantTending
 
             private static GameObject AddMutation(GameObject seed, CreaturePoopLoot.Instance smi)
             {
-                if (BetterPlantTendingOptions.Instance.space_tree_unlock_mutation
-                    && should_mutate.Get(smi) && seed.TryGetComponent(out MutantPlant seed_mutant))
+                if (should_mutate.Get(smi) && seed.TryGetComponent(out MutantPlant seed_mutant))
                 {
                     seed_mutant.Mutate();
                 }
@@ -165,13 +170,15 @@ namespace BetterPlantTending
                 return false;
             }
         }
-
+        #endregion
+        #region ajust sirop
         // ускоряем производство сиропа пропорционально мутациям
         // добавляем недостающий атрибут
         [HarmonyPatch(typeof(SpaceTreeConfig), nameof(SpaceTreeConfig.CreatePrefab))]
         private static class SpaceTreeConfig_CreatePrefab
         {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled()
+                && DlcManager.IsContentSubscribed(DlcManager.DLC2_ID);
 
             private static void Postfix(GameObject __result)
             {
@@ -190,7 +197,8 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(SpaceTreePlant), nameof(SpaceTreePlant.InitializeStates))]
         private static class SpaceTreePlant_InitializeStates_Mutant
         {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled()
+                && DlcManager.IsContentSubscribed(DlcManager.DLC2_ID);
 
             private static void Postfix(SpaceTreePlant __instance)
             {
@@ -209,7 +217,8 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(SpaceTreePlant.Instance), nameof(SpaceTreePlant.Instance.GetProductionSpeed))]
         private static class SpaceTreePlant_Instance_GetProductionSpeed
         {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled()
+                && DlcManager.IsContentSubscribed(DlcManager.DLC2_ID);
 
             private static void Postfix(SpaceTreePlant.Instance __instance, ref float __result)
             {
@@ -220,7 +229,8 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(SpaceTreePlant.Instance), nameof(SpaceTreePlant.Instance.OptimalProductionDuration), MethodType.Getter)]
         private static class SpaceTreePlant_Instance_OptimalProductionDuration
         {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled()
+                && DlcManager.IsContentSubscribed(DlcManager.DLC2_ID);
 
             private static void Postfix(SpaceTreePlant.Instance __instance, ref float __result)
             {
@@ -233,6 +243,8 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(SpaceTreePlant.Instance), nameof(SpaceTreePlant.Instance.IsMature), MethodType.Getter)]
         private static class SpaceTreePlant_Instance_IsMature
         {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC2_ID);
+
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
                 return TranspilerUtils.Transpile(instructions, original, transpiler);
@@ -255,9 +267,12 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(SpaceTreeBranch.Instance), nameof(SpaceTreeBranch.Instance.Productivity), MethodType.Getter)]
         private static class SpaceTreeBranch_Instance_Productivity
         {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
+                && BetterPlantTendingOptions.Instance.space_tree_adjust_productivity;
+
             private static void Postfix(SpaceTreeBranch.Instance __instance, ref float __result, AmountInstance ___maturity)
             {
-                if (__result > 0f && BetterPlantTendingOptions.Instance.space_tree_adjust_productivity && ___maturity != null)
+                if (__result > 0f && ___maturity != null)
                 {
                     ModifyValueByAttributeMultiplierModifiers(___maturity.deltaAttribute, ref __result);
                 }
@@ -308,46 +323,51 @@ namespace BetterPlantTending
 
         internal static void SpaceTree_ResolveTooltipCallback_Patch()
         {
-            var statusItem_brach = Db.Get().CreatureStatusItems.SpaceTreeBranchLightStatus;
-            var originCB_brach = statusItem_brach.resolveTooltipCallback;
-            statusItem_brach.resolveTooltipCallback = (str, data) =>
+            if (BetterPlantTendingOptions.Instance.space_tree_adjust_productivity)
             {
-                var tooltip = originCB_brach(str, data);
-                if (BetterPlantTendingOptions.Instance.space_tree_adjust_productivity)
+                var statusItem_brach = Db.Get().CreatureStatusItems.SpaceTreeBranchLightStatus;
+                var originCB_brach = statusItem_brach.resolveTooltipCallback;
+                statusItem_brach.resolveTooltipCallback = (str, data) =>
                 {
+                    var tooltip = originCB_brach(str, data);
                     string text = GetTooltipForAttributeMultiplierModifiers(Maturity.Get((SpaceTreeBranch.Instance)data).deltaAttribute);
                     if (!string.IsNullOrEmpty(text))
                         tooltip = tooltip + "\n" + text;
-                }
-                return tooltip;
-            };
-            if (!DlcManager.FeaturePlantMutationsEnabled()) return;
-            var statusItem_tree = Db.Get().CreatureStatusItems.ProducingSugarWater;
-            var originCB_tree = statusItem_tree.resolveTooltipCallback;
-            statusItem_tree.resolveTooltipCallback = (str, data) =>
+                    return tooltip;
+                };
+            }
+            if (DlcManager.FeaturePlantMutationsEnabled())
             {
-                var tooltip = originCB_tree(str, data);
-                var smi = (SpaceTreePlant.Instance)data;
-                string text = GetTooltipForAttributeMultiplierModifiers(yield_amount.Get(smi));
-                if (!string.IsNullOrEmpty(text))
-                    tooltip = tooltip + "\n" + text;
-                text = GetTooltipForAttributeMultiplierModifiers(max_maturity.Get(smi), true);
-                if (!string.IsNullOrEmpty(text))
-                    tooltip = tooltip + "\n" + text;
-                return tooltip;
-            };
+                var statusItem_tree = Db.Get().CreatureStatusItems.ProducingSugarWater;
+                var originCB_tree = statusItem_tree.resolveTooltipCallback;
+                statusItem_tree.resolveTooltipCallback = (str, data) =>
+                {
+                    var tooltip = originCB_tree(str, data);
+                    var smi = (SpaceTreePlant.Instance)data;
+                    string text = GetTooltipForAttributeMultiplierModifiers(yield_amount.Get(smi));
+                    if (!string.IsNullOrEmpty(text))
+                        tooltip = tooltip + "\n" + text;
+                    text = GetTooltipForAttributeMultiplierModifiers(max_maturity.Get(smi), true);
+                    if (!string.IsNullOrEmpty(text))
+                        tooltip = tooltip + "\n" + text;
+                    return tooltip;
+                };
+            }
         }
 
         // чиним добычу сиропа вручную если дерево в ящике
         [HarmonyPatch(typeof(SpaceTreeSyrupHarvestWorkable), "OnPrefabInit")]
         private static class SpaceTreeSyrupHarvestWorkable_OnPrefabInit
         {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC2_ID);
+
             private static void Postfix(SpaceTreeSyrupHarvestWorkable __instance)
             {
                 __instance.SetOffsets(new CellOffset[2] { CellOffset.none, CellOffset.down });
             }
         }
-
+        #endregion
+        #region force self harvest
         // ветка сиропового дерева не имеет Growing поэтому не умеет самосброс урожая
         // для мутации "Juicy Fruits" научим её
         private static SpaceTreeBranch.BoolParameter force_self_harvest_on_grown;
@@ -355,7 +375,8 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(SpaceTreeBranch), nameof(SpaceTreeBranch.InitializeStates))]
         private static class SpaceTreeBranch_InitializeStates
         {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled()
+                && DlcManager.IsContentSubscribed(DlcManager.DLC2_ID);
 
             private static void Postfix(SpaceTreeBranch __instance, SpaceTreeBranch.GrownStates ___grown)
             {
@@ -383,7 +404,8 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(PlantMutation), "ApplyFunctionalTo")]
         private static class PlantMutation_ApplyFunctionalTo
         {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
+            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled()
+                && DlcManager.IsContentSubscribed(DlcManager.DLC2_ID);
 
             private static void Postfix(MutantPlant target, bool ___forceSelfHarvestOnGrown)
             {
@@ -395,5 +417,7 @@ namespace BetterPlantTending
                 }
             }
         }
+        #endregion
+        #endregion
     }
 }

@@ -24,11 +24,13 @@ namespace BetterPlantTending
         private RadiationEmitter emitter;
 #pragma warning restore CS0649
 
+        private AttributeInstance growingRate;
+
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
             var attributes = this.GetAttributes();
-            attributes.Add(Db.Get().Amounts.Maturity.deltaAttribute);
+            growingRate = attributes.Add(Db.Get().Amounts.Maturity.deltaAttribute);
             attributes.Add(fakeGrowingRate);
         }
 
@@ -41,7 +43,7 @@ namespace BetterPlantTending
         public override void ApplyModifier()
         {
             // а тут нужно учесть дикость
-            float grow_multiplier = this.GetAttributes().Get(fakeGrowingRate.AttributeId).GetTotalValue() / CROPS.GROWTH_RATE;
+            float grow_multiplier = growingRate.GetTotalValue() / CROPS.GROWTH_RATE;
             float wild_multiplier = (receptacleMonitor.Replanted ? 1 : CROPS.WILD_GROWTH_RATE_MODIFIER);
             float rate = coldBreather.consumptionRate * grow_multiplier * wild_multiplier;
             if (elementConsumer.consumptionRate != rate)

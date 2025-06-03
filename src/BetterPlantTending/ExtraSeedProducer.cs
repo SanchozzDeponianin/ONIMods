@@ -32,8 +32,8 @@ namespace BetterPlantTending
         public bool ShouldDivergentTending => (isNotDecorative || !hasExtraSeedAvailable) && !IsWilting;
         public bool ShouldFarmTinkerTending => isNotDecorative || !hasExtraSeedAvailable;
 
-        private static readonly handler OnUprootedDelegate = new handler((component, data) => component.ExtractExtraSeed());
-        private static readonly handler OnCropTendedDelegate = new handler((component, data) => component.CreateExtraSeed());
+        private static readonly handler OnUprootedDelegate = new((component, data) => component.ExtractExtraSeed());
+        private static readonly handler OnCropTendedDelegate = new((component, data) => component.CreateExtraSeed());
 
         private static readonly System.Func<SeedProducer, string, int, bool, GameObject> ProduceSeed =
             typeof(SeedProducer).Detour<System.Func<SeedProducer, string, int, bool, GameObject>>("ProduceSeed");
