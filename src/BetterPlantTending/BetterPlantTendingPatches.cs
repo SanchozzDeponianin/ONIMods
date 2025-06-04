@@ -12,10 +12,11 @@ using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
-using static BetterPlantTending.BetterPlantTendingAssets;
 
 namespace BetterPlantTending
 {
+    using static BetterPlantTendingAssets;
+
     internal sealed class BetterPlantTendingPatches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
@@ -41,6 +42,7 @@ namespace BetterPlantTending
                 TreesPatches.SpaceTree_ResolveTooltipCallback_Patch();
         }
 
+        #region gas consumption
         // Оксихрен
         [HarmonyPatch(typeof(OxyfernConfig), nameof(OxyfernConfig.CreatePrefab))]
         private static class OxyfernConfig_CreatePrefab
@@ -83,7 +85,7 @@ namespace BetterPlantTending
         {
             private static void Postfix(ColdBreather __instance)
             {
-                __instance.GetComponent<TendedColdBreather>()?.ApplyModifier();
+                __instance.GetComponent<TendedColdBreather>().ApplyModifier();
             }
         }
 
@@ -105,9 +107,67 @@ namespace BetterPlantTending
             }
         }
 
-        // todo: blue grass
-        // todo: dino fern
+        // синяя алоэ и диночтототам, оба два похожи как Ctrl-C Ctrl-V
+        [HarmonyPatch(typeof(BlueGrassConfig), nameof(BlueGrassConfig.CreatePrefab))]
+        private static class BlueGrassConfig_CreatePrefab
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
+                && BetterPlantTendingOptions.Instance.blue_grass_adjust_gas_consumption;
 
+            private static void Postfix(GameObject __result)
+            {
+                __result.AddOrGet<TendedBlueGrass>();
+            }
+        }
+
+        [HarmonyPatch(typeof(DinofernConfig), nameof(DinofernConfig.CreatePrefab))]
+        private static class DinofernConfig_CreatePrefab
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC4_ID)
+                && BetterPlantTendingOptions.Instance.dinofern_adjust_gas_consumption;
+
+            private static void Postfix(GameObject __result)
+            {
+                __result.AddOrGet<TendedDinofern>();
+            }
+        }
+
+        [HarmonyPatch]
+        private static class BlueGrass_Dinofern_SetConsumptionRate
+        {
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                if (DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
+                    && BetterPlantTendingOptions.Instance.blue_grass_adjust_gas_consumption)
+                    yield return typeof(BlueGrass).GetMethodSafe(nameof(BlueGrass.SetConsumptionRate), false);
+                if (DlcManager.IsContentSubscribed(DlcManager.DLC4_ID)
+                    && BetterPlantTendingOptions.Instance.dinofern_adjust_gas_consumption)
+                    yield return typeof(Dinofern).GetMethodSafe(nameof(Dinofern.SetConsumptionRate), false);
+            }
+
+            private static void Postfix(KMonoBehaviour __instance, ElementConsumer ___elementConsumer, ReceptacleMonitor __receptacleMonitor)
+            {
+                // тут дикость учитывается дважды: внутри Growing ххх.SetConsumptionRate
+                float base_growth_rate = __receptacleMonitor.Replanted ? CROPS.GROWTH_RATE : CROPS.WILD_GROWTH_RATE;
+                float multiplier = __instance.GetAttributes().Get(fakeGrowingRate.AttributeId).GetTotalValue() / base_growth_rate;
+                ___elementConsumer.consumptionRate *= multiplier;
+                ___elementConsumer.RefreshConsumptionRate();
+            }
+        }
+
+        // возможность дафать семена
+        [HarmonyPatch(typeof(Dinofern), "OnSpawn")]
+        private static class Dinofern_OnSpawn
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC4_ID)
+                && BetterPlantTendingOptions.Instance.dinofern_can_give_seeds;
+
+            private static void Postfix(Dinofern __instance)
+            {
+                __instance.GetComponent<SeedProducer>().seedInfo.productionType = SeedProducer.ProductionType.Harvest;
+            }
+        }
+        #endregion
         #region CritterTrapPlant
         // растение-ловушка:
         // производство газа  пропорционально её скорости роста
@@ -405,7 +465,7 @@ namespace BetterPlantTending
         +++     if (CanReachBelow(navigator, cell, plant))
             ...
                 var trunk = target.GetComponent<ForestTreeSeedMonitor>();
-			    var locker = target.GetComponent<StorageLocker>();
+                var locker = target.GetComponent<StorageLocker>();
         +++     AddPlant(context.targets, plant);
             ...
             */
@@ -506,7 +566,7 @@ namespace BetterPlantTending
             /*
         --- Growing growing = go.GetComponent<Growing>();
         +++ Growing growing = go.GetComponent<Growing>() ?? go.GetComponent<ExtraSeedProducer>();
-	        bool flag = growing == null;
+            bool flag = growing == null;
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {

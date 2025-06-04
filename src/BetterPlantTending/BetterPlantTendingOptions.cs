@@ -56,17 +56,6 @@ namespace BetterPlantTending
 
         [JsonProperty]
         [Option]
-        public bool saltplant_adjust_gas_consumption { get; set; } = true;
-
-        [JsonProperty]
-        [Option]
-        public bool hydrocactus_adjust_gas_consumption { get; set; } = true;
-
-        // todo: blue grass
-        // todo: dino fern
-
-        [JsonProperty]
-        [Option]
         [RequireDLC(DlcManager.EXPANSION1_ID)]
         public bool coldbreather_adjust_radiation_by_grow_speed { get; set; } = true;
 
@@ -89,6 +78,30 @@ namespace BetterPlantTending
         [Option]
         [RequireDLC(DlcManager.EXPANSION1_ID)]
         public bool critter_trap_can_give_seeds { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool saltplant_adjust_gas_consumption { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        [RequireDLC(DlcManager.EXPANSION1_ID)]
+        public bool hydrocactus_adjust_gas_consumption { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        [RequireDLC(DlcManager.DLC2_ID)]
+        public bool blue_grass_adjust_gas_consumption { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        [RequireDLC(DlcManager.DLC4_ID)]
+        public bool dinofern_adjust_gas_consumption { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        [RequireDLC(DlcManager.DLC4_ID)]
+        public bool dinofern_can_give_seeds { get; set; } = true;
 
         // шансы доп семян
         [JsonObject(MemberSerialization.OptIn)]

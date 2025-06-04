@@ -17,6 +17,9 @@ namespace BetterPlantTending
         private const string SPACE_TREE = "{SPACE_TREE}";
         private const string SUGARWATER = "{SUGARWATER}";
         private const string SALTPLANT = "{SALTPLANT}";
+        private const string FILTERPLANT = "{FILTERPLANT}";
+        private const string BLUE_GRASS = "{BLUE_GRASS}";
+        private const string DINOFERN = "{DINOFERN}";
         private const string CRITTERTRAPPLANT = "{CRITTERTRAPPLANT}";
         private const string SAPTREE = "{SAPTREE}";
         private const string SQUIRREL = "{SQUIRREL}";
@@ -81,10 +84,6 @@ namespace BetterPlantTending
             {
                 public static LocString NAME = $"Move the output cell of {OXYFERN} 1 up";
             }
-            public class SALTPLANT_ADJUST_GAS_CONSUMPTION
-            {
-                public static LocString NAME = $"Adjust the gas absorption rate of {SALTPLANT} in proportion to the growth rate";
-            }
             public class COLDBREATHER_ADJUST_RADIATION_BY_GROW_SPEED
             {
                 public static LocString NAME = $"Adjust the radiation emission of {COLDBREATHER} in proportion to the growth rate";
@@ -106,6 +105,26 @@ namespace BetterPlantTending
             public class CRITTER_TRAP_CAN_GIVE_SEEDS
             {
                 public static LocString NAME = $"The {CRITTERTRAPPLANT} can produce seeds when harvesting";
+            }
+            public class SALTPLANT_ADJUST_GAS_CONSUMPTION
+            {
+                public static LocString NAME = $"Adjust the gas absorption rate of {SALTPLANT} in proportion to the growth rate";
+            }
+            public class HYDROCACTUS_ADJUST_GAS_CONSUMPTION
+            {
+                public static LocString NAME = $"Adjust the gas absorption rate of {FILTERPLANT} in proportion to the growth rate";
+            }
+            public class BLUE_GRASS_ADJUST_GAS_CONSUMPTION
+            {
+                public static LocString NAME = $"Adjust the gas absorption rate of {BLUE_GRASS} in proportion to the growth rate";
+            }
+            public class DINOFERN_ADJUST_GAS_CONSUMPTION
+            {
+                public static LocString NAME = $"Adjust the gas absorption rate of {DINOFERN} in proportion to the growth rate";
+            }
+            public class DINOFERN_CAN_GIVE_SEEDS
+            {
+                public static LocString NAME = $"The {DINOFERN} can produce seeds when harvesting";
             }
             public class EXTRA_SEEDS
             {
@@ -147,6 +166,9 @@ namespace BetterPlantTending
                 { SPACE_TREE, CREATURES.SPECIES.SPACETREE.NAME },
                 { SUGARWATER, ELEMENTS.SUGARWATER.NAME },
                 { SALTPLANT, CREATURES.SPECIES.SALTPLANT.NAME },
+                { FILTERPLANT, CREATURES.SPECIES.FILTERPLANT.NAME },
+                { BLUE_GRASS, CREATURES.SPECIES.BLUE_GRASS.NAME },
+                { DINOFERN, CREATURES.SPECIES.DINOFERN.NAME },
                 { CRITTERTRAPPLANT, CREATURES.SPECIES.CRITTERTRAPPLANT.NAME },
                 { SAPTREE, CREATURES.SPECIES.SAPTREE.NAME },
                 { SQUIRREL, CREATURES.SPECIES.SQUIRREL.NAME },
