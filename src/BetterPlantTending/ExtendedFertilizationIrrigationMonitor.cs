@@ -48,7 +48,7 @@ namespace BetterPlantTending
 
         public static void Subscribe(StateMachine.Instance smi)
         {
-            if (!BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning)
+            if (!ModOptions.Instance.prevent_fertilization_irrigation_not_growning)
                 return;
             if (smi.IsNullOrDestroyed() || smi.GetMaster().IsNullOrDestroyed())
                 return;
@@ -68,7 +68,7 @@ namespace BetterPlantTending
 
         public static void QueueUpdateAbsorbing(StateMachine.Instance smi)
         {
-            if (!BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning)
+            if (!ModOptions.Instance.prevent_fertilization_irrigation_not_growning)
                 return;
             if (smi.IsNullOrDestroyed() || smi.GetMaster().IsNullOrDestroyed())
                 return;

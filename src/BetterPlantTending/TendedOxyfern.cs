@@ -1,5 +1,5 @@
 ﻿using Klei.AI;
-using static BetterPlantTending.BetterPlantTendingAssets;
+using static BetterPlantTending.ModAssets;
 
 namespace BetterPlantTending
 {

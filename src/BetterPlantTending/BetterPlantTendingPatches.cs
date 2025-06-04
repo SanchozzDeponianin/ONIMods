@@ -15,17 +15,17 @@ using PeterHan.PLib.PatchManager;
 
 namespace BetterPlantTending
 {
-    using static BetterPlantTendingAssets;
+    using static ModAssets;
 
-    internal sealed class BetterPlantTendingPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(BetterPlantTendingPatches));
-            new POptions().RegisterOptions(this, typeof(BetterPlantTendingOptions));
-            BetterPlantTendingOptions.Reload();
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
+            ModOptions.Reload();
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -51,7 +51,7 @@ namespace BetterPlantTending
             {
                 Tinkerable.MakeFarmTinkerable(__result);
                 __result.AddOrGet<TendedOxyfern>();
-                if (BetterPlantTendingOptions.Instance.oxyfern_fix_output_cell)
+                if (ModOptions.Instance.oxyfern_fix_output_cell)
                     __result.GetComponent<ElementConverter>().outputElements[0].outputElementOffset.y += 0.5f;
             }
         }
@@ -95,9 +95,9 @@ namespace BetterPlantTending
         {
             private static IEnumerable<MethodBase> TargetMethods()
             {
-                if (BetterPlantTendingOptions.Instance.saltplant_adjust_gas_consumption)
+                if (ModOptions.Instance.saltplant_adjust_gas_consumption)
                     yield return typeof(SaltPlantConfig).GetMethodSafe(nameof(SaltPlantConfig.CreatePrefab), false);
-                if (DlcManager.IsExpansion1Active() && BetterPlantTendingOptions.Instance.hydrocactus_adjust_gas_consumption)
+                if (DlcManager.IsExpansion1Active() && ModOptions.Instance.hydrocactus_adjust_gas_consumption)
                     yield return typeof(FilterPlantConfig).GetMethodSafe(nameof(FilterPlantConfig.CreatePrefab), false);
             }
 
@@ -112,7 +112,7 @@ namespace BetterPlantTending
         private static class BlueGrassConfig_CreatePrefab
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
-                && BetterPlantTendingOptions.Instance.blue_grass_adjust_gas_consumption;
+                && ModOptions.Instance.blue_grass_adjust_gas_consumption;
 
             private static void Postfix(GameObject __result)
             {
@@ -124,7 +124,7 @@ namespace BetterPlantTending
         private static class DinofernConfig_CreatePrefab
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC4_ID)
-                && BetterPlantTendingOptions.Instance.dinofern_adjust_gas_consumption;
+                && ModOptions.Instance.dinofern_adjust_gas_consumption;
 
             private static void Postfix(GameObject __result)
             {
@@ -138,10 +138,10 @@ namespace BetterPlantTending
             private static IEnumerable<MethodBase> TargetMethods()
             {
                 if (DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
-                    && BetterPlantTendingOptions.Instance.blue_grass_adjust_gas_consumption)
+                    && ModOptions.Instance.blue_grass_adjust_gas_consumption)
                     yield return typeof(BlueGrass).GetMethodSafe(nameof(BlueGrass.SetConsumptionRate), false);
                 if (DlcManager.IsContentSubscribed(DlcManager.DLC4_ID)
-                    && BetterPlantTendingOptions.Instance.dinofern_adjust_gas_consumption)
+                    && ModOptions.Instance.dinofern_adjust_gas_consumption)
                     yield return typeof(Dinofern).GetMethodSafe(nameof(Dinofern.SetConsumptionRate), false);
             }
 
@@ -160,7 +160,7 @@ namespace BetterPlantTending
         private static class Dinofern_OnSpawn
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC4_ID)
-                && BetterPlantTendingOptions.Instance.dinofern_can_give_seeds;
+                && ModOptions.Instance.dinofern_can_give_seeds;
 
             private static void Postfix(Dinofern __instance)
             {
@@ -177,10 +177,10 @@ namespace BetterPlantTending
             private static float base_growth_rate;
             private static bool Prepare()
             {
-                base_growth_rate = BetterPlantTendingOptions.Instance.critter_trap_decrease_gas_production_by_wildness
+                base_growth_rate = ModOptions.Instance.critter_trap_decrease_gas_production_by_wildness
                     ? CROPS.GROWTH_RATE : CROPS.WILD_GROWTH_RATE;
                 return DlcManager.IsExpansion1Active()
-                    && BetterPlantTendingOptions.Instance.critter_trap_adjust_gas_production;
+                    && ModOptions.Instance.critter_trap_adjust_gas_production;
             }
 
             private static void Prefix(CritterTrapPlant.StatesInstance __instance, ref float dt)
@@ -195,7 +195,7 @@ namespace BetterPlantTending
         private static class CritterTrapPlant_OnSpawn
         {
             private static bool Prepare() => DlcManager.IsExpansion1Active()
-                && BetterPlantTendingOptions.Instance.critter_trap_can_give_seeds;
+                && ModOptions.Instance.critter_trap_can_give_seeds;
 
             private static void Postfix(CritterTrapPlant __instance)
             {
@@ -210,7 +210,7 @@ namespace BetterPlantTending
         private static class SapTreeConfig_CreatePrefab
         {
             private static bool Prepare() => DlcManager.IsExpansion1Active()
-                && BetterPlantTendingOptions.Instance.allow_tinker_saptree;
+                && ModOptions.Instance.allow_tinker_saptree;
 
             private static void Postfix(GameObject __result)
             {
@@ -240,7 +240,7 @@ namespace BetterPlantTending
         private static class SapTree_StatesInstance_EatFoodItem_Ooze
         {
             private static bool Prepare() => DlcManager.IsExpansion1Active()
-                && BetterPlantTendingOptions.Instance.allow_tinker_saptree;
+                && ModOptions.Instance.allow_tinker_saptree;
 
             private static IEnumerable<MethodBase> TargetMethods()
             {
@@ -262,7 +262,7 @@ namespace BetterPlantTending
         private static class SapTree_StatesInstance_EatFoodItem
         {
             private static bool Prepare() => DlcManager.IsExpansion1Active()
-                && BetterPlantTendingOptions.Instance.allow_tinker_saptree;
+                && ModOptions.Instance.allow_tinker_saptree;
 
             /*
             тут в норме dt = 1 поэтому можно просто умножить. если клеи поменяют, то придется городить чтото посложнее
@@ -353,14 +353,14 @@ namespace BetterPlantTending
                     // чтобы обновить чору после того как белка извлекла семя
                     __instance.Subscribe((int)GameHashes.SeedProduced, ___OnEffectRemovedDelegate);
                     // чтобы обновить чору когда растение засыхает/растёт/выросло
-                    if (BetterPlantTendingOptions.Instance.prevent_tending_grown_or_wilting)
+                    if (ModOptions.Instance.prevent_tending_grown_or_wilting)
                     {
                         __instance.Subscribe((int)GameHashes.Wilt, ___OnEffectRemovedDelegate);
                         __instance.Subscribe((int)GameHashes.WiltRecover, ___OnEffectRemovedDelegate);
                         __instance.Subscribe((int)GameHashes.Grow, ___OnEffectRemovedDelegate);
                         __instance.Subscribe((int)GameHashes.CropSleep, ___OnEffectRemovedDelegate);
                         __instance.Subscribe((int)GameHashes.CropWakeUp, ___OnEffectRemovedDelegate);
-                        if (BetterPlantTendingOptions.Instance.space_tree_adjust_productivity)
+                        if (ModOptions.Instance.space_tree_adjust_productivity)
                             __instance.Subscribe((int)GameHashes.TagsChanged, OnTagsChanged);
                     }
                 }
@@ -385,7 +385,7 @@ namespace BetterPlantTending
                     return;
                 if (__instance.tinkerMaterialTag == FarmStationConfig.TINKER_TOOLS)
                 {
-                    if (BetterPlantTendingOptions.Instance.prevent_tending_grown_or_wilting)
+                    if (ModOptions.Instance.prevent_tending_grown_or_wilting)
                     {
                         if (__instance.HasTag(GameTags.Wilting)) // засохло
                         {
@@ -399,7 +399,7 @@ namespace BetterPlantTending
                             return;
                         }
                         // ветка сиропового дерева:
-                        if (BetterPlantTendingOptions.Instance.space_tree_adjust_productivity)
+                        if (ModOptions.Instance.space_tree_adjust_productivity)
                         {
                             // ускорение сиропа включено => дерево заполнено сиропом и ожидает сбора
                             if (__instance.HasTag(SpaceTreePlant.SpaceTreeReadyForHarvest))
@@ -628,7 +628,7 @@ namespace BetterPlantTending
             {
                 if (growing == null)
                     return true;
-                if (BetterPlantTendingOptions.Instance.prevent_tending_grown_or_wilting && !growing.IsGrowing())
+                if (ModOptions.Instance.prevent_tending_grown_or_wilting && !growing.IsGrowing())
                     return true;
                 return growing.ReachedNextHarvest();
             }
@@ -817,7 +817,7 @@ namespace BetterPlantTending
         private static bool ShouldAbsorb(StateMachine.Instance smi)
         {
             bool absorb = !smi.gameObject.HasTag(GameTags.Wilting);
-            if (absorb && BetterPlantTendingOptions.Instance.prevent_fertilization_irrigation_not_growning
+            if (absorb && ModOptions.Instance.prevent_fertilization_irrigation_not_growning
                 && smi.gameObject.TryGetComponent<ExtendedFertilizationIrrigationMonitor>(out var monitor))
                 absorb = absorb && monitor.ShouldAbsorb;
             return absorb;

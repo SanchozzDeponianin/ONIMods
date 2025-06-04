@@ -3,7 +3,7 @@ using STRINGS;
 
 namespace BetterPlantTending
 {
-    internal static class BetterPlantTendingAssets
+    internal static class ModAssets
     {
         internal const string FARM_TINKER_EFFECT_ID = "FarmTinker";
         internal const string DIVERGENT_CROP_TENDED_EFFECT_ID = "DivergentCropTended";
@@ -29,7 +29,7 @@ namespace BetterPlantTending
             var db = Db.Get();
             var effectFarmTinker = db.effects.Get(FARM_TINKER_EFFECT_ID);
             var toPercent = new ToPercentAttributeFormatter(1f);
-            var options = BetterPlantTendingOptions.Instance;
+            var options = ModOptions.Instance;
 
             fakeGrowingRate = new AttributeModifier(
                 attribute_id: db.Amounts.Maturity.deltaAttribute.Id,

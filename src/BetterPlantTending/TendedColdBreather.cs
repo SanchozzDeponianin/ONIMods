@@ -1,7 +1,7 @@
 ﻿using Klei.AI;
 using TUNING;
 using UnityEngine;
-using static BetterPlantTending.BetterPlantTendingAssets;
+using static BetterPlantTending.ModAssets;
 
 namespace BetterPlantTending
 {
@@ -54,9 +54,9 @@ namespace BetterPlantTending
             if (emitter != null)
             {
                 var rads = emitRads;
-                if (BetterPlantTendingOptions.Instance.coldbreather_adjust_radiation_by_grow_speed)
+                if (ModOptions.Instance.coldbreather_adjust_radiation_by_grow_speed)
                     rads *= grow_multiplier;
-                if (BetterPlantTendingOptions.Instance.coldbreather_decrease_radiation_by_wildness)
+                if (ModOptions.Instance.coldbreather_decrease_radiation_by_wildness)
                     rads *= wild_multiplier;
                 if (emitter.emitRads != rads)
                 {

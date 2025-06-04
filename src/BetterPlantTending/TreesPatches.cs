@@ -24,7 +24,7 @@ namespace BetterPlantTending
         private static class ForestTreeSeedMonitor_ExtractExtraSeed
         {
             private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled()
-                && BetterPlantTendingOptions.Instance.tree_unlock_mutation;
+                && ModOptions.Instance.tree_unlock_mutation;
 
             private static GameObject AddMutation(GameObject seed, ForestTreeSeedMonitor trunk)
             {
@@ -91,7 +91,7 @@ namespace BetterPlantTending
         {
             private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled()
                 && DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
-                && BetterPlantTendingOptions.Instance.space_tree_unlock_mutation;
+                && ModOptions.Instance.space_tree_unlock_mutation;
 
             private static void Postfix(CreaturePoopLoot __instance)
             {
@@ -122,7 +122,7 @@ namespace BetterPlantTending
         {
             private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled()
                 && DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
-                && BetterPlantTendingOptions.Instance.space_tree_unlock_mutation;
+                && ModOptions.Instance.space_tree_unlock_mutation;
 
             // мутантовое дерево не даёт семена
             // TODO: пока так сойдёт, если в CreaturePoopLoot добавят чтото кроме семян, надо будет менять алгоритм
@@ -268,7 +268,7 @@ namespace BetterPlantTending
         private static class SpaceTreeBranch_Instance_Productivity
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
-                && BetterPlantTendingOptions.Instance.space_tree_adjust_productivity;
+                && ModOptions.Instance.space_tree_adjust_productivity;
 
             private static void Postfix(SpaceTreeBranch.Instance __instance, ref float __result, AmountInstance ___maturity)
             {
@@ -323,7 +323,7 @@ namespace BetterPlantTending
 
         internal static void SpaceTree_ResolveTooltipCallback_Patch()
         {
-            if (BetterPlantTendingOptions.Instance.space_tree_adjust_productivity)
+            if (ModOptions.Instance.space_tree_adjust_productivity)
             {
                 var statusItem_brach = Db.Get().CreatureStatusItems.SpaceTreeBranchLightStatus;
                 var originCB_brach = statusItem_brach.resolveTooltipCallback;

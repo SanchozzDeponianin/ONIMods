@@ -2,14 +2,14 @@
 using TUNING;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Options;
-using static BetterPlantTending.BetterPlantTendingAssets;
+using static BetterPlantTending.ModAssets;
 
 namespace BetterPlantTending
 {
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class BetterPlantTendingOptions : BaseOptions<BetterPlantTendingOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         // основные настройки
         [JsonProperty]

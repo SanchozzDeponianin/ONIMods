@@ -4,7 +4,7 @@ using KSerialization;
 using UnityEngine;
 using STRINGS;
 using PeterHan.PLib.Detours;
-using static BetterPlantTending.BetterPlantTendingAssets;
+using static BetterPlantTending.ModAssets;
 
 namespace BetterPlantTending
 {
@@ -26,8 +26,8 @@ namespace BetterPlantTending
         [SerializeField]
         internal bool isNotDecorative = false;
 
-        private static bool AllowFarmTinkerDecorative => BetterPlantTendingOptions.Instance.allow_tinker_decorative;
-        private bool IsWilting => BetterPlantTendingOptions.Instance.prevent_tending_grown_or_wilting && wilting.IsWilting();
+        private static bool AllowFarmTinkerDecorative => ModOptions.Instance.allow_tinker_decorative;
+        private bool IsWilting => ModOptions.Instance.prevent_tending_grown_or_wilting && wilting.IsWilting();
         public bool ExtraSeedAvailable => hasExtraSeedAvailable;
         public bool ShouldDivergentTending => (isNotDecorative || !hasExtraSeedAvailable) && !IsWilting;
         public bool ShouldFarmTinkerTending => isNotDecorative || !hasExtraSeedAvailable;
@@ -57,7 +57,7 @@ namespace BetterPlantTending
             Subscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Subscribe((int)GameHashes.Died, OnUprootedDelegate);
             Subscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
-            if (!BetterPlantTendingOptions.Instance.extra_seeds.pip_required_to_extract)
+            if (!ModOptions.Instance.extra_seeds.pip_required_to_extract)
                 Subscribe((int)GameHashes.EffectRemoved, OnUprootedDelegate);
         }
 
@@ -66,7 +66,7 @@ namespace BetterPlantTending
             Unsubscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Unsubscribe((int)GameHashes.Died, OnUprootedDelegate);
             Unsubscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
-            if (!BetterPlantTendingOptions.Instance.extra_seeds.pip_required_to_extract)
+            if (!ModOptions.Instance.extra_seeds.pip_required_to_extract)
                 Unsubscribe((int)GameHashes.EffectRemoved, OnUprootedDelegate);
             base.OnCleanUp();
         }
