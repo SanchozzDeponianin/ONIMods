@@ -121,10 +121,10 @@ namespace BetterPlantTending
                     yield return typeof(Dinofern).GetMethodSafe(nameof(Dinofern.SetConsumptionRate), false);
             }
 
-            private static void Postfix(KMonoBehaviour __instance, ElementConsumer ___elementConsumer, ReceptacleMonitor __receptacleMonitor)
+            private static void Postfix(KMonoBehaviour __instance, ElementConsumer ___elementConsumer, ReceptacleMonitor ___receptacleMonitor)
             {
                 // тут дикость учитывается дважды: внутри Growing ххх.SetConsumptionRate
-                float base_growth_rate = __receptacleMonitor.Replanted ? CROPS.GROWTH_RATE : CROPS.WILD_GROWTH_RATE;
+                float base_growth_rate = ___receptacleMonitor.Replanted ? CROPS.GROWTH_RATE : CROPS.WILD_GROWTH_RATE;
                 float multiplier = __instance.GetAttributes().Get(fakeGrowingRate.AttributeId).GetTotalValue() / base_growth_rate;
                 ___elementConsumer.consumptionRate *= multiplier;
                 ___elementConsumer.RefreshConsumptionRate();

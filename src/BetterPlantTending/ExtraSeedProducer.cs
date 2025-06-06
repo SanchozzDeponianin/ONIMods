@@ -1,14 +1,16 @@
 ﻿using System.Collections.Generic;
 using Klei.AI;
 using KSerialization;
-using UnityEngine;
 using STRINGS;
+using UnityEngine;
 using PeterHan.PLib.Detours;
-using static BetterPlantTending.ModAssets;
 
 namespace BetterPlantTending
 {
+    using static ModAssets;
+    using static STRINGS.UI.UISIDESCREENS.PLANTERSIDESCREEN;
     using handler = EventSystem.IntraObjectHandler<ExtraSeedProducer>;
+
     public class ExtraSeedProducer : KMonoBehaviour, IGameObjectEffectDescriptor
     {
 #pragma warning disable CS0649
@@ -103,11 +105,22 @@ namespace BetterPlantTending
             float seedChance = this?.GetAttributes()?.Get(ExtraSeedChance)?.GetTotalValue() ??
                 (isNotDecorative ? ExtraSeedChanceNotDecorativeBaseValue.Value : ExtraSeedChanceDecorativeBaseValue.Value);
             string percent = GameUtil.GetFormattedPercent(seedChance * 100, GameUtil.TimeSlice.None);
+            var affects = new List<string>() { DUPLICANTS.MODIFIERS.FARMTINKER.NAME };
+            if (Game.IsDlcActiveForCurrentSave(DlcManager.EXPANSION1_ID))
+            {
+                affects.Add(CREATURES.SPECIES.DIVERGENT.VARIANT_BEETLE.NAME);
+                affects.Add(CREATURES.SPECIES.DIVERGENT.VARIANT_WORM.NAME);
+            }/*
+            if (Game.IsDlcActiveForCurrentSave(DlcManager.DLC4_ID))
+                affects.Add(CREATURES.SPECIES.BUTTERFLY.NAME);*/
+            for (int i = 0; i < affects.Count; i++)
+                affects[i] = UI.FormatAsKeyWord(UI.StripLinkFormatting(affects[i]));
+            string pip = ModOptions.Instance.extra_seeds.pip_required_to_extract ? TOOLTIPS.SQUIRREL_NEEDED : string.Empty;
             var descs = new List<Descriptor>
             {
                 new Descriptor(
-                    txt: string.Format(UI.UISIDESCREENS.PLANTERSIDESCREEN.BONUS_SEEDS, percent),
-                    tooltip: string.Format(UI.UISIDESCREENS.PLANTERSIDESCREEN.TOOLTIPS.BONUS_SEEDS, percent),
+                    txt: string.Format(BONUS_SEEDS, percent),
+                    tooltip: string.Format(TOOLTIPS.BONUS_SEEDS, percent, string.Join(", ", affects), pip),
                     descriptorType: Descriptor.DescriptorType.Effect,
                     only_for_simple_info_screen: false)
             };

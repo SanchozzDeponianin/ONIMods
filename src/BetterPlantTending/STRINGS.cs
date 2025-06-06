@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using STRINGS;
+using static STRINGS.UI;
 using SanchozzONIMods.Lib;
 
 namespace BetterPlantTending
@@ -36,6 +37,22 @@ namespace BetterPlantTending
                 public class EXTRASEEDCHANCE
                 {
                     public static LocString NAME = "Extra Seed Chance";
+                }
+            }
+        }
+
+        public class UI
+        {
+            public class UISIDESCREENS
+            {
+                public class PLANTERSIDESCREEN
+                {
+                    public static LocString BONUS_SEEDS = $"Base {FormatAsLink("Extra Seed", "PLANTS")} Harvest Chance: {{0}}";
+                    public class TOOLTIPS
+                    {
+                        public static LocString BONUS_SEEDS = "This plant has a {0} chance to produce new seeds when tended or pollinated\n\nAffected by: {1}{2}";
+                        public static LocString SQUIRREL_NEEDED = $"\n\nA {SQUIRREL} is required to extract the seeds";
+                    }
                 }
             }
         }
@@ -91,7 +108,7 @@ namespace BetterPlantTending
             public class COLDBREATHER_DECREASE_RADIATION_BY_WILDNESS
             {
                 public static LocString NAME = $"Decrease the radiation emission of wild {COLDBREATHER}";
-                public static LocString TOOLTIP = $"To be honest, it should have been done by the {UI.FormatAsKeyWord("Klei")} themselves";
+                public static LocString TOOLTIP = $"To be honest, it should have been done by the {FormatAsKeyWord("Klei")} themselves";
             }
             public class CRITTER_TRAP_ADJUST_GAS_PRODUCTION
             {
@@ -179,7 +196,7 @@ namespace BetterPlantTending
                 { YIELDAMOUNT, global::STRINGS.DUPLICANTS.ATTRIBUTES.YIELDAMOUNT.NAME },
             };
             foreach (var k in dictionary.Keys.ToList())
-                dictionary[k] = UI.FormatAsKeyWord(UI.StripLinkFormatting(dictionary[k]));
+                dictionary[k] = FormatAsKeyWord(StripLinkFormatting(dictionary[k]));
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
             OPTIONS.PREVENT_FERTILIZATION_IRRIGATION_NOT_GROWNING.TOOLTIP.ReplaceText(OPTIONS.PREVENT_TENDING_GROWN_OR_WILTING.TOOLTIP.text);
             OPTIONS.BASE_CHANCE_NOT_DECORATIVE.TOOLTIP.ReplaceText(OPTIONS.BASE_CHANCE_DECORATIVE.TOOLTIP.text);
