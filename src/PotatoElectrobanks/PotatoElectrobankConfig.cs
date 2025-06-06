@@ -65,7 +65,7 @@ namespace PotatoElectrobanks
             var template = EntityTemplates.CreateLooseEntity(id,
                 string.Format(NAME, StripLinkFormatting(name), ExtractLinkID(name)),
                 string.Format(DESC, name),
-                mass, true, Assets.GetAnim(animName), initialAnim, Grid.SceneLayer.Ore,
+                ElectrobankConfig.MASS, true, Assets.GetAnim(animName), initialAnim, Grid.SceneLayer.Ore,
                 EntityTemplates.CollisionShape.RECTANGLE, 0.5f, 0.8f, true, 0, SimHashes.Creature, new List<Tag>
                 {
                     GameTags.ChargedPortableBattery,

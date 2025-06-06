@@ -142,7 +142,7 @@ namespace SanchozzONIMods.Lib
                     if (File.Exists(lang_file))
                     {
 #if DEBUG
-                        Debug.LogFormat("[{0}] try load LangFile: {1}", ModName, lang_file);
+                        Debug.LogFormat("[{0}] try load LangFile: {1}", MyModName, lang_file);
 #endif
                         Localization.OverloadStrings(Localization.LoadStringsFile(lang_file, false));
                         LocalizeDescription(locstring_tree_root);

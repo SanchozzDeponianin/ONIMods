@@ -1,4 +1,5 @@
-﻿using Klei.AI;
+﻿using System.Collections.Generic;
+using Klei.AI;
 using TUNING;
 using UnityEngine;
 using HarmonyLib;
@@ -33,6 +34,7 @@ namespace PotatoElectrobanks
 
         // хранить в холодосе
         // запретить в разрядниках
+        // разрядить для отладки
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()
         {
@@ -53,10 +55,32 @@ namespace PotatoElectrobanks
                         Tag categoryTag = (electrobank is PotatoElectrobank) ? PotatoPortableBattery : NonPotatoPortableBattery;
                         prefabID.AddTag(categoryTag);
                         DiscoveredResources.Instance.Discover(prefabID.PrefabTag, categoryTag);
+#if DEBUG
+                        electrobank.Subscribe((int)GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate);
+#endif
                     }
                 };
             }
+#if DEBUG
+            foreach (var storage in Assets.GetPrefab(BionicMinionConfig.ID).GetComponents<Storage>())
+                storage.showInUI = true;
+#endif
         }
+
+#if DEBUG
+        private static readonly EventSystem.IntraObjectHandler<Electrobank> OnRefreshUserMenuDelegate
+            = new((electrobank, data) => OnRefreshUserMenu(electrobank));
+
+        private static void OnRefreshUserMenu(Electrobank electrobank)
+        {
+            if (electrobank != null)
+            {
+                var binfo = new KIconButtonMenu.ButtonInfo("action_power", "DEBUG Discharge",
+                    () => electrobank.RemovePower(float.PositiveInfinity, false), Utils.MaxAction);
+                Game.Instance.userMenu.AddButton(electrobank.gameObject, binfo, 1f);
+            }
+        }
+#endif 
 
         // исправляем проверку полной зарядки
         [HarmonyPatch(typeof(Electrobank), nameof(Electrobank.IsFullyCharged), MethodType.Getter)]
@@ -70,24 +94,6 @@ namespace PotatoElectrobanks
                     return false;
                 }
                 return true;
-            }
-        }
-
-        // исправляем подсчёт разряженных батареек унутри бионикла
-        // нахрена тут клеи вообще массу считают ?
-        [HarmonyPatch(typeof(BionicBatteryMonitor.Instance), nameof(BionicBatteryMonitor.Instance.DepletedElectrobankCount), MethodType.Getter)]
-        private static class BionicBatteryMonitor_Instance_DepletedElectrobankCount
-        {
-            private static bool Prefix(BionicBatteryMonitor.Instance __instance, ref int __result)
-            {
-                int num = 0;
-                foreach (var go in __instance.storage.items)
-                {
-                    if (go != null && go.HasTag(GameTags.EmptyPortableBattery))
-                        num++;
-                }
-                __result = num;
-                return false;
             }
         }
 
@@ -122,15 +128,24 @@ namespace PotatoElectrobanks
         }
 
         // для красоты, выплёвывать то что должно быть мусором
-        [HarmonyPatch(typeof(ReloadElectrobankChore), nameof(ReloadElectrobankChore.SetOverrideAnimSymbol))]
-        private static class ReloadElectrobankChore_SetOverrideAnimSymbol
+        [HarmonyPatch(typeof(ReloadElectrobankChore.Instance), nameof(ReloadElectrobankChore.Instance.ShowElectrobankSymbol))]
+        private static class ReloadElectrobankChore_Instance_ShowElectrobankSymbol
         {
-            private static void Prefix(ref GameObject electrobank)
+            private static Dictionary<Tag, KAnim.Build.Symbol> depletedSymbols = new();
+            private static void Prefix(ReloadElectrobankChore.Instance __instance, ref KAnim.Build.Symbol symbol)
             {
-                if (electrobank.HasTag(GameTags.EmptyPortableBattery)
-                    && electrobank.TryGetComponent(out PotatoElectrobank potato) && potato.garbage.IsValid)
+                if (symbol == __instance.sm.depletedElectrobankSymbol)
                 {
-                    electrobank = Assets.GetPrefab(potato.garbage);
+                    var depleted = ReloadElectrobankChore.GetAnyEmptyBattery(__instance);
+                    var depleted_id = depleted.PrefabID();
+                    if (depleted != null && !depletedSymbols.TryGetValue(depleted_id, out symbol))
+                    {
+                        if (depleted.TryGetComponent(out PotatoElectrobank potato) && potato.garbage.IsValid
+                            && Assets.TryGetPrefab(potato.garbage) is GameObject garbage)
+                            depleted = garbage;
+                        symbol = depleted.GetComponent<KBatchedAnimController>().AnimFiles[0].GetData().build.GetSymbolByIndex(0U);
+                        depletedSymbols[depleted_id] = symbol;
+                    }
                 }
             }
         }
@@ -222,6 +237,45 @@ namespace PotatoElectrobanks
                         else
                             modifier.SetValue(0f);
                     }
+                }
+            }
+        }
+
+        // не гнить унутре флудо
+        [HarmonyPatch(typeof(FetchDroneConfig), nameof(FetchDroneConfig.CreatePrefab))]
+        private static class FetchDroneConfig_CreatePrefab
+        {
+            private static void Postfix(GameObject __result)
+            {
+                foreach (var storage in __result.GetComponents<Storage>())
+                {
+                    if (storage.storageID == GameTags.ChargedPortableBattery)
+                        storage.SetDefaultStoredItemModifiers(new List<Storage.StoredItemModifier>
+                        {
+                            Storage.StoredItemModifier.Hide,
+                            Storage.StoredItemModifier.Preserve,
+                            Storage.StoredItemModifier.Insulate,
+                        });
+                }
+            }
+        }
+
+        // если сгнило поправим массу
+        [HarmonyPatch(typeof(Rottable), nameof(Rottable.InitializeStates))]
+        private static class Rottable_InitializeStates
+        {
+            private static void Postfix(Rottable __instance)
+            {
+                Rottable.State.AddAction(nameof(FixPotatoMass), FixPotatoMass, __instance.Spoiled.enterActions, false);
+            }
+
+            private static void FixPotatoMass(Rottable.Instance smi)
+            {
+                if (!smi.IsNullOrStopped() && smi.gameObject != null
+                    && smi.gameObject.TryGetComponent(out PotatoElectrobank _)
+                    && smi.gameObject.TryGetComponent(out PrimaryElement pe))
+                {
+                    pe.Mass = pe.Units;
                 }
             }
         }

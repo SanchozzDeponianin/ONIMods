@@ -13,3 +13,13 @@ msgctxt "PotatoElectrobanks.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.ELECTROBANK_POTATO
 msgid "<link=\"ELECTROBANKPOTATO{1}\">Bio \"{0}\" Power Bank</link>"
 msgstr ""
 
+#. PotatoElectrobanks.STRINGS.MOD_DESCRIPTION
+msgctxt "PotatoElectrobanks.STRINGS.MOD_DESCRIPTION"
+msgid "Adds five new Potato Power Banks exclusive for Bionics and Flydo."
+msgstr ""
+
+#. PotatoElectrobanks.STRINGS.MOD_TITLE
+msgctxt "PotatoElectrobanks.STRINGS.MOD_TITLE"
+msgid "Potato Power Banks"
+msgstr ""
+
