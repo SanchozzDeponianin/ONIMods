@@ -24,7 +24,7 @@ namespace CrabsProfit
             Utils.InitLocalization(typeof(STRINGS));
         }
 
-        private static void AddDrop(GameObject prefab, string drop_id, int count)
+        private static void AddDrop(GameObject prefab, string drop_id, float count)
         {
             if (count > 0 && !string.IsNullOrEmpty(drop_id))
             {
@@ -87,23 +87,16 @@ namespace CrabsProfit
             }
         }
 
-        // оба
         [HarmonyPatch(typeof(BabyCrabFreshWaterConfig), nameof(BabyCrabFreshWaterConfig.CreatePrefab))]
         private static class BabyCrabFreshWaterConfig_CreatePrefab
         {
-            private static bool Prepare() => ModOptions.Instance.CrabFreshWater_Shell_Mass > 0
-                || ModOptions.Instance.BabyCrabFreshWater_Meat > 0;
+            private static bool Prepare() => ModOptions.Instance.CrabFreshWater_Shell_Mass > 0;
             private static void Postfix(GameObject __result)
             {
-                if (ModOptions.Instance.BabyCrabFreshWater_Meat > 0)
-                {
-                    AddDrop(__result, ShellfishMeatConfig.ID, ModOptions.Instance.BabyCrabFreshWater_Meat);
-                }
-                if (ModOptions.Instance.CrabFreshWater_Shell_Mass > 0)
-                {
-                    AddDrop(__result, BabyCrabFreshWaterShellConfig.ID, 1);
-                    __result.AddOrGetDef<BabyMonitor.Def>().onGrowDropID = BabyCrabFreshWaterShellConfig.ID;
-                }
+                AddDrop(__result, CrabFreshWaterShellConfig.ID, ModOptions.Instance.BabyShellUnits);
+                var def = __result.AddOrGetDef<BabyMonitor.Def>();
+                def.onGrowDropID = CrabFreshWaterShellConfig.ID;
+                def.onGrowDropUnits = ModOptions.Instance.BabyShellUnits;
                 FixDrop(__result);
             }
         }

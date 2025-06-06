@@ -58,11 +58,6 @@ msgctxt "CrabsProfit.STRINGS.OPTIONS.BABYCRABFRESHWATER_MASS_DIVIDER.NAME"
 msgid "<style=\"KKeyword\">Small Sanishell Molt</style> is less X times"
 msgstr "<style=\"KKeyword\">Малый металлический панцирь</style> меньше в Х раз"
 
-#. CrabsProfit.STRINGS.OPTIONS.BABYCRABFRESHWATER_MEAT.NAME
-msgctxt "CrabsProfit.STRINGS.OPTIONS.BABYCRABFRESHWATER_MEAT.NAME"
-msgid "{BABYCRABFRESHWATER} meat amount, units"
-msgstr "{BABYCRABFRESHWATER}, количество мяса, шт"
-
 #. CrabsProfit.STRINGS.OPTIONS.BASE_ORE.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.BASE_ORE.NAME"
 msgid "Basic Ores"

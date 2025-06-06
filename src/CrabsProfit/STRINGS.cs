@@ -52,10 +52,6 @@ namespace CrabsProfit
             {
                 public static LocString NAME = $"{CRABWOOD} meat amount, units";
             }
-            public class BABYCRABFRESHWATER_MEAT
-            {
-                public static LocString NAME = $"{BABYCRABFRESHWATER} meat amount, units";
-            }
             public class CRABFRESHWATER_SHELL_MASS
             {
                 public static LocString NAME = $"{UI.FormatAsKeyWord(ITEMS.INDUSTRIAL_PRODUCTS.CRAB_SHELL.VARIANT_FRESH_WATER.NAME)} mass, kg";

@@ -61,11 +61,6 @@ namespace CrabsProfit
 
         [JsonProperty]
         [Option]
-        [Limit(0, 3)]
-        public int BabyCrabFreshWater_Meat { get; set; } = 1;
-
-        [JsonProperty]
-        [Option]
         public ShellMass CrabFreshWater_Shell_Mass { get; set; } = ShellMass.mass400;
 
         [JsonProperty]
@@ -78,7 +73,7 @@ namespace CrabsProfit
         public float AdultShellMass => Mathf.Max((float)CrabFreshWater_Shell_Mass, (float)ShellMass.mass50);
 
         [JsonIgnore]
-        public float BabyShellMass => AdultShellMass / Mathf.Max((float)BabyCrabFreshWater_Mass_Divider, 1f);
+        public float BabyShellUnits => 1f / Mathf.Max((float)BabyCrabFreshWater_Mass_Divider, 1f);
 
         public class OreWeights
         {
