@@ -7,7 +7,7 @@ namespace RoverRefueling
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class RoverRefuelingOptions : BaseOptions<RoverRefuelingOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option]

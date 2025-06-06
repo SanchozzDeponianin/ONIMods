@@ -360,25 +360,14 @@ namespace SuitRecharger
         private static void CheckDifficultySetting()
         {
             var currentQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.Durability);
-            float durabilityLossDifficultyMod;
-            switch (currentQualitySetting?.id)
+            var durabilityLossDifficultyMod = (currentQualitySetting?.id) switch
             {
-                case "Indestructible":
-                    durabilityLossDifficultyMod = EQUIPMENT.SUITS.INDESTRUCTIBLE_DURABILITY_MOD;
-                    break;
-                case "Reinforced":
-                    durabilityLossDifficultyMod = EQUIPMENT.SUITS.REINFORCED_DURABILITY_MOD;
-                    break;
-                case "Flimsy":
-                    durabilityLossDifficultyMod = EQUIPMENT.SUITS.FLIMSY_DURABILITY_MOD;
-                    break;
-                case "Threadbare":
-                    durabilityLossDifficultyMod = EQUIPMENT.SUITS.THREADBARE_DURABILITY_MOD;
-                    break;
-                default:
-                    durabilityLossDifficultyMod = 1f;
-                    break;
-            }
+                "Indestructible" => EQUIPMENT.SUITS.INDESTRUCTIBLE_DURABILITY_MOD,
+                "Reinforced" => EQUIPMENT.SUITS.REINFORCED_DURABILITY_MOD,
+                "Flimsy" => EQUIPMENT.SUITS.FLIMSY_DURABILITY_MOD,
+                "Threadbare" => EQUIPMENT.SUITS.THREADBARE_DURABILITY_MOD,
+                _ => 1f,
+            };
             defaultDurabilityThreshold = Mathf.Abs(EQUIPMENT.SUITS.OXYGEN_MASK_DECAY * durabilityLossDifficultyMod * durabilityPerCycleGap);
             DurabilityMode = (defaultDurabilityThreshold > 0f) ? DurabilitySetting.Enabled : DurabilitySetting.Disabled;
         }

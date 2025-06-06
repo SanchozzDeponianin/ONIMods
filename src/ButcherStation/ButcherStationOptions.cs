@@ -7,7 +7,7 @@ namespace ButcherStation
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class ButcherStationOptions : BaseOptions<ButcherStationOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option(Format = "F0")]

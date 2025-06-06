@@ -7,7 +7,7 @@ namespace TravelTubesExpanded
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class TravelTubesOptions : BaseOptions<TravelTubesOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option]

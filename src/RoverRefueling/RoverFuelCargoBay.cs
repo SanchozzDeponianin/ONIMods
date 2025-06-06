@@ -9,10 +9,10 @@ namespace RoverRefueling
     using handler = EventSystem.IntraObjectHandler<RoverFuelCargoBay>;
     public class RoverFuelCargoBay : KMonoBehaviour, IUserControlledCapacity, ISidescreenButtonControl
     {
-        private static readonly handler OnRefreshUserMenuDelegate = new handler((cmp, data) => cmp.OnRefreshUserMenu(data));
-        private static readonly handler OnStorageChangeDelegate = new handler((cmp, data) => cmp.OnStorageChange(data));
-        private static readonly handler OnCopySettingsDelegate = new handler((cmp, data) => cmp.OnCopySettings(data));
-        private static readonly handler OnRocketLandedDelegate = new handler((cmp, data) => cmp.filteredStorage.FilterChanged());
+        private static readonly handler OnRefreshUserMenuDelegate = new((cmp, data) => cmp.OnRefreshUserMenu(data));
+        private static readonly handler OnStorageChangeDelegate = new((cmp, data) => cmp.OnStorageChange(data));
+        private static readonly handler OnCopySettingsDelegate = new((cmp, data) => cmp.OnCopySettings(data));
+        private static readonly handler OnRocketLandedDelegate = new((cmp, data) => cmp.filteredStorage.FilterChanged());
 
         [SerializeField]
         public Tag fuelTag;
@@ -57,7 +57,7 @@ namespace RoverRefueling
 
         protected override void OnPrefabInit()
         {
-            fillEnable = RoverRefuelingOptions.Instance.fuel_cargo_bay_fill_enable;
+            fillEnable = ModOptions.Instance.fuel_cargo_bay_fill_enable;
             userMaxCapacity = MaxCapacity;
             filteredStorage = new FilteredStorage(this, null, this, false, Db.Get().ChoreTypes.Fetch);
             filteredStorage.SetHasMeter(false);

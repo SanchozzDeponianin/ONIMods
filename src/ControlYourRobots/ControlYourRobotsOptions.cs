@@ -7,7 +7,7 @@ namespace ControlYourRobots
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class ControlYourRobotsOptions : BaseOptions<ControlYourRobotsOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option]

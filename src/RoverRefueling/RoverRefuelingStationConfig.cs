@@ -39,7 +39,7 @@ namespace RoverRefueling
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
-            float mass_per_charge = RoverRefuelingOptions.Instance.fuel_mass_per_charge;
+            float mass_per_charge = ModOptions.Instance.fuel_mass_per_charge;
             float capacity = NUM_USES * mass_per_charge;
             var prefabID = go.GetComponent<KPrefabID>();
             prefabID.AddTag(RoomConstraints.ConstraintTags.IndustrialMachinery);

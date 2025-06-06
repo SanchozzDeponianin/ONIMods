@@ -5,7 +5,7 @@ using SanchozzONIMods.Lib;
 
 namespace Archaeologist
 {
-    internal sealed class ArchaeologistPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         private const string Archaeologist = "Archaeologist";
 

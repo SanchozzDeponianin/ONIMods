@@ -12,14 +12,14 @@ using PeterHan.PLib.UI;
 namespace SuitRecharger
 {
     using static SuitRecharger;
-    internal sealed class SuitRechargerPatches : UserMod2
+    internal sealed class Patches : UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(SuitRechargerPatches));
-            new POptions().RegisterOptions(this, typeof(SuitRechargerOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         public override void OnAllModsLoaded(Harmony harmony, IReadOnlyList<Mod> mods)

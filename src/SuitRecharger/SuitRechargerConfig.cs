@@ -46,8 +46,8 @@ namespace SuitRecharger
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
-            O2_CAPACITY = SuitRechargerOptions.Instance.o2_capacity;
-            FUEL_CAPACITY = SuitRechargerOptions.Instance.fuel_capacity;
+            O2_CAPACITY = ModOptions.Instance.o2_capacity;
+            FUEL_CAPACITY = ModOptions.Instance.fuel_capacity;
 
             var o2_consumer = go.AddOrGet<ConduitConsumer>();
             o2_consumer.conduitType = ConduitType.Gas;

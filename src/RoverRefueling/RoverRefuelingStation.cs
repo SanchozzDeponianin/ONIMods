@@ -5,10 +5,10 @@ namespace RoverRefueling
     using handler = EventSystem.IntraObjectHandler<RoverRefuelingStation>;
     public class RoverRefuelingStation : StateMachineComponent<RoverRefuelingStation.StatesInstance>
     {
-        private static readonly handler CheckPipeDelegate = new handler((component, data) => component.CheckPipe());
-        private static readonly handler OnStorageChangeDelegate = new handler((component, data) => component.RefreshMeter());
+        private static readonly handler CheckPipeDelegate = new((component, data) => component.CheckPipe());
+        private static readonly handler OnStorageChangeDelegate = new((component, data) => component.RefreshMeter());
 
-        private static readonly Chore.Precondition IsRover = new Chore.Precondition
+        private static readonly Chore.Precondition IsRover = new()
         {
             id = nameof(IsRover),
             description = STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ROVER,
@@ -18,14 +18,14 @@ namespace RoverRefueling
                 context.consumerState.prefabid.PrefabTag == GameTags.Robots.Models.ScoutRover
         };
 
-        private static readonly Chore.Precondition RoverNeedRefueling = new Chore.Precondition
+        private static readonly Chore.Precondition RoverNeedRefueling = new()
         {
             id = nameof(RoverNeedRefueling),
             description = global::STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.HAS_URGE,
             sortOrder = -1,
             canExecuteOnAnyThread = true,
             fn = (ref Chore.Precondition.Context context, object data) =>
-                context.consumerState.prefabid.HasTag(RoverRefuelingPatches.RoverNeedRefueling)
+                context.consumerState.prefabid.HasTag(Patches.RoverNeedRefueling)
         };
 
         public class StatesInstance : GameStateMachine<States, StatesInstance, RoverRefuelingStation, object>.GameInstance
@@ -33,7 +33,7 @@ namespace RoverRefueling
             private float minimum_fuel_mass;
             public StatesInstance(RoverRefuelingStation master) : base(master)
             {
-                minimum_fuel_mass = 0.1f * RoverRefuelingOptions.Instance.fuel_mass_per_charge;
+                minimum_fuel_mass = 0.1f * ModOptions.Instance.fuel_mass_per_charge;
             }
 
             public bool IsReady()

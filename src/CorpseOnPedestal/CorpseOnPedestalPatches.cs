@@ -9,7 +9,7 @@ using SanchozzONIMods.Lib;
 
 namespace CorpseOnPedestal
 {
-    internal sealed class CorpseOnPedestalPatches : UserMod2
+    internal sealed class Patches : UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
@@ -142,8 +142,8 @@ namespace CorpseOnPedestal
         }
 
         // учтём все виды дупликов и гоботов
-        private static HashSet<Tag> AllMinions = new HashSet<Tag>();
-        private static HashSet<Tag> AllRobots = new HashSet<Tag>();
+        private static HashSet<Tag> AllMinions = new();
+        private static HashSet<Tag> AllRobots = new();
         private static bool IsMinion(Tag tag) => AllMinions.Contains(tag);
         private static bool IsRobot(Tag tag) => AllRobots.Contains(tag);
         private static bool IsMinionOrRobot(Tag tag) => IsMinion(tag) || IsRobot(tag);
@@ -161,7 +161,7 @@ namespace CorpseOnPedestal
         }
 
         // так как игра не учитывает дупликов и гоботов в мировом инвентаре, посчитаем их сами
-        private static Components.Cmps<RobotAi.Instance> DeadRobotsIdentities = new Components.Cmps<RobotAi.Instance>();
+        private static Components.Cmps<RobotAi.Instance> DeadRobotsIdentities = new();
 
         [HarmonyPatch(typeof(RobotAi), nameof(RobotAi.InitializeStates))]
         private static class RobotAi_InitializeStates

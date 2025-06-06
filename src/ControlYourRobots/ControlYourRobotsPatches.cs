@@ -17,20 +17,20 @@ namespace ControlYourRobots
 {
     using static STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE;
 
-    internal sealed class ControlYourRobotsPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
-            new PPatchManager(harmony).RegisterPatchClass(typeof(ControlYourRobotsPatches));
-            new POptions().RegisterOptions(this, typeof(ControlYourRobotsOptions));
-            ControlYourRobotsOptions.Reload();
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
+            ModOptions.Reload();
         }
 
         public static Tag RobotSuspend = TagManager.Create(nameof(RobotSuspend));
         public static Tag RobotSuspendBehaviour = TagManager.Create(nameof(RobotSuspendBehaviour));
-        public static Dictionary<Tag, AttributeModifier> SuspendedBatteryModifiers = new Dictionary<Tag, AttributeModifier>();
-        private static Dictionary<Tag, AttributeModifier> IdleBatteryModifiers = new Dictionary<Tag, AttributeModifier>();
+        public static Dictionary<Tag, AttributeModifier> SuspendedBatteryModifiers = new();
+        private static Dictionary<Tag, AttributeModifier> IdleBatteryModifiers = new();
 
         [PLibMethod(RunAt.BeforeDbInit)]
         private static void BeforeDbInit(Harmony harmony)
@@ -51,9 +51,9 @@ namespace ControlYourRobots
                 __result.AddOrGetDef<MoveToLocationMonitor.Def>().invalidTagsForMoveTo = new Tag[] { GameTags.Dead, GameTags.Stored, RobotSuspend };
                 __result.AddOrGet<Movable>(); // переносить спящего
                 SuspendedBatteryModifiers[id] = new AttributeModifier(batteryType.deltaAttribute.Id, batteryDepletionRate, NAME);
-                if (ControlYourRobotsOptions.Instance.low_power_mode_enable)
+                if (ModOptions.Instance.low_power_mode_enable)
                 {
-                    float rate = batteryDepletionRate * (1f - ControlYourRobotsOptions.Instance.low_power_mode_value / 100f);
+                    float rate = batteryDepletionRate * (1f - ModOptions.Instance.low_power_mode_value / 100f);
                     IdleBatteryModifiers[id] = new AttributeModifier(batteryType.deltaAttribute.Id, rate, CREATURES.STATUSITEMS.IDLE.NAME);
                 }
                 __result.AddOrGet<RobotPersonalPriorityProxy>();
@@ -142,7 +142,7 @@ namespace ControlYourRobots
         [HarmonyPatch(typeof(MorbRoverConfig), nameof(MorbRoverConfig.OnSpawn))]
         private static class MorbRoverConfig_OnSpawn
         {
-            private static bool Prepare() => !ControlYourRobotsOptions.Instance.deconstruct_dead_biobot;
+            private static bool Prepare() => !ModOptions.Instance.deconstruct_dead_biobot;
 
             private static void Postfix(MorbRoverConfig __instance, GameObject inst)
             {
@@ -154,7 +154,7 @@ namespace ControlYourRobots
         private static class ScoutRoverConfig_OnSpawn
         {
             private static bool Prepare() => DlcManager.IsExpansion1Active()
-                && ControlYourRobotsOptions.Instance.deconstruct_dead_rover;
+                && ModOptions.Instance.deconstruct_dead_rover;
 
             private static void Postfix(GameObject inst)
             {
@@ -187,9 +187,9 @@ namespace ControlYourRobots
         {
             private static void Postfix(RobotAi __instance)
             {
-                StatusItem RobotSleeping = new StatusItem(nameof(RobotSleeping), NAME, TOOLTIP, "status_item_exhausted",
-                    StatusItem.IconType.Custom, NotificationType.Neutral, false, default(HashedString),
-                    showWorldIcon: ControlYourRobotsOptions.Instance.zzz_icon_enable);
+                StatusItem RobotSleeping = new(nameof(RobotSleeping), NAME, TOOLTIP, "status_item_exhausted",
+                    StatusItem.IconType.Custom, NotificationType.Neutral, false, default,
+                    showWorldIcon: ModOptions.Instance.zzz_icon_enable);
 
                 var suspended = __instance.CreateState("suspended", __instance.alive);
 
@@ -225,7 +225,7 @@ namespace ControlYourRobots
         private static class RobotAi_DeleteOnDeath
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && ControlYourRobotsOptions.Instance.dead_flydo_returns_materials;
+                && ModOptions.Instance.dead_flydo_returns_materials;
 
             private static void Prefix(RobotAi.Instance smi)
             {
@@ -262,7 +262,7 @@ namespace ControlYourRobots
         [HarmonyPatch(typeof(IdleStates), nameof(IdleStates.InitializeStates))]
         private static class IdleStates_InitializeStates
         {
-            private static bool Prepare() => ControlYourRobotsOptions.Instance.low_power_mode_enable;
+            private static bool Prepare() => ModOptions.Instance.low_power_mode_enable;
 
             private static void Postfix(IdleStates.State ___loop)
             {
@@ -308,7 +308,7 @@ namespace ControlYourRobots
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -430,7 +430,7 @@ namespace ControlYourRobots
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -520,7 +520,7 @@ namespace ControlYourRobots
             // предотвращение краша
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                return TranspilerUtils.Transpile(instructions, original, IL, transpiler);
+                return instructions.Transpile(original, IL, transpiler);
             }
             /*
                 пропускаем эти вызовы методов если переменная является RobotAssignablesProxy

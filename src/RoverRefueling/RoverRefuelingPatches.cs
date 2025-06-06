@@ -13,7 +13,7 @@ using PeterHan.PLib.PatchManager;
 
 namespace RoverRefueling
 {
-    internal sealed class RoverRefuelingPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public const string RefuelingEffectID = "ScoutBotRefueling";
         public static Effect RefuelingEffect;
@@ -22,8 +22,8 @@ namespace RoverRefueling
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(RoverRefuelingPatches));
-            new POptions().RegisterOptions(this, typeof(RoverRefuelingOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -38,7 +38,7 @@ namespace RoverRefueling
             Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Utilities, RoverRefuelingStationConfig.ID, BUILD_SUBCATEGORY.automated, SweepBotStationConfig.ID);
             Utils.AddBuildingToTechnology("ArtificialFriends", RoverRefuelingStationConfig.ID);
             var db = Db.Get();
-            var rate = ROBOTS.SCOUTBOT.BATTERY_CAPACITY / RoverRefuelingOptions.Instance.charge_time;
+            var rate = ROBOTS.SCOUTBOT.BATTERY_CAPACITY / ModOptions.Instance.charge_time;
             var modifier = new AttributeModifier(
                 attribute_id: db.Amounts.InternalChemicalBattery.deltaAttribute.Id,
                 value: rate,
@@ -105,10 +105,10 @@ namespace RoverRefueling
         [HarmonyPatch(typeof(ScoutModuleConfig), nameof(ScoutModuleConfig.DoPostConfigureComplete))]
         private static class ScoutModuleConfig_DoPostConfigureComplete
         {
-            private static bool Prepare() => RoverRefuelingOptions.Instance.fuel_cargo_bay_enable;
+            private static bool Prepare() => ModOptions.Instance.fuel_cargo_bay_enable;
             private static void Postfix(GameObject go)
             {
-                float capacity = RoverRefuelingStationConfig.NUM_USES * RoverRefuelingOptions.Instance.fuel_mass_per_charge;
+                float capacity = RoverRefuelingStationConfig.NUM_USES * ModOptions.Instance.fuel_mass_per_charge;
                 var storage = go.AddOrGet<Storage>();
                 storage.capacityKg = capacity;
                 var fuels = Assets.GetPrefabsWithTag(RoverRefuelingStationConfig.fuelTag).Select(prefab => prefab.PrefabID());
@@ -135,7 +135,7 @@ namespace RoverRefueling
         [HarmonyPatch(typeof(DropToUserCapacity), "OnCompleteWork")]
         private static class DropToUserCapacity_OnCompleteWork
         {
-            private static bool Prepare() => RoverRefuelingOptions.Instance.fuel_cargo_bay_enable;
+            private static bool Prepare() => ModOptions.Instance.fuel_cargo_bay_enable;
             private static bool Prefix(DropToUserCapacity __instance, ref Chore ___chore)
             {
                 if (__instance.TryGetComponent<RoverFuelCargoBay>(out var cargoBay))
@@ -158,7 +158,7 @@ namespace RoverRefueling
         [HarmonyPatch(typeof(LaunchPadMaterialDistributor.Instance), nameof(LaunchPadMaterialDistributor.Instance.FillRocket))]
         private static class LaunchPadMaterialDistributor_Instance_FillRocket
         {
-            private static bool Prepare() => RoverRefuelingOptions.Instance.fuel_cargo_bay_enable;
+            private static bool Prepare() => ModOptions.Instance.fuel_cargo_bay_enable;
             private static void Postfix(LaunchPadMaterialDistributor.Instance __instance)
             {
                 var craftInterface = attachedRocket.Get(__instance.sm).Get<RocketModuleCluster>(__instance).CraftInterface;

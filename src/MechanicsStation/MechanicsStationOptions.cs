@@ -2,13 +2,13 @@
 using Newtonsoft.Json;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Options;
-using static MechanicsStation.MechanicsStationAssets;
+using static MechanicsStation.ModAssets;
 
 namespace MechanicsStation
 {
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
-    internal sealed class MechanicsStationOptions : BaseOptions<MechanicsStationOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option(Format = "F0")]

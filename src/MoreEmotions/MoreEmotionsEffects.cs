@@ -3,7 +3,7 @@
 namespace MoreEmotions
 {
     using static STRINGS.DUPLICANTS.MODIFIERS;
-    internal static class MoreEmotionsEffects
+    internal static class ModEffects
     {
         public const int CONTUSION_HEIGHT = 6;
         public const float CONTUSION_ATTRIBUTE_PENALTY = -5f;

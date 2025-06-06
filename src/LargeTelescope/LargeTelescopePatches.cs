@@ -11,14 +11,14 @@ using PeterHan.PLib.PatchManager;
 
 namespace LargeTelescope
 {
-    internal sealed class LargeTelescopePatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
-            LargeTelescopeOptions.Reload();
-            new PPatchManager(harmony).RegisterPatchClass(typeof(LargeTelescopePatches));
-            new POptions().RegisterOptions(this, typeof(LargeTelescopeOptions));
+            ModOptions.Reload();
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -36,7 +36,7 @@ namespace LargeTelescope
             private static void Postfix(BuildingDef __result)
             {
                 __result.EnergyConsumptionWhenActive = BUILDINGS.ENERGY_CONSUMPTION_WHEN_ACTIVE.TIER4;
-                if (LargeTelescopeOptions.Instance.add_glass)
+                if (ModOptions.Instance.add_glass)
                 {
                     __result.MaterialCategory = __result.MaterialCategory.Append(MATERIALS.GLASSES[0]);
                     __result.Mass = __result.Mass.Append(BUILDINGS.CONSTRUCTION_MASS_KG.TIER3[0]);
@@ -50,7 +50,7 @@ namespace LargeTelescope
             private static bool Prepare() => DlcManager.IsPureVanilla();
             private static void Postfix(BuildingDef __result)
             {
-                if (LargeTelescopeOptions.Instance.add_glass)
+                if (ModOptions.Instance.add_glass)
                 {
                     __result.MaterialCategory = __result.MaterialCategory.Append(MATERIALS.GLASSES[0]);
                     __result.Mass = __result.Mass.Append(BUILDINGS.CONSTRUCTION_MASS_KG.TIER3[0]);
@@ -65,9 +65,9 @@ namespace LargeTelescope
             private static bool Prepare() => DlcManager.IsExpansion1Active();
             private static void Postfix(GameObject go)
             {
-                if (LargeTelescopeOptions.Instance.prohibit_inside_rocket)
+                if (ModOptions.Instance.prohibit_inside_rocket)
                     go.AddOrGet<KPrefabID>().AddTag(GameTags.NotRocketInteriorBuilding);
-                go.AddOrGetDef<ClusterTelescope.Def>().analyzeClusterRadius = LargeTelescopeOptions.Instance.analyze_cluster_radius;
+                go.AddOrGetDef<ClusterTelescope.Def>().analyzeClusterRadius = ModOptions.Instance.analyze_cluster_radius;
             }
         }
 
@@ -75,7 +75,7 @@ namespace LargeTelescope
         [HarmonyPatch]
         private static class Telescopes_CreateChore
         {
-            private static bool Prepare() => LargeTelescopeOptions.Instance.not_require_gas_pipe;
+            private static bool Prepare() => ModOptions.Instance.not_require_gas_pipe;
             private static IEnumerable<MethodBase> TargetMethods()
             {
                 if (DlcManager.IsExpansion1Active())
@@ -98,7 +98,7 @@ namespace LargeTelescope
         [PLibMethod(RunAt.BeforeDbPostProcess)]
         private static void BeforeDbPostProcess()
         {
-            if (LargeTelescopeOptions.Instance.not_require_gas_pipe)
+            if (ModOptions.Instance.not_require_gas_pipe)
             {
                 var id = DlcManager.IsExpansion1Active() ? ClusterTelescopeEnclosedConfig.ID : TelescopeConfig.ID;
                 Assets.GetBuildingDef(id).BuildingComplete.GetComponent<RequireInputs>().SetRequirements(true, false);
@@ -112,7 +112,7 @@ namespace LargeTelescope
             private static float efficiencyMultiplier = 1f;
             private static bool Prepare()
             {
-                efficiencyMultiplier = 1f + (LargeTelescopeOptions.Instance.efficiency_multiplier / 100f);
+                efficiencyMultiplier = 1f + (ModOptions.Instance.efficiency_multiplier / 100f);
                 return DlcManager.IsExpansion1Active();
             }
 

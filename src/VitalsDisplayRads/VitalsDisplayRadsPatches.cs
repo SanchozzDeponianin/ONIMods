@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace VitalsDisplayRads
 {
-    internal static class VitalsDisplayRadsPatches
+    internal static class Patches
     {
         private sealed class Mod : KMod.UserMod2
         {
@@ -50,7 +50,7 @@ namespace VitalsDisplayRads
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
             // внедряем после столбца здоровья
             private static bool transpiler(List<CodeInstruction> instructions)

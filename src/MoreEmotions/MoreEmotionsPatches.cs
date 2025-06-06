@@ -13,16 +13,16 @@ using PeterHan.PLib.Options;
 
 namespace MoreEmotions
 {
-    using static MoreEmotionsEffects;
+    using static ModEffects;
 
-    internal sealed class MoreEmotionsPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(MoreEmotionsPatches));
-            new POptions().RegisterOptions(this, typeof(MoreEmotionsOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         // todo: добавлять звуки к анимациям
@@ -79,7 +79,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(SleepChore.States), nameof(SleepChore.States.InitializeStates))]
         private static class SleepChore_States_InitializeStates
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.wake_up_lazy_ass;
+            private static bool Prepare() => ModOptions.Instance.wake_up_lazy_ass;
 
             private static void Postfix(SleepChore.States __instance)
             {
@@ -124,7 +124,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(SleepChore.States), nameof(SleepChore.States.InitializeStates))]
         internal static class SleepChore_States_InitializeStates_Alternative
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.alternative_sleep_anims;
+            private static bool Prepare() => ModOptions.Instance.alternative_sleep_anims;
 
             private static SleepChore.States.State peaceful;
             private static SleepChore.States.State bad;
@@ -208,7 +208,7 @@ namespace MoreEmotions
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -242,7 +242,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(Sleepable), nameof(Sleepable.GetWorkPstAnims))]
         private static class Sleepable_GetWorkPstAnims
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.alternative_sleep_anims;
+            private static bool Prepare() => ModOptions.Instance.alternative_sleep_anims;
 
             private static void Postfix(WorkerBase worker, ref HashedString[] __result)
             {
@@ -265,7 +265,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(SleepChore.StatesInstance), nameof(SleepChore.StatesInstance.SetAnim))]
         private static class SleepChore_StatesInstance_SetAnim
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.alternative_narcoleptic_anims;
+            private static bool Prepare() => ModOptions.Instance.alternative_narcoleptic_anims;
 
             private static void Postfix(SleepChore.StatesInstance __instance)
             {
@@ -292,13 +292,13 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(BladderMonitor), nameof(BladderMonitor.InitializeStates))]
         private static class BladderMonitor_InitializeStates
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.full_bladder_emote || MoreEmotionsOptions.Instance.full_bladder_laugh;
+            private static bool Prepare() => ModOptions.Instance.full_bladder_emote || ModOptions.Instance.full_bladder_laugh;
 
             private static void Postfix(BladderMonitor __instance)
             {
-                if (MoreEmotionsOptions.Instance.full_bladder_emote)
+                if (ModOptions.Instance.full_bladder_emote)
                     __instance.urgentwant.wanting.ToggleReactable(CreateSelfReactable);
-                if (MoreEmotionsOptions.Instance.full_bladder_laugh)
+                if (ModOptions.Instance.full_bladder_laugh)
                     __instance.urgentwant.peeing
                         .ToggleReactable(CreatePasserbyReactable)
                         .ToggleReactable(CreatePasserbyReactable)
@@ -321,7 +321,7 @@ namespace MoreEmotions
             {
                 void AddEffect(GameObject reactor)
                 {
-                    if (MoreEmotionsOptions.Instance.full_bladder_add_effect
+                    if (ModOptions.Instance.full_bladder_add_effect
                         && !smi.IsNullOrDestroyed() && !smi.gameObject.IsNullOrDestroyed()
                         && smi.gameObject.TryGetComponent(out Effects effects))
                         effects.AddOrExtend(FullBladderLaugh, true);
@@ -344,7 +344,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(CalorieMonitor), nameof(CalorieMonitor.InitializeStates))]
         private static class CalorieMonitor_InitializeStates
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.starvation_emote;
+            private static bool Prepare() => ModOptions.Instance.starvation_emote;
 
             private static void Postfix(CalorieMonitor __instance)
             {
@@ -366,7 +366,7 @@ namespace MoreEmotions
         [HarmonyPatch]
         private static class StressEmoteChore_StatesInstance_Constructor
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.alternative_binge_eat_emote;
+            private static bool Prepare() => ModOptions.Instance.alternative_binge_eat_emote;
             private static MethodBase TargetMethod() => typeof(StressEmoteChore.StatesInstance).GetConstructors()[0];
 
             private static HashedString orig_emote_kanim = "anim_interrupt_binge_eat_kanim";
@@ -393,7 +393,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(HandSanitizer.Work), "OnCompleteWork")]
         private static class HandSanitizer_Work_OnCompleteWork
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.wet_hands_emote;
+            private static bool Prepare() => ModOptions.Instance.wet_hands_emote;
 
             private static void Postfix(HandSanitizer.Work __instance, WorkerBase worker)
             {
@@ -409,7 +409,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(Moppable), "OnStopWork")]
         private static class Moppable_OnCompleteWork
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.wet_hands_emote;
+            private static bool Prepare() => ModOptions.Instance.wet_hands_emote;
 
             private static void Postfix(WorkerBase worker)
             {
@@ -422,7 +422,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(DeathMonitor), nameof(DeathMonitor.InitializeStates))]
         private static class DeathMonitor_InitializeStates
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.saw_corpse_emote;
+            private static bool Prepare() => ModOptions.Instance.saw_corpse_emote;
 
             private static void Postfix(DeathMonitor __instance)
             {
@@ -435,7 +435,7 @@ namespace MoreEmotions
 
             private static void AddEffect(GameObject reactor)
             {
-                if (MoreEmotionsOptions.Instance.saw_corpse_add_effect
+                if (ModOptions.Instance.saw_corpse_add_effect
                     && !reactor.IsNullOrDestroyed() && reactor.TryGetComponent(out Effects effects))
                     effects.Add(SawCorpse, true);
             }
@@ -462,7 +462,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(Grave.States), nameof(Grave.States.InitializeStates))]
         private static class Grave_States_InitializeStates
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.respect_grave_emote;
+            private static bool Prepare() => ModOptions.Instance.respect_grave_emote;
 
             private static void Postfix(Grave.States __instance)
             {
@@ -482,7 +482,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(StressBehaviourMonitor), nameof(StressBehaviourMonitor.InitializeStates))]
         private static class StressBehaviourMonitor_InitializeStates
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.stress_cheering;
+            private static bool Prepare() => ModOptions.Instance.stress_cheering;
 
             private static void Postfix(StressBehaviourMonitor __instance)
             {
@@ -510,7 +510,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(DupeGreetingManager), nameof(DupeGreetingManager.BeginNewGreeting))]
         private static class DupeGreetingManager_BeginNewGreeting
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.double_greeting;
+            private static bool Prepare() => ModOptions.Instance.double_greeting;
             private const float LocalCooldown = 20f;
             private static List<Emote> new_emotes;
 
@@ -559,7 +559,7 @@ namespace MoreEmotions
                 }
                 // первично, шансы обычного или нашего приветствия пропорцилнальны количеству возможных приветствий
                 int m = DupeGreetingManager.emotes.Count;
-                if (MoreEmotionsOptions.Instance.moonwalk_greeting)
+                if (ModOptions.Instance.moonwalk_greeting)
                     m++;
                 int n = new_emotes.Count;
                 int i = UnityEngine.Random.Range(0, m + n);
@@ -598,7 +598,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(DupeGreetingManager), nameof(DupeGreetingManager.GetReactable))]
         private static class DupeGreetingManager_GetReactable
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.moonwalk_greeting;
+            private static bool Prepare() => ModOptions.Instance.moonwalk_greeting;
             private static bool Prefix(MinionIdentity minion, DupeGreetingManager __instance, ref Reactable __result)
             {
                 if (DupeGreetingManager.emotes == null)
@@ -621,7 +621,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(GermExposureMonitor), nameof(GermExposureMonitor.InitializeStates))]
         private static class GermExposureMonitor_InitializeStates
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.contaminated_food_emote;
+            private static bool Prepare() => ModOptions.Instance.contaminated_food_emote;
             private static void Postfix(GermExposureMonitor __instance)
             {
                 react_contaminated_food = __instance.CreateState(nameof(react_contaminated_food), __instance.root);
@@ -638,7 +638,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(GermExposureMonitor.Instance), nameof(GermExposureMonitor.Instance.InjectDisease))]
         private static class GermExposureMonitor_Instance_InjectDisease
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.contaminated_food_emote;
+            private static bool Prepare() => ModOptions.Instance.contaminated_food_emote;
             private static void Postfix(GermExposureMonitor.Instance __instance, Disease disease, int count, Sickness.InfectionVector vector)
             {
                 if (vector == Sickness.InfectionVector.Digestion && __instance.IsInsideState(__instance.sm.root))
@@ -660,7 +660,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(FallMonitor), nameof(FallMonitor.InitializeStates))]
         private static class FallMonitor_InitializeStates
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.fall_contusion_emote;
+            private static bool Prepare() => ModOptions.Instance.fall_contusion_emote;
 
             private static FallMonitor.IntParameter fall_cell;
             private static FallMonitor.IntParameter fall_height;
@@ -688,7 +688,7 @@ namespace MoreEmotions
                     .PlayAnim(smi => ShouldContuze(smi) ? "fall_hard_pst" : "fall_pst")
                     .OnAnimQueueComplete(__instance.standing);
 
-                if (MoreEmotionsOptions.Instance.fall_contusion_add_effect)
+                if (ModOptions.Instance.fall_contusion_add_effect)
                     __instance.landfloor.Exit(Contuze);
             }
 
@@ -710,7 +710,7 @@ namespace MoreEmotions
         [HarmonyPatch(typeof(BaseMinionConfig), nameof(BaseMinionConfig.BaseRationalAiStateMachines))]
         private static class BaseMinionConfig_BaseRationalAiStateMachines
         {
-            private static bool Prepare() => MoreEmotionsOptions.Instance.fall_contusion_emote && MoreEmotionsOptions.Instance.fall_contusion_add_effect;
+            private static bool Prepare() => ModOptions.Instance.fall_contusion_emote && ModOptions.Instance.fall_contusion_add_effect;
 
             private static void Postfix(ref Func<RationalAi.Instance, StateMachine.Instance>[] __result)
             {

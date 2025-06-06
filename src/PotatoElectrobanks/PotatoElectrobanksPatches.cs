@@ -14,7 +14,7 @@ namespace PotatoElectrobanks
     using FlydoModifierParameter = StateMachinesExtensions.NonSerializedObjectParameter
         <RobotElectroBankMonitor, RobotElectroBankMonitor.Instance, IStateMachineTarget, RobotElectroBankMonitor.Def, AttributeModifier>;
 
-    internal sealed class PotatoElectrobanksPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public static readonly Tag PotatoPortableBattery = TagManager.Create(nameof(PotatoPortableBattery));
         public static readonly Tag NonPotatoPortableBattery = TagManager.Create(nameof(NonPotatoPortableBattery));
@@ -22,7 +22,7 @@ namespace PotatoElectrobanks
         public override void OnLoad(Harmony harmony)
         {
             if (!DlcManager.IsContentSubscribed(DlcManager.DLC3_ID) || this.LogModVersion()) return;
-            new PPatchManager(harmony).RegisterPatchClass(typeof(PotatoElectrobanksPatches));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
             base.OnLoad(harmony);
         }
 

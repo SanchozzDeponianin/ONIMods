@@ -7,7 +7,7 @@ namespace Smelter
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class SmelterOptions : BaseOptions<SmelterOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonObject(MemberSerialization.OptIn)]
         public sealed class Recipes

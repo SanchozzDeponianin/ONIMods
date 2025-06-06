@@ -6,7 +6,7 @@ namespace ButcherStation
     public class FishingStationGuide : KMonoBehaviour, /*IRenderEveryTick,*/ ISim1000ms
     {
         private static readonly EventSystem.IntraObjectHandler<FishingStationGuide> OnOperationalChangedDelegate =
-            new EventSystem.IntraObjectHandler<FishingStationGuide>((component, data) => component.OnOperationalChanged(data));
+            new((component, data) => component.OnOperationalChanged(data));
 
         public const int MinDepth = 1;
         public const int MaxDepth = 5;

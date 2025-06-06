@@ -6,7 +6,7 @@ namespace ArtifactCarePackages
 {
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
-    internal sealed class ArtifactCarePackageOptions : BaseOptions<ArtifactCarePackageOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option]

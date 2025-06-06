@@ -11,14 +11,14 @@ using PeterHan.PLib.PatchManager;
 
 namespace GraveyardKeeper
 {
-    internal sealed class GraveyardKeeperPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(GraveyardKeeperPatches));
-            new POptions().RegisterOptions(this, typeof(GraveyardKeeperOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -28,10 +28,10 @@ namespace GraveyardKeeper
         }
 
         // составляем списки всех растений
-        private static List<Tag> RegularPlants = new List<Tag>();
-        private static List<Tag> SingleHarvestPlants = new List<Tag>();
-        private static List<Tag> NonYieldingPlants = new List<Tag>();
-        private static List<Tag> PlantsToSpawn = new List<Tag>();
+        private static List<Tag> RegularPlants = new();
+        private static List<Tag> SingleHarvestPlants = new();
+        private static List<Tag> NonYieldingPlants = new();
+        private static List<Tag> PlantsToSpawn = new();
 
         [HarmonyPatch(typeof(Db), nameof(Db.PostProcess))]
         private static class Db_PostProcess
@@ -78,13 +78,13 @@ namespace GraveyardKeeper
         [PLibMethod(RunAt.OnStartGame)]
         private static void OnStartGame()
         {
-            GraveyardKeeperOptions.Reload();
+            ModOptions.Reload();
             PlantsToSpawn.Clear();
-            if (GraveyardKeeperOptions.Instance.non_yielding_plants)
+            if (ModOptions.Instance.non_yielding_plants)
                 PlantsToSpawn.AddRange(NonYieldingPlants);
-            if (GraveyardKeeperOptions.Instance.single_harvest_plants)
+            if (ModOptions.Instance.single_harvest_plants)
                 PlantsToSpawn.AddRange(SingleHarvestPlants);
-            if (GraveyardKeeperOptions.Instance.regular_plants)
+            if (ModOptions.Instance.regular_plants)
                 PlantsToSpawn.AddRange(RegularPlants);
             PlantsToSpawn.RemoveAll(tag => !Game.IsCorrectDlcActiveForCurrentSave(Assets.GetPrefab(tag).GetComponent<KPrefabID>()));
             if (PlantsToSpawn.Count == 0)
@@ -135,7 +135,7 @@ namespace GraveyardKeeper
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -223,7 +223,7 @@ namespace GraveyardKeeper
                                     break;
                                 }
                             }
-                            if (planted_cells.Count >= GraveyardKeeperOptions.Instance.max_plants_spawn)
+                            if (planted_cells.Count >= ModOptions.Instance.max_plants_spawn)
                                 break;
                         }
                     }

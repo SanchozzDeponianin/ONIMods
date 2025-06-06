@@ -6,7 +6,7 @@ using PeterHan.PLib.PatchManager;
 
 namespace CarouselCentrifuge
 {
-    internal sealed class CarouselCentrifugePatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         private static Effect specificEffect;
         private static Effect trackingEffect;
@@ -16,8 +16,8 @@ namespace CarouselCentrifuge
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(CarouselCentrifugePatches));
-            new POptions().RegisterOptions(this, typeof(CarouselCentrifugeOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -35,7 +35,7 @@ namespace CarouselCentrifuge
 
             moraleModifier = new AttributeModifier(
                 attribute_id: "QualityOfLife",
-                value: CarouselCentrifugeOptions.Instance.MoraleBonus,
+                value: ModOptions.Instance.MoraleBonus,
                 description: STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.NAME,
                 is_multiplier: false,
                 uiOnly: false,
@@ -46,7 +46,7 @@ namespace CarouselCentrifuge
                 id: CarouselCentrifugeWorkable.specificEffectName,
                 name: STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.NAME,
                 description: STRINGS.DUPLICANTS.MODIFIERS.RIDEONCAROUSEL.TOOLTIP,
-                duration: (CarouselCentrifugeOptions.Instance.SpecificEffectDuration - 0.05f) * Constants.SECONDS_PER_CYCLE,
+                duration: (ModOptions.Instance.SpecificEffectDuration - 0.05f) * Constants.SECONDS_PER_CYCLE,
                 show_in_ui: false,
                 trigger_floating_text: true,
                 is_bad: false
@@ -57,7 +57,7 @@ namespace CarouselCentrifuge
                 id: CarouselCentrifugeWorkable.trackingEffectName,
                 name: "",
                 description: "",
-                duration: CarouselCentrifugeOptions.Instance.TrackingEffectDuration * Constants.SECONDS_PER_CYCLE,
+                duration: ModOptions.Instance.TrackingEffectDuration * Constants.SECONDS_PER_CYCLE,
                 show_in_ui: false,
                 trigger_floating_text: false,
                 is_bad: false
@@ -70,10 +70,10 @@ namespace CarouselCentrifuge
         [PLibMethod(RunAt.OnStartGame)]
         private static void OnStartGame()
         {
-            CarouselCentrifugeOptions.Reload();
-            moraleModifier.SetValue(CarouselCentrifugeOptions.Instance.MoraleBonus);
-            specificEffect.duration = (CarouselCentrifugeOptions.Instance.SpecificEffectDuration - 0.05f) * Constants.SECONDS_PER_CYCLE;
-            trackingEffect.duration = CarouselCentrifugeOptions.Instance.TrackingEffectDuration * Constants.SECONDS_PER_CYCLE;
+            ModOptions.Reload();
+            moraleModifier.SetValue(ModOptions.Instance.MoraleBonus);
+            specificEffect.duration = (ModOptions.Instance.SpecificEffectDuration - 0.05f) * Constants.SECONDS_PER_CYCLE;
+            trackingEffect.duration = ModOptions.Instance.TrackingEffectDuration * Constants.SECONDS_PER_CYCLE;
         }
     }
 }

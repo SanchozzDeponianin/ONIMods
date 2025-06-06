@@ -50,6 +50,6 @@ namespace MoreEmotions
                 .Exit(smi => smi.DestroyFx());
         }
 
-        private static bool HasContusion(Instance smi) => smi.effects.HasEffect(MoreEmotionsEffects.Contusion);
+        private static bool HasContusion(Instance smi) => smi.effects.HasEffect(ModEffects.Contusion);
     }
 }

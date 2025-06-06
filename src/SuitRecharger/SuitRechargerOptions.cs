@@ -7,7 +7,7 @@ namespace SuitRecharger
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class SuitRechargerOptions : BaseOptions<SuitRechargerOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option(Format = "F0")]

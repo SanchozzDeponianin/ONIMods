@@ -3,7 +3,7 @@ using SanchozzONIMods.Lib;
 
 namespace OldLiquidReservoir
 {
-    internal sealed class OldLiquidReservoirPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {

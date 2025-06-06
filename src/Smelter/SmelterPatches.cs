@@ -11,14 +11,14 @@ using PeterHan.PLib.PatchManager;
 
 namespace Smelter
 {
-    internal sealed class SmelterPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(SmelterPatches));
-            new POptions().RegisterOptions(this, typeof(SmelterOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
             new KAnimGroupManager().RegisterInteractAnims(SmelterConfig.ANIM_WORK);
         }
 
@@ -46,7 +46,7 @@ namespace Smelter
         {
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -83,7 +83,7 @@ namespace Smelter
 
         // газообразные продукты нужно выпускать в атмосферу
         // ограничимся только теми постройкаи куда мы добавили такие рецепты
-        private static readonly List<string> fabricators = new List<string>() { SmelterConfig.ID, MetalRefineryConfig.ID };
+        private static readonly List<string> fabricators = new() { SmelterConfig.ID, MetalRefineryConfig.ID };
 
         [HarmonyPatch(typeof(ComplexFabricator), "SpawnOrderProduct")]
         private static class ComplexFabricator_SpawnOrderProduct
@@ -108,7 +108,7 @@ namespace Smelter
         {
             private static void Postfix(LiquidCooledRefinery __instance)
             {
-                if (__instance is LiquidCooledFueledRefinery || SmelterOptions.Instance.features.MetalRefinery_Drop_Overheated_Coolant)
+                if (__instance is LiquidCooledFueledRefinery || ModOptions.Instance.features.MetalRefinery_Drop_Overheated_Coolant)
                 {
                     __instance.DropOverheatedCoolant();
                 }
@@ -123,7 +123,7 @@ namespace Smelter
             {
                 var lcfr = (__instance as LiquidCooledFueledRefinery);
                 bool allowOverheating = lcfr?.AllowOverheating ?? false;
-                if (lcfr != null || SmelterOptions.Instance.features.MetalRefinery_Reuse_Coolant)
+                if (lcfr != null || ModOptions.Instance.features.MetalRefinery_Reuse_Coolant)
                 {
                     __instance.ReuseCoolant(allowOverheating);
                 }

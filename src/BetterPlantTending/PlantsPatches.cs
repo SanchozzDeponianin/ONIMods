@@ -247,7 +247,7 @@ namespace BetterPlantTending
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions)
             {

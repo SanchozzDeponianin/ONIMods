@@ -5,7 +5,7 @@ namespace EatEveryDay
 {
 	// обновленная версия мода "Eat every day Mod" от ricvail
 	// https://steamcommunity.com/sharedfiles/filedetails/?id=2107702766 
-	public sealed class EatEveryDayPatches : KMod.UserMod2
+	public sealed class Patches : KMod.UserMod2
 	{
         public override void OnLoad(Harmony harmony)
         {

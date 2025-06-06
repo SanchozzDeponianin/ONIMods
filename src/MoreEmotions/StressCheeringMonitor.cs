@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace MoreEmotions
 {
-    using static MoreEmotionsPatches;
-    using static MoreEmotionsEffects;
+    using static Patches;
+    using static ModEffects;
 
     // успокаивание стрессующего
     public class StressCheeringMonitor : GameStateMachine<StressCheeringMonitor, StressCheeringMonitor.Instance>

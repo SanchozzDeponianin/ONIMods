@@ -10,12 +10,12 @@ using PeterHan.PLib.PatchManager;
 
 namespace SupplyToClosest
 {
-    internal sealed class SupplyToClosestPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
-            new PPatchManager(harmony).RegisterPatchClass(typeof(SupplyToClosestPatches));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -228,7 +228,7 @@ namespace SupplyToClosest
 
             // если идёт поиск, выставляем isAttemptingOverride
             // что приведет к пропуску IsMoreSatisfyingEarly/Later и еще нескольких прекондицый
-            private static Chore.Precondition FindBetterChore_IsAttemptingOverride = new Chore.Precondition
+            private static Chore.Precondition FindBetterChore_IsAttemptingOverride = new()
             {
                 id = nameof(FindBetterChore_IsAttemptingOverride),
                 description = DUPLICANTS.CHORES.PRECONDITIONS.IS_MORE_SATISFYING,
@@ -265,7 +265,7 @@ namespace SupplyToClosest
             }
 
             // отсеиваем менее приоритетные чоры
-            private static Chore.Precondition FindBetterChore_IsMoreSatisfying = new Chore.Precondition
+            private static Chore.Precondition FindBetterChore_IsMoreSatisfying = new()
             {
                 id = nameof(FindBetterChore_IsMoreSatisfying),
                 description = DUPLICANTS.CHORES.PRECONDITIONS.IS_MORE_SATISFYING,
@@ -307,7 +307,7 @@ namespace SupplyToClosest
             };
 
             // отсеиваем чоры неподходящие для хранения уже выбранного куска
-            private static Chore.Precondition FindBetterChore_IsFetchablePickup = new Chore.Precondition()
+            private static Chore.Precondition FindBetterChore_IsFetchablePickup = new()
             {
                 id = nameof(FindBetterChore_IsFetchablePickup),
                 description = DUPLICANTS.CHORES.PRECONDITIONS.IS_FETCH_TARGET_AVAILABLE,
@@ -334,7 +334,7 @@ namespace SupplyToClosest
             };
 
             // отсеиваем чоры, более далёкие чем изначальная
-            private static Chore.Precondition FindBetterChore_IsCloseEnough = new Chore.Precondition()
+            private static Chore.Precondition FindBetterChore_IsCloseEnough = new()
             {
                 id = nameof(FindBetterChore_IsCloseEnough),
                 description = DUPLICANTS.CHORES.PRECONDITIONS.IS_FETCH_TARGET_AVAILABLE,
@@ -364,7 +364,7 @@ namespace SupplyToClosest
             {
 #pragma warning disable CS8321
                 IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original) =>
-                    TranspilerUtils.Transpile(instructions, original, RemoveCollectChores);
+                    instructions.Transpile(original, RemoveCollectChores);
 #pragma warning restore CS8321
                 provider.CollectChores(consumer_state, succeeded, failed_contexts);
             }
@@ -394,7 +394,7 @@ namespace SupplyToClosest
             {
 #pragma warning disable CS8321
                 IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original) =>
-                    TranspilerUtils.Transpile(instructions, original, RemoveClearables);
+                    instructions.Transpile(original, RemoveClearables);
 #pragma warning restore CS8321
                 provider.UpdateFetches(path_prober);
             }

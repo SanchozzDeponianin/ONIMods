@@ -7,7 +7,7 @@ namespace Hydrocactus
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class HydrocactusOptions : BaseOptions<HydrocactusOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option(Format = "F0")]

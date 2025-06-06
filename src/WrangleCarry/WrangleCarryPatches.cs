@@ -7,14 +7,12 @@ using SanchozzONIMods.Lib;
 
 namespace WrangleCarry
 {
-    internal sealed class WrangleCarryPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
-        private static WrangleCarryPatches @this;
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
-            @this = this;
-            harmony.Patch(typeof(Db).GetMethod(nameof(Db.Initialize)), prefix: new HarmonyMethod(typeof(WrangleCarryPatches), nameof(PatchLater)));
+            harmony.Patch(typeof(Db).GetMethod(nameof(Db.Initialize)), prefix: new HarmonyMethod(typeof(Patches), nameof(PatchLater)));
         }
 
         private const string rage_kanim = "anim_rage_kanim";
@@ -23,7 +21,7 @@ namespace WrangleCarry
         private static void PatchLater()
         {
             Utils.MuteMouthFlapSpeech(rage_kanim, rage_anims);
-            @this.PatchLater();
+            Utils.PatchLater();
         }
 
         // сделать перенос жеготных равноприоритетным с поимкой

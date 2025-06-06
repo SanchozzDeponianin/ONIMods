@@ -3,7 +3,7 @@ using static STRINGS.UI;
 
 namespace PotatoElectrobanks
 {
-    using static PotatoElectrobanksPatches;
+    using static Patches;
 
     public class STRINGS
     {

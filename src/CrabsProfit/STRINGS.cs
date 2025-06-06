@@ -119,7 +119,7 @@ namespace CrabsProfit
                 AddStrings(@enum.ToString().ToUpperInvariant(), ((int)@enum).ToString());
             // добавляем строки для списка руды
             var element = "STRINGS.ELEMENTS.{0}.NAME";
-            foreach (var info in typeof(CrabsProfitOptions.OreWeights).GetProperties())
+            foreach (var info in typeof(ModOptions.OreWeights).GetProperties())
             {
                 var id = info.Name.ToUpperInvariant();
                 if (Strings.TryGet(string.Format(element, id), out var ore_name))

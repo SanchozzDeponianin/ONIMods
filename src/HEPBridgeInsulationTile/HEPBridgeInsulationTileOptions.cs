@@ -7,7 +7,7 @@ namespace HEPBridgeInsulationTile
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class HEPBridgeInsulationTileOptions : BaseOptions<HEPBridgeInsulationTileOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         public enum Research
         {

@@ -6,7 +6,7 @@ namespace CarouselCentrifuge
 {
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
-    internal sealed class CarouselCentrifugeOptions : BaseOptions<CarouselCentrifugeOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option(Format = "F1")]

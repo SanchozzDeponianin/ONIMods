@@ -13,7 +13,7 @@ namespace Smelter
             return transform.GetPosition() + Vector3.left;
         }
 
-        public override Vector3 GetWorkOffset() => new Vector3(0.7f, 0);
+        public override Vector3 GetWorkOffset() => new(0.7f, 0);
 
         protected override void OnPrefabInit()
         {

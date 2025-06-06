@@ -7,7 +7,7 @@ namespace LargeTelescope
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class LargeTelescopeOptions : BaseOptions<LargeTelescopeOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option]

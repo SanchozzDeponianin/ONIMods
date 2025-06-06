@@ -3,7 +3,7 @@ using SanchozzONIMods.Lib;
 
 namespace Lagoo
 {
-    using static LagooPatches;
+    using static Patches;
     using static STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO;
 
     [EntityConfigOrder(3)]

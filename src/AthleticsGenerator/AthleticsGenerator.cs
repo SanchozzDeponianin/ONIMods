@@ -33,7 +33,7 @@ namespace AthleticsGenerator
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            if (AthleticsGeneratorOptions.Instance.enable_meter)
+            if (ModOptions.Instance.enable_meter)
             {
                 meter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target", "meter", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, "meter_target", "meter_fill", "meter_frame", "meter_light", "meter_tubing");
                 UpdateMeter();
@@ -57,7 +57,7 @@ namespace AthleticsGenerator
             {
                 if (workable != null && workable.worker != null)
                 {
-                    converter = workable.worker.GetAttributeConverter(AthleticsGeneratorPatches.ManualGeneratorPower.Id);
+                    converter = workable.worker.GetAttributeConverter(Patches.ManualGeneratorPower.Id);
                     var real_worker = converter.gameObject;
                     real_worker.Subscribe((int)GameHashes.LevelUp, handler);
                     real_worker.Subscribe((int)GameHashes.EffectAdded, handler);
@@ -98,7 +98,7 @@ namespace AthleticsGenerator
         {
             if (meter != null)
             {
-                float rating = !operational.IsActive ? 0f : generator.WattageRating / (generator.BaseWattageRating + DUPLICANTSTATS.ATTRIBUTE_LEVELING.MAX_GAINED_ATTRIBUTE_LEVEL * AthleticsGeneratorOptions.Instance.watts_per_level);
+                float rating = !operational.IsActive ? 0f : generator.WattageRating / (generator.BaseWattageRating + DUPLICANTSTATS.ATTRIBUTE_LEVELING.MAX_GAINED_ATTRIBUTE_LEVEL * ModOptions.Instance.watts_per_level);
                 meter.SetPositionPercent(Mathf.Clamp01(rating));
             }
         }

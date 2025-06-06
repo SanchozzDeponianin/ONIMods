@@ -7,7 +7,7 @@ namespace ReBuildableAETN
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class ReBuildableAETNOptions : BaseOptions<ReBuildableAETNOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonObject(MemberSerialization.OptIn)]
         internal sealed class CarePackages

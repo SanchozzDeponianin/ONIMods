@@ -11,7 +11,7 @@ namespace SanchozzONIMods.Lib
         private const int SWAPS = -77805842;
         private const int INTERACTS = -1371425853;
 
-        private static readonly Version VERSION = new Version(1, 0, 0, 0);
+        private static readonly Version VERSION = new(1, 0, 0, 0);
         internal static KAnimGroupManager Instance { get; private set; }
 
         private readonly Dictionary<HashedString, HashSet<string>> anims_table;

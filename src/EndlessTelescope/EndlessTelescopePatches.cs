@@ -7,7 +7,7 @@ using SanchozzONIMods.Lib;
 
 namespace EndlessTelescope
 {
-    internal sealed class EndlessTelescopePatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
@@ -45,7 +45,7 @@ namespace EndlessTelescope
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)

@@ -6,7 +6,7 @@ namespace GraveyardKeeper
 {
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
-    internal sealed class GraveyardKeeperOptions : BaseOptions<GraveyardKeeperOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonIgnore]
         [Option]

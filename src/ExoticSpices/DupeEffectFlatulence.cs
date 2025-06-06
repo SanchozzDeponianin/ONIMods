@@ -3,7 +3,7 @@ using Klei.AI;
 
 namespace ExoticSpices
 {
-    using static ExoticSpicesAssets;
+    using static ModAssets;
 
     public class DupeEffectFlatulence : GameStateMachine<DupeEffectFlatulence, DupeEffectFlatulence.Instance>
     {
@@ -46,7 +46,7 @@ namespace ExoticSpices
         private State flatulence_on;
 #pragma warning restore CS0649
 
-        private List<Effect> immunities = new List<Effect>();
+        private List<Effect> immunities = new();
 
         public override void InitializeStates(out BaseState default_state)
         {

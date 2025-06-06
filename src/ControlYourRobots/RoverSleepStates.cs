@@ -1,6 +1,6 @@
 ﻿namespace ControlYourRobots
 {
-    using static ControlYourRobotsPatches;
+    using static Patches;
 
     // в некотором роде мимикрируем под RobotElectroBankDeadStates, упрощённо
     public class RoverSleepStates : GameStateMachine<RoverSleepStates, RoverSleepStates.Instance, IStateMachineTarget, RoverSleepStates.Def>

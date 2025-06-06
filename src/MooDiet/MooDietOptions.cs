@@ -15,7 +15,7 @@ namespace MooDiet
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class MooDietOptions : BaseOptions<MooDietOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         public sealed class FlowerDiet
         {

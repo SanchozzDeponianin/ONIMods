@@ -8,15 +8,15 @@ using PeterHan.PLib.Options;
 
 namespace Hydrocactus
 {
-    internal sealed class HydrocactusPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
-            HydrocactusOptions.Reload();
+            ModOptions.Reload();
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(HydrocactusPatches));
-            new POptions().RegisterOptions(this, typeof(HydrocactusOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -37,7 +37,7 @@ namespace Hydrocactus
                     var crop = CROPS.CROP_TYPES[i];
                     if (crop.cropId == cropId)
                     {
-                        crop.numProduced = HydrocactusOptions.Instance.yield_amount;
+                        crop.numProduced = ModOptions.Instance.yield_amount;
                         CROPS.CROP_TYPES[i] = crop;
                         break;
                     }
@@ -51,7 +51,7 @@ namespace Hydrocactus
         {
             private static void Postfix(List<CarePackageInfo> ___carePackages)
             {
-                var seed = new CarePackageInfo(FilterPlantConfig.SEED_ID, HydrocactusOptions.Instance.carepackage_seeds_amount, null);
+                var seed = new CarePackageInfo(FilterPlantConfig.SEED_ID, ModOptions.Instance.carepackage_seeds_amount, null);
                 ___carePackages.Add(seed);
             }
         }

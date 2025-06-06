@@ -6,7 +6,7 @@ using SanchozzONIMods.Lib;
 namespace CrabsProfit
 {
     using static STRINGS.ITEMS.INDUSTRIAL_PRODUCTS;
-    public class CrabsProfitRandomOreConfig : IEntityConfig, IHasDlcRestrictions
+    public class RandomOreConfig : IEntityConfig, IHasDlcRestrictions
     {
         public const string ID = "CrabsProfitRandomOre";
         public static readonly Tag TAG = TagManager.Create(ID);
@@ -56,7 +56,7 @@ namespace CrabsProfit
         private void InitWeights()
         {
             total_weight = 0;
-            var opt = CrabsProfitOptions.Instance.Ore_Weights;
+            var opt = ModOptions.Instance.Ore_Weights;
             weights = new Dictionary<SimHashes, float>()
             {
                 { SimHashes.AluminumOre,    opt.AluminumOre},

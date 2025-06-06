@@ -13,18 +13,18 @@ using PeterHan.PLib.PatchManager;
 
 namespace NoManualDelivery
 {
-    internal sealed class NoManualDeliveryPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(NoManualDeliveryPatches));
-            new POptions().RegisterOptions(this, typeof(NoManualDeliveryOptions));
-            NoManualDeliveryOptions.Reload();
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
+            ModOptions.Reload();
 
             // разрешить руке хватать бутылки
-            if (NoManualDeliveryOptions.Instance.AllowTransferArmPickupGasLiquid)
+            if (ModOptions.Instance.AllowTransferArmPickupGasLiquid)
             {
                 STORAGEFILTERS.SOLID_TRANSFER_ARM_CONVEYABLE = STORAGEFILTERS.SOLID_TRANSFER_ARM_CONVEYABLE
                     .Append(STORAGEFILTERS.GASES).Append(STORAGEFILTERS.LIQUIDS);
@@ -33,7 +33,7 @@ namespace NoManualDelivery
 
             // подготовка, чтобы разрешить дупликам забирать жеготных из инкубатора и всегда хватать еду
             AlwaysCouldBePickedUpByMinionTags = new Tag[] { GameTags.Creatures.Deliverable };
-            if (NoManualDeliveryOptions.Instance.AllowAlwaysPickupEdible)
+            if (ModOptions.Instance.AllowAlwaysPickupEdible)
             {
                 AlwaysCouldBePickedUpByMinionTags = AlwaysCouldBePickedUpByMinionTags.Append(STORAGEFILTERS.FOOD).Append(GameTags.MedicalSupplies);
             }
@@ -46,7 +46,7 @@ namespace NoManualDelivery
         }
 
         // ручной список добавленных построек
-        private static List<string> BuildingToMakeAutomatable = new List<string>()
+        private static List<string> BuildingToMakeAutomatable = new()
         {
             StorageLockerConfig.ID,
             StorageLockerSmartConfig.ID,
@@ -105,7 +105,7 @@ namespace NoManualDelivery
             "BigStorageLocker", "BigBeautifulStorageLocker", "BigSmartStorageLocker", "BigStorageTile",
         };
 
-        private static List<string> BuildingToMakeAutomatableWithTransferArmPickupGasLiquid = new List<string>()
+        private static List<string> BuildingToMakeAutomatableWithTransferArmPickupGasLiquid = new()
         {
             AdvancedResearchCenterConfig.ID,
             LiquidPumpingStationConfig.ID,
@@ -172,7 +172,7 @@ namespace NoManualDelivery
             private static bool Prefix(Pickupable __instance, int carrierID, ref bool __result)
             {
                 if (__instance.KPrefabID.HasAnyTags(AlwaysCouldBePickedUpByMinionTags)
-                    || (NoManualDeliveryOptions.Instance.AllowAlwaysPickupKettle && __instance.targetWorkable is IceKettleWorkable))
+                    || (ModOptions.Instance.AllowAlwaysPickupKettle && __instance.targetWorkable is IceKettleWorkable))
                 {
                     __result = CouldBePickedUpCommon(__instance, carrierID);
                     return false;
@@ -196,7 +196,7 @@ namespace NoManualDelivery
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
             {
-                return TranspilerUtils.Transpile(instructions, method, transpiler);
+                return instructions.Transpile(method, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -388,7 +388,7 @@ namespace NoManualDelivery
         [HarmonyPatch(typeof(Workable), nameof(Workable.GetAnim))]
         private static class Workable_GetAnim
         {
-            private static bool Prepare() => NoManualDeliveryOptions.Instance.AllowTransferArmPickupGasLiquid;
+            private static bool Prepare() => ModOptions.Instance.AllowTransferArmPickupGasLiquid;
             private static void Postfix(Workable __instance, WorkerBase worker, ref Workable.AnimInfo __result)
             {
                 if (__instance is IceKettleWorkable && !worker.UsesMultiTool())

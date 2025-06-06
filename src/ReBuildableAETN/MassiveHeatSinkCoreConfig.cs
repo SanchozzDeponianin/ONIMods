@@ -18,8 +18,7 @@ namespace ReBuildableAETN
         public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
         public string[] GetForbiddenDlcIds() => null;
 
-        public static readonly ArtifactTier TIER_CORE = new ArtifactTier(
-            STRINGS.UI.SPACEARTIFACTS.ARTIFACTTIERS.TIER_CORE.key, DECOR.BONUS.TIER7, 0);
+        public static readonly ArtifactTier TIER_CORE = new(STRINGS.UI.SPACEARTIFACTS.ARTIFACTTIERS.TIER_CORE.key, DECOR.BONUS.TIER7, 0);
 
         public GameObject CreatePrefab()
         {

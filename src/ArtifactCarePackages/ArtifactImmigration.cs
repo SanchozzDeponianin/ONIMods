@@ -17,9 +17,9 @@ namespace ArtifactCarePackages
             Instance = this;
             carePackages = new List<CarePackageInfo>();
             var tiers = new ArtifactTier[] { TIER0, TIER1, TIER2, TIER3, TIER4, TIER5 };
-            int a = ArtifactCarePackageOptions.Instance.CyclesUntilTier0;
-            int b = ArtifactCarePackageOptions.Instance.CyclesUntilTierNext;
-            DropTableSlots = ArtifactCarePackageOptions.Instance.RandomArtifactDropTableSlots;
+            int a = ModOptions.Instance.CyclesUntilTier0;
+            int b = ModOptions.Instance.CyclesUntilTierNext;
+            DropTableSlots = ModOptions.Instance.RandomArtifactDropTableSlots;
             var artifactItems = new List<string>();
             foreach (var artifactType in ArtifactConfig.artifactItems.Keys)
                 artifactItems.AddRange(ArtifactConfig.artifactItems[artifactType]);
@@ -75,7 +75,7 @@ namespace ArtifactCarePackages
                 return null;
 
             // если динамическая вероятность выключена - у всех возможных вариантов будет тупо одинаковый стартовый вес
-            if (ArtifactCarePackageOptions.Instance.DynamicProbability)
+            if (ModOptions.Instance.DynamicProbability)
             {
                 foreach (var art in Components.SpaceArtifacts.Items)
                 {

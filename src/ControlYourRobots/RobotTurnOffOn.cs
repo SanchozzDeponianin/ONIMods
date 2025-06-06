@@ -17,7 +17,7 @@
 
         private void OnSwitchToggled(bool toggled_on)
         {
-            kPrefabID.SetTag(ControlYourRobotsPatches.RobotSuspend, !toggled_on);
+            kPrefabID.SetTag(Patches.RobotSuspend, !toggled_on);
         }
 
         protected override void OnRefreshUserMenu(object data)

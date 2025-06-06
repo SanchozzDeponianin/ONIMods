@@ -63,7 +63,7 @@ namespace ButcherStation
                 .AddCheckBox(prefix, nameof(wrangle_surplus),
                     b => { if (target != null) target.wrangleSurplus = b; }, out wrangle_surplus, out _)
                 // ползун количества
-                .AddSliderBox(prefix, nameof(creature_limit), 0f, ButcherStationOptions.Instance.max_creature_limit,
+                .AddSliderBox(prefix, nameof(creature_limit), 0f, ModOptions.Instance.max_creature_limit,
                     f => { if (target != null) target.creatureLimit = Mathf.RoundToInt(f); }, out creature_limit)
                 // оставить живым
                 .AddCheckBox(prefix, nameof(leave_alive),

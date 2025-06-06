@@ -21,7 +21,7 @@ namespace ButcherStation
         public const float EXTRAMEATPERRANCHINGATTRIBUTE = 0.025f;
 
         [Serialize]
-        internal int creatureLimit = ButcherStationOptions.Instance.max_creature_limit;
+        internal int creatureLimit = ModOptions.Instance.max_creature_limit;
         private int storedCreatureCount;
         internal List<KPrefabID> CachedCreatures { get; private set; } = new List<KPrefabID>();
         private bool dirty = true;
@@ -125,18 +125,18 @@ namespace ButcherStation
         }
 
         private static readonly IDetouredField<RanchStation.Instance, Room> ranchRoom = PDetours.DetourField<RanchStation.Instance, Room>("ranch");
-        private static readonly List<KPrefabID> emptyList = new List<KPrefabID>();
+        private static readonly List<KPrefabID> emptyList = new();
 
         internal void RefreshCreatures()
         {
             // обновляем число жеготных в комнате
             var cavity = (!isExteriorTargetRanchCell) ? ranchRoom.Get(ranchStation)?.cavity : null;
-            cavity = cavity ?? Game.Instance.roomProber.GetCavityForCell(ranchStation.GetTargetRanchCell());
+            cavity ??= Game.Instance.roomProber.GetCavityForCell(ranchStation.GetTargetRanchCell());
             var creatures = cavity?.creatures ?? emptyList;
 
             int old = storedCreatureCount;
             storedCreatureCount = 0;
-            bool filteredCount = ButcherStationOptions.Instance.filtered_count;
+            bool filteredCount = ModOptions.Instance.filtered_count;
             foreach (KPrefabID creature in creatures)
             {
                 if (!creature.HasAnyTags(CreatureNotEligibleTags) && (!filteredCount || treeFilterable.AcceptedTags.Contains(creature.PrefabTag)))
@@ -194,7 +194,7 @@ namespace ButcherStation
                     && butcherStation.IsCreatureEligibleToBeButched(creature_go);
         }
 
-        private static readonly HashSet<string> meats = new HashSet<string>()
+        private static readonly HashSet<string> meats = new()
         {
             MeatConfig.ID,
             FishMeatConfig.ID,
@@ -225,7 +225,7 @@ namespace ButcherStation
                 {
                     if (butcherable.drops != null && butcherable.drops.Count > 0)
                     {
-                        var multiplier = 1 + ButcherStationPatches.RanchingEffectExtraMeat.Lookup(worker).Evaluate();
+                        var multiplier = 1 + Patches.RanchingEffectExtraMeat.Lookup(worker).Evaluate();
                         foreach (var drop in butcherable.drops.Keys.ToArray())
                         {
                             if (meats.Contains(drop))

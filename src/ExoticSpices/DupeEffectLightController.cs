@@ -5,7 +5,7 @@ using TUNING;
 
 namespace ExoticSpices
 {
-    using static ExoticSpicesAssets;
+    using static ModAssets;
 
     // скопипизжено и пересобачено со светлячков (CreatureLightToggleController и LightSymbolTracker)
     // попробуем сделать красявости. плавное включение/выключение свечения при добавлении/убирании эффекта
@@ -15,8 +15,8 @@ namespace ExoticSpices
         {
             public string trackingEffectId = PHOSPHO_RUFUS_SPICE;
             public Color Color = Color.cyan;
-            public float Range = ExoticSpicesOptions.Instance.phospho_rufus_spice.range;
-            public int Lux = ExoticSpicesOptions.Instance.phospho_rufus_spice.lux;
+            public float Range = ModOptions.Instance.phospho_rufus_spice.range;
+            public int Lux = ModOptions.Instance.phospho_rufus_spice.lux;
             public float dim_time = 15f;
             public float glow_time = 10f;
         }
@@ -67,8 +67,7 @@ namespace ExoticSpices
                 public void Finish() => emitter.AddToGrid(false);
             }
 
-            private static WorkItemCollection<ModifyBrightnessTask, object> modify_brightness_job =
-                new WorkItemCollection<ModifyBrightnessTask, object>();
+            private static WorkItemCollection<ModifyBrightnessTask, object> modify_brightness_job = new();
 
             public delegate void ModifyLuxDelegate(Instance instance, float dt);
 

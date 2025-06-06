@@ -8,15 +8,15 @@ using PeterHan.PLib.Options;
 
 namespace AthleticsGenerator
 {
-    internal sealed class AthleticsGeneratorPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public static AttributeConverter ManualGeneratorPower;
 
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
-            new PPatchManager(harmony).RegisterPatchClass(typeof(AthleticsGeneratorPatches));
-            new POptions().RegisterOptions(this, typeof(AthleticsGeneratorOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -32,7 +32,7 @@ namespace AthleticsGenerator
             var formatter = new StandardAttributeFormatter(GameUtil.UnitClass.Power, GameUtil.TimeSlice.None);
             ManualGeneratorPower = Db.Get().AttributeConverters.Create(nameof(ManualGeneratorPower), "Manual Generator Power",
                 STRINGS.DUPLICANTS.ATTRIBUTES.ATHLETICS.POWERMODIFIER, Db.Get().Attributes.Athletics,
-                AthleticsGeneratorOptions.Instance.watts_per_level, 0f, formatter);
+                ModOptions.Instance.watts_per_level, 0f, formatter);
         }
 
         [HarmonyPatch(typeof(ManualGeneratorConfig), nameof(ManualGeneratorConfig.CreateBuildingDef))]
@@ -40,9 +40,9 @@ namespace AthleticsGenerator
         {
             private static void Postfix(BuildingDef __result)
             {
-                if (AthleticsGeneratorOptions.Instance.enable_meter)
+                if (ModOptions.Instance.enable_meter)
                 {
-                    var kanim = AthleticsGeneratorOptions.Instance.enable_light ? "generatormanual_meter_light_kanim" : "generatormanual_meter_kanim";
+                    var kanim = ModOptions.Instance.enable_light ? "generatormanual_meter_light_kanim" : "generatormanual_meter_kanim";
                     PGameUtils.CopySoundsToAnim(kanim, "generatormanual_kanim");
                     __result.AnimFiles[0] = Assets.GetAnim(kanim);
                 }

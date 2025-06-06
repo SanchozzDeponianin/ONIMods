@@ -15,7 +15,7 @@ namespace AttributeRestrictions
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
 
-    internal sealed class AttributeRestrictionsOptions : BaseOptions<AttributeRestrictionsOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [JsonConverter(typeof(StringEnumConverter))]

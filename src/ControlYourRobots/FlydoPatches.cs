@@ -10,7 +10,7 @@ using PeterHan.PLib.Detours;
 
 namespace ControlYourRobots
 {
-    using static ControlYourRobotsPatches;
+    using static Patches;
     using static STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE;
 
     internal static class FlydoPatches
@@ -25,13 +25,13 @@ namespace ControlYourRobots
         private static class GameNavGrids_Constructor
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && (ControlYourRobotsOptions.Instance.flydo_can_pass_door || ControlYourRobotsOptions.Instance.flydo_prefers_straight);
+                && (ModOptions.Instance.flydo_can_pass_door || ModOptions.Instance.flydo_prefers_straight);
 
             private static void Postfix(GameNavGrids __instance, Pathfinding pathfinding)
             {
                 var flyer = __instance.FlyerGrid1x1;
                 NavGrid.Transition[] transitions;
-                if (ControlYourRobotsOptions.Instance.flydo_prefers_straight)
+                if (ModOptions.Instance.flydo_prefers_straight)
                 {
                     transitions = new NavGrid.Transition[flyer.transitions.Length];
                     for (int i = 0; i < flyer.transitions.Length; i++)
@@ -46,7 +46,7 @@ namespace ControlYourRobots
                     transitions = flyer.transitions;
                 var flydo = new NavGrid(FlydoGrid, transitions, flyer.navTypeData, new CellOffset[] { CellOffset.none },
                     new NavTableValidator[] {
-                        new GameNavGrids.FlyingValidator(false, false, ControlYourRobotsOptions.Instance.flydo_can_pass_door),
+                        new GameNavGrids.FlyingValidator(false, false, ModOptions.Instance.flydo_can_pass_door),
                         new GameNavGrids.SwimValidator() },
                     flyer.updateRangeX, flyer.updateRangeY, flyer.maxLinksPerCell);
                 pathfinding.AddNavGrid(flydo);
@@ -60,7 +60,7 @@ namespace ControlYourRobots
             private static void Postfix(GameObject __result)
             {
                 __result.AddOrGet<RobotTurnOffOn>();
-                if (ControlYourRobotsOptions.Instance.flydo_can_pass_door || ControlYourRobotsOptions.Instance.flydo_prefers_straight)
+                if (ModOptions.Instance.flydo_can_pass_door || ModOptions.Instance.flydo_prefers_straight)
                     __result.GetComponent<Navigator>().NavGridName = FlydoGrid;
                 // для правильного отображения величины заряда при сне
                 var delta_id = Db.Get().Amounts.InternalElectroBank.deltaAttribute.Id;
@@ -83,7 +83,7 @@ namespace ControlYourRobots
         private static class FetchDroneConfig_OnSpawn
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && ControlYourRobotsOptions.Instance.flydo_can_pass_door;
+                && ModOptions.Instance.flydo_can_pass_door;
             private static void Postfix(GameObject inst)
             {
                 if (inst.TryGetComponent(out Navigator navigator))
@@ -105,8 +105,8 @@ namespace ControlYourRobots
         private static class AccessControl_OnPrefabInit
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && ControlYourRobotsOptions.Instance.flydo_can_pass_door
-                && ControlYourRobotsOptions.Instance.restrict_flydo_by_default;
+                && ModOptions.Instance.flydo_can_pass_door
+                && ModOptions.Instance.restrict_flydo_by_default;
             private static void Postfix(AccessControl __instance)
             {
                 Game.Instance.Subscribe(FirstFludoWasAppeared, __instance.Restrict);
@@ -118,8 +118,8 @@ namespace ControlYourRobots
         private static class AccessControl_OnSpawn
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && ControlYourRobotsOptions.Instance.flydo_can_pass_door
-                && ControlYourRobotsOptions.Instance.restrict_flydo_by_default;
+                && ModOptions.Instance.flydo_can_pass_door
+                && ModOptions.Instance.restrict_flydo_by_default;
             private static void Postfix(AccessControl __instance)
             {
                 foreach (var proxy in RobotAssignablesProxy.Cmps.Items)
@@ -137,8 +137,8 @@ namespace ControlYourRobots
         private static class AccessControl_OnCleanUp
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && ControlYourRobotsOptions.Instance.flydo_can_pass_door
-                && ControlYourRobotsOptions.Instance.restrict_flydo_by_default;
+                && ModOptions.Instance.flydo_can_pass_door
+                && ModOptions.Instance.restrict_flydo_by_default;
             private static void Prefix(AccessControl __instance)
             {
                 Game.Instance.Unsubscribe(FirstFludoWasAppeared, __instance.Restrict);
@@ -196,7 +196,7 @@ namespace ControlYourRobots
         private static class FetchChore_CanFetchDroneComplete
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && ControlYourRobotsOptions.Instance.flydo_can_for_itself;
+                && ModOptions.Instance.flydo_can_for_itself;
 
             private static IEnumerable<MethodBase> TargetMethods()
             {
@@ -213,7 +213,7 @@ namespace ControlYourRobots
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)

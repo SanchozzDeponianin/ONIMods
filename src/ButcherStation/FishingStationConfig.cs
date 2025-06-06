@@ -64,10 +64,10 @@ namespace ButcherStation
             var roomTracker = go.AddOrGet<RoomTracker>();
             roomTracker.requiredRoomType = Db.Get().RoomTypes.CreaturePen.Id;
             roomTracker.requirement = RoomTracker.Requirement.Required;
-            if (ButcherStationPatches.RoomsExpandedFound)
+            if (Patches.RoomsExpandedFound)
             {
                 go.AddOrGet<MultiRoomTracker>().possibleRoomTypes =
-                    new string[] { Db.Get().RoomTypes.CreaturePen.Id, ButcherStationPatches.AquariumRoom.Id };
+                    new string[] { Db.Get().RoomTypes.CreaturePen.Id, Patches.AquariumRoom.Id };
             }
         }
 

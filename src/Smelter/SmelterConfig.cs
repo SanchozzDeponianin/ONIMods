@@ -25,7 +25,7 @@ namespace Smelter
         internal const string ANIM = "smelter_new_kanim";
         internal const string ANIM_WORK = "anim_interacts_smelter_new_kanim";
 
-        private static readonly List<Storage.StoredItemModifier> RefineryStoredItemModifiers = new List<Storage.StoredItemModifier>
+        private static readonly List<Storage.StoredItemModifier> RefineryStoredItemModifiers = new()
         {
             Storage.StoredItemModifier.Hide,
             Storage.StoredItemModifier.Preserve,
@@ -157,7 +157,7 @@ namespace Smelter
         {
             const float INPUT_KG = 100f;
             // добавляем переплавку абиссалития в электроплавильню
-            if (SmelterOptions.Instance.recipes.Katairite_To_Tungsten)
+            if (ModOptions.Instance.recipes.Katairite_To_Tungsten)
             {
                 const float PHOSPHORUS = 10f;
                 const float SALT = 20f;
@@ -191,7 +191,7 @@ namespace Smelter
             }
 
             // добавляем переплавку фосфора в стеклоплавильню
-            if (SmelterOptions.Instance.recipes.Phosphorite_To_Phosphorus)
+            if (ModOptions.Instance.recipes.Phosphorite_To_Phosphorus)
             {
                 var ingredients = new ComplexRecipe.RecipeElement[]
                 {
@@ -214,7 +214,7 @@ namespace Smelter
             }
 
             // добавляем переплавку пластика в стеклоплавильню
-            if (SmelterOptions.Instance.recipes.Plastic_To_Naphtha)
+            if (ModOptions.Instance.recipes.Plastic_To_Naphtha)
             {
                 var ingredients = new ComplexRecipe.RecipeElement[]
                 {
@@ -290,7 +290,7 @@ namespace Smelter
                 });
 
             // добавляем расплавленную серу в стеклоплавильню
-            if (SmelterOptions.Instance.recipes.Sulfur_To_LiquidSulfur)
+            if (ModOptions.Instance.recipes.Sulfur_To_LiquidSulfur)
             {
                 var ingredients = new ComplexRecipe.RecipeElement[]
                 {
@@ -313,7 +313,7 @@ namespace Smelter
             }
 
             // добавляем варку резины
-            if (DlcManager.IsExpansion1Active() && SmelterOptions.Instance.recipes.Resin_To_Isoresin)
+            if (DlcManager.IsExpansion1Active() && ModOptions.Instance.recipes.Resin_To_Isoresin)
             {
                 var resin = ElementLoader.FindElementByHash(SimHashes.Resin);
                 var resin_solid = resin.lowTempTransition;

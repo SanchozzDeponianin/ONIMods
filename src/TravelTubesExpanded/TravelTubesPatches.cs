@@ -12,14 +12,14 @@ using PeterHan.PLib.Options;
 
 namespace TravelTubesExpanded
 {
-    internal sealed class TravelTubesPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(TravelTubesPatches));
-            new POptions().RegisterOptions(this, typeof(TravelTubesOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -56,7 +56,7 @@ namespace TravelTubesExpanded
         {
             private static void Postfix(GameObject go)
             {
-                go.AddOrGet<TravelTubeEntrance>().joulesPerLaunch = TravelTubesOptions.Instance.kjoules_per_launch * Constants.KW2W;
+                go.AddOrGet<TravelTubeEntrance>().joulesPerLaunch = ModOptions.Instance.kjoules_per_launch * Constants.KW2W;
                 go.AddOrGet<EntranceFakeTubes>();
             }
         }

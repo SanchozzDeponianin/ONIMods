@@ -27,7 +27,7 @@ namespace RoverRefueling
             multitoolContext = "fetchliquid";
             multitoolHitEffectTag = WhirlPoolFxEffectConfig.ID;
             storage.gunTargetOffset = new Vector2(0.6f, 0.5f);
-            fuelConsumeRate = RoverRefuelingOptions.Instance.fuel_mass_per_charge / RoverRefuelingOptions.Instance.charge_time;
+            fuelConsumeRate = ModOptions.Instance.fuel_mass_per_charge / ModOptions.Instance.charge_time;
         }
 
         protected override void OnSpawn()
@@ -42,16 +42,16 @@ namespace RoverRefueling
         {
             battery = Db.Get().Amounts.InternalChemicalBattery.Lookup(worker);
             worker.TryGetComponent<PrimaryElement>(out primaryElement);
-            if (worker.TryGetComponent<Effects>(out var effects) && !effects.HasEffect(RoverRefuelingPatches.RefuelingEffect))
-                effects.Add(RoverRefuelingPatches.RefuelingEffect, false);
+            if (worker.TryGetComponent<Effects>(out var effects) && !effects.HasEffect(Patches.RefuelingEffect))
+                effects.Add(Patches.RefuelingEffect, false);
         }
 
         protected override void OnStopWork(WorkerBase worker)
         {
             battery = null;
             primaryElement = null;
-            if (worker.TryGetComponent<Effects>(out var effects) && effects.HasEffect(RoverRefuelingPatches.RefuelingEffect))
-                effects.Remove(RoverRefuelingPatches.RefuelingEffect);
+            if (worker.TryGetComponent<Effects>(out var effects) && effects.HasEffect(Patches.RefuelingEffect))
+                effects.Remove(Patches.RefuelingEffect);
         }
 
         protected override bool OnWorkTick(WorkerBase worker, float dt)
@@ -70,7 +70,7 @@ namespace RoverRefueling
             var item = default(Descriptor);
             item.SetupDescriptor(RoverRefuelingStationConfig.fuelTag.ProperName(),
                 string.Format(STRINGS.BUILDINGS.PREFABS.ROVERREFUELINGSTATION.REQUIREMENT_TOOLTIP,
-                RoverRefuelingOptions.Instance.fuel_mass_per_charge, RoverRefuelingStationConfig.fuelTag.ProperName()),
+                ModOptions.Instance.fuel_mass_per_charge, RoverRefuelingStationConfig.fuelTag.ProperName()),
                 Descriptor.DescriptorType.Requirement);
             list.Add(item);
             return list;

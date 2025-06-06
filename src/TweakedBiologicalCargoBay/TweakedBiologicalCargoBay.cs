@@ -4,7 +4,7 @@ using SanchozzONIMods.Lib;
 
 namespace TweakedBiologicalCargoBay
 {
-    internal sealed class TweakedBiologicalCargoBayPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {

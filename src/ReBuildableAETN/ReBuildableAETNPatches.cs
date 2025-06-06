@@ -16,14 +16,14 @@ using static ReBuildableAETN.MassiveHeatSinkCoreConfig;
 
 namespace ReBuildableAETN
 {
-    public sealed class ReBuildableAETNPatches : KMod.UserMod2
+    public sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
-            ReBuildableAETNOptions.Reload();
+            ModOptions.Reload();
             new PPatchManager(harmony).RegisterPatchClass(GetType());
-            new POptions().RegisterOptions(this, typeof(ReBuildableAETNOptions));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -49,7 +49,7 @@ namespace ReBuildableAETN
             Utils.AddBuildingToTechnology("Catalytics", MassiveHeatSinkConfig.ID);
             GameTags.MaterialBuildingElements.Add(MaterialBuildingTag);
             // добавляем ядра -выдры- в космос в ванилле
-            var chance = ReBuildableAETNOptions.Instance.VanillaPlanetChance;
+            var chance = ModOptions.Instance.VanillaPlanetChance;
             if (DlcManager.IsPureVanilla() && chance.Enabled)
             {
                 var sdp = Db.Get().SpaceDestinationTypes;
@@ -83,7 +83,7 @@ namespace ReBuildableAETN
                 __result.ViewMode = OverlayModes.GasConduits.ID;
                 __result.MaterialCategory = MATERIALS.REFINED_METALS.Append(MaterialBuildingTag.Name);
                 __result.Mass = __result.Mass.Append(2 * MASS);
-                if (ReBuildableAETNOptions.Instance.AddLogicPort)
+                if (ModOptions.Instance.AddLogicPort)
                     __result.LogicInputPorts = LogicOperationalController.CreateSingleInputPortList(new CellOffset(1, 0));
             }
         }
@@ -105,7 +105,7 @@ namespace ReBuildableAETN
                 deconstructable.requiredSkillPerk = Db.Get().SkillPerks.CanDemolish.Id;
                 deconstructable.allowDeconstruction = false;
                 go.AddOrGet<MassiveHeatSinkRebuildable>();
-                if (ReBuildableAETNOptions.Instance.AddLogicPort)
+                if (ModOptions.Instance.AddLogicPort)
                     go.AddOrGet<LogicOperationalController>();
                 go.UpdateComponentRequirement<Demolishable>(false);
             }
@@ -157,7 +157,7 @@ namespace ReBuildableAETN
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -177,12 +177,12 @@ namespace ReBuildableAETN
         [HarmonyPatch(typeof(Immigration), "ConfigureCarePackages")]
         private static class Immigration_ConfigureCarePackages
         {
-            private static bool Prepare() => ReBuildableAETNOptions.Instance.CarePackage.Enabled;
+            private static bool Prepare() => ModOptions.Instance.CarePackage.Enabled;
 
             private static bool Condition(Tag tag)
             {
-                return (GameClock.Instance.GetCycle() >= ReBuildableAETNOptions.Instance.CarePackage.MinCycle)
-                    && (!ReBuildableAETNOptions.Instance.CarePackage.RequireDiscovered
+                return (GameClock.Instance.GetCycle() >= ModOptions.Instance.CarePackage.MinCycle)
+                    && (!ModOptions.Instance.CarePackage.RequireDiscovered
                         || DiscoveredResources.Instance.IsDiscovered(tag));
             }
 
@@ -211,13 +211,13 @@ namespace ReBuildableAETN
                 setLocker.dropOffset = new Vector2I(1, 1);
                 go.AddOrGet<LoopingSounds>();
                 go.AddOrGet<MassiveHeatSinkCoreSpawner>().chance =
-                    ReBuildableAETNOptions.Instance.GravitasPOIChance.RarePOIChance / 100f;
+                    ModOptions.Instance.GravitasPOIChance.RarePOIChance / 100f;
                 return go.AddOrGet<Demolishable>();
             }
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -267,7 +267,7 @@ namespace ReBuildableAETN
             private static void Postfix(GameObject __result)
             {
                 __result.AddOrGet<MassiveHeatSinkCoreSpawner>().chance =
-                    ReBuildableAETNOptions.Instance.GravitasPOIChance.RarePOIChance / 100f;
+                    ModOptions.Instance.GravitasPOIChance.RarePOIChance / 100f;
             }
         }
 
@@ -284,7 +284,7 @@ namespace ReBuildableAETN
             private static void Postfix(GameObject __result)
             {
                 __result.AddOrGet<MassiveHeatSinkCoreSpawner>().chance =
-                    ReBuildableAETNOptions.Instance.GravitasPOIChance.LockerPOIChance / 100f;
+                    ModOptions.Instance.GravitasPOIChance.LockerPOIChance / 100f;
             }
         }
 
@@ -305,7 +305,7 @@ namespace ReBuildableAETN
                 {
                     return true;
                 }
-                var chance = ReBuildableAETNOptions.Instance.SpaceOutPOIChance;
+                var chance = ModOptions.Instance.SpaceOutPOIChance;
                 if (__instance.CanHarvestArtifact() && chance.Enabled && UnityEngine.Random.Range(0f, 100f) < chance.SpacePOIChance)
                 {
                     __instance.artifactToHarvest = string.Empty;
@@ -329,7 +329,7 @@ namespace ReBuildableAETN
 
             private static bool Prefix(ArtifactPOIStates.Instance __instance, ref string __result)
             {
-                if (__instance.CanHarvestArtifact() && ReBuildableAETNOptions.Instance.SpaceOutPOIChance.Enabled && __instance.artifactToHarvest == string.Empty)
+                if (__instance.CanHarvestArtifact() && ModOptions.Instance.SpaceOutPOIChance.Enabled && __instance.artifactToHarvest == string.Empty)
                 {
                     __result = ID;
                     return false;

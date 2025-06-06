@@ -7,15 +7,15 @@ using PeterHan.PLib.Options;
 
 namespace CrabsProfit
 {
-    internal sealed class CrabsProfitPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(CrabsProfitPatches));
-            new POptions().RegisterOptions(this, typeof(CrabsProfitOptions));
-            CrabsProfitOptions.Reload();
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
+            ModOptions.Reload();
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -56,10 +56,10 @@ namespace CrabsProfit
         [HarmonyPatch(typeof(CrabConfig), nameof(CrabConfig.CreateCrab))]
         private static class CrabConfig_CreateCrab
         {
-            private static bool Prepare() => CrabsProfitOptions.Instance.Crab_Meat > 0;
+            private static bool Prepare() => ModOptions.Instance.Crab_Meat > 0;
             private static void Postfix(GameObject __result)
             {
-                AddDrop(__result, ShellfishMeatConfig.ID, CrabsProfitOptions.Instance.Crab_Meat);
+                AddDrop(__result, ShellfishMeatConfig.ID, ModOptions.Instance.Crab_Meat);
                 FixDrop(__result);
             }
         }
@@ -67,10 +67,10 @@ namespace CrabsProfit
         [HarmonyPatch(typeof(CrabWoodConfig), nameof(CrabWoodConfig.CreateCrabWood))]
         private static class CrabWoodConfig_CreateCrabWood
         {
-            private static bool Prepare() => CrabsProfitOptions.Instance.CrabWood_Meat > 0;
+            private static bool Prepare() => ModOptions.Instance.CrabWood_Meat > 0;
             private static void Postfix(GameObject __result)
             {
-                AddDrop(__result, ShellfishMeatConfig.ID, CrabsProfitOptions.Instance.CrabWood_Meat);
+                AddDrop(__result, ShellfishMeatConfig.ID, ModOptions.Instance.CrabWood_Meat);
                 FixDrop(__result);
             }
         }
@@ -79,7 +79,7 @@ namespace CrabsProfit
         [HarmonyPatch(typeof(CrabFreshWaterConfig), nameof(CrabFreshWaterConfig.CreatePrefab))]
         private static class CrabFreshWaterConfig_CreatePrefab
         {
-            private static bool Prepare() => CrabsProfitOptions.Instance.CrabFreshWater_Shell_Mass > 0;
+            private static bool Prepare() => ModOptions.Instance.CrabFreshWater_Shell_Mass > 0;
             private static void Postfix(GameObject __result)
             {
                 AddDrop(__result, CrabFreshWaterShellConfig.ID, 1);
@@ -91,15 +91,15 @@ namespace CrabsProfit
         [HarmonyPatch(typeof(BabyCrabFreshWaterConfig), nameof(BabyCrabFreshWaterConfig.CreatePrefab))]
         private static class BabyCrabFreshWaterConfig_CreatePrefab
         {
-            private static bool Prepare() => CrabsProfitOptions.Instance.CrabFreshWater_Shell_Mass > 0
-                || CrabsProfitOptions.Instance.BabyCrabFreshWater_Meat > 0;
+            private static bool Prepare() => ModOptions.Instance.CrabFreshWater_Shell_Mass > 0
+                || ModOptions.Instance.BabyCrabFreshWater_Meat > 0;
             private static void Postfix(GameObject __result)
             {
-                if (CrabsProfitOptions.Instance.BabyCrabFreshWater_Meat > 0)
+                if (ModOptions.Instance.BabyCrabFreshWater_Meat > 0)
                 {
-                    AddDrop(__result, ShellfishMeatConfig.ID, CrabsProfitOptions.Instance.BabyCrabFreshWater_Meat);
+                    AddDrop(__result, ShellfishMeatConfig.ID, ModOptions.Instance.BabyCrabFreshWater_Meat);
                 }
-                if (CrabsProfitOptions.Instance.CrabFreshWater_Shell_Mass > 0)
+                if (ModOptions.Instance.CrabFreshWater_Shell_Mass > 0)
                 {
                     AddDrop(__result, BabyCrabFreshWaterShellConfig.ID, 1);
                     __result.AddOrGetDef<BabyMonitor.Def>().onGrowDropID = BabyCrabFreshWaterShellConfig.ID;

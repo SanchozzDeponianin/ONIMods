@@ -7,14 +7,14 @@ using PeterHan.PLib.UI;
 
 namespace AttributeRestrictions
 {
-    internal sealed class AttributeRestrictionsPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(AttributeRestrictionsPatches));
-            new POptions().RegisterOptions(this, typeof(AttributeRestrictionsOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -52,7 +52,7 @@ namespace AttributeRestrictions
             var gen_re = gen.AddOrGet<AttributeRestriction>();
             gen_re.workable = gen.GetComponent<ManualGenerator>();
             gen_re.isBelow = true;
-            if (AttributeRestrictionsOptions.Instance.attribute == ManualGeneratorAttribute.Athletics)
+            if (ModOptions.Instance.attribute == ManualGeneratorAttribute.Athletics)
                 gen_re.overrideAttribute = Db.Get().Attributes.Athletics.IdHash;
 
             // самогонный аппарат

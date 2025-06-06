@@ -13,7 +13,7 @@ namespace Lagoo
 {
     using static LagooConfig;
 
-    internal sealed class LagooPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public const string squirrel_kanim = "squirrel_kanim";
         public const string baby_squirrel_kanim = "baby_squirrel_kanim";
@@ -27,8 +27,8 @@ namespace Lagoo
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(LagooPatches));
-            new POptions().RegisterOptions(this, typeof(LagooOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
             var kagm = new KAnimGroupManager();
             kagm.RegisterAnims(squirrel_kanim, lagoo_kanim);
             kagm.RegisterAnims(baby_squirrel_kanim, baby_lagoo_kanim);
@@ -41,7 +41,7 @@ namespace Lagoo
         // загрузим свою анимацию в общую группу с клеевской и продуплируем символы
         // а заодно и зе-ордер поправим. штатным белкам всеравно, а тут глаза должны быть поверх мордочки.
 
-        private static Dictionary<KAnimFile, KAnimFile> AnimFileMapping = new Dictionary<KAnimFile, KAnimFile>();
+        private static Dictionary<KAnimFile, KAnimFile> AnimFileMapping = new();
 
         [PLibMethod(RunAt.BeforeDbInit)]
         private static void BeforeDbInit()
@@ -174,7 +174,7 @@ namespace Lagoo
                     if (effect == null)
                         effect = effects.Add(WarmTouch, true);
                     if (effect != null)
-                        effect.timeRemaining = Mathf.Max(effect.timeRemaining, LagooOptions.Instance.warm_touch_duration * Constants.SECONDS_PER_CYCLE);
+                        effect.timeRemaining = Mathf.Max(effect.timeRemaining, ModOptions.Instance.warm_touch_duration * Constants.SECONDS_PER_CYCLE);
                 }
             }
         }
@@ -212,7 +212,7 @@ namespace Lagoo
             // id из worldgen/mobs.yaml
             private const string med = "med_SquirrelLagoo";
             private const string low = "low_SquirrelLagoo";
-            private static readonly Dictionary<string, string> AffectedBiomes = new Dictionary<string, string>()
+            private static readonly Dictionary<string, string> AffectedBiomes = new()
             {
                 {"biomes/Forest/Snowy", med},
                 {"biomes/Frozen/Dry", med},

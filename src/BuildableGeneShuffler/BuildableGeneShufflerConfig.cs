@@ -23,7 +23,7 @@ namespace BuildableGeneShuffler
                 height: 3,
                 anim: anim,
                 hitpoints: BUILDINGS.HITPOINTS.TIER2,
-                construction_time: BuildableGeneShufflerOptions.Instance.constructionTime,
+                construction_time: ModOptions.Instance.constructionTime,
                 construction_mass: new float[] { metal_mass, glass_mass },
                 construction_materials: new string[] { MATERIALS.REFINED_METAL, MATERIALS.GLASS },
                 melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER2,

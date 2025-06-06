@@ -3,7 +3,7 @@ using SanchozzONIMods.Lib;
 
 namespace MoreEmotions
 {
-    using static MoreEmotionsEffects;
+    using static ModEffects;
 
     public class STRINGS
     {

@@ -45,7 +45,7 @@ namespace CarouselCentrifuge
             showProgressBar = true;
             resetProgressOnStop = true;
             synchronizeAnims = true;
-            if (DlcManager.FeatureClusterSpaceEnabled() && CarouselCentrifugeOptions.Instance.EnableTraining)
+            if (DlcManager.FeatureClusterSpaceEnabled() && ModOptions.Instance.EnableTraining)
             {
                 workAttribute = Db.Get().Attributes.SpaceNavigation;
                 attributeExperienceMultiplier = DUPLICANTSTATS.ATTRIBUTE_LEVELING.BARELY_EVER_EXPERIENCE;
@@ -58,7 +58,7 @@ namespace CarouselCentrifuge
                 vomitStatusItem = new StatusItem("CarouselVomiting", STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.NAME, STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.TOOLTIP, string.Empty, StatusItem.IconType.Info, NotificationType.BadMinor, false, OverlayModes.None.ID);
 
             }
-            vomitChancePercent = CarouselCentrifugeOptions.Instance.DizzinessChancePercent;
+            vomitChancePercent = ModOptions.Instance.DizzinessChancePercent;
         }
 
         public override Attribute GetWorkAttribute() => workAttribute;

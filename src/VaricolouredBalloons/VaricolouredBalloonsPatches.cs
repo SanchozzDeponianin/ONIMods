@@ -13,17 +13,17 @@ using PeterHan.PLib.PatchManager;
 
 namespace VaricolouredBalloons
 {
-    public sealed class VaricolouredBalloonsPatches : KMod.UserMod2
+    public sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(VaricolouredBalloonsPatches));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
         }
 
         private static readonly BalloonArtistFacadeType Varicoloured = (BalloonArtistFacadeType)Hash.SDBMLower(nameof(Varicoloured));
-        private static readonly List<BalloonOverrideSymbolIter> BalloonOverrides = new List<BalloonOverrideSymbolIter>();
+        private static readonly List<BalloonOverrideSymbolIter> BalloonOverrides = new();
         public static ReadOnlyCollection<BalloonArtistFacadeResource> MyBalloons { get; private set; }
 
         private static BalloonArtistFacadeResource MakeBalloon(string id, string animFile, BalloonArtistFacadeType type)
@@ -137,7 +137,7 @@ namespace VaricolouredBalloons
             }
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions)
             {

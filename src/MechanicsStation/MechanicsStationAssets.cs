@@ -11,7 +11,7 @@ using PeterHan.PLib.Detours;
 
 namespace MechanicsStation
 {
-    internal class MechanicsStationAssets
+    internal class ModAssets
     {
         public const float BASE_SPEED_VALUE = 1f;
         public const string MACHINERY_SPEED_MODIFIER_NAME = "MachinerySpeed";
@@ -150,11 +150,11 @@ namespace MechanicsStation
 
         internal static void LoadOptions()
         {
-            MechanicsStationOptions.Reload();
-            MachinerySpeedModifier.SetValue(MechanicsStationOptions.Instance.machinery_speed_modifier / 100);
-            CraftingSpeedModifier.SetValue(MechanicsStationOptions.Instance.crafting_speed_modifier / 100);
-            MachineTinkerEffect.duration = MechanicsStationOptions.Instance.machine_tinker_effect_duration * Constants.SECONDS_PER_CYCLE;
-            MachineTinkerEffectDuration.multiplier = MechanicsStationOptions.Instance.machine_tinker_effect_duration_per_skill / 100;
+            ModOptions.Reload();
+            MachinerySpeedModifier.SetValue(ModOptions.Instance.machinery_speed_modifier / 100);
+            CraftingSpeedModifier.SetValue(ModOptions.Instance.crafting_speed_modifier / 100);
+            MachineTinkerEffect.duration = ModOptions.Instance.machine_tinker_effect_duration * Constants.SECONDS_PER_CYCLE;
+            MachineTinkerEffectDuration.multiplier = ModOptions.Instance.machine_tinker_effect_duration_per_skill / 100;
         }
 
         // сделать постройку улучшаемой
@@ -177,7 +177,7 @@ namespace MechanicsStation
                 if (prefab.TryGetComponent<Tinkerable>(out var _tinkerable))
                 {
                     _tinkerable.SetWorkTime(TUNING.BUILDINGS.WORK_TIME_SECONDS.SHORT_WORK_TIME);
-                    _tinkerable.effectMultiplier = MechanicsStationOptions.Instance.machine_tinker_effect_duration_per_skill / 100;
+                    _tinkerable.effectMultiplier = ModOptions.Instance.machine_tinker_effect_duration_per_skill / 100;
                     UserMenuAllowed.Set(_tinkerable, false); // по умолчанию выключено
                 }
             };
@@ -213,6 +213,6 @@ namespace MechanicsStation
     [SkipSaveFileSerialization]
     public class MachineTinkerFreezeEffectDuration : OperationalNotActiveFreezeEffectDuration
     {
-        protected override bool ShouldFreeze => MechanicsStationOptions.Instance.machine_tinker_freeze_effect_duration && base.ShouldFreeze;
+        protected override bool ShouldFreeze => ModOptions.Instance.machine_tinker_freeze_effect_duration && base.ShouldFreeze;
     }
 }

@@ -317,7 +317,7 @@ namespace BetterPlantTending
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions)
             {
@@ -382,7 +382,7 @@ namespace BetterPlantTending
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions, TranspilerUtils.Log log)
             {
@@ -494,7 +494,7 @@ namespace BetterPlantTending
             }
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                return TranspilerUtils.Transpile(instructions, original, IL, transpiler);
+                return instructions.Transpile(original, IL, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
             {

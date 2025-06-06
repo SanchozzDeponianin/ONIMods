@@ -55,7 +55,7 @@ namespace MoreEmotions
 
         private void Trigger(GameObject reactor)
         {
-            gameObject.Trigger((int)MoreEmotionsPatches.SleepDisturbedByKick);
+            gameObject.Trigger((int)Patches.SleepDisturbedByKick);
         }
 
         public override bool InternalCanBegin(GameObject new_reactor, Navigator.ActiveTransition transition)

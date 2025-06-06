@@ -27,7 +27,7 @@ namespace SquirrelGenerator
                 build_location_rule: BuildLocationRule.OnFloor,
                 decor: BUILDINGS.DECOR.NONE
                 );
-            buildingDef.GeneratorWattageRating = SquirrelGeneratorOptions.Instance.GeneratorWattageRating;
+            buildingDef.GeneratorWattageRating = ModOptions.Instance.GeneratorWattageRating;
             buildingDef.GeneratorBaseCapacity = 10000f;
             buildingDef.RequiresPowerOutput = true;
             buildingDef.PowerOutputOffset = new CellOffset(0, 0);
@@ -36,7 +36,7 @@ namespace SquirrelGenerator
             buildingDef.Breakable = true;
             buildingDef.ForegroundLayer = Grid.SceneLayer.BuildingFront;
             buildingDef.LogicInputPorts = LogicOperationalController.CreateSingleInputPortList(new CellOffset(0, 0));
-            buildingDef.SelfHeatKilowattsWhenActive = SquirrelGeneratorOptions.Instance.SelfHeatWatts / Constants.KW2DTU_S;
+            buildingDef.SelfHeatKilowattsWhenActive = ModOptions.Instance.SelfHeatWatts / Constants.KW2DTU_S;
             PGameUtils.CopySoundsToAnim("generatorsquirrel_kanim", "generatormanual_kanim");
             return buildingDef;
         }

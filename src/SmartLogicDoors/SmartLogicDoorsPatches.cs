@@ -11,12 +11,12 @@ using PeterHan.PLib.UI;
 
 namespace SmartLogicDoors
 {
-    internal sealed class SmartLogicDoorsPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
-            new PPatchManager(harmony).RegisterPatchClass(typeof(SmartLogicDoorsPatches));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -74,7 +74,7 @@ namespace SmartLogicDoors
             */
             internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                return TranspilerUtils.Transpile(instructions, original, IL, transpiler);
+                return instructions.Transpile(original, IL, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL, TranspilerUtils.Log log)

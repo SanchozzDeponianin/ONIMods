@@ -5,7 +5,7 @@ namespace ControlYourRobots
     [SkipSaveFileSerialization]
     public class RobotPersonalPriorityProxy : KMonoBehaviour
     {
-        public static Components.Cmps<RobotPersonalPriorityProxy> Cmps = new Components.Cmps<RobotPersonalPriorityProxy>();
+        public static Components.Cmps<RobotPersonalPriorityProxy> Cmps = new();
 
         [MyCmpReq]
         public ChoreConsumer consumer;

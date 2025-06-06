@@ -12,7 +12,7 @@ namespace SquirrelGenerator
 
         public class Def : BaseDef
         {
-            public Vector3 workAnimOffset = new Vector3(-0.5f, 0.4f);
+            public Vector3 workAnimOffset = new(-0.5f, 0.4f);
             public float workAnimSpeedMultiplier = 1.8f;
         }
 
@@ -43,7 +43,7 @@ namespace SquirrelGenerator
                 chore.AddPrecondition(ChorePreconditions.instance.CheckBehaviourPrecondition, WantsToWheelRunning);
                 calories = Db.Get().Amounts.Calories.Lookup(gameObject);
                 metabolism = Db.Get().CritterAttributes.Metabolism.Lookup(gameObject);
-                metabolism_bonus = METABOLISM_BONUS + SquirrelGeneratorOptions.Instance.MetabolismBonus;
+                metabolism_bonus = METABOLISM_BONUS + ModOptions.Instance.MetabolismBonus;
                 gameObject.TryGetComponent(out monitor);
                 gameObject.TryGetComponent(out kbac);
                 gameObject.TryGetComponent(out navigator);
@@ -89,14 +89,14 @@ namespace SquirrelGenerator
                     is_bad: false);
                 RunInWheelEffect.Add(new AttributeModifier(
                     attribute_id: Db.Get().CritterAttributes.Metabolism.Id,
-                    value: SquirrelGeneratorOptions.Instance.MetabolismBonus,
+                    value: ModOptions.Instance.MetabolismBonus,
                     description: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME,
                     is_multiplier: false,
                     uiOnly: false,
                     is_readonly: true));
                 RunInWheelEffect.Add(new AttributeModifier(
                     attribute_id: Db.Get().CritterAttributes.Happiness.Id,
-                    value: SquirrelGeneratorOptions.Instance.HappinessBonus,
+                    value: ModOptions.Instance.HappinessBonus,
                     description: STRINGS.CREATURES.MODIFIERS.RUN_IN_WHEEL.NAME,
                     is_multiplier: false,
                     uiOnly: false,

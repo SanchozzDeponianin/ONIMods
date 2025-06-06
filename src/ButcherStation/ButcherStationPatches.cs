@@ -15,7 +15,7 @@ using PeterHan.PLib.UI;
 
 namespace ButcherStation
 {
-    internal sealed class ButcherStationPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public static AttributeConverter RanchingEffectExtraMeat;
 
@@ -23,8 +23,8 @@ namespace ButcherStation
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(ButcherStationPatches));
-            new POptions().RegisterOptions(this, typeof(ButcherStationOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -46,7 +46,7 @@ namespace ButcherStation
                 name: "Ranching Effect Extra Meat",
                 description: STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMODIFIER,
                 attribute: Db.Get().Attributes.Ranching,
-                multiplier: ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f,
+                multiplier: ModOptions.Instance.extra_meat_per_ranching_attribute / 100f,
                 base_value: 0f,
                 formatter: formatter);
             RoomsExpandedCompat(harmony);
@@ -55,7 +55,7 @@ namespace ButcherStation
         [PLibMethod(RunAt.OnStartGame)]
         private static void OnStartGame()
         {
-            RanchingEffectExtraMeat.multiplier = ButcherStationOptions.Instance.extra_meat_per_ranching_attribute / 100f;
+            RanchingEffectExtraMeat.multiplier = ModOptions.Instance.extra_meat_per_ranching_attribute / 100f;
         }
 
         [PLibMethod(RunAt.OnDetailsScreenInit)]
@@ -116,7 +116,7 @@ namespace ButcherStation
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions)
             {
@@ -159,7 +159,7 @@ namespace ButcherStation
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions)
             {
@@ -224,7 +224,7 @@ namespace ButcherStation
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -281,7 +281,7 @@ namespace ButcherStation
         {
             private static void Postfix(BaggableCritterCapacityTracker __instance)
             {
-                __instance.maximumCreatures = ButcherStationOptions.Instance.max_creature_limit;
+                __instance.maximumCreatures = ModOptions.Instance.max_creature_limit;
             }
         }
 
@@ -366,7 +366,7 @@ namespace ButcherStation
 
             internal static IEnumerable<CodeInstruction> TranspilerCompat(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions)
             {

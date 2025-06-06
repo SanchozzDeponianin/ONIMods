@@ -11,10 +11,10 @@ namespace SanchozzONIMods.Shared
     [SkipSaveFileSerialization]
     public abstract class FreezeEffectDurationBase : KMonoBehaviour
     {
-        private static readonly handler OnEffectAddedDelegate = new handler((cmp, data) => cmp.OnEffectAdded(data));
+        private static readonly handler OnEffectAddedDelegate = new((cmp, data) => cmp.OnEffectAdded(data));
 
         [SerializeField]
-        public List<HashedString> effectsToFreeze = new List<HashedString>();
+        public List<HashedString> effectsToFreeze = new();
 
 #pragma warning disable CS0649
         [MyCmpReq]
@@ -98,7 +98,7 @@ namespace SanchozzONIMods.Shared
     [SkipSaveFileSerialization]
     public class OperationalNotActiveFreezeEffectDuration : FreezeEffectDurationBase
     {
-        private static readonly handler2 OnActiveChangedDelegate = new handler2((cmp, data) => cmp.OnActiveChanged(data));
+        private static readonly handler2 OnActiveChangedDelegate = new((cmp, data) => cmp.OnActiveChanged(data));
 
 #pragma warning disable CS0649
         [MyCmpReq]

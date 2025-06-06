@@ -16,7 +16,7 @@ namespace CrabsProfit
 
         public GameObject CreatePrefab()
         {
-            var mass = CrabsProfitOptions.Instance.BabyShellMass;
+            var mass = ModOptions.Instance.BabyShellMass;
             var go = EntityTemplates.CreateLooseEntity(
                 id: ID,
                 name: BABY_CRAB_SHELL.VARIANT_FRESH_WATER.NAME,

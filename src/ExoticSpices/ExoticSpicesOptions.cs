@@ -23,7 +23,7 @@ namespace ExoticSpices
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class ExoticSpicesOptions : BaseOptions<ExoticSpicesOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonObject(MemberSerialization.OptIn)]
         public sealed class PhosphoRufusSpice

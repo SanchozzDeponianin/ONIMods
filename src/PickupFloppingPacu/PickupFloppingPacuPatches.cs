@@ -3,7 +3,7 @@ using SanchozzONIMods.Lib;
 
 namespace PickupFloppingPacu
 {
-    internal sealed class PickupFloppingPacuPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {

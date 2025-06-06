@@ -108,7 +108,7 @@ namespace BuildableGeneShuffler
                 faceTargetWhenWorking = true;
                 synchronizeAnims = false;
                 resetProgressOnStop = false;
-                SetWorkTime(BuildableGeneShufflerOptions.Instance.manipulationTime);
+                SetWorkTime(ModOptions.Instance.manipulationTime);
                 attributeConverter = Db.Get().AttributeConverters.CompoundingSpeed;
                 skillExperienceSkillGroup = Db.Get().SkillGroups.MedicalAid.Id;
                 skillExperienceMultiplier = SKILLS.ALL_DAY_EXPERIENCE;

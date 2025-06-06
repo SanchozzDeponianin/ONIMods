@@ -20,10 +20,9 @@ namespace SanchozzONIMods.Shared
 #pragma warning restore CS0649
 
         private static readonly EventSystem.IntraObjectHandler<MultiRoomTracker> OnUpdateRoomDelegate =
-            new EventSystem.IntraObjectHandler<MultiRoomTracker>(
-                (MultiRoomTracker component, object data) => component.OnUpdateRoom(data));
+            new((component, data) => component.OnUpdateRoom(data));
 
-        private static readonly DetouredMethod<Action<RoomTracker, object>> UPDATEROOM = 
+        private static readonly DetouredMethod<Action<RoomTracker, object>> UPDATEROOM =
             typeof(RoomTracker).DetourLazy<Action<RoomTracker, object>>("OnUpdateRoom");
 
         protected override void OnPrefabInit()
@@ -41,7 +40,7 @@ namespace SanchozzONIMods.Shared
         private void OnUpdateRoom(object data)
         {
             var room = (Room)data;
-            if (room != null && roomTracker != null && room.roomType.Id != roomTracker.requiredRoomType 
+            if (room != null && roomTracker != null && room.roomType.Id != roomTracker.requiredRoomType
                 && (allowAnyRoomType || (possibleRoomTypes != null && possibleRoomTypes.Contains(room.roomType.Id))))
             {
                 roomTracker.requiredRoomType = room.roomType.Id;

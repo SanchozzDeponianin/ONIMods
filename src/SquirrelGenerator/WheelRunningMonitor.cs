@@ -31,7 +31,7 @@ namespace SquirrelGenerator
 
             public void RefreshSearchTime()
             {
-                nextSearchTime = Time.time + Mathf.Lerp(SquirrelGeneratorOptions.Instance.SearchMinInterval, SquirrelGeneratorOptions.Instance.SearchMaxInterval, Random.value);
+                nextSearchTime = Time.time + Mathf.Lerp(ModOptions.Instance.SearchMinInterval, ModOptions.Instance.SearchMaxInterval, Random.value);
             }
 
             public void SetSearchTimeImmediately()
@@ -56,7 +56,7 @@ namespace SquirrelGenerator
             {
                 TargetWheel = null;
                 var pooledList = ListPool<ScenePartitionerEntry, GameScenePartitioner>.Allocate();
-                var extents = new Extents(Grid.PosToCell(master.transform.GetPosition()), SquirrelGeneratorOptions.Instance.SearchWheelRadius);
+                var extents = new Extents(Grid.PosToCell(master.transform.GetPosition()), ModOptions.Instance.SearchWheelRadius);
                 GameScenePartitioner.Instance.GatherEntries(extents, GameScenePartitioner.Instance.completeBuildings, pooledList);
                 int mincost = MAX_NAVIGATE_DISTANCE;
                 foreach (ScenePartitionerEntry item in pooledList)

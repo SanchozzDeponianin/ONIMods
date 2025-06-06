@@ -7,7 +7,7 @@ namespace NoManualDelivery
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class NoManualDeliveryOptions : BaseOptions<NoManualDeliveryOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option]

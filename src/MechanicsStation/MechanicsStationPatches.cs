@@ -8,18 +8,18 @@ using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
-using static MechanicsStation.MechanicsStationAssets;
+using static MechanicsStation.ModAssets;
 
 namespace MechanicsStation
 {
-    internal sealed class MechanicsStationPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(MechanicsStationPatches));
-            new POptions().RegisterOptions(this, typeof(MechanicsStationOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -98,7 +98,7 @@ namespace MechanicsStation
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -145,7 +145,7 @@ namespace MechanicsStation
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -171,7 +171,7 @@ namespace MechanicsStation
 
         // добавление построек для улучшения
         // todo: добавлять постройки из длц по мере необходимости
-        private static readonly List<string> BuildingWithElementConverterStopList = new List<string>()
+        private static readonly List<string> BuildingWithElementConverterStopList = new()
         {
             ResearchCenterConfig.ID,            // слишком читерно
             AdvancedResearchCenterConfig.ID,
@@ -184,7 +184,7 @@ namespace MechanicsStation
             "RemoteWorkTerminal",               // бесполезно и бессмысленно
         };
 
-        private static readonly List<string> BuildingWithComplexFabricatorWorkableStopList = new List<string>()
+        private static readonly List<string> BuildingWithComplexFabricatorWorkableStopList = new()
         {
             GenericFabricatorConfig.ID,         // странная старая хрень
             EggCrackerConfig.ID,                // было бы нелепо ;-D
@@ -205,7 +205,7 @@ namespace MechanicsStation
                     {
                         MakeMachineTinkerableSave(go);
                         // увеличить всасывание (впервую очередь для скруббера)
-                        float multiplier = BASE_SPEED_VALUE + (MechanicsStationOptions.Instance.machinery_speed_modifier / 100);
+                        float multiplier = BASE_SPEED_VALUE + (ModOptions.Instance.machinery_speed_modifier / 100);
                         var kPrefabID = go.GetComponent<KPrefabID>();
                         if (go.TryGetComponent<PassiveElementConsumer>(out _))
                         {
@@ -304,8 +304,7 @@ namespace MechanicsStation
         }
 
         private static readonly EventSystem.IntraObjectHandler<BuildingAttachPoint> OnUpdateRoomDelegate =
-            new EventSystem.IntraObjectHandler<BuildingAttachPoint>((BuildingAttachPoint component, object data)
-                => RetriggerOnUpdateRoom(component, data));
+            new((component, data) => RetriggerOnUpdateRoom(component, data));
 
         private static void RetriggerOnUpdateRoom(BuildingAttachPoint buildingAttachPoint, object data)
         {

@@ -13,8 +13,7 @@ namespace ReBuildableAETN
         private const float STUDY_WORK_TIME = 3600f;
 
         private static readonly EventSystem.IntraObjectHandler<MassiveHeatSinkRebuildable> OnDeconstructCompleteDelegate =
-            new EventSystem.IntraObjectHandler<MassiveHeatSinkRebuildable>(
-                (MassiveHeatSinkRebuildable component, object data) => component.OnDeconstructComplete(data));
+            new((component, data) => component.OnDeconstructComplete(data));
 
         private bool isConstructed = false;
 
@@ -84,7 +83,7 @@ namespace ReBuildableAETN
         }
 
         // спавним едро
-        private static readonly Vector2 INITIAL_VELOCITY_RANGE = new Vector2(0.5f, 4f);
+        private static readonly Vector2 INITIAL_VELOCITY_RANGE = new(0.5f, 4f);
         private void OnDeconstructComplete(object data)
         {
             var extents = building.GetExtents();

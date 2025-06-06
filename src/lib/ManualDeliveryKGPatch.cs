@@ -20,7 +20,7 @@ namespace SanchozzONIMods.Shared
     public static class ManualDeliveryKGPatch
     {
         private static readonly EventSystem.IntraObjectHandler<ManualDeliveryKG> OnCopySettingsDelegate =
-            new EventSystem.IntraObjectHandler<ManualDeliveryKG>((component, data) => component.OnCopySettings(data));
+            new((component, data) => component.OnCopySettings(data));
 
         private static EventSystem.IntraObjectHandler<ManualDeliveryKG> OnRefreshUserMenuDelegate;
 
@@ -85,7 +85,7 @@ namespace SanchozzONIMods.Shared
 
         private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
         {
-            return TranspilerUtils.Transpile(instructions, original, transpiler);
+            return instructions.Transpile(original, transpiler);
         }
 
         private static bool transpiler(List<CodeInstruction> instructions)

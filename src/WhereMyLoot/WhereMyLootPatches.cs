@@ -9,7 +9,7 @@ using PeterHan.PLib.Detours;
 
 namespace WhereMyLoot
 {
-    internal sealed class WhereMyLootPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
@@ -33,7 +33,7 @@ namespace WhereMyLoot
             private static readonly DetouredMethod<Action<LoreBearer>> OnClickRead =
                 PDetours.DetourLazy<System.Action<LoreBearer>>(typeof(LoreBearer), "OnClickRead");
 
-            private static readonly Vector2I dropOffset = new Vector2I(0, 1);
+            private static readonly Vector2I dropOffset = new(0, 1);
 
             private static void Prefix(Demolishable __instance)
             {
@@ -108,7 +108,7 @@ namespace WhereMyLoot
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                return TranspilerUtils.Transpile(instructions, original, IL, transpiler);
+                return instructions.Transpile(original, IL, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
             {

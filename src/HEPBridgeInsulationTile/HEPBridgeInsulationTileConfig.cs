@@ -17,7 +17,7 @@ namespace HEPBridgeInsulationTile
 
         public override BuildingDef CreateBuildingDef()
         {
-            string anim = HEPBridgeInsulationTileOptions.Instance.use_old_anim ? "wallbridge_orb_transporter_kanim" : "radbolt_joint_plate_insulated_kanim";
+            string anim = ModOptions.Instance.use_old_anim ? "wallbridge_orb_transporter_kanim" : "radbolt_joint_plate_insulated_kanim";
             PGameUtils.CopySoundsToAnim(anim, "orb_transporter_kanim");
             var def = BuildingTemplates.CreateBuildingDef(
                 id: ID,

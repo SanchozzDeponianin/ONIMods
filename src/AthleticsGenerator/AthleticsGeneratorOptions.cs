@@ -7,7 +7,7 @@ namespace AthleticsGenerator
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class AthleticsGeneratorOptions : BaseOptions<AthleticsGeneratorOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option]

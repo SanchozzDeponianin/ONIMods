@@ -9,9 +9,9 @@ namespace ControlYourRobots
     using handler = EventSystem.IntraObjectHandler<RobotAssignablesProxy>;
     public class RobotAssignablesProxy : MinionAssignablesProxy, IPersonalPriorityManager
     {
-        private static readonly handler OnQueueDestroyObjectDelegate = new handler((cmp, data) => cmp.OnQueueDestroyObject(data));
-        public static Components.Cmps<RobotAssignablesProxy> Cmps = new Components.Cmps<RobotAssignablesProxy>();
-        private static object @lock = new object();
+        private static readonly handler OnQueueDestroyObjectDelegate = new((cmp, data) => cmp.OnQueueDestroyObject(data));
+        public static Components.Cmps<RobotAssignablesProxy> Cmps = new();
+        private static object @lock = new();
         private SchedulerHandle handle;
 
         public Tag PrefabID
@@ -49,9 +49,9 @@ namespace ControlYourRobots
                 {
                     if (PrefabID == FetchDroneConfig.ID)
                     {
-                        if (!ControlYourRobotsOptions.Instance.flydo_can_pass_door)
+                        if (!ModOptions.Instance.flydo_can_pass_door)
                             break;
-                        if (ControlYourRobotsOptions.Instance.restrict_flydo_by_default)
+                        if (ModOptions.Instance.restrict_flydo_by_default)
                             Game.Instance.Trigger(FlydoPatches.FirstFludoWasAppeared, this);
                     }
                     return;

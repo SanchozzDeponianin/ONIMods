@@ -30,7 +30,7 @@ namespace ControlYourRobots
         {
 #pragma warning disable CS8321
             IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original) =>
-                TranspilerUtils.Transpile(instructions, original, RemoveDoorAbove);
+                instructions.Transpile(original, RemoveDoorAbove);
 #pragma warning restore CS8321
             layer.BeginTransition(navigator, transition);
         }

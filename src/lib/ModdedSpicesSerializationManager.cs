@@ -22,7 +22,7 @@ namespace SanchozzONIMods.Lib
         public class ModdedSpices : KMonoBehaviour
         {
             [Serialize]
-            public HashSet<Tag> spices = new HashSet<Tag>();
+            public HashSet<Tag> spices = new();
 
             [OnDeserialized]
             private void OnDeserialized()
@@ -31,7 +31,7 @@ namespace SanchozzONIMods.Lib
             }
         }
 
-        private static readonly Version VERSION = new Version(1, 0, 0, 0);
+        private static readonly Version VERSION = new(1, 0, 0, 0);
         public override Version Version => VERSION;
 
         internal static ModdedSpicesSerializationManager Instance { get; private set; }

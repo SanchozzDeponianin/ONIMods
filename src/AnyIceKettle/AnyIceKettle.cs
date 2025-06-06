@@ -13,7 +13,7 @@ namespace AnyIceKettle
     [SerializationConfig(MemberSerialization.OptIn)]
     public class AnyIceKettle : KMonoBehaviour, FewOptionSideScreen.IFewOptionSideScreen
     {
-        private static readonly handler OnCopySettingsDelegate = new handler((cmp, data) => cmp.OnCopySettings(data));
+        private static readonly handler OnCopySettingsDelegate = new((cmp, data) => cmp.OnCopySettings(data));
 
         internal static readonly IDetouredField<IceKettle.Instance, Element> ElementToMelt
             = PDetours.DetourField<IceKettle.Instance, Element>("elementToMelt");
@@ -46,11 +46,11 @@ namespace AnyIceKettle
             if (IceOres == null)
             {
                 var ores = ElementLoader.FindElements(element => element.IsSolid && element.HasTag(GameTags.IceOre));
-                if (AnyIceKettleOptions.Instance.melt_resin)
+                if (ModOptions.Instance.melt_resin)
                     ores.Add(ElementLoader.FindElementByHash(SimHashes.SolidResin));
-                if (AnyIceKettleOptions.Instance.melt_gunk)
+                if (ModOptions.Instance.melt_gunk)
                     ores.Add(ElementLoader.FindElementByHash(SimHashes.Gunk));
-                if (AnyIceKettleOptions.Instance.melt_phytooil)
+                if (ModOptions.Instance.melt_phytooil)
                     ores.Add(ElementLoader.FindElementByHash(SimHashes.FrozenPhytoOil));
                 ores.RemoveAll(element => element == null);
                 IceOres = ores.ToArray();

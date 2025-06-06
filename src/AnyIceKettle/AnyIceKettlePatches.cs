@@ -12,16 +12,16 @@ using PeterHan.PLib.Options;
 
 namespace AnyIceKettle
 {
-    internal class AnyIceKettlePatches : KMod.UserMod2
+    internal class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(AnyIceKettlePatches));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
             if (DlcManager.IsContentSubscribed(DlcManager.EXPANSION1_ID) || DlcManager.IsContentSubscribed(DlcManager.DLC3_ID))
-                new POptions().RegisterOptions(this, typeof(AnyIceKettleOptions));
-            AnyIceKettleOptions.Reload();
+                new POptions().RegisterOptions(this, typeof(ModOptions));
+            ModOptions.Reload();
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -76,7 +76,7 @@ namespace AnyIceKettle
         {
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions)
             {

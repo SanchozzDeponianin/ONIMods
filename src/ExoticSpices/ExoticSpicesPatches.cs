@@ -12,16 +12,16 @@ using PeterHan.PLib.PatchManager;
 
 namespace ExoticSpices
 {
-    using static ExoticSpicesAssets;
+    using static ModAssets;
 
-    internal sealed class ExoticSpicesPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(ExoticSpicesPatches));
-            new POptions().RegisterOptions(this, typeof(ExoticSpicesOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
             new KAnimGroupManager().RegisterInteractAnims(ANIM_IDLE_ZOMBIE, ANIM_LOCO_ZOMBIE, ANIM_LOCO_WALK_ZOMBIE, ANIM_REACT_BUTT_SCRATCH);
             new ModdedSpicesSerializationManager().RegisterModdedSpices(PHOSPHO_RUFUS_SPICE, GASSY_MOO_SPICE, ZOMBIE_SPICE);
         }
@@ -189,7 +189,7 @@ namespace ExoticSpices
 
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                return TranspilerUtils.Transpile(instructions, original, IL, transpiler);
+                return instructions.Transpile(original, IL, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
@@ -224,7 +224,7 @@ namespace ExoticSpices
         {
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                return TranspilerUtils.Transpile(instructions, original, IL, transpiler);
+                return instructions.Transpile(original, IL, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
@@ -253,10 +253,10 @@ namespace ExoticSpices
         [HarmonyPatch(typeof(Immigration), "ConfigureCarePackages")]
         private static class Immigration_ConfigureCarePackages
         {
-            private static bool Prepare() => ExoticSpicesOptions.Instance.carepackage_seeds_amount > 0;
+            private static bool Prepare() => ModOptions.Instance.carepackage_seeds_amount > 0;
             private static void Postfix(List<CarePackageInfo> ___carePackages)
             {
-                var seed = new CarePackageInfo(EvilFlowerConfig.SEED_ID, ExoticSpicesOptions.Instance.carepackage_seeds_amount,
+                var seed = new CarePackageInfo(EvilFlowerConfig.SEED_ID, ModOptions.Instance.carepackage_seeds_amount,
                     () => DiscoveredResources.Instance.IsDiscovered(EvilFlowerConfig.SEED_ID));
                 ___carePackages.Add(seed);
             }

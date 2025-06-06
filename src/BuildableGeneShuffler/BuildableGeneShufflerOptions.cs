@@ -8,7 +8,7 @@ namespace BuildableGeneShuffler
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class BuildableGeneShufflerOptions : BaseOptions<BuildableGeneShufflerOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option(Format = "F0")]

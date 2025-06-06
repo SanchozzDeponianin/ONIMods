@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace MoreEmotions
 {
-    using static MoreEmotionsEffects;
+    using static ModEffects;
 
     public class RespectGraveReactable : EmoteReactable
     {
@@ -50,7 +50,7 @@ namespace MoreEmotions
 
         private static void AddEffect(GameObject reactor)
         {
-            if (MoreEmotionsOptions.Instance.respect_grave_add_effect
+            if (ModOptions.Instance.respect_grave_add_effect
                 && !reactor.IsNullOrDestroyed() && reactor.TryGetComponent(out Effects effects))
                 effects.Add(RespectGrave, true);
         }

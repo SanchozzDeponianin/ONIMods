@@ -17,7 +17,7 @@ namespace CrabsProfit
 
         public GameObject CreatePrefab()
         {
-            var mass = CrabsProfitOptions.Instance.AdultShellMass;
+            var mass = ModOptions.Instance.AdultShellMass;
             var go = EntityTemplates.CreateLooseEntity(
                 id: ID,
                 name: CRAB_SHELL.VARIANT_FRESH_WATER.NAME,
@@ -47,7 +47,7 @@ namespace CrabsProfit
         internal static void AddRecipe(string shell_id, float shell_mass)
         {
             var ingredients = new ComplexRecipe.RecipeElement[] { new ComplexRecipe.RecipeElement(shell_id, 1f) };
-            var results = new ComplexRecipe.RecipeElement[] { new ComplexRecipe.RecipeElement(CrabsProfitRandomOreConfig.ID, shell_mass) };
+            var results = new ComplexRecipe.RecipeElement[] { new ComplexRecipe.RecipeElement(RandomOreConfig.ID, shell_mass) };
             var id = ComplexRecipeManager.MakeRecipeID(RockCrusherConfig.ID, ingredients, results);
             new ComplexRecipe(id, ingredients, results)
             {

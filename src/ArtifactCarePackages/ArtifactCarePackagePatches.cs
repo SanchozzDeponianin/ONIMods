@@ -11,14 +11,14 @@ using PeterHan.PLib.PatchManager;
 
 namespace ArtifactCarePackages
 {
-    internal sealed class ArtifactCarePackagePatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(ArtifactCarePackagePatches));
-            new POptions().RegisterOptions(this, typeof(ArtifactCarePackageOptions));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -30,7 +30,7 @@ namespace ArtifactCarePackages
         [PLibMethod(RunAt.OnStartGame)]
         private static void OnStartGame()
         {
-            ArtifactCarePackageOptions.Reload();
+            ModOptions.Reload();
             new ArtifactImmigration();
         }
 
@@ -58,7 +58,7 @@ namespace ArtifactCarePackages
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)
@@ -141,7 +141,7 @@ namespace ArtifactCarePackages
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions)
             { 
@@ -185,7 +185,7 @@ namespace ArtifactCarePackages
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
 
             private static bool transpiler(List<CodeInstruction> instructions)

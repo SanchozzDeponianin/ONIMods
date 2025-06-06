@@ -8,7 +8,7 @@ namespace AttributeRestrictions
     public class AttributeRestriction : KMonoBehaviour
     {
         private static readonly EventSystem.IntraObjectHandler<AttributeRestriction> OnCopySettingsDelegate =
-            new EventSystem.IntraObjectHandler<AttributeRestriction>((component, data) => component.OnCopySettings(data));
+            new((component, data) => component.OnCopySettings(data));
 
         [SerializeField]
         public bool showInUI = true;
@@ -31,7 +31,7 @@ namespace AttributeRestrictions
 
         public Attribute requiredAttribute => (overrideAttribute.IsValid ? Db.Get().Attributes.TryGet(overrideAttribute) : null) ?? workable?.GetWorkAttribute();
 
-        public static Chore.Precondition IsSufficientAttributeLevel = new Chore.Precondition
+        public static Chore.Precondition IsSufficientAttributeLevel = new()
         {
             id = nameof(IsSufficientAttributeLevel),
             description = STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_SUFFICIENT_ATTRIBUTE_LEVEL,

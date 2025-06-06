@@ -12,13 +12,13 @@ using PeterHan.PLib.PatchManager;
 
 namespace WornSuitDischarge
 {
-    internal sealed class WornSuitDischargePatches : UserMod2
+    internal sealed class Patches : UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(WornSuitDischargePatches));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
         }
 
         public override void OnAllModsLoaded(Harmony harmony, IReadOnlyList<Mod> mods)
@@ -39,9 +39,9 @@ namespace WornSuitDischarge
                 LifeSupport.choreTypes.Add(EquipmentFetch);
             if (!EquipmentFetch.groups.Contains(LifeSupport))
             {
-                //EquipmentFetch.groups = EquipmentFetch.groups.AddItem(LifeSupport).ToArray();
+                //EquipmentFetch.groups = EquipmentFetch.groups.Append(LifeSupport);
                 traverse.Property<ChoreGroup[]>(nameof(ChoreType.groups)).Value =
-                    EquipmentFetch.groups.AddItem(LifeSupport).ToArray();
+                    EquipmentFetch.groups.Append(LifeSupport);
             }
             //EquipmentFetch.priority = FetchCritical.priority;
             traverse.Property<int>(nameof(ChoreType.priority)).Value = FetchCritical.priority;
@@ -112,7 +112,7 @@ namespace WornSuitDischarge
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions)
             {
@@ -182,7 +182,7 @@ namespace WornSuitDischarge
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
-                return TranspilerUtils.Transpile(instructions, original, transpiler);
+                return instructions.Transpile(original, transpiler);
             }
             private static bool transpiler(List<CodeInstruction> instructions)
             {

@@ -5,7 +5,7 @@ namespace GraveyardKeeper
     public class PlantSparkleFX : KMonoBehaviour
     {
         private const float duration = 15f;
-        private static Vector3 offset = new Vector3(0.5f, 0.2f, 0.1f);
+        private static Vector3 offset = new(0.5f, 0.2f, 0.1f);
         private GameObject fx;
 
         protected override void OnSpawn()

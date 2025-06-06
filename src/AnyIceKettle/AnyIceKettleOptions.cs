@@ -7,7 +7,7 @@ namespace AnyIceKettle
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class AnyIceKettleOptions : BaseOptions<AnyIceKettleOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonIgnore]
         [Option]

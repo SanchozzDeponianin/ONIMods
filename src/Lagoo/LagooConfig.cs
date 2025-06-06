@@ -7,7 +7,7 @@ using static STRINGS.UI;
 
 namespace Lagoo
 {
-    using static LagooPatches;
+    using static Patches;
     using static LagooTuning;
     using static STRINGS.CREATURES.SPECIES.SQUIRREL.VARIANT_LAGOO;
 

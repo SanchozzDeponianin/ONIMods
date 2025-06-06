@@ -5,7 +5,7 @@ using PeterHan.PLib.Detours;
 
 namespace ExoticSpices
 {
-    using static ExoticSpicesAssets;
+    using static ModAssets;
 
     public class DupeEffectZombie : GameStateMachine<DupeEffectZombie, DupeEffectZombie.Instance>
     {

@@ -5,12 +5,10 @@ namespace SandboxMutantPlant
 {
     using static STRINGS.UI.USERMENUACTIONS;
 
-    internal sealed class SandboxMutantPlantPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
-        private static readonly EventSystem.IntraObjectHandler<MutantPlant> OnRefreshUserMenuDelegate = new EventSystem.IntraObjectHandler<MutantPlant>(delegate (MutantPlant component, object data)
-        {
-            OnRefreshUserMenu(component);
-        });
+        private static readonly EventSystem.IntraObjectHandler<MutantPlant> OnRefreshUserMenuDelegate =
+            new((component, data) => OnRefreshUserMenu(component));
 
         public override void OnLoad(Harmony harmony)
         {

@@ -14,7 +14,7 @@ namespace Lagoo
         public const int GERMS_EMMITED_PER_KG_POOPED = 100000;
         public const string GERM_ID_EMMITED_ON_POOP = "PollenGerms";
 
-        public static List<FertilityMonitor.BreedingChance> EGG_CHANCES_LAGOO = new List<FertilityMonitor.BreedingChance>
+        public static List<FertilityMonitor.BreedingChance> EGG_CHANCES_LAGOO = new()
         {
             new FertilityMonitor.BreedingChance { egg = SquirrelConfig.EGG_ID,      weight = 0.25f },
             new FertilityMonitor.BreedingChance { egg = SquirrelHugConfig.EGG_ID,   weight = 0.05f },

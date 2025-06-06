@@ -2,7 +2,7 @@
 using TUNING;
 using UnityEngine;
 using SanchozzONIMods.Lib;
-using static MechanicsStation.MechanicsStationAssets;
+using static MechanicsStation.ModAssets;
 
 namespace MechanicsStation
 {

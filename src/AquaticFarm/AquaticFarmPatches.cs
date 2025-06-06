@@ -4,13 +4,13 @@ using PeterHan.PLib.PatchManager;
 
 namespace AquaticFarm
 {
-    internal sealed class AquaticFarmPatches : KMod.UserMod2
+    internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
-            new PPatchManager(harmony).RegisterPatchClass(typeof(AquaticFarmPatches));
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]

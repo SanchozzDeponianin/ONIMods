@@ -278,20 +278,6 @@ namespace SanchozzONIMods.Lib
         }
 
         // замена текста в загруженной локализации
-        [Obsolete("need to replace it to 'ReplaceText'", false)]
-        public static void ReplaceLocString(ref LocString locString, string search, string replacement)
-        {
-            LocString newlocString = new LocString(locString.text.Replace(search, replacement), locString.key.String);
-            locString = newlocString;
-        }
-        [Obsolete("need to replace it to 'ReplaceText'", false)]
-        public static void ReplaceLocString(ref LocString locString, string newtext)
-        {
-            LocString newlocString = new LocString(newtext, locString.key.String);
-            locString = newlocString;
-        }
-
-        // замена текста в загруженной локализации
         private static readonly FieldInfo LocStringText = typeof(LocString).GetField("_text", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         public static void ReplaceText(this LocString locString, string newtext)
         {

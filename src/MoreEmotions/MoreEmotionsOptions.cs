@@ -7,7 +7,7 @@ namespace MoreEmotions
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
-    internal sealed class MoreEmotionsOptions : BaseOptions<MoreEmotionsOptions>
+    internal sealed class ModOptions : BaseOptions<ModOptions>
     {
         [JsonProperty]
         [Option]
