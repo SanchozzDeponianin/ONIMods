@@ -8,7 +8,6 @@ using STRINGS;
 using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
-using PeterHan.PLib.Detours;
 
 namespace BetterPlantTending
 {
@@ -317,10 +316,6 @@ namespace BetterPlantTending
         }
 
         // добавляем больше сведений в тоолтипы
-
-        private static IDetouredField<SpaceTreeBranch.Instance, AmountInstance> Maturity
-            = PDetours.DetourField<SpaceTreeBranch.Instance, AmountInstance>("maturity");
-
         internal static void SpaceTree_ResolveTooltipCallback_Patch()
         {
             if (ModOptions.Instance.space_tree_adjust_productivity)
@@ -330,7 +325,7 @@ namespace BetterPlantTending
                 statusItem_brach.resolveTooltipCallback = (str, data) =>
                 {
                     var tooltip = originCB_brach(str, data);
-                    string text = GetTooltipForAttributeMultiplierModifiers(Maturity.Get((SpaceTreeBranch.Instance)data).deltaAttribute);
+                    string text = GetTooltipForAttributeMultiplierModifiers(((SpaceTreeBranch.Instance)data).maturity.deltaAttribute);
                     if (!string.IsNullOrEmpty(text))
                         tooltip = tooltip + "\n" + text;
                     return tooltip;
@@ -356,7 +351,7 @@ namespace BetterPlantTending
         }
 
         // чиним добычу сиропа вручную если дерево в ящике
-        [HarmonyPatch(typeof(SpaceTreeSyrupHarvestWorkable), "OnPrefabInit")]
+        [HarmonyPatch(typeof(SpaceTreeSyrupHarvestWorkable), nameof(SpaceTreeSyrupHarvestWorkable.OnPrefabInit))]
         private static class SpaceTreeSyrupHarvestWorkable_OnPrefabInit
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC2_ID);
@@ -401,7 +396,7 @@ namespace BetterPlantTending
             }
         }
 
-        [HarmonyPatch(typeof(PlantMutation), "ApplyFunctionalTo")]
+        [HarmonyPatch(typeof(PlantMutation), nameof(PlantMutation.ApplyFunctionalTo))]
         private static class PlantMutation_ApplyFunctionalTo
         {
             private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled()

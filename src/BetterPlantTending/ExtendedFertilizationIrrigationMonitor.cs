@@ -1,7 +1,4 @@
-﻿using Klei.AI;
-using PeterHan.PLib.Detours;
-
-namespace BetterPlantTending
+﻿namespace BetterPlantTending
 {
     using handler = EventSystem.IntraObjectHandler<ExtendedFertilizationIrrigationMonitor>;
     public class ExtendedFertilizationIrrigationMonitor : KMonoBehaviour
@@ -26,6 +23,9 @@ namespace BetterPlantTending
 
         [MySmiGet]
         private SpaceTreePlant.Instance siropTree;
+
+        [MySmiGet]
+        private VineMother.Instance vineMother;
 #pragma warning restore CS0649
 
         private bool shouldAbsorb = true;
@@ -108,7 +108,7 @@ namespace BetterPlantTending
             Unsubscribe((int)GameHashes.TreeBranchCountChanged, OnDelegate, true);
         }
 
-        protected override void OnCleanUp()
+        public override void OnCleanUp()
         {
             ForceUnsubscribe();
             if (updateHandle.IsValid)
@@ -133,9 +133,6 @@ namespace BetterPlantTending
                 updateHandle.ClearScheduler();
             updateHandle = GameScheduler.Instance.Schedule("QueueUpdateAbsorbing", 2 * UpdateManager.SecondsPerSimTick, UpdateAbsorbing);
         }
-
-        private static IDetouredField<SpaceTreeBranch.Instance, AmountInstance> Maturity
-            = PDetours.DetourField<SpaceTreeBranch.Instance, AmountInstance>("maturity");
 
         private void UpdateShouldAbsorb()
         {
@@ -169,12 +166,8 @@ namespace BetterPlantTending
                             else
                             {
                                 var stbi = branch.GetSMI<SpaceTreeBranch.Instance>();       // сироповые ветки
-                                if (!stbi.IsNullOrStopped() && !stbi.IsBranchFullyGrown)
-                                {
-                                    var maturity = Maturity.Get(stbi);
-                                    if (maturity.GetDelta() > 0)
-                                        growing_branches++;
-                                }
+                                if (!stbi.IsNullOrStopped() && !stbi.IsBranchFullyGrown && stbi.maturity.GetDelta() > 0)
+                                    growing_branches++;
                             }
                         });
                     shouldAbsorb = growing_branches > 0;
@@ -182,7 +175,36 @@ namespace BetterPlantTending
                 // в иных случаях поглощение включено если растение может расти и не выросло полностью
                 else
                     shouldAbsorb = !fullyGrown && growing.IsGrowing();
+                return;
             }
+            if (!vineMother.IsNullOrStopped())
+            {
+                // лоза не имеет Growing
+                // проверка всех веток лозы
+                // поглощение включено если есть растущие ветки
+                shouldAbsorb = false;
+                foreach (var branch in new[] { vineMother.LeftBranch, vineMother.RightBranch })
+                {
+                    if (branch != null)
+                    {
+                        var vineBranch = branch.GetSMI<VineBranch.Instance>();
+                        while (!vineBranch.IsNullOrStopped())
+                        {
+                            if (!vineBranch.IsGrown || !vineBranch.IsReadyForHarvest)
+                            {
+                                shouldAbsorb = true;
+                                break;
+                            }
+                            vineBranch = vineBranch.BranchSMI;
+                        }
+                        if (shouldAbsorb)
+                            break;
+                    }
+                }
+                return;
+            }
+            // иные случаи. ? оксихрен с холодыхом ?
+            shouldAbsorb = true;
         }
     }
 }

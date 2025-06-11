@@ -14,7 +14,7 @@ namespace BetterPlantTending
         // основные настройки
         [JsonProperty]
         [Option]
-        public bool allow_tinker_decorative { get; set; } = true; // todo: проверить restart
+        public bool allow_tinker_decorative { get; set; } = true;
 
         [JsonProperty]
         [Option]
@@ -28,11 +28,15 @@ namespace BetterPlantTending
 
         [JsonProperty]
         [Option]
-        public bool prevent_tending_grown_or_wilting { get; set; } = true; // todo: проверить restart
+        public bool prevent_tending_grown_or_wilting { get; set; } = true;
 
         [JsonProperty]
         [Option]
-        public bool prevent_fertilization_irrigation_not_growning { get; set; } = true; // todo: проверить restart
+        public bool prevent_fertilization_irrigation_not_growning { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool allow_tending_together { get; set; } = true;
 
         [JsonProperty]
         [Option]
@@ -128,6 +132,12 @@ namespace BetterPlantTending
             [Limit(0, 2 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
             [RequireDLC(DlcManager.EXPANSION1_ID)]
             public float modifier_worm { get; set; } = EXTRA_SEED_CHANCE_MODIFIER_WORM;
+
+            [JsonProperty]
+            [Option(Format = "F2")]
+            [Limit(0, 2 * CROPS.BASE_BONUS_SEED_PROBABILITY)]
+            [RequireDLC(DlcManager.DLC4_ID)]
+            public float modifier_butterfly { get; set; } = EXTRA_SEED_CHANCE_MODIFIER_BUTTERFLY;
 
             [JsonProperty]
             [Option]

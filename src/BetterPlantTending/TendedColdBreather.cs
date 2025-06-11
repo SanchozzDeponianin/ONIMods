@@ -26,7 +26,7 @@ namespace BetterPlantTending
 
         private AttributeInstance growingRate;
 
-        protected override void OnPrefabInit()
+        public override void OnPrefabInit()
         {
             base.OnPrefabInit();
             var attributes = this.GetAttributes();
@@ -34,7 +34,7 @@ namespace BetterPlantTending
             attributes.Add(fakeGrowingRate);
         }
 
-        protected override void OnSpawn()
+        public override void OnSpawn()
         {
             base.OnSpawn();
             ApplyModifier();

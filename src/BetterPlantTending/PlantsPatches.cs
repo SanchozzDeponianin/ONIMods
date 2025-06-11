@@ -54,7 +54,7 @@ namespace BetterPlantTending
             }
         }
 
-        [HarmonyPatch(typeof(ColdBreather), "OnReplanted")]
+        [HarmonyPatch(typeof(ColdBreather), nameof(ColdBreather.OnReplanted))]
         private static class ColdBreather_OnReplanted
         {
             private static void Postfix(ColdBreather __instance)
@@ -132,7 +132,7 @@ namespace BetterPlantTending
         }
 
         // возможность дафать семена
-        [HarmonyPatch(typeof(Dinofern), "OnSpawn")]
+        [HarmonyPatch(typeof(Dinofern), nameof(Dinofern.OnSpawn))]
         private static class Dinofern_OnSpawn
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC4_ID)
@@ -167,7 +167,7 @@ namespace BetterPlantTending
         }
 
         // возможность дафать семена
-        [HarmonyPatch(typeof(CritterTrapPlant), "OnSpawn")]
+        [HarmonyPatch(typeof(CritterTrapPlant), nameof(CritterTrapPlant.OnSpawn))]
         private static class CritterTrapPlant_OnSpawn
         {
             private static bool Prepare() => DlcManager.IsExpansion1Active()

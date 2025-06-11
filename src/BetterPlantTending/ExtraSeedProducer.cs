@@ -3,7 +3,6 @@ using Klei.AI;
 using KSerialization;
 using STRINGS;
 using UnityEngine;
-using PeterHan.PLib.Detours;
 
 namespace BetterPlantTending
 {
@@ -17,8 +16,6 @@ namespace BetterPlantTending
         [MyCmpReq]
         private SeedProducer seedProducer;
         [MyCmpReq]
-        private Tinkerable tinkerable;
-        [MyCmpReq]
         private WiltCondition wilting;
 #pragma warning restore CS0649
 
@@ -26,44 +23,57 @@ namespace BetterPlantTending
         private bool hasExtraSeedAvailable = false;
 
         [SerializeField]
-        internal bool isNotDecorative = false;
-
-        private static bool AllowFarmTinkerDecorative => ModOptions.Instance.allow_tinker_decorative;
-        private bool IsWilting => ModOptions.Instance.prevent_tending_grown_or_wilting && wilting.IsWilting();
-        public bool ExtraSeedAvailable => hasExtraSeedAvailable;
-        public bool ShouldDivergentTending => (isNotDecorative || !hasExtraSeedAvailable) && !IsWilting;
-        public bool ShouldFarmTinkerTending => isNotDecorative || !hasExtraSeedAvailable;
+        public bool isDecorative = true;
+        public bool ExtraSeedAvailable
+        {
+            get => hasExtraSeedAvailable;
+#if DEBUG
+            set
+            {
+                if (value)
+                {
+                    hasExtraSeedAvailable = true;
+                    if (isDecorative)
+                        this.AddTag(GameTags.FullyGrown);
+                }
+                else
+                {
+                    hasExtraSeedAvailable = false;
+                    this.RemoveTag(GameTags.FullyGrown);
+                }
+            }
+#endif
+        }
+        public bool ShouldFarmTinkerTending => !isDecorative || !hasExtraSeedAvailable;
 
         private static readonly handler OnUprootedDelegate = new((component, data) => component.ExtractExtraSeed());
         private static readonly handler OnCropTendedDelegate = new((component, data) => component.CreateExtraSeed());
 
-        private static readonly System.Func<SeedProducer, string, int, bool, GameObject> ProduceSeed =
-            typeof(SeedProducer).Detour<System.Func<SeedProducer, string, int, bool, GameObject>>("ProduceSeed");
-
-        protected override void OnPrefabInit()
+        public override void OnPrefabInit()
         {
             base.OnPrefabInit();
             var attributes = this.GetAttributes();
             attributes.Add(ExtraSeedChance);
-            if (isNotDecorative)
-                attributes.Add(ExtraSeedChanceNotDecorativeBaseValue);
-            else
+            if (isDecorative)
                 attributes.Add(ExtraSeedChanceDecorativeBaseValue);
+            else
+                attributes.Add(ExtraSeedChanceNotDecorativeBaseValue);
         }
 
-        protected override void OnSpawn()
+        public override void OnSpawn()
         {
             base.OnSpawn();
-            if (!isNotDecorative)
-                tinkerable.tinkerMaterialTag = AllowFarmTinkerDecorative ? FarmStationConfig.TINKER_TOOLS : GameTags.Void;
             Subscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Subscribe((int)GameHashes.Died, OnUprootedDelegate);
             Subscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
             if (!ModOptions.Instance.extra_seeds.pip_required_to_extract)
                 Subscribe((int)GameHashes.EffectRemoved, OnUprootedDelegate);
+            this.AddTag(GameTags.GrowingPlant);
+            if (hasExtraSeedAvailable && isDecorative)
+                this.AddTag(GameTags.FullyGrown);
         }
 
-        protected override void OnCleanUp()
+        public override void OnCleanUp()
         {
             Unsubscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Unsubscribe((int)GameHashes.Died, OnUprootedDelegate);
@@ -86,7 +96,11 @@ namespace BetterPlantTending
                         Db.Get().AttributeConverters.SeedHarvestChance).Evaluate();
                 }
                 if (Random.Range(0f, 1f) <= seedChance)
+                {
                     hasExtraSeedAvailable = true;
+                    if (isDecorative)
+                        this.AddTag(GameTags.FullyGrown);
+                }
             }
         }
 
@@ -95,7 +109,8 @@ namespace BetterPlantTending
             if (hasExtraSeedAvailable)
             {
                 hasExtraSeedAvailable = false;
-                ProduceSeed(seedProducer, seedProducer.seedInfo.seedId, 1, true);
+                seedProducer.ProduceSeed(seedProducer.seedInfo.seedId, 1, true);
+                this.RemoveTag(GameTags.FullyGrown);
             }
         }
 
@@ -103,16 +118,16 @@ namespace BetterPlantTending
         public List<Descriptor> GetDescriptors(GameObject go)
         {
             float seedChance = this?.GetAttributes()?.Get(ExtraSeedChance)?.GetTotalValue() ??
-                (isNotDecorative ? ExtraSeedChanceNotDecorativeBaseValue.Value : ExtraSeedChanceDecorativeBaseValue.Value);
+                (!isDecorative ? ExtraSeedChanceNotDecorativeBaseValue.Value : ExtraSeedChanceDecorativeBaseValue.Value);
             string percent = GameUtil.GetFormattedPercent(seedChance * 100, GameUtil.TimeSlice.None);
             var affects = new List<string>() { DUPLICANTS.MODIFIERS.FARMTINKER.NAME };
             if (Game.IsDlcActiveForCurrentSave(DlcManager.EXPANSION1_ID))
             {
                 affects.Add(CREATURES.SPECIES.DIVERGENT.VARIANT_BEETLE.NAME);
                 affects.Add(CREATURES.SPECIES.DIVERGENT.VARIANT_WORM.NAME);
-            }/*
+            }
             if (Game.IsDlcActiveForCurrentSave(DlcManager.DLC4_ID))
-                affects.Add(CREATURES.SPECIES.BUTTERFLY.NAME);*/
+                affects.Add(CREATURES.SPECIES.BUTTERFLY.NAME);
             for (int i = 0; i < affects.Count; i++)
                 affects[i] = UI.FormatAsKeyWord(UI.StripLinkFormatting(affects[i]));
             string pip = ModOptions.Instance.extra_seeds.pip_required_to_extract ? TOOLTIPS.SQUIRREL_NEEDED : string.Empty;

@@ -8,7 +8,7 @@
 
         private SchedulerHandle updateHandle;
 
-        protected override void OnPrefabInit()
+        public override void OnPrefabInit()
         {
             base.OnPrefabInit();
             Subscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
@@ -18,7 +18,7 @@
             Subscribe((int)GameHashes.WiltRecover, OnGrowDelegate);
         }
 
-        protected override void OnCleanUp()
+        public override void OnCleanUp()
         {
             Unsubscribe((int)GameHashes.Grow, OnGrowDelegate);
             Unsubscribe((int)GameHashes.Wilt, OnGrowDelegate);

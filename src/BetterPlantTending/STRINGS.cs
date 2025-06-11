@@ -27,8 +27,10 @@ namespace BetterPlantTending
         private const string FARMTINKER = "{FARMTINKER}";
         private const string DIVERGENTCROPTENDED = "{DIVERGENTCROPTENDED}";
         private const string WORMCROPTENDED = "{WORMCROPTENDED}";
+        private const string BUTTERFLYCROPTENDED = "{BUTTERFLYCROPTENDED}";
         private const string MATURITYMAX = "{MATURITYMAX}";
         private const string YIELDAMOUNT = "{YIELDAMOUNT}";
+        private const string TINKER = "{TINKER}";
 
         public class DUPLICANTS
         {
@@ -61,13 +63,17 @@ namespace BetterPlantTending
         {
             public class ALLOW_TINKER_DECORATIVE
             {
-                public static LocString NAME = "Enable tinkering decorative plants";
-                public static LocString TOOLTIP = "To obtaining additional seeds";
+                public static LocString NAME = "Enable tinkering decorative plants by default";
+                public static LocString TOOLTIP = $"To obtaining additional seeds\nThis affects newly spawned plants.\nFor existing plants, use the {TINKER} button";
             }
             public class ALLOW_TINKER_SAPTREE
             {
                 public static LocString NAME = $"Enable tinkering {SAPTREE}";
                 public static LocString TOOLTIP = "To accelerate the absorption of food and increase the conversion rate of calories into Resine";
+            }
+            public class ALLOW_TENDING_TOGETHER
+            {
+                public static LocString NAME = $"Insectoids of different species being able to accelerate plants together at the same time";
             }
             public class PREVENT_TENDING_GROWN_OR_WILTING
             {
@@ -165,6 +171,10 @@ namespace BetterPlantTending
             {
                 public static LocString NAME = $"Additional chance from the {WORMCROPTENDED} effect";
             }
+            public class MODIFIER_BUTTERFLY
+            {
+                public static LocString NAME = $"Additional chance from the {BUTTERFLYCROPTENDED} effect";
+            }
             public class PIP_REQUIRED_TO_EXTRACT
             {
                 public static LocString NAME = $"A {SQUIRREL} is required to extract the seeds";
@@ -192,8 +202,10 @@ namespace BetterPlantTending
                 { FARMTINKER, global::STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.NAME },
                 { DIVERGENTCROPTENDED, CREATURES.MODIFIERS.DIVERGENTPLANTTENDED.NAME},
                 { WORMCROPTENDED, CREATURES.MODIFIERS.DIVERGENTPLANTTENDEDWORM.NAME},
+                { BUTTERFLYCROPTENDED, CREATURES.MODIFIERS.BUTTERFLYPOLLINATED.NAME},
                 { MATURITYMAX, CREATURES.ATTRIBUTES.MATURITYMAX.NAME },
                 { YIELDAMOUNT, global::STRINGS.DUPLICANTS.ATTRIBUTES.YIELDAMOUNT.NAME },
+                { TINKER, USERMENUACTIONS.TINKER.ALLOW },
             };
             foreach (var k in dictionary.Keys.ToList())
                 dictionary[k] = FormatAsKeyWord(StripLinkFormatting(dictionary[k]));

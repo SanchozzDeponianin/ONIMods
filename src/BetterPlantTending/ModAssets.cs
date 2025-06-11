@@ -8,12 +8,14 @@ namespace BetterPlantTending
         internal const string FARM_TINKER_EFFECT_ID = "FarmTinker";
         internal const string DIVERGENT_CROP_TENDED_EFFECT_ID = "DivergentCropTended";
         internal const string DIVERGENT_CROP_TENDED_WORM_EFFECT_ID = "DivergentCropTendedWorm";
+        internal const string BUTTERFLY_CROP_TENDED_EFFECT_ID = "ButterflyPollinated";
         internal const float FARM_TINKER_BONUS_DECOR = 0.3f;
 
         internal const float EXTRA_SEED_CHANCE_BASE_VALUE_DECORATIVE = 1.5f * TUNING.CROPS.BASE_BONUS_SEED_PROBABILITY;
         internal const float EXTRA_SEED_CHANCE_BASE_VALUE_NOT_DECORATIVE = 0;
         internal const float EXTRA_SEED_CHANCE_MODIFIER_DIVERGENT = 0.5f * TUNING.CROPS.BASE_BONUS_SEED_PROBABILITY;
         internal const float EXTRA_SEED_CHANCE_MODIFIER_WORM = 1.5f * TUNING.CROPS.BASE_BONUS_SEED_PROBABILITY;
+        internal const float EXTRA_SEED_CHANCE_MODIFIER_BUTTERFLY = 1.5f * TUNING.CROPS.BASE_BONUS_SEED_PROBABILITY;
 
         internal static AttributeModifier fakeGrowingRate;
         private static AttributeModifier FarmTinkerBonusDecor;
@@ -22,7 +24,7 @@ namespace BetterPlantTending
         internal static AttributeModifier ExtraSeedChanceNotDecorativeBaseValue;
         private static AttributeModifier ExtraSeedChanceDivergentModifier;
         private static AttributeModifier ExtraSeedChanceWormModifier;
-        // todo: mimika
+        private static AttributeModifier ExtraSeedChanceButterflyModifier;
 
         internal static void Init()
         {
@@ -64,6 +66,7 @@ namespace BetterPlantTending
             // модификаторы для жучинкусов
             var effectDivergentCropTended = db.effects.Get(DIVERGENT_CROP_TENDED_EFFECT_ID);
             var effectWormCropTended = db.effects.Get(DIVERGENT_CROP_TENDED_WORM_EFFECT_ID);
+            var effectButterflyCropTended = db.effects.Get(BUTTERFLY_CROP_TENDED_EFFECT_ID);
 
             ExtraSeedChanceDivergentModifier = new AttributeModifier(
                 attribute_id: ExtraSeedChance.Id,
@@ -74,6 +77,11 @@ namespace BetterPlantTending
                 attribute_id: ExtraSeedChance.Id,
                 value: options.extra_seeds.modifier_worm);
             effectWormCropTended.Add(ExtraSeedChanceWormModifier);
+
+            ExtraSeedChanceButterflyModifier = new AttributeModifier(
+                attribute_id: ExtraSeedChance.Id,
+                value: options.extra_seeds.modifier_butterfly);
+            effectButterflyCropTended.Add(ExtraSeedChanceButterflyModifier);
         }
     }
 }
