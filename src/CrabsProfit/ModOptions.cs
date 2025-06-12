@@ -111,7 +111,7 @@ namespace CrabsProfit
             [JsonProperty]
             [Option]
             [Limit(min_normal, max)]
-            public int Rust { get; set; } = 7;
+            public int Rust { get; set; } = 5;
 
             [JsonProperty]
             [Option]

@@ -1,10 +1,12 @@
-﻿using UnityEngine;
-
-namespace Smelter
+﻿namespace Smelter
 {
-    // старая анимация смещена. придется вернуть обработку смещения
+    // старая анимация смещена.
     public class SmelterWorkable : ComplexFabricatorWorkable
     {
-        public override Vector3 GetWorkOffset() => Vector3.left;
+        protected override void OnSpawn()
+        {
+            base.OnSpawn();
+            SetOffsets(new[] { CellOffset.left });
+        }
     }
 }

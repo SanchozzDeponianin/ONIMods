@@ -351,7 +351,6 @@ namespace BetterPlantTending
             private static void Postfix(GameObject __result)
             {
                 __result.AddOrGet<ExtendedFertilizationIrrigationMonitor>();
-                Debug.LogFormat("ExtendPlantToFertilizableIrrigated {0}", __result.name);
             }
         }
 
