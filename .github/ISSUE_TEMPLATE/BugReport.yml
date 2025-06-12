@@ -6,12 +6,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report.
-        But before sending a bug report, first make sure that your game really uses the latest version of the mod.
+        Thanks for taking the time to fill out this bug report.  
+        But before sending a bug report, first make sure that your game really uses the latest version of the mod.  
+        Use the [Mod Updater](https://steamcommunity.com/sharedfiles/filedetails/?id=2018291283) to force the game to update mods.
   - type: checkboxes
     id: triedupdate
     attributes:
-      label: "Steam users: Before reporting an issue, have you tried to force update the mod using [Mod Updater](https://steamcommunity.com/sharedfiles/filedetails/?id=2018291283) ?" 
+      label: "Steam users: Before reporting an issue, have you tried to force update the mod using Mod Updater ?"
       options:
         - label: Mod is up to date
           required: true
@@ -19,13 +20,13 @@ body:
     id: modname
     attributes:
       label: Which Mod?
-      description: What mod has the issue?
+      description: What mod has the issue ?
     validations:
       required: true
   - type: dropdown
     id: mod
     attributes:
-      label: How was the Mod installed?
+      label: How was the Mod installed ?
       options:
         - Steam Workshop
         - Local installed
@@ -37,8 +38,6 @@ body:
       label: Description of the bug/crash
       description: |
         Tell me what bug you encountered and what happens instead of the expected behavior.
-        <!--Tell me if you have the Spaced Out! DLC installed, and if you are using any of the public preview branches.
-        Are you using a local mod copy or Steam subscription ? -->
     validations:
       required: true
   - type: textarea
@@ -54,11 +53,11 @@ body:
     attributes:
       label: Player.log
       description: |
-        Please attach the full output "Player.log" file to allow us to understand your issue.
-        The Message shown during a crash is NOT a log and not very helpful.
-        The "Player.log" file must be fresh immediately after a crash, not after the game has overwritten it 100500 times.
-        If there was no crash, please attach it anyway so that I can see which version of the game and mod is actually loaded.
-        This file is located at:
+        Please attach the full output "Player.log" file to allow us to understand your issue.  
+        The Message shown during a crash is NOT a log and not very helpful.  
+        The "Player.log" file must be fresh immediately after a crash, not after the game has overwritten it 100500 times.  
+        If there was no crash, please attach it anyway so that I can see which version of the game and mod is actually loaded.  
+        This file is located at:  
 
         Windows: C:\Users\%username%\AppData\LocalLow\Klei\Oxygen Not Included\Player.log
 
@@ -66,8 +65,10 @@ body:
 
         Linux:   ~/.config/unity3d/Klei/Oxygen Not Included/Player.log
       placeholder: |
-        Click in here to enable drag and drop and to either use that or the built in file selector by clicking the bottom bar afterwards. Then add your log file here.
-        Please do not copypaste the contents of the log file into here as raw text. Just add it as an attachment.
+        Click in here to enable drag and drop and to either use that or the built in file selector by clicking the bottom bar afterwards.  
+        Then add your log file here.  
+        Please do not copypaste the contents of the log file into here as raw text.  
+        Just add it as an attachment.
     validations:
       required: true
   - type: checkboxes
