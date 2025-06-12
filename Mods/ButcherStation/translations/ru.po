@@ -58,6 +58,16 @@ msgctxt "ButcherStation.STRINGS.DUPLICANTS.ATTRIBUTES.RANCHING.EFFECTEXTRAMEATMO
 msgid "{0} Extra <style=\"KKeyword\">Meat</style> when working at the <style=\"KKeyword\">Butcher</style> and <style=\"KKeyword\">Fishing Stations</style>"
 msgstr "{0} дополнительное <style=\"KKeyword\">Мясо</style> при работе на <style=\"KKeyword\">Станциях Живодёра</style> и <style=\"KKeyword\">Рыбалки</style>"
 
+#. ButcherStation.STRINGS.MOD_DESCRIPTION
+msgctxt "ButcherStation.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a new Stations allows the Ranchers to control the population and butchering too old, surplus, or unwanted Critters."
+msgstr "Добавляет новые станции, позволяющие Ранчерам контролировать популяцию и забивать слишком старых, излишних или нежелательных животных."
+
+#. ButcherStation.STRINGS.MOD_TITLE
+msgctxt "ButcherStation.STRINGS.MOD_TITLE"
+msgid "Butcher & Fishing Stations"
+msgstr "Живодёрня и Рыбалка"
+
 #. ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.NAME
 msgctxt "ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.NAME"
 msgid "+X% <style=\"KKeyword\">Extra Meat</style> from butchered Critters per each <style=\"KKeyword\">Husbandry</style> attribute level"

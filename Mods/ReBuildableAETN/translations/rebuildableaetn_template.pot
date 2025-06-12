@@ -13,14 +13,19 @@ msgctxt "ReBuildableAETN.STRINGS.ITEMS.MASSIVE_HEATSINK_CORE.NAME"
 msgid "Neutronium Core"
 msgstr ""
 
-#. ReBuildableAETN.STRINGS.MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.NAME
-msgctxt "ReBuildableAETN.STRINGS.MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.NAME"
-msgid ""
-msgstr ""
-
 #. ReBuildableAETN.STRINGS.MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.TOOLTIP
 msgctxt "ReBuildableAETN.STRINGS.MISC.STATUSITEMS.MASSIVEHEATSINK_STUDIED.TOOLTIP"
 msgid "Now this Natural Feature can be deconstructed to obtain {NEUTRONIUM_CORE}."
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.MOD_DESCRIPTION
+msgctxt "ReBuildableAETN.STRINGS.MOD_DESCRIPTION"
+msgid "Allows you to disassemble and build AETN in another place."
+msgstr ""
+
+#. ReBuildableAETN.STRINGS.MOD_TITLE
+msgctxt "ReBuildableAETN.STRINGS.MOD_TITLE"
+msgid "Rebuildable AETN"
 msgstr ""
 
 #. ReBuildableAETN.STRINGS.OPTIONS.ADDLOGICPORT.NAME

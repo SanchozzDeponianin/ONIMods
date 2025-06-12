@@ -38,6 +38,16 @@ msgctxt "Smelter.STRINGS.BUILDINGS.STATUSITEMS.SMELTERNEEDSEMPTYING.TOOLTIP"
 msgid "This building needs to be emptied of <link=\"HEAT\">too hot</link> <link=\"ELEMENTSLIQUID\">Coolant</link> to resume function"
 msgstr "Эта постройка требует опустошения от <link=\"HEAT\">слишком горячей</link> <link=\"ELEMENTSLIQUID\">жидкости</link>, чтобы продолжить работу"
 
+#. Smelter.STRINGS.MOD_DESCRIPTION
+msgctxt "Smelter.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a new Smelter building designed to smelt metals in the early game, and a few new recipes."
+msgstr "Новое здание Плавильня, предназначенное для выплавки металлов в ранней игре, и несколько новых рецептов."
+
+#. Smelter.STRINGS.MOD_TITLE
+msgctxt "Smelter.STRINGS.MOD_TITLE"
+msgid "Smelter"
+msgstr "Плавильня"
+
 #. Smelter.STRINGS.OPTIONS.FEATURES.CATEGORY
 msgctxt "Smelter.STRINGS.OPTIONS.FEATURES.CATEGORY"
 msgid "Enable some features for vanilla buildings"
