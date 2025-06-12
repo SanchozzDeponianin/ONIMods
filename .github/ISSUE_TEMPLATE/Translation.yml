@@ -13,6 +13,7 @@ body:
       label: What mod is that translation for?
       multiple: false
       options:
+        - Any Ice Liquefier
         - Aquatic Farm
         - Artifacts in Care Packages
         - Athletic Manual Generator
@@ -27,11 +28,15 @@ body:
         - Enclosed Telescope Tune-Up
         - Endless Telescope
         - Festive Halloween Spices
+        - Gassy Moo Eat Flowers
         - Graveyard Keeper
         - Hydrocactus
         - Insulated Radbolt Joint Plate
+        - Lagoo Revived
         - Mechanics Station
+        - More Emotions
         - No Manual Delivery
+        - Potato Power Banks
         - Rebuildable AETN
         - Relic Hunter
         - "Rover's Recharger"
@@ -39,6 +44,7 @@ body:
         - Smelter
         - Squirrel Wheel
         - Suit Recharger
+        - Transit Tubes Expanded
         - Not listed (use textfield below)
     validations:
       required: true
@@ -53,6 +59,6 @@ body:
       label: translation file
       description: |
         Add your translation file here (***.po file), you probably need to zip it.  
-      placeholder: Click in here to enable drag and drop and to either use that or the built in file selector by clicking the bottom bar afterwards. Then add your log file here
+      placeholder: Click in here to enable drag and drop and to either use that or the built in file selector by clicking the bottom bar afterwards. Then add your *.po file here
     validations:
       required: true
