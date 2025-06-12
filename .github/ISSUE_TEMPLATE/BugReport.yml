@@ -8,22 +8,44 @@ body:
       value: |
         Thanks for taking the time to fill out this bug report.
         But before sending a bug report, first make sure that your game really uses the latest version of the mod.
-        Use the [Mod Updater](https://steamcommunity.com/sharedfiles/filedetails/?id=2018291283) to force the game to update mods.
+  - type: checkboxes
+    id: triedupdate
+    attributes:
+      label: "Steam users: Before reporting an issue, have you tried to force update the mod using [Mod Updater](https://steamcommunity.com/sharedfiles/filedetails/?id=2018291283) ?" 
+      options:
+        - label: Mod is up to date
+          required: true
+  - type: input
+    id: modname
+    attributes:
+      label: Which Mod?
+      description: What mod has the issue?
+    validations:
+      required: true
+  - type: dropdown
+    id: mod
+    attributes:
+      label: How was the Mod installed?
+      options:
+        - Steam Workshop
+        - Local installed
+    validations:
+      required: true
   - type: textarea
     id: bug-description
     attributes:
       label: Description of the bug/crash
       description: |
         Tell me what bug you encountered and what happens instead of the expected behavior.
-        Tell me if you have the Spaced Out! DLC installed, and if you are using any of the public preview branches.
-        Are you using a local mod copy or Steam subscription ?
+        <!--Tell me if you have the Spaced Out! DLC installed, and if you are using any of the public preview branches.
+        Are you using a local mod copy or Steam subscription ? -->
     validations:
       required: true
   - type: textarea
     id: steps-to-reproduce
     attributes:
       label: Steps To Reproduce
-      description: Provide an unambiguous set of steps to reproduce this bug.
+      description: Steps to reproduce the bug.
       placeholder: Please write the steps in a list form
     validations:
       required: true
@@ -32,20 +54,51 @@ body:
     attributes:
       label: Player.log
       description: |
-        Add the file "Player.log" that contains the crash/bug.
-        The Message shown during a crash is NOT a log and not very helpful. 
-        Add the log file by either dragging it into the text field below or attach it 
-        via the file selector that opens when you click the prompt at the bottom of the text field.
+        Please attach the full output "Player.log" file to allow us to understand your issue.
+        The Message shown during a crash is NOT a log and not very helpful.
+        The "Player.log" file must be fresh immediately after a crash, not after the game has overwritten it 100500 times.
+        If there was no crash, please attach it anyway so that I can see which version of the game and mod is actually loaded.
+        This file is located at:
 
-        You find your log file under the following path:
-        on Windows:
-          C:\Users\%username%\AppData\LocalLow\Klei\Oxygen Not Included\Player.log
-        on Mac:
-          ~/Library/Logs/Klei/Oxygen Not Included/Player.log
-        on Linux:
-          ~/.config/unity3d/Klei/Oxygen Not Included/Player.log
+        Windows: C:\Users\%username%\AppData\LocalLow\Klei\Oxygen Not Included\Player.log
+
+        Mac:     ~/Library/Logs/Klei/Oxygen Not Included/Player.log
+
+        Linux:   ~/.config/unity3d/Klei/Oxygen Not Included/Player.log
       placeholder: |
         Click in here to enable drag and drop and to either use that or the built in file selector by clicking the bottom bar afterwards. Then add your log file here.
         Please do not copypaste the contents of the log file into here as raw text. Just add it as an attachment.
     validations:
       required: true
+  - type: checkboxes
+    id: dlcs
+    attributes:
+      label: Active DLCs
+      description: Which DLCs are active ?
+      options:
+        - label: Spaced Out
+        - label: Frosty Planet Pack
+        - label: Bionic Booster Pack
+        - label: Prehistoric Planet Pack
+  - type: dropdown
+    id: store
+    attributes:
+      label: Game Platform
+      description: On which store was the game purchased?
+      options:
+        - Steam
+        - Epic
+        - WeGame
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: On what operating systems/platforms does the problem occur?
+      multiple: true
+      options:
+        - Windows
+        - Mac
+        - Linux
+      default: 0
