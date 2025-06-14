@@ -194,6 +194,24 @@ namespace Lagoo
             }
         }
 
+        // на корм динозаверу
+        [HarmonyPatch(typeof(BaseRaptorConfig), nameof(BaseRaptorConfig.StandardDiets))]
+        private static class BaseRaptorConfig_StandardDiets
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC4_ID);
+            private static void Postfix(List<Diet.Info> __result)
+            {
+                foreach (var diet in __result)
+                {
+                    if (diet.foodType == Diet.Info.FoodType.EatButcheredPrey && diet.consumedTags.Contains(SquirrelConfig.ID))
+                    {
+                        diet.consumedTags.Add(ID);
+                        diet.consumedTags.Add(BABY_ID);
+                    }
+                }
+            }
+        }
+
         // добавляем в посылку
         [HarmonyPatch(typeof(Immigration), nameof(Immigration.ConfigureCarePackages))]
         private static class Immigration_ConfigureCarePackages
@@ -214,18 +232,18 @@ namespace Lagoo
             private const string low = "low_SquirrelLagoo";
             private static readonly Dictionary<string, string> AffectedBiomes = new()
             {
-                {"biomes/Forest/Snowy", med},
-                {"biomes/Frozen/Dry", med},
-                {"biomes/Frozen/Solid", med},
-                {"biomes/Frozen/Wet", med},
-                {"expansion1::biomes/Frozen/SaltySlush", med},
-                {"dlc2::biomes/CarrotQuarry/Basic", low},
-                {"dlc2::biomes/CarrotQuarry/Slush", low},
-                {"dlc2::biomes/IceCaves/Basic", low},
-                {"dlc2::biomes/IceCaves/Metal", low},
-                {"dlc2::biomes/IceCaves/Oxy", low},
-                {"dlc2::biomes/IceCaves/Snowy", low},
-                {"dlc2::biomes/SugarWoods/Basic", low},
+                { "biomes/Forest/Snowy", med },
+                { "biomes/Frozen/Dry", med },
+                { "biomes/Frozen/Solid", med },
+                { "biomes/Frozen/Wet", med },
+                { "expansion1::biomes/Frozen/SaltySlush", med },
+                { "dlc2::biomes/CarrotQuarry/Basic", low },
+                { "dlc2::biomes/CarrotQuarry/Slush", low },
+                { "dlc2::biomes/IceCaves/Basic", low },
+                { "dlc2::biomes/IceCaves/Metal", low },
+                { "dlc2::biomes/IceCaves/Oxy", low },
+                { "dlc2::biomes/IceCaves/Snowy", low },
+                { "dlc2::biomes/SugarWoods/Basic", low },
             };
 
             private static void Postfix(bool __result)

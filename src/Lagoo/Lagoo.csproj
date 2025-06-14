@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Lagoo</Title>
     <Description>Lagoo is a deeply mutated Pip, adapted to survive in a harsh cold climate.</Description>
-    <ModVersion>1.0.1</ModVersion>
+    <ModVersion>1.1.0</ModVersion>
     <UsesPLib>true</UsesPLib>
     <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>

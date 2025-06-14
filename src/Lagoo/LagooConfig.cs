@@ -55,11 +55,6 @@ namespace Lagoo
             // обнимашки с дуплями с уменьшенным таймером
             if (!is_baby)
                 lagoo.AddOrGetDef<HugMonitor.Def>().hugFrenzyCooldown = 0.5f * HugMonitor.HUGTUNING.HUG_FRENZY_DURATION;
-            // отключаем обнимашки с яйцами
-            // todo: включить обратно когда будут нарисованы соответсвующие ушы
-            var def = lagoo.GetComponent<ChoreConsumer>().choreTable.GetEntry<HugEggStates.Def>().stateMachineDef;
-            if (def is HugEggStates.Def egg_def)
-                egg_def.behaviourTag = Tag.Invalid;
             // выживаем в холоде
             var temperature_monitor = lagoo.AddOrGetDef<CritterTemperatureMonitor.Def>();
             temperature_monitor.temperatureColdDeadly = -70f + Constants.CELSIUS2KELVIN;
