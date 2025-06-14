@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>MSBuildTasksHelper</Title>
     <Description>.</Description>
-    <ModVersion>1.4.0</ModVersion>
+    <ModVersion>1.5.0</ModVersion>
     <DistributeMod>false</DistributeMod>
   </PropertyGroup>
   <ItemGroup>

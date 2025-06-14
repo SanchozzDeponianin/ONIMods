@@ -28,55 +28,66 @@ namespace SanchozzONIMods
             try
             {
                 var deserializer = new DeserializerBuilder().IgnoreUnmatchedProperties().Build();
-
-                List<GameVersionInfo> KnownVersions;
+                KnownGameVersions data;
                 // загружаем исвестные версии
                 if (File.Exists(KnownGameVersionsFile))
-                    KnownVersions = deserializer.Deserialize<KnownGameVersions>(File.ReadAllText(KnownGameVersionsFile)).KnownVersions.ToList();
+                    data = deserializer.Deserialize<KnownGameVersions>(File.ReadAllText(KnownGameVersionsFile));
                 else
-                    KnownVersions = new List<GameVersionInfo>();
-                KnownVersions.Sort();
+                    data = new();
+                data.PreserveVersion ??= GetKleiAssemblyInfo.INVALID;
+                data.KnownVersions.Sort();
 
                 var candidates = new List<string>();
-                if (KnownVersions.Count > 3)
+                if (data.KnownVersions.Count > 3)
                 {
-                    // для простоты будем считать что три последние версии это "бета", "основная" и "предыдущая"
-                    int prew = KnownVersions[KnownVersions.Count - 3].MinimumBuildNumber;
-                    int live = KnownVersions[KnownVersions.Count - 2].MinimumBuildNumber;
-
-                    var ArchivedVersions = new Dictionary<int, string>();
-
-                    if (File.Exists(RootModInfoFile))
+                    // будем считать что
+                    // три последние версии это "бета", "основная" и "предыдущая"
+                    // либо две последние версии это "основная" и "предыдущая"
+                    // "предыдущая" должна быть указана в 'PreserveVersion'
+                    int i = data.KnownVersions.FindIndex(info => info.GameVersion == data.PreserveVersion);
+                    if (i == -1 || i > data.KnownVersions.Count - 2)
                     {
-                        int build = deserializer.Deserialize<ModInfo>(File.ReadAllText(RootModInfoFile)).minimumSupportedBuild;
-                        ArchivedVersions[build] = RootModInfoFile;
+                        Log.LogError("'PreserveVersion' not specified or invalid, abort cleaning!");
                     }
-
-                    if (ArchivedModInfoFiles != null)
+                    else
                     {
-                        foreach (var file in ArchivedModInfoFiles)
+                        int prew = data.KnownVersions[i].MinimumBuildNumber;
+                        int live = data.KnownVersions[i + 1].MinimumBuildNumber;
+
+                        var ArchivedVersions = new Dictionary<int, string>();
+
+                        if (File.Exists(RootModInfoFile))
                         {
-                            if (File.Exists(file))
+                            int build = deserializer.Deserialize<ModInfo>(File.ReadAllText(RootModInfoFile)).minimumSupportedBuild;
+                            ArchivedVersions[build] = RootModInfoFile;
+                        }
+
+                        if (ArchivedModInfoFiles != null)
+                        {
+                            foreach (var file in ArchivedModInfoFiles)
                             {
-                                int build = deserializer.Deserialize<ModInfo>(File.ReadAllText(file)).minimumSupportedBuild;
-                                ArchivedVersions[build] = file;
+                                if (File.Exists(file))
+                                {
+                                    int build = deserializer.Deserialize<ModInfo>(File.ReadAllText(file)).minimumSupportedBuild;
+                                    ArchivedVersions[build] = file;
+                                }
                             }
                         }
-                    }
 
-                    // сохраняем версии от "предыдущей" и новее
-                    // если не было версии == "предыдущая" сохраняем ещё одну наиболее новую из всех
-                    var buildNumbers = ArchivedVersions.Keys.ToList();
-                    buildNumbers.Sort();
-                    buildNumbers.RemoveAll(build => build >= live);
-                    if (buildNumbers.RemoveAll(build => build >= prew) == 0 && buildNumbers.Count > 0)
-                    {
-                        buildNumbers.RemoveAt(buildNumbers.Count - 1);
-                    }
-                    foreach (int build in buildNumbers)
-                    {
-                        if (ArchivedVersions[build] != RootModInfoFile)
-                            candidates.Add(Path.GetDirectoryName(ArchivedVersions[build]));
+                        // сохраняем версии от "предыдущей" и новее
+                        // если не было версии == "предыдущая" сохраняем ещё одну наиболее новую из всех
+                        var buildNumbers = ArchivedVersions.Keys.ToList();
+                        buildNumbers.Sort();
+                        buildNumbers.RemoveAll(build => build >= live);
+                        if (buildNumbers.RemoveAll(build => build >= prew) == 0 && buildNumbers.Count > 0)
+                        {
+                            buildNumbers.RemoveAt(buildNumbers.Count - 1);
+                        }
+                        foreach (int build in buildNumbers)
+                        {
+                            if (ArchivedVersions[build] != RootModInfoFile)
+                                candidates.Add(Path.GetDirectoryName(ArchivedVersions[build]));
+                        }
                     }
                 }
                 TooOldArchivedVersions = candidates.ToArray();

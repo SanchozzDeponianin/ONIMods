@@ -39,40 +39,41 @@ namespace SanchozzONIMods
         {
             try
             {
-                List<GameVersionInfo> KnownVersions;
+                KnownGameVersions data;
                 // загружаем исвестные версии
                 if (File.Exists(KnownGameVersionsFile))
                 {
-                    KnownVersions = new DeserializerBuilder().Build()
-                        .Deserialize<KnownGameVersions>(File.ReadAllText(KnownGameVersionsFile)).KnownVersions.ToList();
+                    data = new DeserializerBuilder().IgnoreUnmatchedProperties().Build()
+                        .Deserialize<KnownGameVersions>(File.ReadAllText(KnownGameVersionsFile));
                 }
                 else
-                    KnownVersions = new List<GameVersionInfo>();
-                KnownVersions.Sort();
+                    data = new();
+                data.PreserveVersion ??= GetKleiAssemblyInfo.INVALID;
+                data.KnownVersions.Sort();
                 // добавляем туды нынешнюю версию если надо
                 bool need_write = false;
                 if (CurrentGameVersion != GetKleiAssemblyInfo.INVALID)
                 {
-                    int i = KnownVersions.FindIndex(info => info.GameVersion == CurrentGameVersion);
+                    int i = data.KnownVersions.FindIndex(info => info.GameVersion == CurrentGameVersion);
                     if (i == -1)
                     {
-                        KnownVersions.Add(new GameVersionInfo() { GameVersion = CurrentGameVersion, MinimumBuildNumber = CurrentBuildNumber });
+                        data.KnownVersions.Add(new GameVersionInfo() { GameVersion = CurrentGameVersion, MinimumBuildNumber = CurrentBuildNumber });
                         need_write = true;
                     }
-                    else if (KnownVersions[i].MinimumBuildNumber > CurrentBuildNumber)
+                    else if (data.KnownVersions[i].MinimumBuildNumber > CurrentBuildNumber)
                     {
-                        var info = KnownVersions[i];
+                        var info = data.KnownVersions[i];
                         info.MinimumBuildNumber = CurrentBuildNumber;
-                        KnownVersions[i] = info;
+                        data.KnownVersions[i] = info;
                         need_write = true;
                     }
-                    KnownVersions.Sort();
+                    data.KnownVersions.Sort();
                 }
                 // и записываем
                 if (need_write)
                 {
                     File.WriteAllText(KnownGameVersionsFile,
-                        new SerializerBuilder().Build().Serialize(new KnownGameVersions() { KnownVersions = KnownVersions.ToArray() }));
+                        new SerializerBuilder().Build().Serialize(data));
                 }
 
                 // в корне мода нет инфо файла == ставим прям в корень
@@ -92,11 +93,11 @@ namespace SanchozzONIMods
                 PreviousGameVersion = GetKleiAssemblyInfo.INVALID;
 
                 // пытаемся примерно определить соответсвующую ему версию
-                for (int j = 0; j < KnownVersions.Count; j++)
+                for (int j = 0; j < data.KnownVersions.Count; j++)
                 {
-                    if (PreviousBuildNumber < KnownVersions[j].MinimumBuildNumber)
+                    if (PreviousBuildNumber < data.KnownVersions[j].MinimumBuildNumber)
                         break;
-                    PreviousGameVersion = KnownVersions[j].GameVersion;
+                    PreviousGameVersion = data.KnownVersions[j].GameVersion;
                 }
 
                 if (CurrentGameVersion == GetKleiAssemblyInfo.INVALID)

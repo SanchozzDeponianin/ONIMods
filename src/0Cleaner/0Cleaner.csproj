@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Cleaner</Title>
+    <Description>.</Description>
+    <ModVersion>1.0.0</ModVersion>
+    <DistributeMod>false</DistributeMod>
+  </PropertyGroup>
+
+  <UsingTask
+    TaskName="SanchozzONIMods.FindTooOldArchivedVersions"
+    AssemblyFile="$(MSBuildTasksHelperDLL)" />
+
+  <Target Name="CleanAllTooOldArchivedVersions" AfterTargets="Clean" >
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <InstAllRootFolder>$(ModOutputFolderDebug)</InstAllRootFolder>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <InstAllRootFolder>$(ModOutputFolderRelease)</InstAllRootFolder>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <AllModYamlFiles Include="$(InstAllRootFolder)/**/mod.yaml" />
+    </ItemGroup>
+    <ItemGroup>
+      <ArchivedModInfoFiles Include="%(AllModYamlFiles.RelativeDir)/archived_versions/**/mod_info.yaml" >
+        <RootFolder>%(AllModYamlFiles.RelativeDir)</RootFolder>
+      </ArchivedModInfoFiles>
+    </ItemGroup>
+
+    <SanchozzONIMods.FindTooOldArchivedVersions
+      RootModInfoFile="%(ArchivedModInfoFiles.RootFolder)/mod_info.yaml"
+      KnownGameVersionsFile="$(ProjectDir)/../KnownGameVersions.yaml"
+      ArchivedModInfoFiles="@(ArchivedModInfoFiles)" >
+      <Output TaskParameter="TooOldArchivedVersions" ItemName="TooOldArchivedVersions" />
+    </SanchozzONIMods.FindTooOldArchivedVersions>
+
+    <Message Importance="high" Text="Found Too Old Archived Versions, delete:" Condition=" '@(TooOldArchivedVersions->Count())' &gt; 0 " />
+    <Message Importance="high" Text="%(TooOldArchivedVersions.Identity)" />
+
+    <RemoveDir Directories="@(TooOldArchivedVersions)" />
+
+  </Target>
+</Project>

@@ -117,6 +117,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WornSuitDischarge", "WornSu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WrangleCarry", "WrangleCarry\WrangleCarry.csproj", "{BC79007D-AACA-43B8-A216-D3D7AA1B48D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "0Cleaner", "0Cleaner\0Cleaner.csproj", "{6BE64EE9-A454-43DD-BF6D-50E9340029D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Backup = Debug|Backup
@@ -509,6 +511,14 @@ Global
 		{BC79007D-AACA-43B8-A216-D3D7AA1B48D9}.Release|Backup.Build.0 = Release|Backup
 		{BC79007D-AACA-43B8-A216-D3D7AA1B48D9}.Release|Steam.ActiveCfg = Release|Steam
 		{BC79007D-AACA-43B8-A216-D3D7AA1B48D9}.Release|Steam.Build.0 = Release|Steam
+		{6BE64EE9-A454-43DD-BF6D-50E9340029D9}.Debug|Backup.ActiveCfg = Debug|Backup
+		{6BE64EE9-A454-43DD-BF6D-50E9340029D9}.Debug|Backup.Build.0 = Debug|Backup
+		{6BE64EE9-A454-43DD-BF6D-50E9340029D9}.Debug|Steam.ActiveCfg = Debug|Steam
+		{6BE64EE9-A454-43DD-BF6D-50E9340029D9}.Debug|Steam.Build.0 = Debug|Steam
+		{6BE64EE9-A454-43DD-BF6D-50E9340029D9}.Release|Backup.ActiveCfg = Release|Backup
+		{6BE64EE9-A454-43DD-BF6D-50E9340029D9}.Release|Backup.Build.0 = Release|Backup
+		{6BE64EE9-A454-43DD-BF6D-50E9340029D9}.Release|Steam.ActiveCfg = Release|Steam
+		{6BE64EE9-A454-43DD-BF6D-50E9340029D9}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
