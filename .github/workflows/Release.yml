@@ -17,7 +17,7 @@ jobs:
       run: |
         mkdir Zipped
         cd Mods/
-        zip -ro ../Zipped/Mods.zip ./*
+        zip -rlq ../Zipped/Mods.zip ./*
 
 #    - name: Delete old releases
 #      uses: dev-drprasad/delete-older-releases@v0.3.4
@@ -36,9 +36,8 @@ jobs:
       with:
         tag_name: "AllModsRelease"
         release_name: "Local Mod Download"
-        body: Ololo
-#        body_path: "Desc.md"
-        draft: false
+        body_path: ".github/Release.md"
+        draft: true
         prerelease: true
 
     - name: Upload files to github release
