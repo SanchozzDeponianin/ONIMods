@@ -1,7 +1,7 @@
 # Sanchozz's mods for Oxygen Not Included
 Steam Workshop: https://steamcommunity.com/profiles/76561198341359629/myworkshopfiles/?appid=457140
 
-Last tested on game version: **659901**
+Last tested on game version: **674504**
 
 Limited support for so-called beta versions:
 
