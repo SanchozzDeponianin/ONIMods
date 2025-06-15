@@ -25,7 +25,7 @@ jobs:
     - name: Delete old releases
       uses: dev-drprasad/delete-older-releases@v0.3.4
       with:
-        keep_latest: 2
+        keep_latest: 0
         delete_tag_pattern: AllModsRelease*
         delete_tags: true
       env:
@@ -41,7 +41,7 @@ jobs:
         release_name: "Local Mod Download"
         body_path: ".github/Release.md"
         draft: false
-        prerelease: true
+        prerelease: false
 
     - name: Upload files to github release
       uses: svenstaro/upload-release-action@v2
@@ -50,7 +50,7 @@ jobs:
         file: Zipped/*.*
         file_glob: true
         tag: ${{ steps.create-zip.outputs.TAG_NAME }}
-        prerelease: true
+        prerelease: false
         overwrite: true
       env:
         GITHUB_TOKEN: ${{ github.token }}
