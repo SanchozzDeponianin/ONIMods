@@ -7,7 +7,7 @@ permissions:
 #  actions: write # Grant write permission to delete old workflow runs
 
 jobs:
-  build:
+  make_release:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,16 +17,17 @@ jobs:
       run: |
         mkdir Zipped
         cd Mods/
-        zip -rlq ../Zipped/Mods.zip ./*
+        zip -rlq ../Zipped/0_All_Mods.zip ./*
+        find * -maxdepth 0 -type d -exec zip -rlq "../Zipped/{}.zip" "{}" \;
 
-#    - name: Delete old releases
-#      uses: dev-drprasad/delete-older-releases@v0.3.4
-#      with:
-#        keep_latest: 0
-#        delete_tag_pattern: pattern*
-#        delete_tags: true
-#      env:
-#        GITHUB_TOKEN: ${{ github.token }}
+    - name: Delete old releases
+      uses: dev-drprasad/delete-older-releases@v0.3.4
+      with:
+        keep_latest: 0
+        delete_tag_pattern: AllModsRelease*
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
 
     - name: Create GitHub release
       id: create_release
