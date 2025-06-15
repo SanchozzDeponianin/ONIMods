@@ -1,0 +1,62 @@
+name: Create Release
+
+on: workflow_dispatch
+
+permissions:
+  contents: write # Grant write permission for creating releases
+#  actions: write # Grant write permission to delete old workflow runs
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+   
+    - name: Create Zip
+      run: |
+        mkdir Zipped
+        cd Mods/
+        zip -ro ../Zipped/Mods.zip ./*
+
+#    - name: Delete old releases
+#      uses: dev-drprasad/delete-older-releases@v0.3.4
+#      with:
+#        keep_latest: 0
+#        delete_tag_pattern: pattern*
+#        delete_tags: true
+#      env:
+#        GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Create GitHub release
+      id: create_release
+      uses: actions/create-release@v1.1.4
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        tag_name: "AllModsRelease"
+        release_name: "Local Mod Download"
+        body: Ololo
+#        body_path: "Desc.md"
+        draft: false
+        prerelease: true
+
+    - name: Upload files to github release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ github.token }}
+        file: Zipped/*.*
+        file_glob: true
+        tag: AllModsRelease
+        prerelease: true
+        overwrite: true
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
+    # - name: Delete workflow runs
+    #   uses: Mattraks/delete-workflow-runs@v2
+    #   with:
+    #     token: ${{ github.token }}
+    #     repository: ${{ github.repository }}
+    #     retain_days: 1
+    #     keep_minimum_runs: 3
