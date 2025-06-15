@@ -13,8 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
    
-    - name: Create Zip
+    - id: create-zip
+      name: Create Zip
       run: |
+        date -u +TAG_NAME=AllModsRelease_%Y-%m-%d-%H-%M-%S >> "$GITHUB_OUTPUT"
         mkdir Zipped
         cd Mods/
         zip -rlq ../Zipped/0_All_Mods.zip ./*
@@ -23,7 +25,7 @@ jobs:
     - name: Delete old releases
       uses: dev-drprasad/delete-older-releases@v0.3.4
       with:
-        keep_latest: 0
+        keep_latest: 2
         delete_tag_pattern: AllModsRelease*
         delete_tags: true
       env:
@@ -35,10 +37,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        tag_name: "AllModsRelease"
+        tag_name: ${{ steps.create-zip.outputs.TAG_NAME }}
         release_name: "Local Mod Download"
         body_path: ".github/Release.md"
-        draft: true
+        draft: false
         prerelease: true
 
     - name: Upload files to github release
@@ -47,7 +49,7 @@ jobs:
         repo_token: ${{ github.token }}
         file: Zipped/*.*
         file_glob: true
-        tag: AllModsRelease
+        tag: ${{ steps.create-zip.outputs.TAG_NAME }}
         prerelease: true
         overwrite: true
       env:
