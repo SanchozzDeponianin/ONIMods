@@ -11,13 +11,13 @@ Limited support for so-called beta versions:
 # Local Downloads
 Steam users: Before trying a local download or reporting an issue, use [PeterHan's Mod Updater](https://steamcommunity.com/sharedfiles/filedetails/?id=2018291283)  to see if the mod is out of date.
 
-Steam sometimes serves outdated mod versions, and Oxygen Not Included is also available on the Epic Games Store. Local copies of these mods are available in the [Releases](https://github.com/SanchozzDeponianin/ONIMods/releases) section. These mods should be installed into the `Local` folder, creating it if it does not already exist. Mods should remain in their own subfolder.
+Steam sometimes serves outdated mod versions, and Oxygen Not Included is also available on the WeGame and Epic Games Store. Local copies of these mods are available in the [Releases](https://github.com/SanchozzDeponianin/ONIMods/releases) section. These mods should be installed into the `Local` folder, creating it if it does not already exist. Mods should remain in their own subfolder.
 
 ![Location where local mods should be installed](Docs/localmods.png)
 
 + Windows: `%USERPROFILE%\Documents\Klei\OxygenNotIncluded\mods\Local` Replace the documents path with the path to your Documents folder if this folder has been redirected.
-+ Mac OS: `/Users/user name/Library/Application Support/unity.Klei.Oxygen Not Included/mods/Local` Replace user name with your user name.
-+ Linux: `~/.config/unity3d/Klei/Oxygen Not Included/mods/Local`
++ Mac OS:  `/Users/user name/Library/Application Support/unity.Klei.Oxygen Not Included/mods/Local` Replace user name with your user name.
++ Linux:   `~/.config/unity3d/Klei/Oxygen Not Included/mods/Local`
 
 Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 
