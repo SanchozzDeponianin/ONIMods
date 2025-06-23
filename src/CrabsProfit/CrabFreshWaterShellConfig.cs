@@ -22,8 +22,8 @@ namespace CrabsProfit
                 id: ID,
                 name: CRAB_SHELL.VARIANT_FRESH_WATER.NAME,
                 desc: CRAB_SHELL.VARIANT_FRESH_WATER.DESC,
-                mass: mass,
-                unitMass: true,
+                mass: 1f,
+                unitMass: false,
                 anim: Assets.GetAnim("fresh_crabshells_large_kanim"),
                 initialAnim: "object",
                 sceneLayer: Grid.SceneLayer.Front,
@@ -33,7 +33,7 @@ namespace CrabsProfit
                 isPickupable: true,
                 sortOrder: 0,
                 element: SimHashes.Creature,
-                additionalTags: new List<Tag> { GameTags.IndustrialIngredient, GameTags.Organics });
+                additionalTags: new List<Tag> { GameTags.Organics, GameTags.MoltShell });
             go.AddOrGet<EntitySplitter>();
             go.AddOrGet<SimpleMassStatusItem>();
             EntityTemplates.CreateAndRegisterCompostableFromPrefab(go);
@@ -46,7 +46,7 @@ namespace CrabsProfit
 
         internal static void AddRecipe(string shell_id, float shell_mass)
         {
-            var ingredients = new ComplexRecipe.RecipeElement[] { new ComplexRecipe.RecipeElement(shell_id, 1f) };
+            var ingredients = new ComplexRecipe.RecipeElement[] { new ComplexRecipe.RecipeElement(shell_id, shell_mass) };
             var results = new ComplexRecipe.RecipeElement[] { new ComplexRecipe.RecipeElement(RandomOreConfig.ID, shell_mass) };
             var id = ComplexRecipeManager.MakeRecipeID(RockCrusherConfig.ID, ingredients, results);
             new ComplexRecipe(id, ingredients, results)

@@ -82,7 +82,7 @@ namespace CrabsProfit
             private static bool Prepare() => ModOptions.Instance.CrabFreshWater_Shell_Mass > 0;
             private static void Postfix(GameObject __result)
             {
-                AddDrop(__result, CrabFreshWaterShellConfig.ID, 1);
+                AddDrop(__result, CrabFreshWaterShellConfig.ID, ModOptions.Instance.AdultShellMass);
                 FixDrop(__result);
             }
         }
@@ -93,10 +93,10 @@ namespace CrabsProfit
             private static bool Prepare() => ModOptions.Instance.CrabFreshWater_Shell_Mass > 0;
             private static void Postfix(GameObject __result)
             {
-                AddDrop(__result, CrabFreshWaterShellConfig.ID, ModOptions.Instance.BabyShellUnits);
+                AddDrop(__result, CrabFreshWaterShellConfig.ID, ModOptions.Instance.BabyShellMass);
                 var def = __result.AddOrGetDef<BabyMonitor.Def>();
                 def.onGrowDropID = CrabFreshWaterShellConfig.ID;
-                def.onGrowDropUnits = ModOptions.Instance.BabyShellUnits;
+                def.onGrowDropUnits = ModOptions.Instance.BabyShellMass;
                 FixDrop(__result);
             }
         }
