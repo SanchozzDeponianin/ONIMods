@@ -9,7 +9,7 @@ namespace ReBuildableAETN
     public class MassiveHeatSinkCoreConfig : IEntityConfig, IHasDlcRestrictions
     {
         public const string ID = "MassiveHeatSinkCore";
-        public static float MASS = 1f; // ArtifactConfig.ARTIFACT_MASS;
+        public static float MASS = ArtifactConfig.ARTIFACT_MASS;
         public const float TEMPERATURE = 100f;
         public static Tag TAG = TagManager.Create(ID);
         public static Tag MaterialBuildingTag = TagManager.Create("BuildingNeutroniumCore");

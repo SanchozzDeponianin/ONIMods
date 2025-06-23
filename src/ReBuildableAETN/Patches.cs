@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using Database;
 using TUNING;
 using UnityEngine;
@@ -82,7 +83,7 @@ namespace ReBuildableAETN
                 __result.ShowInBuildMenu = true;
                 __result.ViewMode = OverlayModes.GasConduits.ID;
                 __result.MaterialCategory = MATERIALS.REFINED_METALS.Append(MaterialBuildingTag.Name);
-                __result.Mass = __result.Mass.Append(2 * MASS);
+                __result.Mass = __result.Mass.Append(2);
                 if (ModOptions.Instance.AddLogicPort)
                     __result.LogicInputPorts = LogicOperationalController.CreateSingleInputPortList(new CellOffset(1, 0));
             }
@@ -141,17 +142,20 @@ namespace ReBuildableAETN
             }
         }
 
-        // на длц - чтобы нельзя было строить аетн из замурованной версии едра
-        // придется влезть во все постройки и запретить тэг замурованного артифакта
+        // исправляем требование к массе. изза неконсистентности после У56:
+        // строительное мюню считает в юнитах, а доставка для стройки в килограммах.
+        // чтобы нельзя было строить аетн из замурованной версии едра,
+        // придется влезть во все постройки и запретить тэг замурованного артифакта.
         [HarmonyPatch(typeof(Constructable), "OnSpawn")]
         private static class Constructable_OnSpawn
         {
-            private static bool Prepare() => DlcManager.IsExpansion1Active();
-
             private static void InjectForbiddenTag(FetchList2 fetchList, Tag tag, Tag[] forbidden_tags, float amount, Operational.State operationalRequirement)
             {
                 if (tag == TAG)
+                {
                     forbidden_tags = (forbidden_tags ?? new Tag[0]).Append(GameTags.CharmedArtifact);
+                    amount *= MASS;
+                }
                 fetchList.Add(tag, forbidden_tags, amount, operationalRequirement);
             }
 
@@ -170,6 +174,63 @@ namespace ReBuildableAETN
                     return true;
                 }
                 return false;
+            }
+        }
+
+        // косметический патч, отображаем в кодексе ядра в юнитах
+        [HarmonyPatch(typeof(CodexEntryGenerator), "GenerateBuildingDescriptionContainers")]
+        private static class CodexEntryGenerator_GenerateBuildingDescriptionContainers
+        {
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
+            {
+                return instructions.Transpile(original, IL, transpiler);
+            }
+
+            private static string GetUnits(float amount)
+            {
+                return GameUtil.GetFormattedUnits(amount);
+            }
+            /*
+            --- GameUtil.GetFormattedMass(блабла)
+            +++ def.MaterialCategory[i] == MaterialBuildingTag ? GameUtil.GetFormattedUnits(блабла) : GameUtil.GetFormattedMass(блабла)
+            */
+            private static bool transpiler(List<CodeInstruction> instructions, MethodBase method, ILGenerator IL)
+            {
+                var def = method.GetParameters().FirstOrDefault(p => p.ParameterType == typeof(BuildingDef));
+                var material = typeof(BuildingDef).GetFieldSafe(nameof(BuildingDef.MaterialCategory), false);
+                var mass = typeof(BuildingDef).GetFieldSafe(nameof(BuildingDef.Mass), false);
+                var get_mass = typeof(GameUtil).GetMethodSafe(nameof(GameUtil.GetFormattedMass), true, PPatchTools.AnyArguments);
+                var get_units = typeof(CodexEntryGenerator_GenerateBuildingDescriptionContainers).GetMethodSafe(nameof(GetUnits), true, typeof(float));
+                var equals = typeof(string).GetMethodSafe(nameof(string.Equals), true, typeof(string), typeof(string));
+
+                if (def == null || material == null || mass == null || get_mass == null || get_units == null || equals == null)
+                    return false;
+                int i = instructions.FindIndex(inst => inst.Calls(get_mass));
+                if (i == -1) return false;
+                int j = instructions.FindLastIndex(i, inst => inst.LoadsField(mass));
+                if (j == -1 || !instructions[j + 1].IsLdloc()) return false;
+                var index = new CodeInstruction(instructions[j + 1]);
+
+                j--;
+                var @else = IL.DefineLabel();
+                instructions[j].labels.Add(@else);
+                var endif = IL.DefineLabel();
+                instructions[i + 1].labels.Add(endif);
+
+                instructions.Insert(j++, def.GetLoadArgInstruction());
+                instructions.Insert(j++, new CodeInstruction(OpCodes.Ldfld, material));
+                instructions.Insert(j++, index);
+                instructions.Insert(j++, new CodeInstruction(OpCodes.Ldelem_Ref));
+                instructions.Insert(j++, new CodeInstruction(OpCodes.Ldstr, MaterialBuildingTag.Name));
+                instructions.Insert(j++, new CodeInstruction(OpCodes.Call, equals));
+                instructions.Insert(j++, new CodeInstruction(OpCodes.Brfalse_S, @else));
+                instructions.Insert(j++, def.GetLoadArgInstruction());
+                instructions.Insert(j++, new CodeInstruction(OpCodes.Ldfld, mass));
+                instructions.Insert(j++, index);
+                instructions.Insert(j++, new CodeInstruction(OpCodes.Ldelem_R4));
+                instructions.Insert(j++, new CodeInstruction(OpCodes.Call, get_units));
+                instructions.Insert(j++, new CodeInstruction(OpCodes.Br_S, endif));
+                return true;
             }
         }
 
