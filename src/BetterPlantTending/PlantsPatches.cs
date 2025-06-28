@@ -68,6 +68,8 @@ namespace BetterPlantTending
         [HarmonyPatch]
         private static class SaltPlantConfig_CreatePrefab
         {
+            private static bool Prepare() => TargetMethods().Count() > 0;
+
             private static IEnumerable<MethodBase> TargetMethods()
             {
                 if (ModOptions.Instance.saltplant_adjust_gas_consumption)
@@ -111,6 +113,8 @@ namespace BetterPlantTending
         [HarmonyPatch]
         private static class BlueGrass_Dinofern_SetConsumptionRate
         {
+            private static bool Prepare() => TargetMethods().Count() > 0;
+
             private static IEnumerable<MethodBase> TargetMethods()
             {
                 if (DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
