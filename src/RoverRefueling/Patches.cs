@@ -77,6 +77,7 @@ namespace RoverRefueling
         {
             private static IEnumerable<MethodBase> TargetMethods()
             {
+                var methods = new List<MethodBase>();
                 foreach (var type in typeof(RobotBatteryMonitor).GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic))
                 {
                     if (type.IsDefined(typeof(CompilerGeneratedAttribute)))
@@ -87,11 +88,12 @@ namespace RoverRefueling
                             if (method.ReturnType == typeof(StatusItem)
                                 && parameters.Length == 1 && parameters[0].ParameterType == typeof(RobotBatteryMonitor.Instance))
                             {
-                                yield return method;
+                                methods.Add(method);
                             }
                         }
                     }
                 }
+                return methods;
             }
 
             private static void Postfix(RobotBatteryMonitor.Instance smi, ref StatusItem __result)

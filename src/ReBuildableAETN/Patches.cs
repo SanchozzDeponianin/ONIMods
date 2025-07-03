@@ -130,9 +130,10 @@ namespace ReBuildableAETN
 
             private static IEnumerable<MethodBase> TargetMethods()
             {
-                yield return typeof(Deconstructable).GetMethodSafe("QueueDeconstruction", false);
-                yield return typeof(Deconstructable).GetMethodSafe("CancelDeconstruction", false, typeof(bool))
-                    ?? typeof(Deconstructable).GetMethodSafe("CancelDeconstruction", false);
+                return new MethodBase[] {
+                    typeof(Deconstructable).GetMethodSafe("QueueDeconstruction", false),
+                    typeof(Deconstructable).GetMethodSafe("CancelDeconstruction", false),
+                };
             }
 
             private static void Postfix(Deconstructable __instance, ref bool ___shouldShowSkillPerkStatusItem, bool ___isMarkedForDeconstruction)
@@ -338,8 +339,10 @@ namespace ReBuildableAETN
         {
             private static IEnumerable<MethodBase> TargetMethods()
             {
-                yield return typeof(SetLockerConfig).GetMethodSafe(nameof(SetLockerConfig.CreatePrefab), false, PPatchTools.AnyArguments);
-                yield return typeof(VendingMachineConfig).GetMethodSafe(nameof(VendingMachineConfig.CreatePrefab), false, PPatchTools.AnyArguments);
+                return new MethodBase[] {
+                    typeof(SetLockerConfig).GetMethodSafe(nameof(SetLockerConfig.CreatePrefab), false, PPatchTools.AnyArguments),
+                    typeof(VendingMachineConfig).GetMethodSafe(nameof(VendingMachineConfig.CreatePrefab), false, PPatchTools.AnyArguments),
+                };
             }
 
             private static void Postfix(GameObject __result)

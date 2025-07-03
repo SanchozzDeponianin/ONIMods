@@ -50,8 +50,10 @@ namespace WrangleCarry
             private static IEnumerable<MethodBase> TargetMethods()
             {
                 const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-                yield return typeof(Capturable).GetMethod("OnStartWork", flags);
-                yield return typeof(Capturable).GetMethod("OnStopWork", flags);
+                return new MethodBase[] {
+                    typeof(Capturable).GetMethod("OnStartWork", flags),
+                    typeof(Capturable).GetMethod("OnStopWork", flags),
+                };
             }
             private static void Postfix(Capturable __instance)
             {

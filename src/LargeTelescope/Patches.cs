@@ -80,12 +80,14 @@ namespace LargeTelescope
             {
                 if (DlcManager.IsExpansion1Active())
                 {
-                    yield return typeof(ClusterTelescope.Instance).GetMethodSafe(nameof(ClusterTelescope.Instance.CreateRevealTileChore), false);
-                    yield return typeof(ClusterTelescope.Instance).GetMethodSafe(nameof(ClusterTelescope.Instance.CreateIdentifyMeteorChore), false);
+                    return new MethodBase[] {
+                        typeof(ClusterTelescope.Instance).GetMethodSafe(nameof(ClusterTelescope.Instance.CreateRevealTileChore), false),
+                        typeof(ClusterTelescope.Instance).GetMethodSafe(nameof(ClusterTelescope.Instance.CreateIdentifyMeteorChore), false),
+                    };
                 }
                 else
                 {
-                    yield return typeof(Telescope).GetMethodSafe("CreateChore", false);
+                    return new MethodBase[] { typeof(Telescope).GetMethodSafe("CreateChore", false) };
                 }
             }
             private static void Postfix(Chore __result)
@@ -120,8 +122,10 @@ namespace LargeTelescope
             {
                 const string method = "OnWorkTick";
                 var args = new Type[] { typeof(WorkerBase), typeof(float) };
-                yield return typeof(ClusterTelescope.ClusterTelescopeWorkable).GetMethodSafe(method, false, args);
-                yield return typeof(ClusterTelescope.ClusterTelescopeIdentifyMeteorWorkable).GetMethodSafe(method, false, args);
+                return new MethodBase[] {
+                    typeof(ClusterTelescope.ClusterTelescopeWorkable).GetMethodSafe(method, false, args),
+                    typeof(ClusterTelescope.ClusterTelescopeIdentifyMeteorWorkable).GetMethodSafe(method, false, args),
+                };
             }
 
             private static void Prefix(ClusterTelescope.Instance ___m_telescope, ref float dt)

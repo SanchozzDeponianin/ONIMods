@@ -72,10 +72,12 @@ namespace BetterPlantTending
 
             private static IEnumerable<MethodBase> TargetMethods()
             {
+                var methods = new List<MethodBase>();
                 if (ModOptions.Instance.saltplant_adjust_gas_consumption)
-                    yield return typeof(SaltPlantConfig).GetMethodSafe(nameof(SaltPlantConfig.CreatePrefab), false);
+                    methods.Add(typeof(SaltPlantConfig).GetMethodSafe(nameof(SaltPlantConfig.CreatePrefab), false));
                 if (DlcManager.IsExpansion1Active() && ModOptions.Instance.hydrocactus_adjust_gas_consumption)
-                    yield return typeof(FilterPlantConfig).GetMethodSafe(nameof(FilterPlantConfig.CreatePrefab), false);
+                    methods.Add(typeof(FilterPlantConfig).GetMethodSafe(nameof(FilterPlantConfig.CreatePrefab), false));
+                return methods;
             }
 
             private static void Postfix(GameObject __result)
@@ -117,12 +119,18 @@ namespace BetterPlantTending
 
             private static IEnumerable<MethodBase> TargetMethods()
             {
+                var methods = new List<MethodBase>();
                 if (DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
                     && ModOptions.Instance.blue_grass_adjust_gas_consumption)
-                    yield return typeof(BlueGrass).GetMethodSafe(nameof(BlueGrass.SetConsumptionRate), false);
+                {
+                    methods.Add(typeof(BlueGrass).GetMethodSafe(nameof(BlueGrass.SetConsumptionRate), false));
+                }
                 if (DlcManager.IsContentSubscribed(DlcManager.DLC4_ID)
                     && ModOptions.Instance.dinofern_adjust_gas_consumption)
-                    yield return typeof(Dinofern).GetMethodSafe(nameof(Dinofern.SetConsumptionRate), false);
+                {
+                    methods.Add(typeof(Dinofern).GetMethodSafe(nameof(Dinofern.SetConsumptionRate), false));
+                }
+                return methods;
             }
 
             private static void Postfix(KMonoBehaviour __instance, ElementConsumer ___elementConsumer, ReceptacleMonitor ___receptacleMonitor)

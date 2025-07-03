@@ -23,8 +23,10 @@ namespace CorpseOnPedestal
         {
             private static IEnumerable<MethodBase> TargetMethods()
             {
-                yield return typeof(BaseMinionConfig).GetMethod(nameof(BaseMinionConfig.BaseMinion));
-                yield return typeof(BaseRoverConfig).GetMethod(nameof(BaseRoverConfig.BaseRover));
+                return new MethodBase[] {
+                    typeof(BaseMinionConfig).GetMethod(nameof(BaseMinionConfig.BaseMinion)),
+                    typeof(BaseRoverConfig).GetMethod(nameof(BaseRoverConfig.BaseRover)),
+                };
             }
 
             private static void Postfix(GameObject __result)

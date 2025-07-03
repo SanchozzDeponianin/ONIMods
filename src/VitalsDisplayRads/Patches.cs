@@ -27,9 +27,11 @@ namespace VitalsDisplayRads
             private static bool Prepare() => Sim.IsRadiationEnabled();
             private static IEnumerable<MethodBase> TargetMethods()
             {
-                yield return typeof(LabelTableColumn).GetMethod(nameof(LabelTableColumn.GetHeaderWidget));
-                yield return typeof(LabelTableColumn).GetMethod(nameof(LabelTableColumn.GetDefaultWidget));
-                yield return typeof(LabelTableColumn).GetMethod(nameof(LabelTableColumn.GetMinionWidget));
+                return new MethodBase[] {
+                    typeof(LabelTableColumn).GetMethod(nameof(LabelTableColumn.GetHeaderWidget)),
+                    typeof(LabelTableColumn).GetMethod(nameof(LabelTableColumn.GetDefaultWidget)),
+                    typeof(LabelTableColumn).GetMethod(nameof(LabelTableColumn.GetMinionWidget)),
+                };
             }
 
             private static void Postfix(GameObject __result)

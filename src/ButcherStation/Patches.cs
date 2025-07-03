@@ -189,16 +189,18 @@ namespace ButcherStation
             private static IEnumerable<MethodBase> TargetMethods()
             {
                 var smi_type = typeof(RanchStation.Instance);
+                var methods = new List<MethodBase>();
                 var CanBeRanched = smi_type.GetMethodSafe("CanRanchableBeRanchedAtRanchStation", false, typeof(RanchableMonitor.Instance));
                 if (CanBeRanched != null)
-                    yield return CanBeRanched;
+                    methods.Add(CanBeRanched);
                 else
                     PUtil.LogWarning("Method not found 'RanchStation.Instance.CanRanchableBeRanchedAtRanchStation'");
                 var GetCavityInfo = smi_type.GetMethodSafe(nameof(RanchStation.Instance.GetCavityInfo), false);
                 if (GetCavityInfo != null)
-                    yield return GetCavityInfo;
+                    methods.Add(GetCavityInfo);
                 else
                     PUtil.LogWarning("Method not found 'RanchStation.Instance.GetCavityInfo'");
+                return methods;
             }
             private static CavityInfo GetFishingCavity(CavityInfo cavity, RanchStation.Instance smi)
             {
