@@ -3,8 +3,9 @@
   <PropertyGroup>
     <Title>Crabs Profit</Title>
     <Description>Adds a little Crab Meat to all types of Crabs, as well as a shell for Sanishell, which can be crushed to obtain Metal Ore.</Description>
-    <ModVersion>1.0.7</ModVersion>
+    <ModVersion>1.0.8</ModVersion>
     <UsesPLib>true</UsesPLib>
+    <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\lib\BaseOptions.cs">
