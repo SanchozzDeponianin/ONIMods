@@ -36,6 +36,8 @@ namespace CarouselCentrifuge
             buildingDef.ViewMode = OverlayModes.Power.ID;
             buildingDef.AudioCategory = "Metal";
             buildingDef.AudioSize = "large";
+            buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.MORALE);
+            buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.ROCKET);
             return buildingDef;
         }
 

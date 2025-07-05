@@ -36,10 +36,11 @@ namespace ButcherStation
             buildingDef.Entombable = true;
             buildingDef.AudioCategory = "Metal";
             buildingDef.AudioSize = "large";
-            //buildingDef.OverheatTemperature = BUILDINGS.OVERHEAT_TEMPERATURES.HIGH_1;
             buildingDef.UtilityInputOffset = new CellOffset(0, 0);
             buildingDef.UtilityOutputOffset = new CellOffset(0, 0);
             buildingDef.DefaultAnimState = "off";
+            buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.CRITTER);
+            buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.RANCHING);
             return buildingDef;
         }
 

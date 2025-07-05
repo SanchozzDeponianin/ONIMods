@@ -37,6 +37,7 @@ namespace TravelTubesExpanded
             def.UtilityOutputOffset = new CellOffset(0, 2);
             def.SceneLayer = Grid.SceneLayer.BuildingFront;
             def.ForegroundLayer = Grid.SceneLayer.BuildingFront;
+            def.AddSearchTerms(global::STRINGS.SEARCH_TERMS.TRANSPORT);
             return def;
         }
 

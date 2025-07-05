@@ -53,6 +53,7 @@ namespace HEPBridgeInsulationTile
             };
             GeneratedBuildings.RegisterWithOverlay(OverlayScreen.RadiationIDs, ID);
             def.Deprecated = !Sim.IsRadiationEnabled();
+            def.AddSearchTerms(global::STRINGS.SEARCH_TERMS.TILE);
             return def;
         }
 

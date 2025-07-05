@@ -62,6 +62,8 @@ namespace Smelter
             buildingDef.AudioCategory = "HollowMetal";
             buildingDef.AudioSize = "large";
             buildingDef.LogicInputPorts = LogicOperationalController.CreateSingleInputPortList(new CellOffset(0, 0));
+            buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.METAL);
+            buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.GLASS);
             return buildingDef;
         }
 

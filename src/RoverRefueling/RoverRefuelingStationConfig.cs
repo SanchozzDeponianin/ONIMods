@@ -34,6 +34,7 @@ namespace RoverRefueling
             def.PermittedRotations = PermittedRotations.FlipH;
             def.ViewMode = OverlayModes.LiquidConduits.ID;
             GeneratedBuildings.RegisterWithOverlay(OverlayScreen.LiquidVentIDs, ID);
+            def.AddSearchTerms(global::STRINGS.SEARCH_TERMS.ROBOT);
             return def;
         }
 

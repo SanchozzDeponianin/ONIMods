@@ -38,6 +38,8 @@ namespace AquaticFarm
             buildingDef.ConstructionOffsetFilter = BuildingDef.ConstructionOffsetFilter_OneDown;
             buildingDef.PermittedRotations = PermittedRotations.FlipV;
             buildingDef.DragBuild = true;
+            buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.FARM);
+            buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.FOOD);
             return buildingDef;
         }
 

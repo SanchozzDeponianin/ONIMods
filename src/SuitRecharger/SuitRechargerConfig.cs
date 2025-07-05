@@ -41,6 +41,7 @@ namespace SuitRecharger
             def.UtilityInputOffset = new CellOffset(1, 2);
             def.PermittedRotations = PermittedRotations.FlipH;
             GeneratedBuildings.RegisterWithOverlay(OverlayScreen.SuitIDs, ID);
+            def.AddSearchTerms(global::STRINGS.SEARCH_TERMS.ATMOSUIT);
             return def;
         }
 
