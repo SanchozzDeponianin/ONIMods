@@ -55,15 +55,20 @@
   </Target>
 
   <!-- дегенерация публицизированых длл игры -->
-  <Target Name="Publicise" BeforeTargets="PreBuildEvent" Condition=" '$(DistributeMod)' == 'true' And '$(UsesPublicise)' == 'true' " >
+  <Target Name="PubliciseMkdir" BeforeTargets="Publicise" Condition=" '$(DistributeMod)' == 'true' And '$(UsesPublicise)' == 'true' " >
+    <MakeDir Directories="$(PublicisedFolder)" Condition = "!Exists('$(PublicisedFolder)')" />
     <ItemGroup>
       <PubliciseInputAssemblies Include="$(GameFolder)/Assembly-CSharp.dll;$(GameFolder)/Assembly-CSharp-firstpass.dll;" />
     </ItemGroup>
-    <MakeDir Directories="$(PublicisedFolder)" Condition = "!Exists('$(PublicisedFolder)')" />
+  </Target>
+  <Target Name="Publicise" BeforeTargets="BeforeResolveReferences" Condition=" '$(DistributeMod)' == 'true' And '$(UsesPublicise)' == 'true' "
+		Inputs="@(PubliciseInputAssemblies)"
+		Outputs="@(PubliciseInputAssemblies->'$(PublicisedFolder)/%(Filename)_public%(Extension)')" >
     <Publicise
        InputAssemblies="@(PubliciseInputAssemblies)"
        OutputPath="$(PublicisedFolder)"
        PubliciseCompilerGenerated="false"/>
+    <Touch Files="@(PubliciseInputAssemblies->'$(PublicisedFolder)/%(Filename)_public%(Extension)')" />
   </Target>
 
   <!-- подчищаем при очистке -->
@@ -252,10 +257,10 @@
       ArchivedModInfoFiles="@(ArchivedModInfoFiles)" >
       <Output TaskParameter="TooOldArchivedVersions" ItemName="TooOldArchivedVersions" />
     </SanchozzONIMods.FindTooOldArchivedVersions>
-    
+
     <Message Importance="high" Text="Found Too Old Archived Versions, delete:" Condition=" '@(TooOldArchivedVersions->Count())' &gt; 0 " />
     <Message Importance="high" Text="%(TooOldArchivedVersions.Identity)" />
-    
+
     <RemoveDir Directories="@(TooOldArchivedVersions)" />
   </Target>
 </Project>
