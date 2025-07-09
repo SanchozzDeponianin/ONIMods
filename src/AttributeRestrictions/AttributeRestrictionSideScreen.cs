@@ -48,68 +48,42 @@ namespace AttributeRestrictions
                 ButtonInactiveStyle.disabledhoverColor = new Color(0.5f, 0.4898898f, 0.4595588f);
             }
 
-            var margin = new RectOffset(6, 6, 6, 6);
-            var baseLayout = gameObject.GetComponent<BoxLayoutGroup>();
-            if (baseLayout != null)
+            if (gameObject.TryGetComponent(out BoxLayoutGroup baseLayout))
                 baseLayout.Params = new BoxLayoutParams()
                 {
                     Alignment = TextAnchor.MiddleLeft,
-                    Margin = margin,
+                    Margin = new RectOffset(8, 8, 2, 8),
                 };
             var panel = new PPanel("MainPanel")
             {
                 Alignment = TextAnchor.MiddleLeft,
                 Direction = PanelDirection.Vertical,
-                Margin = margin,
-                Spacing = 8,
+                Spacing = 4,
                 FlexSize = Vector2.right,
+                BackColor = PUITuning.Colors.Transparent,
             }
                 // чекбох
                 .AddCheckBox(prefix, nameof(is_enable),
-                    b => { if (target != null) target.isEnabled = b; }, out is_enable, out _, out set_text)
-                // две кнопки
-                .AddChild(new PPanel("Buttons")
-                {
-                    Alignment = TextAnchor.MiddleCenter,
-                    Direction = PanelDirection.Horizontal,
-                    FlexSize = Vector2.right,
-                    Spacing = 10,
-                }
-                    // Арргхх!!! ад и израиль из кучи панелей чтобы кнопки по центру выровнять
-                    .AddChild(new PPanel("Left")
-                    {
-                        Direction = PanelDirection.Horizontal,
-                        FlexSize = Vector2.right,
-                    }
-                        .AddChild(new PSpacer())
-                        .AddChild(new PButton()
-                        {
-                            Color = ButtonInactiveStyle,
-                            Margin = new RectOffset(8, 8, 3, 3),
-                            TextStyle = PUITuning.Fonts.TextLightStyle,
-                            OnClick = go => SetBelow(false),
-                            Text = UI.UISIDESCREENS.THRESHOLD_SWITCH_SIDESCREEN.ABOVE_BUTTON
-                        }.AddOnRealize(go => aboveButton = go))
-                    )
-                    .AddChild(new PPanel("Right")
-                    {
-                        Direction = PanelDirection.Horizontal,
-                        FlexSize = Vector2.right,
-                    }
-                        .AddChild(new PButton()
-                        {
-                            Color = ButtonInactiveStyle,
-                            Margin = new RectOffset(8, 8, 3, 3),
-                            TextStyle = PUITuning.Fonts.TextLightStyle,
-                            OnClick = go => SetBelow(true),
-                            Text = UI.UISIDESCREENS.THRESHOLD_SWITCH_SIDESCREEN.BELOW_BUTTON
-                        }.AddOnRealize(go => belowButton = go))
-                        .AddChild(new PSpacer())
-                    )
-                )
-                // слайдер
-                .AddSliderBox(prefix, nameof(required_level), 0f, 20f,
-                    f => { if (target != null) target.requiredAttributeLevel = Mathf.RoundToInt(f); }, out required_level)
+                    b => { if (target != null) target.isEnabled = b; }, out is_enable, out _, out set_text, true);
+            // две кнопки
+            var left_button = new PButton()
+            {
+                Color = ButtonInactiveStyle,
+                TextStyle = PUITuning.Fonts.TextLightStyle,
+                OnClick = go => SetBelow(true),
+                Text = UI.UISIDESCREENS.THRESHOLD_SWITCH_SIDESCREEN.BELOW_BUTTON
+            }.AddOnRealize(go => belowButton = go);
+            var right_button = new PButton()
+            {
+                Color = ButtonInactiveStyle,
+                TextStyle = PUITuning.Fonts.TextLightStyle,
+                OnClick = go => SetBelow(false),
+                Text = UI.UISIDESCREENS.THRESHOLD_SWITCH_SIDESCREEN.ABOVE_BUTTON
+            }.AddOnRealize(go => aboveButton = go);
+            // слайдер
+            panel.AddSliderBox(prefix, nameof(required_level), 0f, 20f,
+                    f => { if (target != null) target.requiredAttributeLevel = Mathf.RoundToInt(f); },
+                    out required_level, null, left_button, right_button)
                 .AddTo(gameObject);
             ContentContainer = gameObject;
             base.OnPrefabInit();

@@ -8,6 +8,16 @@ msgctxt "AttributeRestrictions.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_SUFFIC
 msgid "Not allowed by Attribute Restrictions"
 msgstr "Не разрешено ограничениями по атрибутам"
 
+#. AttributeRestrictions.STRINGS.MOD_DESCRIPTION
+msgctxt "AttributeRestrictions.STRINGS.MOD_DESCRIPTION"
+msgid "You can more flexibly control which Buildings are allowed to Duplicants, depending on the level of their Attributes."
+msgstr "Вы можете более гибко управлять тем, какие постройки разрешены для Дупликантов, в зависимости от уровня их Атрибутов."
+
+#. AttributeRestrictions.STRINGS.MOD_TITLE
+msgctxt "AttributeRestrictions.STRINGS.MOD_TITLE"
+msgid "Attribute-based Workshop Restrictions"
+msgstr "Ограничения на основе Атрибутов"
+
 #. AttributeRestrictions.STRINGS.OPTIONS.ATTRIBUTE.NAME
 msgctxt "AttributeRestrictions.STRINGS.OPTIONS.ATTRIBUTE.NAME"
 msgid "Attribute of the <style=\"KKeyword\">Manual Generator</style>"
@@ -20,7 +30,7 @@ msgstr "При использовании Ручного генератора д
 
 #. AttributeRestrictions.STRINGS.UI.UISIDESCREENS.ATTRIBUTE_RESTRICTION_SIDESCREEN.IS_ENABLE.NAME
 msgctxt "AttributeRestrictions.STRINGS.UI.UISIDESCREENS.ATTRIBUTE_RESTRICTION_SIDESCREEN.IS_ENABLE.NAME"
-msgid "Allow to operate this Building when\nthe {0} attribute is"
+msgid "Allow to operate this Building\nwhen the {0} attribute is"
 msgstr "Разрешить работу с этой постройкой\nесли атрибут {0}"
 
 #. AttributeRestrictions.STRINGS.UI.UISIDESCREENS.ATTRIBUTE_RESTRICTION_SIDESCREEN.IS_ENABLE.TOOLTIP

@@ -34,6 +34,19 @@ namespace AttributeRestrictions
                     go.AddOrGet<AttributeRestriction>().workable = go.GetComponent<ComplexFabricatorWorkable>();
             }
 
+            // наука
+            foreach (var go in Assets.GetPrefabsWithComponent<ResearchCenter>())
+            {
+                if (go.TryGetComponent(out ResearchCenter research_center))
+                    go.AddOrGet<AttributeRestriction>().workable = research_center;
+            }
+
+            foreach (var go in Assets.GetPrefabsWithComponent<NuclearResearchCenterWorkable>())
+            {
+                if (go.TryGetComponent(out NuclearResearchCenterWorkable research_center))
+                    go.AddOrGet<AttributeRestriction>().workable = research_center;
+            }
+
             // ранч-станции
             foreach (var go in Assets.GetPrefabsWithTag(RoomConstraints.ConstraintTags.RanchStationType))
             {

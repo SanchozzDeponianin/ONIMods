@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Attribute-based Workshop Restrictions</Title>
     <Description>You can more flexibly control which Buildings are allowed to Duplicants, depending on the level of their Attributes.</Description>
-    <ModVersion>1.0.8</ModVersion>
+    <ModVersion>1.0.9</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

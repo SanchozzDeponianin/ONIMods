@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Configurable Automation-controlled Doors</Title>
     <Description>Allows you to select, for each Door individually, the desired state with a green / red automation signal, including the "Auto" state.</Description>
-    <ModVersion>1.0.6</ModVersion>
+    <ModVersion>1.0.7</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

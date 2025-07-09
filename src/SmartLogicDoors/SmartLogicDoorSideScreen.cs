@@ -16,20 +16,17 @@ namespace SmartLogicDoors
 
         protected override void OnPrefabInit()
         {
-            var margin = new RectOffset(6, 6, 6, 6);
-            var baseLayout = gameObject.GetComponent<BoxLayoutGroup>();
-            if (baseLayout != null)
+            if (gameObject.TryGetComponent(out BoxLayoutGroup baseLayout))
                 baseLayout.Params = new BoxLayoutParams()
                 {
                     Alignment = TextAnchor.MiddleLeft,
-                    Margin = margin,
+                    Margin = new RectOffset(8, 8, 2, 8),
                 };
             var panel = new PPanel("MainPanel")
             {
                 Alignment = TextAnchor.MiddleLeft,
                 Direction = PanelDirection.Vertical,
-                Margin = margin,
-                Spacing = 8,
+                Spacing = 4,
                 FlexSize = Vector2.right,
             }
                 .AddChild(new PLabel("Label")

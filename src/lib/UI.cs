@@ -16,7 +16,7 @@ namespace SanchozzONIMods.Lib.UI
             return AddCheckBox(parent, prefix, name, onChecked, out setChecked, out setActive, out Action<string> _);
         }
 
-        public static PPanel AddCheckBox(this PPanel parent, string prefix, string name, Action<bool> onChecked, out Action<bool> setChecked, out Action<bool> setActive, out Action<string> setText)
+        public static PPanel AddCheckBox(this PPanel parent, string prefix, string name, Action<bool> onChecked, out Action<bool> setChecked, out Action<bool> setActive, out Action<string> setText, bool dynamicSize = false)
         {
             prefix = (prefix + name).ToUpperInvariant();
             GameObject cb_go = null;
@@ -25,6 +25,7 @@ namespace SanchozzONIMods.Lib.UI
                 CheckColor = PUITuning.Colors.ComponentLightStyle,
                 CheckSize = new Vector2(24f, 24f),
                 ComponentBackColor = PUITuning.Colors.Transparent,
+                DynamicSize = dynamicSize,
                 Text = Strings.Get(prefix + ".NAME"),
                 TextAlignment = TextAnchor.MiddleLeft,
                 TextStyle = PUITuning.Fonts.TextDarkStyle,
@@ -49,7 +50,7 @@ namespace SanchozzONIMods.Lib.UI
             return parent.AddChild(cb);
         }
 
-        public static PPanel AddSliderBox(this PPanel parent, string prefix, string name, float min, float max, Action<float> onValueUpdate, out Action<float> setValue, Func<float, string> customTooltip = null)
+        public static PPanel AddSliderBox(this PPanel parent, string prefix, string name, float min, float max, Action<float> onValueUpdate, out Action<float> setValue, Func<float, string> customTooltip = null, IUIComponent leftChild = null, IUIComponent rightChild = null)
         {
             float value = 0;
             GameObject text_go = null;
@@ -122,7 +123,7 @@ namespace SanchozzONIMods.Lib.UI
                 OnTextChanged = OnTextChanged,
             }.AddOnRealize(realized => text_go = realized);
 
-            var margin = new RectOffset(12, 12, 2, 2);
+            var margin = new RectOffset(8, 8, 2, 2);
             var panel_top = new PPanel("slider_top_" + name)
             {
                 Alignment = TextAnchor.MiddleCenter,
@@ -132,8 +133,13 @@ namespace SanchozzONIMods.Lib.UI
                 Spacing = 2,
                 BackColor = PUITuning.Colors.Transparent,
             };
-            panel_top.AddChild(minLabel).AddChild(new PSpacer()).AddChild(preLabel)
-                .AddChild(textField).AddChild(pstLabel).AddChild(new PSpacer()).AddChild(maxLabel);
+            panel_top.AddChild(minLabel).AddChild(new PSpacer());
+            if (leftChild != null)
+                panel_top.AddChild(leftChild);
+            panel_top.AddChild(preLabel).AddChild(textField).AddChild(pstLabel);
+            if (rightChild != null)
+                panel_top.AddChild(rightChild);
+            panel_top.AddChild(new PSpacer()).AddChild(maxLabel);
 
             var slider = new PSliderSingle("slider_" + name)
             {

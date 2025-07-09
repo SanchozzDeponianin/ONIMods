@@ -3,6 +3,16 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. SmartLogicDoors.STRINGS.MOD_DESCRIPTION
+msgctxt "SmartLogicDoors.STRINGS.MOD_DESCRIPTION"
+msgid "Allows you to select, for each Door individually, the desired state with a green / red automation signal, including the \"Auto\" state."
+msgstr ""
+
+#. SmartLogicDoors.STRINGS.MOD_TITLE
+msgctxt "SmartLogicDoors.STRINGS.MOD_TITLE"
+msgid "Configurable Automation-controlled Doors"
+msgstr ""
+
 #. SmartLogicDoors.STRINGS.UI.UISIDESCREENS.SMARTLOGICDOOR_SIDESCREEN.AUTO_LOCKED.NAME
 msgctxt "SmartLogicDoors.STRINGS.UI.UISIDESCREENS.SMARTLOGICDOOR_SIDESCREEN.AUTO_LOCKED.NAME"
 msgid "{AUTO} / {LOCKED}"

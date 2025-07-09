@@ -33,20 +33,17 @@ namespace ButcherStation
 
         protected override void OnPrefabInit()
         {
-            var margin = new RectOffset(6, 6, 2, 2);
-            var baseLayout = gameObject.GetComponent<BoxLayoutGroup>();
-            if (baseLayout != null)
+            if (gameObject.TryGetComponent(out BoxLayoutGroup baseLayout))
                 baseLayout.Params = new BoxLayoutParams()
                 {
                     Alignment = TextAnchor.MiddleLeft,
-                    Margin = margin,
+                    Margin = new RectOffset(8, 8, 4, 8),
                 };
             var panel = new PPanel("MainPanel")
             {
                 Alignment = TextAnchor.MiddleLeft,
                 Direction = PanelDirection.Vertical,
-                Margin = margin,
-                Spacing = 2,
+                Spacing = 4,
                 FlexSize = Vector2.right,
                 BackColor = PUITuning.Colors.Transparent,
             }

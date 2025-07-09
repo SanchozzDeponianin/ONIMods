@@ -29,7 +29,7 @@ namespace AttributeRestrictions
 
                     public class IS_ENABLE
                     {
-                        public static LocString NAME = "Allow to operate this Building when\nthe {0} attribute is";
+                        public static LocString NAME = "Allow to operate this Building\nwhen the {0} attribute is";
                         public static LocString TOOLTIP = "Affect to Operate errands.\nDoes not affect, when the Duplicant has already started to perform this errand.\nDoes not affect to Supply, Repair, Disinfect, etc errands.";
                     }
 
