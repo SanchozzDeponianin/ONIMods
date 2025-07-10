@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Any Ice Maker</Title>
+    <Description>Allows you to choose which type of Ice will produce the Ice Maker.</Description>
+    <ModVersion>1.0.0</ModVersion>
+    <UsesPLib>true</UsesPLib>
+  </PropertyGroup>
+</Project>
