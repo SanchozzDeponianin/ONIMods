@@ -472,9 +472,9 @@ namespace SanchozzONIMods.Lib
         {
             if (Assets.TryGetAnim(kanim_name, out var kanim) && kanim.IsAnimLoaded)
             {
-                var anims = new HashedString[kanim.data.animCount];
-                for (int i = 0; i < kanim.data.animCount; i++)
-                    anims[i] = kanim.data.GetAnim(i).hash;
+                var anims = new HashedString[kanim.GetData().animCount];
+                for (int i = 0; i < kanim.GetData().animCount; i++)
+                    anims[i] = kanim.GetData().GetAnim(i).hash;
                 MuteMouthFlapSpeech(kanim_name, anims);
             }
         }
