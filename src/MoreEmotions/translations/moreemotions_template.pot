@@ -53,6 +53,16 @@ msgctxt "MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.STRESSED_CHEERING.TOOLTIP"
 msgid "Another Duplicant cheering up this Duplicant and provided psychological assistance"
 msgstr ""
 
+#. MoreEmotions.STRINGS.MOD_DESCRIPTION
+msgctxt "MoreEmotions.STRINGS.MOD_DESCRIPTION"
+msgid "Adds more Duplicants emotions and reactions to various everyday situations."
+msgstr ""
+
+#. MoreEmotions.STRINGS.MOD_TITLE
+msgctxt "MoreEmotions.STRINGS.MOD_TITLE"
+msgid "More Emotions"
+msgstr ""
+
 #. MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_BINGE_EAT_EMOTE.NAME
 msgctxt "MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_BINGE_EAT_EMOTE.NAME"
 msgid "Alternative variant of Binge Eater emotion"

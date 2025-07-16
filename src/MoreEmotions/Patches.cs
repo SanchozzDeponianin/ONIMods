@@ -23,6 +23,7 @@ namespace MoreEmotions
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
             new POptions().RegisterOptions(this, typeof(ModOptions));
+            new KAnimGroupManager().RegisterInteractAnims("anim_narcoleptic_sleep_kanim");
         }
 
         // todo: добавлять звуки к анимациям
@@ -32,6 +33,8 @@ namespace MoreEmotions
         {
             Utils.InitLocalization(typeof(STRINGS));
             Utils.LoadEmbeddedAudioSheet("AudioSheets/SFXTags_Duplicants.csv");
+            Utils.MuteMouthFlapSpeech("anim_sleep_narcoleptic_kanim");
+            Utils.MuteMouthFlapSpeech("anim_narcoleptic_sleep_kanim");
 #if DEBUG
             var path = System.IO.Path.Combine(Utils.MyModPath, "AudioSheets", "SFXTags_Duplicants.csv");
             if (System.IO.File.Exists(path))
@@ -267,8 +270,15 @@ namespace MoreEmotions
         {
             private static bool Prepare() => ModOptions.Instance.alternative_narcoleptic_anims;
 
+            private static KAnimFile[] OverrideAnims;
+
             private static void Postfix(SleepChore.StatesInstance __instance)
             {
+                if (OverrideAnims == null)
+                {
+                    OverrideAnims = new[] { Assets.GetAnim(
+                        DlcManager.IsExpansion1Active() ? "anim_sleep_narcoleptic_kanim" : "anim_narcoleptic_sleep_kanim") };
+                }
                 if (!__instance.sm.isInterruptable.Get(__instance) && UnityEngine.Random.value < 0.3f)
                 {
                     var sleepable = __instance.sm.bed.Get<Sleepable>(__instance);
@@ -279,7 +289,7 @@ namespace MoreEmotions
                         var stamina = Db.Get().Amounts.Stamina.Lookup(sleeper);
                         if (stamina != null && stamina.value > stamina.GetMax() * STAMINA_THRESHOLD)
                         {
-                            sleepable.overrideAnims = new KAnimFile[] { Assets.GetAnim("anim_sleep_narcoleptic_kanim") };
+                            sleepable.overrideAnims = OverrideAnims;
                             __instance.hadTerribleSleep = true;
                         }
                     }

@@ -455,17 +455,28 @@ namespace SanchozzONIMods.Lib
         }
 
         // предотвращаем разговоры при проигрывании этих анимаций
-        public static void MuteMouthFlapSpeech(HashedString kanim_file, params HashedString[] anims)
+        public static void MuteMouthFlapSpeech(HashedString kanim_name, params HashedString[] anims)
         {
             var sheet = GameAudioSheets.Get();
             var muted_kanims = Traverse.Create(sheet).Field<Dictionary<HashedString, HashSet<HashedString>>>("animsNotAllowedToPlaySpeech").Value;
-            if (!muted_kanims.TryGetValue(kanim_file, out var hashset))
+            if (!muted_kanims.TryGetValue(kanim_name, out var hashset))
             {
                 hashset = new HashSet<HashedString>();
-                muted_kanims[kanim_file] = hashset;
+                muted_kanims[kanim_name] = hashset;
             }
             foreach (var anim_name in anims)
                 hashset.Add(anim_name);
+        }
+
+        public static void MuteMouthFlapSpeech(HashedString kanim_name)
+        {
+            if (Assets.TryGetAnim(kanim_name, out var kanim) && kanim.IsAnimLoaded)
+            {
+                var anims = new HashedString[kanim.data.animCount];
+                for (int i = 0; i < kanim.data.animCount; i++)
+                    anims[i] = kanim.data.GetAnim(i).hash;
+                MuteMouthFlapSpeech(kanim_name, anims);
+            }
         }
 
         public static void MuteMouthFlapSpeech(params Klei.AI.Emote[] muted_emotes)
