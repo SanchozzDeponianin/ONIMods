@@ -3,6 +3,16 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. GraveyardKeeper.STRINGS.MOD_DESCRIPTION
+msgctxt "GraveyardKeeper.STRINGS.MOD_DESCRIPTION"
+msgid "The Pip buries the corpses of Duplicants in the ground and decorates them with Plants."
+msgstr ""
+
+#. GraveyardKeeper.STRINGS.MOD_TITLE
+msgctxt "GraveyardKeeper.STRINGS.MOD_TITLE"
+msgid "Graveyard Keeper"
+msgstr ""
+
 #. GraveyardKeeper.STRINGS.OPTIONS.MAX_PLANTS_SPAWN.NAME
 msgctxt "GraveyardKeeper.STRINGS.OPTIONS.MAX_PLANTS_SPAWN.NAME"
 msgid "The maximum number of Plants planted by {SQUIRREL}\nduring one burial of the corpse."

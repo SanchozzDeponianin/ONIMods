@@ -112,6 +112,42 @@ namespace GraveyardKeeper
             }
         }
 
+        // оказалось что белки пытаются резервировать даже семена лежащие на складах и переносимые дупликами
+        // запретим это
+        [HarmonyPatch(typeof(SeedPlantingStates), "FindSeed")]
+        private static class SeedPlantingStates_FindSeed
+        {
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return instructions.Transpile(original, transpiler);
+            }
+            /*
+            --- if (блабла && !seed.HasTag(GameTags.Creatures.ReservedByCreature) && блабла)
+            +++ if (блабла && !seed.HasTag(GameTags.Creatures.ReservedByCreature) && !seed.HasTag(GameTags.Stored) &&  блабла)
+            */
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var reserved = typeof(GameTags.Creatures).GetFieldSafe(nameof(GameTags.Creatures.ReservedByCreature), true);
+                var stored = typeof(GameTags).GetFieldSafe(nameof(GameTags.Stored), true);
+                if (reserved == null || stored == null)
+                    return false;
+                int i = instructions.FindIndex(inst => inst.LoadsField(reserved));
+                if (i == -1 || !instructions[i - 1].IsLdloc()) return false;
+                int j = instructions.FindIndex(i, inst => inst.Branches(out _));
+                if (j == -1) return false;
+                var subrange = instructions.GetRange(i - 1, j - i + 2);
+                for (int k = 0; k < subrange.Count; k++)
+                {
+                    subrange[k] = new CodeInstruction(subrange[k]);
+                    subrange[k].ExtractLabels();
+                    if (subrange[k].LoadsField(reserved))
+                        subrange[k].operand = stored;
+                }
+                instructions.InsertRange(j + 1, subrange);
+                return true;
+            }
+        }
+
         // ранее игре очень не нравилось когда тело дупликанта пытается перенести кто-то кто сам не дупликант
         // теперь больше не крашится. но нужно быть начеку. и если что, то опять вернуть трюк
         // (уничтожаем труп и заменяем его семечкой когда белка пытается всять)

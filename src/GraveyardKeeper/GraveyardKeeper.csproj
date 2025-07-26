@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Graveyard Keeper</Title>
     <Description>The Pip buries the corpses of Duplicants in the ground and decorates them with Plants.</Description>
-    <ModVersion>1.0.5</ModVersion>
+    <ModVersion>1.0.6</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
