@@ -32,6 +32,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Butcher & Fishing Stations](https://steamcommunity.com/sharedfiles/filedetails/?id=1907824546) | Adds a new Stations allows the Ranchers to control the population and butchering too old, surplus, or unwanted Critters. | Yes | Yes |
 | [Carousel](https://steamcommunity.com/sharedfiles/filedetails/?id=1899088142) | Adds a new recreation building. Funny dizzy entertainment. Sometimes too dizzy... | Yes | Yes |
 | [Crabs Profit](https://steamcommunity.com/sharedfiles/filedetails/?id=2816177874) | Adds a little Crab Meat to all types of Crabs, as well as a shell for Sanishell, which can be crushed to obtain Metal Ore. | Yes | Yes |
+| [Dowsing Booster](https://steamcommunity.com/sharedfiles/filedetails/?id=3548583609) | Grants a Bionic Duplicant the ability to regularly uncover hidden geysers while Defragmenting. | Yes | Yes |
 | [Festive Halloween Spices](https://steamcommunity.com/sharedfiles/filedetails/?id=2877478087) | Adds some exotic Spices with extraordinary effects to the Spice Grinder. | Yes | Yes |
 | [Insulated Radbolt Joint Plate](https://steamcommunity.com/sharedfiles/filedetails/?id=2451195132) | Adds a Insulated variant of Radbolt Joint Plate.| No | Yes |
 | [Lagoo](https://steamcommunity.com/sharedfiles/filedetails/?id=3417326857) | Lagoo is a deeply mutated Pip, adapted to survive in a harsh cold climate. | Yes | Yes |

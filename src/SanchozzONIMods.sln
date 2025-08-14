@@ -121,6 +121,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "0Cleaner", "0Cleaner\0Clean
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnyIceMachine", "AnyIceMachine\AnyIceMachine.csproj", "{B7D33888-FEF4-44E8-B664-E57E31478CE0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplorerBooster", "ExplorerBooster\ExplorerBooster.csproj", "{12E6EC61-0154-4A26-8325-9F5D96BBFC4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Backup = Debug|Backup
@@ -529,6 +531,14 @@ Global
 		{B7D33888-FEF4-44E8-B664-E57E31478CE0}.Release|Backup.Build.0 = Release|Backup
 		{B7D33888-FEF4-44E8-B664-E57E31478CE0}.Release|Steam.ActiveCfg = Release|Steam
 		{B7D33888-FEF4-44E8-B664-E57E31478CE0}.Release|Steam.Build.0 = Release|Steam
+		{12E6EC61-0154-4A26-8325-9F5D96BBFC4F}.Debug|Backup.ActiveCfg = Debug|Backup
+		{12E6EC61-0154-4A26-8325-9F5D96BBFC4F}.Debug|Backup.Build.0 = Debug|Backup
+		{12E6EC61-0154-4A26-8325-9F5D96BBFC4F}.Debug|Steam.ActiveCfg = Debug|Steam
+		{12E6EC61-0154-4A26-8325-9F5D96BBFC4F}.Debug|Steam.Build.0 = Debug|Steam
+		{12E6EC61-0154-4A26-8325-9F5D96BBFC4F}.Release|Backup.ActiveCfg = Release|Backup
+		{12E6EC61-0154-4A26-8325-9F5D96BBFC4F}.Release|Backup.Build.0 = Release|Backup
+		{12E6EC61-0154-4A26-8325-9F5D96BBFC4F}.Release|Steam.ActiveCfg = Release|Steam
+		{12E6EC61-0154-4A26-8325-9F5D96BBFC4F}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

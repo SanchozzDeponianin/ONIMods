@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Dowsing Booster</Title>
+    <Description>Grants a Bionic Duplicant the ability to regularly uncover hidden geysers while Defragmenting.</Description>
+    <ModVersion>1.0.0</ModVersion>
+    <RequiredDlcIds>DLC3_ID</RequiredDlcIds>
+    <UsesPLib>true</UsesPLib>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\lib\BaseOptions.cs">
+      <Link>BaseOptions.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>
