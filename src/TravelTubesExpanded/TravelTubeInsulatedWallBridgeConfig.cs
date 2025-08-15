@@ -56,13 +56,13 @@ namespace TravelTubesExpanded
             go.AddOrGet<Insulator>();
             go.AddOrGet<TileTemperature>();
             go.AddOrGet<TravelTubeBridge>();
-            //go.AddOrGet<OccupyArea>().objectLayers = new ObjectLayer[] { ObjectLayer.FoundationTile };
+            go.AddOrGet<OccupyArea>().objectLayers = new ObjectLayer[] { ObjectLayer.TravelTubeConnection };
         }
-        /*
+
         public override void ConfigurePost(BuildingDef def)
         {
             Assets.GetBuildingDef(TravelTubeWallBridgeConfig.ID).BuildingComplete
                 .AddOrGet<OccupyArea>().objectLayers = new ObjectLayer[] { ObjectLayer.TravelTubeConnection };
-        }*/
+        }
     }
 }

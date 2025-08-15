@@ -70,7 +70,7 @@ namespace TravelTubesExpanded
                 if ((UtilityConnections)data == 0)
                 {
                     int bridge_cell = Grid.OffsetCell(Grid.PosToCell(__instance), 0, 2);
-                    var go = Grid.Objects[bridge_cell, (int)ObjectLayer.FoundationTile];
+                    var go = Grid.Objects[bridge_cell, (int)ObjectLayer.TravelTubeConnection];
                     if (go != null && go.TryGetComponent(out TravelTubeUtilityNetworkLink link))
                     {
                         link.GetCells(out int a, out int b);
@@ -126,13 +126,9 @@ namespace TravelTubesExpanded
                     .GetMethod(nameof(UtilityNetworkTubesManager.GetConnections));
 
                 // эти слои ObjectLayer.TravelTube ObjectLayer.TravelTubeConnection почему то не используются игрой
-                // ну что добавим оптимизацию не дергать фундаменты ?
-                // бляяя в плиб тоже есть бага
-                /*
+                // добавим оптимизацию не дергать фундаменты
                 instructions = PPatchTools.ReplaceConstant(instructions,
                     (int)ObjectLayer.FoundationTile, (int)ObjectLayer.TravelTubeConnection, true)
-                */
-                instructions = instructions
                     .Transpile(original, IL, AddJumpEntranceAndDualBridgeTest)
                     .Transpile(original, IL, AddTubeAndBridgeExitTest)
                     .Transpile(original, IL, AddFloorToTubeTest);
@@ -327,7 +323,7 @@ namespace TravelTubesExpanded
 
             private static UtilityConnections GetDirectionTubeToNeighbourBridge(int tube_cell, int neighbour_cell)
             {
-                var go = Grid.Objects[neighbour_cell, (int)ObjectLayer.FoundationTile];
+                var go = Grid.Objects[neighbour_cell, (int)ObjectLayer.TravelTubeConnection];
                 if (go != null && go.TryGetComponent(out TravelTubeUtilityNetworkLink neighbour_link))
                 {
                     neighbour_link.GetCells(out int a, out int b);
@@ -343,7 +339,7 @@ namespace TravelTubesExpanded
             {
                 if (connection != 0)
                     return connection;
-                var go = Grid.Objects[bridge_cell, (int)ObjectLayer.FoundationTile];
+                var go = Grid.Objects[bridge_cell, (int)ObjectLayer.TravelTubeConnection];
                 if (go != null && go.TryGetComponent(out TravelTubeUtilityNetworkLink link))
                 {
                     link.GetCells(out int a, out int b);
@@ -354,7 +350,7 @@ namespace TravelTubesExpanded
                     {
                         int below_cell = Grid.CellBelow(bridge_cell);
                         if (Grid.IsValidCell(below_cell) && (below_cell == a || below_cell == b)
-                            && HasEntrance(Grid.Objects[below_cell, (int)ObjectLayer.FoundationTile]))
+                            && HasEntrance(Grid.Objects[below_cell, (int)ObjectLayer.TravelTubeConnection]))
                         {
                             if (transition.end == NavType.Tube)
                                 connection = UtilityConnections.Up;

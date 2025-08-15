@@ -55,6 +55,7 @@ namespace TravelTubesExpanded
             go.AddOrGet<BuildingHP>().destroyOnDamaged = true;
             go.AddOrGet<TileTemperature>();
             go.AddOrGet<TravelTubeBridge>();
+            go.AddOrGet<OccupyArea>().objectLayers = new ObjectLayer[] { ObjectLayer.TravelTubeConnection };
             go.AddOrGet<KPrefabID>().AddTag(GameTags.Bunker);
         }
     }

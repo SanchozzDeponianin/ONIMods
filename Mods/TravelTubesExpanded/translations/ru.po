@@ -63,6 +63,16 @@ msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBELADDERBRIDGE.NA
 msgid "<link=\"TRAVELTUBELADDERBRIDGE\">Transit Tube Ladder Crossing</link>"
 msgstr "<link=\"TRAVELTUBELADDERBRIDGE\">Пересечение транзитной трубы с лестницей</link>"
 
+#. TravelTubesExpanded.STRINGS.MOD_DESCRIPTION
+msgctxt "TravelTubesExpanded.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a new Transit Tube Insulated, Bunker, Ladder, Fire Pole Crossing buildings and several tweaks for the Transit Tube system."
+msgstr "Добавляет несколько новых построек: Пересечение транзитной трубы Теплоизолированное, Бункерное, с Лестницей, с Пожарным столбом, а также несколько твиков для системы транзитных труб."
+
+#. TravelTubesExpanded.STRINGS.MOD_TITLE
+msgctxt "TravelTubesExpanded.STRINGS.MOD_TITLE"
+msgid "Transit Tubes Expanded"
+msgstr "Улучшенные Транзитные Трубы"
+
 #. TravelTubesExpanded.STRINGS.OPTIONS.KJOULES_PER_LAUNCH.NAME
 msgctxt "TravelTubesExpanded.STRINGS.OPTIONS.KJOULES_PER_LAUNCH.NAME"
 msgid "Transit Tube Access <style=\"KKeyword\">Power</style> consumption per launch, kJ"

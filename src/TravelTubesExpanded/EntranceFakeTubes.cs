@@ -30,14 +30,14 @@ namespace TravelTubesExpanded
             base.OnSpawn();
             int cell = Grid.PosToCell(this);
             int above = Grid.CellAbove(cell);
-            Grid.Objects[cell, (int)ObjectLayer.FoundationTile] = gameObject;
-            Grid.Objects[above, (int)ObjectLayer.FoundationTile] = gameObject;
+            Grid.Objects[cell, (int)ObjectLayer.TravelTubeConnection] = gameObject;
+            Grid.Objects[above, (int)ObjectLayer.TravelTubeConnection] = gameObject;
             Pathfinding.Instance.AddDirtyNavGridCell(above);
             int x = (int)transform.GetPosition().x;
             int y = (int)transform.GetPosition().y;
             var extents = new Extents(x, y + 2, 1, 1);
             bridgeChangedEntry = GameScenePartitioner.Instance.Add("TravelTubeEntrance.TubeListener", gameObject, extents,
-                GameScenePartitioner.Instance.objectLayers[(int)ObjectLayer.FoundationTile], TubeChanged);
+                GameScenePartitioner.Instance.objectLayers[(int)ObjectLayer.TravelTubeConnection], TubeChanged);
             //updateHandle = GameScheduler.Instance.Schedule("TravelTubeEntrance.TubeListener", 0.4f, TubeChanged);
         }
 
@@ -45,8 +45,8 @@ namespace TravelTubesExpanded
         {
             int cell = Grid.PosToCell(this);
             int above = Grid.CellAbove(cell);
-            Grid.Objects[cell, (int)ObjectLayer.FoundationTile] = null;
-            Grid.Objects[above, (int)ObjectLayer.FoundationTile] = null;
+            Grid.Objects[cell, (int)ObjectLayer.TravelTubeConnection] = null;
+            Grid.Objects[above, (int)ObjectLayer.TravelTubeConnection] = null;
             Grid.HasTube[cell] = false;
             Grid.HasTube[above] = false;
             Components.ITravelTubePieces.Remove(this);

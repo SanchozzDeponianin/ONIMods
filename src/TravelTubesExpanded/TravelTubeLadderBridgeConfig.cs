@@ -50,7 +50,7 @@ namespace TravelTubesExpanded
             go.AddOrGet<AnimTileable>();
             go.AddOrGet<BuildingHP>().destroyOnDamaged = false;
             go.AddOrGet<TravelTubeBridge>();
-            go.AddOrGet<OccupyArea>().objectLayers = new ObjectLayer[] { ObjectLayer.FoundationTile };
+            go.AddOrGet<OccupyArea>().objectLayers = new ObjectLayer[] { ObjectLayer.TravelTubeConnection };
         }
 
         public override void ConfigurePost(BuildingDef def)
