@@ -15,7 +15,18 @@ namespace ControlYourRobots
 
         [JsonProperty]
         [Option]
-        public bool low_power_mode_enable { get; set; } = false;
+        public bool low_power_mode_enable { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        [RequireDLC(DlcManager.DLC3_ID)]
+        public bool low_power_mode_flydo_landed { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        [RequireDLC(DlcManager.DLC3_ID)]
+        [Limit(5, Constants.SECONDS_PER_CYCLE)]
+        public int low_power_mode_flydo_timeout { get; set; } = 20;
 
         [JsonProperty]
         [Option]
@@ -36,6 +47,16 @@ namespace ControlYourRobots
         [Option]
         [RequireDLC(DlcManager.DLC3_ID)]
         public bool flydo_can_for_itself { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        [RequireDLC(DlcManager.DLC3_ID)]
+        public bool flydo_can_liquid_source { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        [RequireDLC(DlcManager.DLC3_ID)]
+        public bool flydo_can_underwater { get; set; } = true;
 
         [JsonProperty]
         [Option]

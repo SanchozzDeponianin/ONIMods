@@ -3,6 +3,16 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. ControlYourRobots.STRINGS.MOD_DESCRIPTION
+msgctxt "ControlYourRobots.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a couple of features to better control your Robots: \"Move To\" and \"Turn Off/On\" buttons, Door Access Control, etc."
+msgstr ""
+
+#. ControlYourRobots.STRINGS.MOD_TITLE
+msgctxt "ControlYourRobots.STRINGS.MOD_TITLE"
+msgid "Control your Robots"
+msgstr ""
+
 #. ControlYourRobots.STRINGS.OPTIONS.DEAD_FLYDO_RETURNS_MATERIALS.NAME
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.DEAD_FLYDO_RETURNS_MATERIALS.NAME"
 msgid "Flydo returns the materials from which it was made when destroyed"
@@ -23,9 +33,19 @@ msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_FOR_ITSELF.NAME"
 msgid "Flydo can pick up the Power Bank for itself"
 msgstr ""
 
+#. ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_LIQUID_SOURCE.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_LIQUID_SOURCE.NAME"
+msgid "Flydo can use Pitcher Pump, Bottle Fillers, Ice Liquefier ect"
+msgstr ""
+
 #. ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_PASS_DOOR.NAME
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_PASS_DOOR.NAME"
 msgid "Flydo can pass through Doors"
+msgstr ""
+
+#. ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_UNDERWATER.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_UNDERWATER.NAME"
+msgid "Flydo can pick up underwater things"
 msgstr ""
 
 #. ControlYourRobots.STRINGS.OPTIONS.FLYDO_PREFERS_STRAIGHT.NAME
@@ -41,6 +61,21 @@ msgstr ""
 #. ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_ENABLE.TOOLTIP
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_ENABLE.TOOLTIP"
 msgid "When the Robot is idle and just stands still and does nothing, it will consume less battery energy."
+msgstr ""
+
+#. ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_FLYDO_LANDED.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_FLYDO_LANDED.NAME"
+msgid "Enable Flydo energy saving mode when idling"
+msgstr ""
+
+#. ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_FLYDO_LANDED.TOOLTIP
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_FLYDO_LANDED.TOOLTIP"
+msgid "When the Flydo is idle and does nothing, it will landed to floor and consume less battery energy."
+msgstr ""
+
+#. ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_FLYDO_TIMEOUT.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_FLYDO_TIMEOUT.NAME"
+msgid "The timeout when the Flydo will enter energy saving mode"
 msgstr ""
 
 #. ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_VALUE.NAME

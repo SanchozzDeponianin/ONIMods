@@ -29,8 +29,10 @@ namespace ControlYourRobots
 
         public static Tag RobotSuspend = TagManager.Create(nameof(RobotSuspend));
         public static Tag RobotSuspendBehaviour = TagManager.Create(nameof(RobotSuspendBehaviour));
+        public static Tag RobotLandedIdleBehaviour = TagManager.Create(nameof(RobotLandedIdleBehaviour));
         public static Dictionary<Tag, AttributeModifier> SuspendedBatteryModifiers = new();
-        private static Dictionary<Tag, AttributeModifier> IdleBatteryModifiers = new();
+        public static Dictionary<Tag, AttributeModifier> IdleBatteryModifiers = new();
+        public static Dictionary<Tag, AttributeModifier> LandedIdleBatteryModifiers = new();
 
         [PLibMethod(RunAt.BeforeDbInit)]
         private static void BeforeDbInit(Harmony harmony)

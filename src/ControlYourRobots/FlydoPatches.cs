@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Reflection.Emit;
 using Klei.AI;
+using STRINGS;
 using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
@@ -62,6 +63,8 @@ namespace ControlYourRobots
                 __result.AddOrGet<RobotTurnOffOn>();
                 if (ModOptions.Instance.flydo_can_pass_door || ModOptions.Instance.flydo_prefers_straight)
                     __result.GetComponent<Navigator>().NavGridName = FlydoGrid;
+                if (ModOptions.Instance.low_power_mode_flydo_landed)
+                    __result.AddOrGetDef<RobotLandedIdleMonitor.Def>().timeout = ModOptions.Instance.low_power_mode_flydo_timeout;
                 // для правильного отображения величины заряда при сне
                 var delta_id = Db.Get().Amounts.InternalElectroBank.deltaAttribute.Id;
                 var trait = Db.Get().traits.TryGet("FetchDroneBaseTrait");
@@ -72,6 +75,8 @@ namespace ControlYourRobots
                         if (modifier.AttributeId == delta_id)
                         {
                             SuspendedBatteryModifiers[__result.PrefabID()] = new AttributeModifier(delta_id, -modifier.Value, NAME);
+                            float rate = -modifier.Value * (1f - ModOptions.Instance.low_power_mode_value / 100f);
+                            LandedIdleBatteryModifiers[__result.PrefabID()] = new AttributeModifier(delta_id, rate, CREATURES.STATUSITEMS.IDLE.NAME);
                             break;
                         }
                     }
@@ -192,6 +197,47 @@ namespace ControlYourRobots
             }
         }
 
+        // приземляццо и низкая мощность при безделии
+        [HarmonyPatch(typeof(FetchDroneConfig), nameof(FetchDroneConfig.CreatePrefab))]
+        private static class FetchDroneConfig_CreatePrefab_2
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
+                && ModOptions.Instance.low_power_mode_flydo_landed;
+            /*
+                var chore_table = new ChoreTable.Builder()
+                    .Add(блаблабла)
+            +++     .Add(new RobotLandedIdleStates.Def())
+                    .Add(new IdleStates.Def(блаблабла));
+            */
+            private static ChoreTable.Builder Inject(ChoreTable.Builder builder)
+            {
+                // приоритет чуть выше чем Idle
+                return builder.Add(new RobotLandedIdleStates.Def(), true, Db.Get().ChoreTypes.ReturnSuitIdle.priority);
+            }
+
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return instructions.Transpile(original, transpiler);
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions)
+            {
+                var idle_states = typeof(IdleStates.Def).GetConstructors()[0];
+                var inject = typeof(FetchDroneConfig_CreatePrefab_2).GetMethodSafe(nameof(Inject), true, typeof(ChoreTable.Builder));
+                if (idle_states != null && inject != null)
+                {
+                    int i = instructions.FindIndex(inst => inst.opcode == OpCodes.Newobj && inst.operand as MethodBase == idle_states);
+                    if (i != -1)
+                    {
+                        instructions.Insert(i, new CodeInstruction(OpCodes.Call, inject));
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
+        // флудо может брать батарейки для себя
         [HarmonyPatch]
         private static class FetchChore_CanFetchDroneComplete
         {
@@ -231,6 +277,80 @@ namespace ControlYourRobots
                     }
                 }
                 return false;
+            }
+        }
+
+        // флудо может брать бутылки из наливайки, чайника, набутыливателей и т.п. и штуки под водой
+        [HarmonyPatch]
+        private static class FetchChore_IsFetchTargetAvailable
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
+                && (ModOptions.Instance.flydo_can_liquid_source || ModOptions.Instance.flydo_can_underwater);
+
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                var list = new List<MethodBase>
+                {
+                    FetchChore.IsFetchTargetAvailable.fn.Method,
+                    FetchChore.CanFetchDroneComplete.fn.Method
+                };
+                list.RemoveAll(m => m == null);
+                return list;
+            }
+            /*
+                if (blablabla
+            ---     && (pickupable.targetWorkable == null || pickupable.targetWorkable as Pickupable != null)
+                    && blablabla...navigator.CanReach(
+            ---         pickupable.cachedCell))
+            +++         pickupable.GetProperlyCell))
+            или
+            +++         pickupable))
+            */
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return instructions.Transpile(original, transpiler);
+            }
+
+            private static bool transpiler(List<CodeInstruction> instructions, MethodBase method)
+            {
+                var targetWorkable = typeof(Pickupable).GetFieldSafe(nameof(Pickupable.targetWorkable), false);
+                var cachedCell = typeof(Pickupable).GetPropertySafe<int>(nameof(Pickupable.cachedCell), false)?.GetGetMethod();
+                var properlyCell = typeof(FetchChore_IsFetchTargetAvailable).GetMethodSafe(nameof(GetProperlyCell), true, PPatchTools.AnyArguments);
+                var can_reach_cell = typeof(Navigator).GetMethodSafe(nameof(Navigator.CanReach), false, typeof(int));
+                var can_reach_approachable = typeof(Navigator).GetMethodSafe(nameof(Navigator.CanReach), false, typeof(IApproachable));
+
+                if (targetWorkable != null && cachedCell != null && properlyCell != null && can_reach_cell != null && can_reach_approachable != null)
+                {
+                    int i;
+                    if (ModOptions.Instance.flydo_can_liquid_source)
+                    {
+                        instructions.RemoveAll(inst => inst.LoadsField(targetWorkable));
+                        if (!ModOptions.Instance.flydo_can_underwater)
+                        {
+                            i = instructions.FindIndex(inst => inst.Calls(cachedCell));
+                            if (i != -1)
+                                instructions[i].operand = properlyCell;
+                        }
+                    }
+                    if (ModOptions.Instance.flydo_can_underwater)
+                    {
+                        i = instructions.FindIndex(inst => inst.Calls(can_reach_cell));
+                        if (i != -1 && instructions[i - 1].Calls(cachedCell))
+                        {
+                            instructions[i].operand = can_reach_approachable;
+                            instructions.RemoveAt(i - 1);
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            // правильная клетка для проверки достижимости флудой для наливайки
+            private static int GetProperlyCell(Pickupable pickupable)
+            {
+                return (pickupable.targetWorkable != null && pickupable.targetWorkable is LiquidPumpingStation) ?
+                    Grid.CellAbove(pickupable.cachedCell) : pickupable.cachedCell;
             }
         }
     }

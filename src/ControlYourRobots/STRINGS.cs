@@ -27,6 +27,15 @@
                 public static LocString NAME = "Enable energy saving mode when idling";
                 public static LocString TOOLTIP = "When the Robot is idle and just stands still and does nothing, it will consume less battery energy.";
             }
+            public class LOW_POWER_MODE_FLYDO_LANDED
+            {
+                public static LocString NAME = "Enable Flydo energy saving mode when idling";
+                public static LocString TOOLTIP = "When the Flydo is idle and does nothing, it will landed to floor and consume less battery energy.";
+            }
+            public class LOW_POWER_MODE_FLYDO_TIMEOUT
+            {
+                public static LocString NAME = "The timeout when the Flydo will enter energy saving mode";
+            }
             public class LOW_POWER_MODE_VALUE
             {
                 public static LocString NAME = "Battery consumption rate in energy saving mode, % of nominal value";
@@ -43,6 +52,14 @@
             public class FLYDO_CAN_FOR_ITSELF
             {
                 public static LocString NAME = "Flydo can pick up the Power Bank for itself";
+            }
+            public class FLYDO_CAN_LIQUID_SOURCE
+            {
+                public static LocString NAME = "Flydo can use Pitcher Pump, Bottle Fillers, Ice Liquefier ect";
+            }
+            public class FLYDO_CAN_UNDERWATER
+            {
+                public static LocString NAME = "Flydo can pick up underwater things";
             }
             public class FLYDO_PREFERS_STRAIGHT
             {
