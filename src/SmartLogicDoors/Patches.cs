@@ -77,43 +77,35 @@ namespace SmartLogicDoors
                 return instructions.Transpile(original, IL, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL, TranspilerUtils.Log log)
+            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
             {
                 var isBitActive = typeof(LogicCircuitNetwork).GetMethodSafe(nameof(LogicCircuitNetwork.IsBitActive), true, PPatchTools.AnyArguments);
                 var getDoorState = typeof(Door_OnLogicValueChanged).GetMethodSafe(nameof(GetDoorState), true, PPatchTools.AnyArguments);
                 var requestedState = typeof(Door).GetFieldSafe("requestedState", false);
 
-                bool result1 = false, result2 = false;
-                if (isBitActive != null && getDoorState != null && requestedState != null)
-                {
-                    var label = IL.DefineLabel();
-                    for (int i = 0; i < instructions.Count; i++)
-                    {
-                        var instruction = instructions[i];
-                        if (instruction.Calls(isBitActive))
-                        {
-                            i++;
-                            if (instructions[i].IsStloc())
-                            {
-                                var ldloc = TranspilerUtils.GetMatchingLoadInstruction(instructions[i]);
-                                instructions.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
-                                instructions.Insert(++i, new CodeInstruction(OpCodes.Dup));
-                                instructions.Insert(++i, ldloc);
-                                instructions.Insert(++i, new CodeInstruction(OpCodes.Call, getDoorState));
-                                instructions.Insert(++i, new CodeInstruction(OpCodes.Br_S, label));
-                                result1 = true;
-                                log.Step(1);
-                            }
-                        }
-                        else if (instruction.StoresField(requestedState))
-                        {
-                            instruction.labels.Add(label);
-                            result2 = true;
-                            log.Step(2);
-                        }
-                    }
-                }
-                return result1 && result2;
+                if (isBitActive == null || getDoorState == null || requestedState == null)
+                    return false;
+
+                int j = instructions.FindIndex(inst => inst.StoresField(requestedState));
+                if (j == -1)
+                    return false;
+
+                int i = instructions.FindIndex(inst => inst.Calls(isBitActive));
+                if (i == -1)
+                    return false;
+                i++;
+                if (!instructions[i].IsStloc())
+                    return false;
+
+                var label = IL.DefineLabel();
+                instructions[j].labels.Add(label);
+                var ldloc = instructions[i].GetMatchingLoadInstruction();
+                instructions.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                instructions.Insert(++i, new CodeInstruction(OpCodes.Dup));
+                instructions.Insert(++i, ldloc);
+                instructions.Insert(++i, new CodeInstruction(OpCodes.Call, getDoorState));
+                instructions.Insert(++i, new CodeInstruction(OpCodes.Br_S, label));
+                return true;
             }
         }
 
