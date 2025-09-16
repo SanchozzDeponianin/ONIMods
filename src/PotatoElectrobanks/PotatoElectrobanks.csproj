@@ -9,8 +9,6 @@
     <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\lib\StateMachinesExtensions.cs">
-      <Link>StateMachinesExtensions.cs</Link>
-    </Compile>
+    <SharedCS Include="StateMachinesExtensions" />
   </ItemGroup>
 </Project>

@@ -7,17 +7,6 @@
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\lib\BaseOptions.cs">
-      <Link>BaseOptions.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\KAnimGroupManager.cs">
-      <Link>KAnimGroupManager.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\ModdedSpicesSerializationManager.cs">
-      <Link>ModdedSpicesSerializationManager.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\TranspilerUtils.cs">
-      <Link>TranspilerUtils.cs</Link>
-    </Compile>
+    <SharedCS Include="BaseOptions;KAnimGroupManager;ModdedSpicesSerializationManager;TranspilerUtils" />
   </ItemGroup>
 </Project>

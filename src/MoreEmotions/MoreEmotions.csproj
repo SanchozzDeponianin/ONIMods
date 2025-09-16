@@ -8,20 +8,6 @@
     <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\lib\BaseOptions.cs">
-      <Link>BaseOptions.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\EffectsExtensions.cs">
-      <Link>EffectsExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\KAnimGroupManager.cs">
-      <Link>KAnimGroupManager.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\StateMachinesExtensions.cs">
-      <Link>StateMachinesExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\TranspilerUtils.cs">
-      <Link>TranspilerUtils.cs</Link>
-    </Compile>
+    <SharedCS Include="BaseOptions;EffectsExtensions;KAnimGroupManager;StateMachinesExtensions;TranspilerUtils" />
   </ItemGroup>
 </Project>

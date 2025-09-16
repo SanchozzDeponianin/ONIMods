@@ -8,8 +8,6 @@
     <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\lib\BaseOptions.cs">
-      <Link>BaseOptions.cs</Link>
-    </Compile>
+    <SharedCS Include="BaseOptions" />
   </ItemGroup>
 </Project>

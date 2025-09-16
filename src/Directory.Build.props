@@ -113,12 +113,6 @@
     <Reference Include="PLibUI" HintPath="$(PLibFolder)/PLibUI.dll" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(DistributeMod)' == 'true' ">
-    <Compile Include="$(MSBuildProjectDirectory)/../lib/Utils.cs">
-      <Link>Utils.cs</Link>
-    </Compile>
-  </ItemGroup>
-
   <!-- сведения о сборке -->
   <PropertyGroup>
     <Author>Sanchozz</Author>

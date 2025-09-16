@@ -8,6 +8,13 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="ResolveSharedFiles" BeforeTargets="ResolveAssemblyReferences" Condition=" '$(DistributeMod)' == 'true' ">
+    <ItemGroup>
+      <SharedCS Include="Utils" />
+      <Compile Include="@(SharedCS->'$(MSBuildProjectDirectory)/../lib/%(Identity).cs')" Link ="@(SharedCS->'%(Identity).cs')" />
+    </ItemGroup>
+  </Target>
+
   <!-- константы для компилятора и прочее -->
   <Target Name="DefineConstants" AfterTargets="ResolveAssemblyReferences">
     <PropertyGroup>

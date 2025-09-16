@@ -7,23 +7,6 @@
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\lib\BaseOptions.cs">
-      <Link>BaseOptions.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\DurabilityExtensions.cs">
-      <Link>DurabilityExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\ManualDeliveryKGPatch.cs">
-      <Link>ManualDeliveryKGPatch.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\StorageDropper.cs">
-      <Link>StorageDropper.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\TranspilerUtils.cs">
-      <Link>TranspilerUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\UI.cs">
-      <Link>UI.cs</Link>
-    </Compile>
+    <SharedCS Include="BaseOptions;DurabilityExtensions;ManualDeliveryKGPatch;StorageDropper;TranspilerUtils;UI" />
   </ItemGroup>
 </Project>

@@ -7,17 +7,6 @@
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\lib\BaseOptions.cs">
-      <Link>BaseOptions.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\FreezeEffectDuration.cs">
-      <Link>FreezeEffectDuration.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\MultiRoomTracker.cs">
-      <Link>MultiRoomTracker.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\TranspilerUtils.cs">
-      <Link>TranspilerUtils.cs</Link>
-    </Compile>
+    <SharedCS Include="BaseOptions;FreezeEffectDuration;MultiRoomTracker;TranspilerUtils" />
   </ItemGroup>
 </Project>

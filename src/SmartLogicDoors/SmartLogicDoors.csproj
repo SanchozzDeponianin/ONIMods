@@ -7,11 +7,6 @@
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\lib\TranspilerUtils.cs">
-      <Link>TranspilerUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\UI.cs">
-      <Link>UI.cs</Link>
-    </Compile>
+    <SharedCS Include="UI;TranspilerUtils" />
   </ItemGroup>
 </Project>

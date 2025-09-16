@@ -8,11 +8,6 @@
     <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\lib\StateMachinesExtensions.cs">
-      <Link>StateMachinesExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\TranspilerUtils.cs">
-      <Link>TranspilerUtils.cs</Link>
-    </Compile>
+    <SharedCS Include="StateMachinesExtensions;TranspilerUtils" />
   </ItemGroup>
 </Project>

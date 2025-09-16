@@ -7,11 +7,6 @@
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\lib\BaseOptions.cs">
-      <Link>BaseOptions.cs</Link>
-    </Compile>
-    <Compile Include="..\lib\UI.cs">
-      <Link>UI.cs</Link>
-    </Compile>
+    <SharedCS Include="BaseOptions;UI" />
   </ItemGroup>
 </Project>
