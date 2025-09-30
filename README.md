@@ -67,6 +67,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [No Manual Delivery](https://steamcommunity.com/sharedfiles/filedetails/?id=2047308624) | Adds a "Allow Manual Use" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings. | Yes | Yes |
 | [[Visual] Old Liquid Reservoir](https://steamcommunity.com/sharedfiles/filedetails/?id=1904543022) | Returns the old visual art of the Liquid Reservoir from older "early access" versions of the game. | Yes | Yes |
 | [Pick up Flopping Pacu](https://steamcommunity.com/sharedfiles/filedetails/?id=2996740374) | Allows Duplicants to pick up flopping Pacu. | Yes | Yes |
+| [Plants have died - Where ?](https://steamcommunity.com/sharedfiles/filedetails/?id=3577468014) | Jumps camera and show you where "Plants have died" when you clicking this message. | Yes | Yes |
 | [Rebuildable AETN](https://steamcommunity.com/sharedfiles/filedetails/?id=2539984678) | Allows to disassemble and build AETN in another place. | Yes | Yes |
 | [Relic Hunter](https://steamcommunity.com/sharedfiles/filedetails/?id=1927259233) | Unlocks the Relic Hunter trait that exists in vanilla but is not used. A duplicant with this trait almost always finds Artifacts when traveling to other planets. | Yes | No |
 | [Sandbox: Mutant Plants](https://steamcommunity.com/sharedfiles/filedetails/?id=2493249462) | Allows to quickly receive mutant Seeds and Plants in the Sandbox mode. | No | Yes |

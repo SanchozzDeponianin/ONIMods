@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. DeadPlantsNotifier.STRINGS.MOD_DESCRIPTION
+msgctxt "DeadPlantsNotifier.STRINGS.MOD_DESCRIPTION"
+msgid "Jumps camera and show you where \"Plants have died\" when you clicking this message."
+msgstr "Перемещает камеру и показывает вам где \"Растения погибли\" когда вы нажимаете на это сообщение."
+
+#. DeadPlantsNotifier.STRINGS.MOD_TITLE
+msgctxt "DeadPlantsNotifier.STRINGS.MOD_TITLE"
+msgid "Plants have died - Where ?"
+msgstr "Растения погибли - Где ?"
+

@@ -120,6 +120,27 @@ namespace SanchozzONIMods.Lib
             return duration;
         }
 
+#if !USESPLIB
+        // подготовка для загрузки локализации для модов без плиб
+        // отдельным патчем чтобы избежать ложных обвинений
+        private static Type LocstringTree;
+
+        public static void RegisterLocalization(Type locstring_tree)
+        {
+            if (locstring_tree == null)
+                throw new ArgumentNullException(nameof(locstring_tree));
+            LocstringTree = locstring_tree;
+            var harmony = new Harmony($"{MyMod.mod.staticID}.{nameof(RegisterLocalization)}");
+            harmony.Patch(typeof(Db).GetMethod(nameof(Db.Initialize)),
+                prefix: new HarmonyMethod(typeof(Utils).GetMethod(nameof(Utils.BeforeDbInit), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)));
+        }
+
+        private static void BeforeDbInit()
+        {
+            InitLocalization(LocstringTree);
+        }
+#endif
+
         // загружаем строки для локализации
         public static void InitLocalization(Type locstring_tree_root)
         {

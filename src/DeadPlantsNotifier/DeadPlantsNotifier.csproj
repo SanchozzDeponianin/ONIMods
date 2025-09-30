@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Plants have died - Where ?</Title>
+    <Description>Jumps camera and show you where "Plants have died" when you clicking this message.</Description>
+    <ModVersion>1.0.0</ModVersion>
+    <UsesPLib>false</UsesPLib>
+  </PropertyGroup>
+</Project>
