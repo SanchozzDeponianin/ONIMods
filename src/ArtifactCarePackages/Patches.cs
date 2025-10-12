@@ -61,7 +61,7 @@ namespace ArtifactCarePackages
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             { 
                 var list_count = typeof(List<CarePackageInfo>).GetProperty(nameof(List<CarePackageInfo>.Count)).GetGetMethod();
                 var inject = typeof(ArtifactImmigration).GetMethodSafe(nameof(ArtifactImmigration.InjectRandomCarePackages), true, PPatchTools.AnyArguments);
@@ -143,7 +143,7 @@ namespace ArtifactCarePackages
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             { 
                 var setActive = typeof(GameObject).GetMethodSafe(nameof(GameObject.SetActive), false, typeof(bool));
                 var tryMakeTerrestrialArtifact = typeof(CarePackage_SpawnContents).GetMethodSafe(nameof(CarePackage_SpawnContents.TryMakeTerrestrialArtifact), true, PPatchTools.AnyArguments);
@@ -188,7 +188,7 @@ namespace ArtifactCarePackages
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             { 
                 var initialAnim = typeof(KAnimControllerBase).GetFieldSafe(nameof(KAnimControllerBase.initialAnim), false);
                 var getProperAnim = typeof(CarePackage_SetAnimToInfo).GetMethodSafe(nameof(GetProperAnim), true, PPatchTools.AnyArguments);

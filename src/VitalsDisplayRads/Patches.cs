@@ -55,7 +55,7 @@ namespace VitalsDisplayRads
                 return instructions.Transpile(original, transpiler);
             }
             // внедряем после столбца здоровья
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var add_column = typeof(TableScreen).GetMethod(nameof(TableScreen.AddLabelColumn), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 var inject = typeof(VitalsTableScreen_OnActivate).GetMethod(nameof(Inject), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);

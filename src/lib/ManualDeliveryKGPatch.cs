@@ -88,7 +88,7 @@ namespace SanchozzONIMods.Shared
             return instructions.Transpile(original, transpiler);
         }
 
-        private static bool transpiler(List<CodeInstruction> instructions)
+        private static bool transpiler(ref List<CodeInstruction> instructions)
         {
             var Tooltip1 = typeof(UI.USERMENUACTIONS.MANUAL_DELIVERY)
                 .GetFieldSafe(nameof(UI.USERMENUACTIONS.MANUAL_DELIVERY.TOOLTIP), true);

@@ -109,7 +109,7 @@ namespace BuildableGeneShuffler
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var injectMass = typeof(Deconstructable_SpawnItemsFromConstruction).GetMethodSafe(nameof(InjectMass), true, PPatchTools.AnyArguments);
                 if (injectMass != null)

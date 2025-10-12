@@ -8,7 +8,6 @@ namespace TravelTubesExpanded
     {
         public Vector3 Position => transform.position;
         private HandleVector<int>.Handle bridgeChangedEntry;
-        //private SchedulerHandle updateHandle;
 
 #pragma warning disable CS0649
         [MyCmpReq]
@@ -38,7 +37,6 @@ namespace TravelTubesExpanded
             var extents = new Extents(x, y + 2, 1, 1);
             bridgeChangedEntry = GameScenePartitioner.Instance.Add("TravelTubeEntrance.TubeListener", gameObject, extents,
                 GameScenePartitioner.Instance.objectLayers[(int)ObjectLayer.TravelTubeConnection], TubeChanged);
-            //updateHandle = GameScheduler.Instance.Schedule("TravelTubeEntrance.TubeListener", 0.4f, TubeChanged);
         }
 
         public override void OnCleanUp()
@@ -52,7 +50,6 @@ namespace TravelTubesExpanded
             Components.ITravelTubePieces.Remove(this);
             Pathfinding.Instance.AddDirtyNavGridCell(above);
             GameScenePartitioner.Instance.Free(ref bridgeChangedEntry);
-            //updateHandle.ClearScheduler();
             base.OnCleanUp();
         }
 

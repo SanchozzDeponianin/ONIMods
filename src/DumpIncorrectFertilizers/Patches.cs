@@ -65,7 +65,7 @@ namespace DumpIncorrectFertilizers
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions, MethodBase original)
+            private static bool transpiler(ref List<CodeInstruction> instructions, MethodBase original)
             {
                 var drop = typeof(Storage).GetMethod(nameof(Storage.Drop), new Type[] { typeof(GameObject), typeof(bool) });
                 var storage = original.GetParameters().FirstOrDefault(p => p.ParameterType == typeof(Storage));

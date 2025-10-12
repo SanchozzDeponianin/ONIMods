@@ -77,7 +77,7 @@ namespace SmartLogicDoors
                 return instructions.Transpile(original, IL, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
+            private static bool transpiler(ref List<CodeInstruction> instructions, ILGenerator IL)
             {
                 var isBitActive = typeof(LogicCircuitNetwork).GetMethodSafe(nameof(LogicCircuitNetwork.IsBitActive), true, PPatchTools.AnyArguments);
                 var getDoorState = typeof(Door_OnLogicValueChanged).GetMethodSafe(nameof(GetDoorState), true, PPatchTools.AnyArguments);

@@ -369,7 +369,7 @@ namespace SupplyToClosest
                 provider.CollectChores(consumer_state, succeeded, failed_contexts);
             }
 
-            private static bool RemoveCollectChores(List<CodeInstruction> instructions)
+            private static bool RemoveCollectChores(ref List<CodeInstruction> instructions)
             {
                 var method = typeof(ClearableManager).GetMethodSafe(nameof(ClearableManager.CollectChores), false,
                     typeof(List<GlobalChoreProvider.Fetch>), typeof(ChoreConsumerState),
@@ -399,7 +399,7 @@ namespace SupplyToClosest
                 provider.UpdateFetches(path_prober);
             }
 
-            private static bool RemoveClearables(List<CodeInstruction> instructions)
+            private static bool RemoveClearables(ref List<CodeInstruction> instructions)
             {
                 var method = typeof(ClearableManager).GetMethodSafe(nameof(ClearableManager.CollectAndSortClearables), false,
                     typeof(Navigator));

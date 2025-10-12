@@ -110,7 +110,7 @@ namespace WhereMyLoot
             {
                 return instructions.Transpile(original, IL, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
+            private static bool transpiler(ref List<CodeInstruction> instructions, ILGenerator IL)
             {
                 var addDefaultOK = typeof(InfoDialogScreen).GetMethodSafe(nameof(InfoDialogScreen.AddDefaultOK), false, typeof(bool));
                 var deactivateScreen = typeof(LoreBearer_OnClickRead).GetMethodSafe(nameof(DeactivateScreenIsMarkedForDemolition), true, PPatchTools.AnyArguments);

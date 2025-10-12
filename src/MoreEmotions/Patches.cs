@@ -214,7 +214,7 @@ namespace MoreEmotions
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var PlayAnim = typeof(SleepChore.States.State).GetMethodSafe("PlayAnim", false, typeof(string));
                 var QueueAnim = typeof(SleepChore_States_InitializeStates_Alternative).GetMethodSafe(nameof(PlayQueueAnim), true, PPatchTools.AnyArguments);

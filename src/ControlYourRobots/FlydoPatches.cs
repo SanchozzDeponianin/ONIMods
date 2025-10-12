@@ -220,7 +220,7 @@ namespace ControlYourRobots
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var idle_states = typeof(IdleStates.Def).GetConstructors()[0];
                 var inject = typeof(FetchDroneConfig_CreatePrefab_2).GetMethodSafe(nameof(Inject), true, typeof(ChoreTable.Builder));
@@ -262,7 +262,7 @@ namespace ControlYourRobots
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var gameObject = typeof(ChoreConsumerState).GetFieldSafe(nameof(ChoreConsumerState.gameObject), false);
                 var op_Equality = typeof(Object).GetMethodSafe("op_Equality", true, typeof(Object), typeof(Object));
@@ -311,7 +311,7 @@ namespace ControlYourRobots
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions, MethodBase method)
+            private static bool transpiler(ref List<CodeInstruction> instructions, MethodBase method)
             {
                 var targetWorkable = typeof(Pickupable).GetFieldSafe(nameof(Pickupable.targetWorkable), false);
                 var cachedCell = typeof(Pickupable).GetPropertySafe<int>(nameof(Pickupable.cachedCell), false)?.GetGetMethod();

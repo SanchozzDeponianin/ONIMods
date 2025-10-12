@@ -118,7 +118,7 @@ namespace ButcherStation
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var LayEggDef = typeof(LayEggStates.Def).GetConstructor(Type.EmptyTypes);
                 var is_baby = typeof(BasePacuConfig).GetMethodSafe(nameof(BasePacuConfig.CreatePrefab), true, PPatchTools.AnyArguments)
@@ -161,7 +161,7 @@ namespace ButcherStation
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var creatures = typeof(CavityInfo).GetField(nameof(CavityInfo.creatures));
                 var GetOrderedCreatureList = typeof(RanchStation_Instance_FindRanchable).GetMethodSafe(nameof(RanchStation_Instance_FindRanchable.GetOrderedCreatureList), true, PPatchTools.AnyArguments);
@@ -229,7 +229,7 @@ namespace ButcherStation
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var cavity = typeof(Room).GetField(nameof(Room.cavity));
                 var GetFishingCavity = typeof(RanchStation_CanRanchableBeRanchedAtRanchStation).GetMethodSafe(nameof(RanchStation_CanRanchableBeRanchedAtRanchStation.GetFishingCavity), true, PPatchTools.AnyArguments);
@@ -370,7 +370,7 @@ namespace ButcherStation
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var CreaturePen = typeof(RoomTypes).GetField(nameof(RoomTypes.CreaturePen));
                 var GetTrueRoomType = typeof(RanchStation_OnRoomUpdated).GetMethodSafe(nameof(RanchStation_OnRoomUpdated.GetTrueRoomType), true, PPatchTools.AnyArguments);

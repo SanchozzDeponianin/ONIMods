@@ -124,7 +124,7 @@ namespace CorpseOnPedestal
                 return null;
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var parent = typeof(Transform).GetProperty(nameof(Transform.parent))?.GetGetMethod();
                 var test = typeof(ScoutRoverConfig_OnSpawn).GetMethod(nameof(IsInsideCargoModule),

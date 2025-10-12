@@ -44,7 +44,7 @@ namespace BetterPlantTending
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var kInstantiate = typeof(Util).GetMethodSafe(nameof(Util.KInstantiate), true, typeof(GameObject), typeof(Vector3));
                 var addMutation = typeof(ForestTreeSeedMonitor_ExtractExtraSeed)
@@ -149,7 +149,7 @@ namespace BetterPlantTending
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var kInstantiate = typeof(Util).GetMethodSafe(nameof(Util.KInstantiate), true, typeof(GameObject), typeof(Vector3));
                 var addMutation = typeof(CreaturePoopLoot_RollForLoot)
@@ -248,7 +248,7 @@ namespace BetterPlantTending
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var IsGrown = typeof(Growing).GetMethodSafe(nameof(Growing.IsGrown), false);
                 var ReachedNextHarvest = typeof(Growing).GetMethodSafe(nameof(Growing.ReachedNextHarvest), false);

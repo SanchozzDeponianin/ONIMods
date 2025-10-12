@@ -101,7 +101,7 @@ namespace MechanicsStation
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var newobj = typeof(HashSet<Tag>).GetConstructor(System.Type.EmptyTypes);
                 var inject = typeof(ComplexFabricator_DropExcessIngredients).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments);
@@ -148,7 +148,7 @@ namespace MechanicsStation
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var roomTracker = typeof(Tinkerable).GetFieldSafe("roomTracker", false);
                 var IsInRoom = typeof(RoomTracker).GetMethodSafe(nameof(RoomTracker.IsInCorrectRoom), false);

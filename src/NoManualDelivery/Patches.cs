@@ -199,7 +199,7 @@ namespace NoManualDelivery
                 return instructions.Transpile(method, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var CouldBePickedUpByMinion = typeof(Pickupable).GetMethodSafe(nameof(Pickupable.CouldBePickedUpByMinion), false, typeof(int));
                 var CouldBePickedUpCommon = typeof(Pickupable).GetMethodSafe("CouldBePickedUpCommon", false, typeof(int));

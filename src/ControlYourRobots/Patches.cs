@@ -95,7 +95,7 @@ namespace ControlYourRobots
                     .PopInterruptGroup();
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var idle = typeof(IdleStates.Def).GetConstructors()[0];
                 var inject = typeof(BaseRoverConfig_BaseRover).GetMethodSafe(nameof(Inject), true, typeof(ChoreTable.Builder));
@@ -313,7 +313,7 @@ namespace ControlYourRobots
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var list = typeof(AccessControlSideScreen).GetFieldSafe("identityList", false);
                 var inject = typeof(AccessControlSideScreen_SetTarget).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments);
@@ -435,7 +435,7 @@ namespace ControlYourRobots
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var cmi = typeof(ClusterManager).GetFieldSafe(nameof(ClusterManager.Instance), true);
                 var inject = typeof(TableScreen_RefreshRows).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments);
@@ -533,7 +533,7 @@ namespace ControlYourRobots
                     .GetComponent<KMonoBehaviour>()
                     .GetMyWorld();
             */
-            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
+            private static bool transpiler(ref List<CodeInstruction> instructions, ILGenerator IL)
             {
                 var GetSoleOwner = typeof(IAssignableIdentity).GetMethodSafe(nameof(IAssignableIdentity.GetSoleOwner), false);
                 var GetTargetGameObject = typeof(MinionAssignablesProxy).GetMethodSafe(nameof(MinionAssignablesProxy.GetTargetGameObject), false);

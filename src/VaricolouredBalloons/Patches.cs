@@ -139,7 +139,7 @@ namespace VaricolouredBalloons
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var constructor = typeof(BalloonOverrideSymbol).GetConstructor(new Type[] { typeof(string), typeof(string) });
                 var restore = typeof(EquippableBalloon_ApplyBalloonOverrideToBalloonFx).GetMethodSafe(nameof(RestoreBalloonOverride), true, PPatchTools.AnyArguments);

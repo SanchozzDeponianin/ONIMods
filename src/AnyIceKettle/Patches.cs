@@ -78,7 +78,7 @@ namespace AnyIceKettle
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var def = typeof(IceKettle.GenericInstance).GetPropertySafe<IceKettle.Def>("def", false)?.GetGetMethod();
                 var target_tag = typeof(IceKettle.Def).GetFieldSafe(nameof(IceKettle.Def.targetElementTag), false);

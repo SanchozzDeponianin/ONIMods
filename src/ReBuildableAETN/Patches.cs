@@ -165,7 +165,7 @@ namespace ReBuildableAETN
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var fetchList_Add = typeof(FetchList2).GetMethodSafe(nameof(FetchList2.Add), false, typeof(Tag), typeof(Tag[]), typeof(float), typeof(Operational.State));
                 var injectForbiddenTag = typeof(Constructable_OnSpawn).GetMethodSafe(nameof(InjectForbiddenTag), true, PPatchTools.AnyArguments);
@@ -195,7 +195,7 @@ namespace ReBuildableAETN
             --- GameUtil.GetFormattedMass(блабла)
             +++ def.MaterialCategory[i] == MaterialBuildingTag ? GameUtil.GetFormattedUnits(блабла) : GameUtil.GetFormattedMass(блабла)
             */
-            private static bool transpiler(List<CodeInstruction> instructions, MethodBase method, ILGenerator IL)
+            private static bool transpiler(ref List<CodeInstruction> instructions, MethodBase method, ILGenerator IL)
             {
                 var def = method.GetParameters().FirstOrDefault(p => p.ParameterType == typeof(BuildingDef));
                 var material = typeof(BuildingDef).GetFieldSafe(nameof(BuildingDef.MaterialCategory), false);
@@ -282,7 +282,7 @@ namespace ReBuildableAETN
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var AddOrGetDemolishable = typeof(EntityTemplateExtensions).GetMethodSafe(nameof(EntityTemplateExtensions.AddOrGet), true, typeof(GameObject))?.MakeGenericMethod(typeof(Demolishable));
                 var injectSetLocker = typeof(PropFacilityDeskConfig_CreatePrefab).GetMethodSafe(nameof(InjectSetLocker), true, PPatchTools.AnyArguments);

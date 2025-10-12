@@ -125,7 +125,7 @@ namespace GraveyardKeeper
             --- if (блабла && !seed.HasTag(GameTags.Creatures.ReservedByCreature) && блабла)
             +++ if (блабла && !seed.HasTag(GameTags.Creatures.ReservedByCreature) && !seed.HasTag(GameTags.Stored) &&  блабла)
             */
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var reserved = typeof(GameTags.Creatures).GetFieldSafe(nameof(GameTags.Creatures.ReservedByCreature), true);
                 var stored = typeof(GameTags).GetFieldSafe(nameof(GameTags.Stored), true);
@@ -174,7 +174,7 @@ namespace GraveyardKeeper
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var EntitySplitter_Split = typeof(EntitySplitter).GetMethodSafe(nameof(EntitySplitter.Split), true, typeof(Pickupable), typeof(float), typeof(GameObject));
                 var splitCorpse = typeof(SeedPlantingStates_PickupComplete).GetMethodSafe(nameof(SplitCorpse), true, typeof(Pickupable), typeof(float), typeof(GameObject));

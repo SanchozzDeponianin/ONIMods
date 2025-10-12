@@ -46,7 +46,7 @@ namespace BetterPlantTending
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions, MethodBase method)
+            private static bool transpiler(ref List<CodeInstruction> instructions, MethodBase method)
             {
                 var context_type = typeof(ClimbableTreeMonitor.Instance.FindClimableTreeContext);
                 var context = method.GetParameters().FirstOrDefault(p => p.ParameterType == context_type);
@@ -159,7 +159,7 @@ namespace BetterPlantTending
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var smi = typeof(CropTendingStates)
                     .GetMethodSafe(nameof(CropTendingStates.FindCrop), false, typeof(CropTendingStates.Instance))
@@ -282,7 +282,7 @@ namespace BetterPlantTending
             {
                 return instructions.Transpile(original, IL, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
+            private static bool transpiler(ref List<CodeInstruction> instructions, ILGenerator IL)
             {
                 var getKPrefabID = typeof(Component).GetMethodSafe(nameof(Component.GetComponent), false).MakeGenericMethod(typeof(KPrefabID));
                 var posToCell = typeof(Grid).GetMethodSafe(nameof(Grid.PosToCell), true, typeof(KMonoBehaviour));
@@ -342,7 +342,7 @@ namespace BetterPlantTending
                 return instructions;
             }
             // мимика не опыляет засохшее
-            private static bool AddTestIsWilting(List<CodeInstruction> instructions)
+            private static bool AddTestIsWilting(ref List<CodeInstruction> instructions)
             {
                 var hasTag = typeof(KPrefabID).GetMethodSafe(nameof(KPrefabID.HasTag), false, typeof(Tag));
                 var fullyGrown = typeof(GameTags).GetFieldSafe(nameof(GameTags.FullyGrown), true);
@@ -363,7 +363,7 @@ namespace BetterPlantTending
 
             // мимика может убобрять растения совместно c жучинкусами
             private static readonly HashedString[] ignoreMimikaEffects = new HashedString[] { BUTTERFLY_CROP_TENDED_EFFECT_ID };
-            private static bool ReplaseIgnoredEffects(List<CodeInstruction> instructions)
+            private static bool ReplaseIgnoredEffects(ref List<CodeInstruction> instructions)
             {
                 var all = typeof(PollinationMonitor).GetFieldSafe(nameof(PollinationMonitor.PollinationEffects), true);
                 var mimika = typeof(PollinateMonitor_Def_IsHarvestablePlant).GetFieldSafe(nameof(ignoreMimikaEffects), true);
@@ -404,7 +404,7 @@ namespace BetterPlantTending
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var getComponent = typeof(GameObject).GetMethod(nameof(Component.GetComponent), Type.EmptyTypes).MakeGenericMethod(typeof(Harvestable));
                 var extract = typeof(StompStates_Instance_HarvestAnyOneIntersectingPlant).GetMethodSafe(nameof(Extract), true, typeof(GameObject));

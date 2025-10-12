@@ -49,7 +49,7 @@ namespace Smelter
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var @base = typeof(LiquidCooledRefinery).GetMethodSafe("OnSpawn", false);
                 var basebase = typeof(ComplexFabricator).GetMethodSafe("OnSpawn", false);

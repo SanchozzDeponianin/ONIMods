@@ -13,22 +13,22 @@ namespace SanchozzONIMods.Lib
     public static class TranspilerUtils
     {
         // обёртка для транспилеров, для упрощения и унификации логирования в случаях успеха и неудачи
-        public delegate bool Callback_Full(List<CodeInstruction> instructions, MethodBase original, ILGenerator IL);
-        public delegate bool Callback_Method(List<CodeInstruction> instructions, MethodBase original);
-        public delegate bool Callback_IL(List<CodeInstruction> instructions, ILGenerator IL);
-        public delegate bool Callback(List<CodeInstruction> instructions);
+        public delegate bool Callback_Full(ref List<CodeInstruction> instructions, MethodBase original, ILGenerator IL);
+        public delegate bool Callback_Method(ref List<CodeInstruction> instructions, MethodBase original);
+        public delegate bool Callback_IL(ref List<CodeInstruction> instructions, ILGenerator IL);
+        public delegate bool Callback(ref List<CodeInstruction> instructions);
 
-        private static IEnumerable<CodeInstruction> TranspileInternal(this IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL, Callback_Full transpiler, MethodBase transpiler_info)
+        private static IEnumerable<CodeInstruction> TranspileInternal(this IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL, MethodBase transpiler_info, Callback_Full transpiler)
         {
-            var modified_instructions = instructions.ToList();
-            for (int i = 0; i < modified_instructions.Count; i++)
-                modified_instructions[i] = new CodeInstruction(modified_instructions[i]);
+            var modified_instructions = new List<CodeInstruction>(instructions.Count());
+            for (int i = 0; i < instructions.Count(); i++)
+                modified_instructions.Add(new CodeInstruction(instructions.ElementAt(i)));
 
             var method_name = original.DeclaringType.FullName + "." + original.Name;
             transpiler_info ??= transpiler.Method;
             var transpiler_name = transpiler_info.DeclaringType.FullName + "." + transpiler_info.Name;
 
-            if (transpiler(modified_instructions, original, IL))
+            if (transpiler(ref modified_instructions, original, IL))
             {
 #if DEBUG
                 var message = $"Transpiler '{transpiler_name}' injected to the method '{method_name}'";
@@ -54,22 +54,25 @@ namespace SanchozzONIMods.Lib
 
         public static IEnumerable<CodeInstruction> Transpile(this IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL, Callback_Full transpiler)
         {
-            return TranspileInternal(instructions, original, IL, transpiler, transpiler.Method);
+            return TranspileInternal(instructions, original, IL, transpiler.Method, transpiler);
         }
 
         public static IEnumerable<CodeInstruction> Transpile(this IEnumerable<CodeInstruction> instructions, MethodBase original, Callback_Method transpiler)
         {
-            return TranspileInternal(instructions, original, null, (list, method, il) => transpiler(list, method), transpiler.Method);
+            return TranspileInternal(instructions, original, null, transpiler.Method,
+                (ref List<CodeInstruction> list, MethodBase method, ILGenerator il) => transpiler(ref list, method));
         }
 
         public static IEnumerable<CodeInstruction> Transpile(this IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL, Callback_IL transpiler)
         {
-            return TranspileInternal(instructions, original, IL, (list, method, il) => transpiler(list, il), transpiler.Method);
+            return TranspileInternal(instructions, original, IL, transpiler.Method,
+                (ref List<CodeInstruction> list, MethodBase method, ILGenerator il) => transpiler(ref list, il));
         }
 
         public static IEnumerable<CodeInstruction> Transpile(this IEnumerable<CodeInstruction> instructions, MethodBase original, Callback transpiler)
         {
-            return TranspileInternal(instructions, original, null, (list, method, il) => transpiler(list), transpiler.Method);
+            return TranspileInternal(instructions, original, null, transpiler.Method,
+                (ref List<CodeInstruction> list, MethodBase method, ILGenerator il) => transpiler(ref list));
         }
 
         public static CodeInstruction GetMatchingLoadInstruction(this CodeInstruction code)

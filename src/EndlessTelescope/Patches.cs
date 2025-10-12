@@ -48,7 +48,7 @@ namespace EndlessTelescope
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var radius = typeof(ClusterTelescope.Def).GetField(nameof(ClusterTelescope.Def.analyzeClusterRadius));
                 if (radius != null)

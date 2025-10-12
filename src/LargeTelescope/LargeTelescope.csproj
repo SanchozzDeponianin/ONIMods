@@ -7,6 +7,6 @@
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <SharedCS Include="BaseOptions;TranspilerUtils" />
+    <SharedCS Include="BaseOptions" />
   </ItemGroup>
 </Project>

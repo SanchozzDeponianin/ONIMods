@@ -192,7 +192,7 @@ namespace ExoticSpices
                 return instructions.Transpile(original, IL, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
+            private static bool transpiler(ref List<CodeInstruction> instructions, ILGenerator IL)
             {
                 var getEmitMass = typeof(Flatulence_Emit).GetMethodSafe(nameof(GetEmitMass), true, PPatchTools.AnyArguments);
                 var mass = IL.DeclareLocal(typeof(float));
@@ -227,7 +227,7 @@ namespace ExoticSpices
                 return instructions.Transpile(original, IL, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions, ILGenerator IL)
+            private static bool transpiler(ref List<CodeInstruction> instructions, ILGenerator IL)
             {
                 var op_Implicit = typeof(StringEntry).GetMethodSafe("op_Implicit", true, typeof(StringEntry));
                 var replace = typeof(string).GetMethodSafe(nameof(string.Replace), false, typeof(string), typeof(string));

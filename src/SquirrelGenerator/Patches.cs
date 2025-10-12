@@ -75,7 +75,7 @@ namespace SquirrelGenerator
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var pop = typeof(ChoreTable.Builder).GetMethodSafe(nameof(ChoreTable.Builder.PopInterruptGroup), false, PPatchTools.AnyArguments);
                 var inject = typeof(BaseSquirrelConfig_BaseSquirrel).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments);
@@ -147,7 +147,7 @@ namespace SquirrelGenerator
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var fetchList = typeof(Constructable).GetFieldSafe("fetchList", false);
                 var submit = typeof(FetchList2).GetMethodSafe(nameof(FetchList2.Submit), false, typeof(System.Action), typeof(bool));

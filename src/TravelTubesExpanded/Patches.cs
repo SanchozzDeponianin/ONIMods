@@ -151,7 +151,7 @@ namespace TravelTubesExpanded
                         if (link1)
                         {
             */
-            private static bool AddJumpEntranceAndDualBridgeTest(List<CodeInstruction> instructions, ILGenerator IL)
+            private static bool AddJumpEntranceAndDualBridgeTest(ref List<CodeInstruction> instructions, ILGenerator IL)
             {
                 var get_link = typeof(GameObject).GetMethodSafe(nameof(GameObject.GetComponent), false)
                     ?.MakeGenericMethod(typeof(TravelTubeUtilityNetworkLink));
@@ -283,7 +283,7 @@ namespace TravelTubesExpanded
             +++         TestBridgeConnections(connections, cell);
                         здесь куча проверок Left Right Up Down;
             */
-            private static bool AddTubeAndBridgeExitTest(List<CodeInstruction> instructions, ILGenerator IL)
+            private static bool AddTubeAndBridgeExitTest(ref List<CodeInstruction> instructions, ILGenerator IL)
             {
                 var grid_objects = typeof(Grid).GetField(nameof(Grid.Objects));
                 var test1 = typeof(NavGrid_Transition_IsValid).GetMethodSafe(nameof(TestTubeConnections), true, PPatchTools.AnyArguments);
@@ -386,7 +386,7 @@ namespace TravelTubesExpanded
                     return Grid.InvalidCell;
             }
             */
-            private static bool AddFloorToTubeTest(List<CodeInstruction> instructions, ILGenerator IL)
+            private static bool AddFloorToTubeTest(ref List<CodeInstruction> instructions, ILGenerator IL)
             {
                 var end = typeof(NavGrid.Transition).GetField(nameof(NavGrid.Transition.end));
                 var test = typeof(NavGrid_Transition_IsValid).GetMethodSafe(nameof(TestBridgeConnections), true, PPatchTools.AnyArguments);

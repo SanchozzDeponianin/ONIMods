@@ -114,7 +114,7 @@ namespace WornSuitDischarge
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var getequipment = typeof(MinionIdentity).GetMethodSafe(nameof(MinionIdentity.GetEquipment), false);
                 var unassign = typeof(Assignable).GetMethodSafe(nameof(Assignable.Unassign), false);
@@ -184,7 +184,7 @@ namespace WornSuitDischarge
             {
                 return instructions.Transpile(original, transpiler);
             }
-            private static bool transpiler(List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var getequipment = typeof(MinionIdentity).GetMethodSafe(nameof(MinionIdentity.GetEquipment), false);
                 var unassign = typeof(Assignable).GetMethodSafe(nameof(Assignable.Unassign), false);
