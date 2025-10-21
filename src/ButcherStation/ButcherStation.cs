@@ -226,11 +226,15 @@ namespace ButcherStation
                     if (worker != null && creature_go.TryGetComponent<Butcherable>(out var butcherable)
                         && butcherable.drops != null && butcherable.drops.Count > 0)
                     {
-                        var multiplier = 1 + Patches.RanchingEffectExtraMeat.Lookup(worker).Evaluate();
-                        foreach (var drop in butcherable.drops.Keys.ToArray())
+                        var converter = worker.GetAttributeConverter(Patches.RanchingEffectExtraMeat.Id);
+                        if (converter != null)
                         {
-                            if (meats.Contains(drop))
-                                butcherable.drops[drop] *= multiplier;
+                            var multiplier = 1 + converter.Evaluate();
+                            foreach (var drop in butcherable.drops.Keys.ToArray())
+                            {
+                                if (meats.Contains(drop))
+                                    butcherable.drops[drop] *= multiplier;
+                            }
                         }
                     }
                     creature_go.GetSMI<DeathMonitor.Instance>()?.Kill(Db.Get().Deaths.Generic);

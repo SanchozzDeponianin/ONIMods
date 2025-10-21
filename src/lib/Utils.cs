@@ -177,9 +177,15 @@ namespace SanchozzONIMods.Lib
             }
 
             // выполняем замену если нужно. тип должен содержать статичный метод "DoReplacement"
-            AccessTools.Method(locstring_tree_root, "DoReplacement", Array.Empty<Type>())
-                ?.Invoke(null, null);
-
+            try
+            {
+                AccessTools.Method(locstring_tree_root, "DoReplacement", Array.Empty<Type>())
+                    ?.Invoke(null, null);
+            }
+            catch (Exception e)
+            {
+                LogExcWarn(e);
+            }
             CreateOptionsLocStringKeys(locstring_tree_root);
         }
 
