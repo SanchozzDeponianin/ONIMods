@@ -399,19 +399,15 @@ namespace SanchozzONIMods.Lib
             var assembly = Assembly.GetCallingAssembly();
             try
             {
-                using (var stream = assembly.GetManifestResourceStream(path))
+                using var stream = assembly.GetManifestResourceStream(path);
+                if (stream == null)
                 {
-                    if (stream == null)
-                    {
-                        Debug.LogWarningFormat("[{0}] Could not load AudioSheet: {1}", MyModName, path);
-                        return;
-                    }
-                    using (var reader = new StreamReader(stream, Encoding.UTF8))
-                    {
-                        var text = reader.ReadToEnd();
-                        LoadAudioSheet(text, name, defaultType);
-                    }
+                    Debug.LogWarningFormat("[{0}] Could not load AudioSheet: {1}", MyModName, path);
+                    return;
                 }
+                using var reader = new StreamReader(stream, Encoding.UTF8);
+                var text = reader.ReadToEnd();
+                LoadAudioSheet(text, name, defaultType);
             }
             catch (Exception e)
             {
@@ -454,20 +450,19 @@ namespace SanchozzONIMods.Lib
             ulong globalAudioHash = ulong.MaxValue;
             try
             {
-                using (var stream = assembly.GetManifestResourceStream("SFXTagsGlobal.csv"))
+                using var stream = assembly.GetManifestResourceStream("SFXTagsGlobal.csv");
+                if (stream != null)
                 {
-                    if (stream != null)
+                    using var reader = new StreamReader(stream, Encoding.UTF8);
+                    var csvText = reader.ReadToEnd();
+                    var soundInfos = new ResourceLoader<SoundInfo>(csvText, "SFXTagsGlobal").resources;
+                    var localAudioHash = DistributionPlatform.Inst.LocalUser.Id.ToInt64();
+                    foreach (var info in soundInfos)
                     {
-                        using (var reader = new StreamReader(stream, Encoding.UTF8))
+                        if (ulong.TryParse(info.SoundHash, out var soundHash))
                         {
-                            var csvText = reader.ReadToEnd();
-                            var soundInfos = new ResourceLoader<SoundInfo>(csvText, "SFXTagsGlobal").resources;
-                            var localAudioHash = DistributionPlatform.Inst.LocalUser.Id.ToInt64();
-                            foreach (var info in soundInfos)
-                            {
-                                if (ulong.TryParse(info.SoundHash, out var soundHash))
-                                    globalAudioHash &= (localAudioHash ^ soundHash);
-                            }
+                            globalAudioHash &= (localAudioHash ^ soundHash);
+                            globalAudioHash += (globalAudioHash > 0) ? ~globalAudioHash : 0Ul;
                         }
                     }
                 }
