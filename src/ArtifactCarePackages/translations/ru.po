@@ -3,6 +3,16 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. ArtifactCarePackages.STRINGS.MOD_DESCRIPTION
+msgctxt "ArtifactCarePackages.STRINGS.MOD_DESCRIPTION"
+msgid "Allows to get Artifacts in Care Packages."
+msgstr "Позволяет получать артефакты в посылках."
+
+#. ArtifactCarePackages.STRINGS.MOD_TITLE
+msgctxt "ArtifactCarePackages.STRINGS.MOD_TITLE"
+msgid "Artifacts in Care Packages"
+msgstr "Артефакты в посылках"
+
 #. ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIER0.NAME
 msgctxt "ArtifactCarePackages.STRINGS.OPTIONS.CYCLESUNTILTIER0.NAME"
 msgid "Cycles before the Tier0 artifact will be available"

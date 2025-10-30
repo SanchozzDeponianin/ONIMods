@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. WrangleCarry.STRINGS.MOD_DESCRIPTION
+msgctxt "WrangleCarry.STRINGS.MOD_DESCRIPTION"
+msgid "Eliminates the lag between the moment when the Rancher caught the Creature, and the moment when the Creature became available for transportation. Allows the Rancher to immediately carry the Creature to the Delivery Point. Adds the Sack."
+msgstr "Устраняет задержку между моментом, когда Животновод поймал Существо, и моментом, когда оно стало доступно для транспортировки. Позволяет Животноводу немедленно доставить Существо к месту доставки. Добавляет Мешок."
+
+#. WrangleCarry.STRINGS.MOD_TITLE
+msgctxt "WrangleCarry.STRINGS.MOD_TITLE"
+msgid "Wrangle & Carry"
+msgstr "Поймай и Тащи"
+

@@ -18,3 +18,13 @@ msgctxt "AquaticFarm.STRINGS.BUILDINGS.PREFABS.AQUATICFARM.NAME"
 msgid "<link=\"AQUATICFARM\">Aquatic Farm</link>"
 msgstr "<link=\"AQUATICFARM\">Водяная ферма</link>"
 
+#. AquaticFarm.STRINGS.MOD_DESCRIPTION
+msgctxt "AquaticFarm.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a new Aquatic Farm tile that can absorbs Liquids from the world for irrigation. Does not require Liquid Piping."
+msgstr "Новая плитка Водяная ферма может впитывать жидкости из окружающей среды для полива. Не требует подключения к жидкостным трубам."
+
+#. AquaticFarm.STRINGS.MOD_TITLE
+msgctxt "AquaticFarm.STRINGS.MOD_TITLE"
+msgid "Aquatic Farm"
+msgstr "Водяная ферма"
+

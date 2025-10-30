@@ -70,6 +70,10 @@
     <PackageReference Include="Aze.Publicise.MSBuild.Task" Version="1.1.0" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(DistributeMod)' == 'true' ">
+    <ProjectReference Include="$(MSBuildProjectDirectory)/../MSBuildTasksHelper/MSBuildTasksHelper.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" />
+  </ItemGroup>
+
   <!-- DLL игры -->
   <!-- нормальные -->
   <ItemGroup Condition=" '$(DistributeMod)' == 'true' And '$(UsesPublicise)' != 'true' ">
@@ -89,8 +93,6 @@
     <Reference Include="0Harmony" HintPath="$(GameFolder)/0Harmony.dll" /> -->
     <PackageReference Include="Lib.Harmony" Version="2.2.2" />
     <Reference Include="Newtonsoft.Json" HintPath="$(GameFolder)/Newtonsoft.Json.dll" />
-    <Reference Include="netstandard" HintPath="$(GameFolder)/netstandard.dll" />
-    <Reference Include="System" HintPath="$(GameFolder)/System.dll" />
     <Reference Include="UnityEngine" HintPath="$(GameFolder)/UnityEngine.dll" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(GameFolder)/UnityEngine.CoreModule.dll" />
     <Reference Include="UnityEngine.ImageConversionModule" HintPath="$(GameFolder)/UnityEngine.ImageConversionModule.dll" />
@@ -99,6 +101,7 @@
     <Reference Include="UnityEngine.UIModule" HintPath="$(GameFolder)/UnityEngine.UIModule.dll" />
     <Reference Include="Unity.TextMeshPro" HintPath="$(GameFolder)/Unity.TextMeshPro.dll" />
     <Reference Include="FMODUnity" HintPath="$(GameFolder)/FMODUnity.dll" />
+    <Reference Include="netstandard" HintPath="$(GameFolder)/netstandard.dll" />
   </ItemGroup>
 
   <!-- PLib -->

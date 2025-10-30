@@ -1,17 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
 
-  <Target Name="ResolveGameDllReferences" BeforeTargets="ResolveAssemblyReferences" >
-    <ItemGroup>
-      <Reference Condition=" '%(Reference.HintPath)' == '' And Exists('$(GameFolder)/%(Identity).dll') "
-                 HintPath="$(GameFolder)/%(Identity).dll" />
-    </ItemGroup>
-  </Target>
+  <!-- общие файлы из lib -->
+  <ItemGroup Condition=" '$(DistributeMod)' == 'true' ">
+    <SharedCS Include="Utils" />
+    <Compile Include="@(SharedCS->'$(MSBuildProjectDirectory)/../lib/%(Identity).cs')" />
+  </ItemGroup>
 
-  <Target Name="ResolveSharedFiles" BeforeTargets="ResolveAssemblyReferences" Condition=" '$(DistributeMod)' == 'true' ">
+  <!-- пустышка для строк для модов у которых нет своих строк -->
+  <Target Name="CreateStubStrings" BeforeTargets="ResolveAssemblyReferences;BeforeBuild"
+          Condition=" '$(DistributeMod)' == 'true' And !Exists('$(MSBuildProjectDirectory)/STRINGS.cs') ">
+    <PropertyGroup>
+      <StubStringsFile>$(MSBuildProjectDirectory)/obj/STRINGS.cs</StubStringsFile>
+      <StubStrings>
+namespace $(AssemblyName)
+{
+    public class STRINGS
+    {
+        public static LocString MOD_TITLE = ""%3B
+        public static LocString MOD_DESCRIPTION = ""%3B
+    }
+}
+      </StubStrings>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(StubStringsFile)" Lines="$(StubStrings)" Overwrite="true" WriteOnlyWhenDifferent="true" />
     <ItemGroup>
-      <SharedCS Include="Utils" />
-      <Compile Include="@(SharedCS->'$(MSBuildProjectDirectory)/../lib/%(Identity).cs')" Link ="@(SharedCS->'%(Identity).cs')" />
+      <Compile Include="$(StubStringsFile)" />
     </ItemGroup>
   </Target>
 
@@ -69,8 +83,8 @@
     </ItemGroup>
   </Target>
   <Target Name="Publicise" BeforeTargets="BeforeResolveReferences" Condition=" '$(DistributeMod)' == 'true' And '$(UsesPublicise)' == 'true' "
-		Inputs="@(PubliciseInputAssemblies)"
-		Outputs="@(PubliciseInputAssemblies->'$(PublicisedFolder)/%(Filename)_public%(Extension)')" >
+    Inputs="@(PubliciseInputAssemblies)"
+    Outputs="@(PubliciseInputAssemblies->'$(PublicisedFolder)/%(Filename)_public%(Extension)')" >
     <Publicise
        InputAssemblies="@(PubliciseInputAssemblies)"
        OutputPath="$(PublicisedFolder)"

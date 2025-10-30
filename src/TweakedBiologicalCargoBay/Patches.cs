@@ -9,6 +9,7 @@ namespace TweakedBiologicalCargoBay
         public override void OnLoad(Harmony harmony)
         {
             this.LogModVersion();
+            Utils.RegisterLocalization(typeof(STRINGS));
             base.OnLoad(harmony);
         }
 

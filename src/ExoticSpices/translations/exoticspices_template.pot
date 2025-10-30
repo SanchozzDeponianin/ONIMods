@@ -53,6 +53,16 @@ msgctxt "ExoticSpices.STRINGS.ITEMS.SPICES.ZOMBIE_COSPLAY_SPICE.NAME"
 msgid "<link=\"ZOMBIECOSPLAYSPICE\">Zombie Spice</link>"
 msgstr ""
 
+#. ExoticSpices.STRINGS.MOD_DESCRIPTION
+msgctxt "ExoticSpices.STRINGS.MOD_DESCRIPTION"
+msgid "Adds some exotic Spices with extraordinary effects to the Spice Grinder."
+msgstr ""
+
+#. ExoticSpices.STRINGS.MOD_TITLE
+msgctxt "ExoticSpices.STRINGS.MOD_TITLE"
+msgid "Festive Halloween Spices"
+msgstr ""
+
 #. ExoticSpices.STRINGS.OPTIONS.ATTRIBUTE_BUFF.NAME
 msgctxt "ExoticSpices.STRINGS.OPTIONS.ATTRIBUTE_BUFF.NAME"
 msgid "Strength and Athletics, +X"

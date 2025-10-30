@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. TweakedBiologicalCargoBay.STRINGS.MOD_DESCRIPTION
+msgctxt "TweakedBiologicalCargoBay.STRINGS.MOD_DESCRIPTION"
+msgid "Allows Duplicants independently transport animals directly from the Biological Cargo Bay to the Critter Drop-Off, without performing any unnecessary intermediate actions."
+msgstr "Позволяет дупликантам самостоятельно транспортировать животных непосредственно из биологического грузового отсека к месту выгрузки животных, без совершения каких-либо ненужных промежуточных действий."
+
+#. TweakedBiologicalCargoBay.STRINGS.MOD_TITLE
+msgctxt "TweakedBiologicalCargoBay.STRINGS.MOD_TITLE"
+msgid "Tweaked Biological Cargo Bay"
+msgstr "Доработанный Биологический грузовой отсек"
+

@@ -12,16 +12,8 @@ namespace EndlessTelescope
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
+            Utils.RegisterLocalization(typeof(STRINGS));
             base.OnLoad(harmony);
-        }
-
-        [HarmonyPatch(typeof(Db), nameof(Db.Initialize))]
-        private static class Db_Initialize
-        {
-            private static void Prefix()
-            {
-                Utils.InitLocalization(typeof(STRINGS));
-            }
         }
 
         [HarmonyPatch(typeof(ClusterTelescope.Instance), MethodType.Constructor)]

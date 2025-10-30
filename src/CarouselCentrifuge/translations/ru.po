@@ -48,6 +48,16 @@ msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.TOOL
 msgid "This Duplicant has unceremoniously hurled as the result of a Dizziness\n------------------\nDuplicant-related \"spills\" can be cleaned up using the <style=\"KKeyword\">Mop Tool</style> <b><color=#F44A4A>[M]</b></color>"
 msgstr "В результате головокружения этого дубликанта просто вывернуло наизнанку\n------------------\n<style=\"KKeyword\">Команда \"ВЫТЕРЕТЬ\"</style> <b><color=#F44A4A>[М]</b></color> поможет убрать оставленные дубликантами \"лужи\""
 
+#. CarouselCentrifuge.STRINGS.MOD_DESCRIPTION
+msgctxt "CarouselCentrifuge.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a new recreation building. Funny dizzy entertainment. Sometimes too dizzy..."
+msgstr "Новое здание для отдыха. Весёлое головокружительное развлечение. Иногда слишком головокружительное..."
+
+#. CarouselCentrifuge.STRINGS.MOD_TITLE
+msgctxt "CarouselCentrifuge.STRINGS.MOD_TITLE"
+msgid "Carousel"
+msgstr "Карусель"
+
 #. CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCEPERCENT.NAME
 msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCEPERCENT.NAME"
 msgid "Chance of <style=\"KKeyword\">Unforeseen consequences</style>"
@@ -68,13 +78,13 @@ msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.ENABLETRAINING.TOOLTIP"
 msgid "Only Space Out! DLC"
 msgstr "Только Space Out! DLC"
 
-#. CarouselCentrifuge.STRINGS.OPTIONS.SPECIFICEFFECTDURATION.NAME
-msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.SPECIFICEFFECTDURATION.NAME"
-msgid "Duration of the <style=\"KKeyword\">Ride on a Carousel</style> effect"
-msgstr "Длительность эффекта <style=\"KKeyword\">Катался на карусели</style>"
-
 #. CarouselCentrifuge.STRINGS.OPTIONS.MORALEBONUS.NAME
 msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.MORALEBONUS.NAME"
 msgid "<style=\"KKeyword\">{Morale}</style> bonus"
 msgstr "Бонус <style=\"KKeyword\">{Morale}</style>"
+
+#. CarouselCentrifuge.STRINGS.OPTIONS.SPECIFICEFFECTDURATION.NAME
+msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.SPECIFICEFFECTDURATION.NAME"
+msgid "Duration of the <style=\"KKeyword\">Ride on a Carousel</style> effect"
+msgstr "Длительность эффекта <style=\"KKeyword\">Катался на карусели</style>"
 

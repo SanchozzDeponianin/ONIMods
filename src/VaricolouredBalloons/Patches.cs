@@ -22,6 +22,12 @@ namespace VaricolouredBalloons
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
         }
 
+        [PLibMethod(RunAt.BeforeDbInit)]
+        private static void BeforeDbInit()
+        {
+            Utils.InitLocalization(typeof(STRINGS));
+        }
+
         private static readonly BalloonArtistFacadeType Varicoloured = (BalloonArtistFacadeType)Hash.SDBMLower(nameof(Varicoloured));
         private static readonly List<BalloonOverrideSymbolIter> BalloonOverrides = new();
         public static ReadOnlyCollection<BalloonArtistFacadeResource> MyBalloons { get; private set; }

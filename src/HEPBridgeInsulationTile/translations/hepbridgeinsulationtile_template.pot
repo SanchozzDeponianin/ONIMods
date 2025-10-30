@@ -3,44 +3,24 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
-#. HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.DESC
-msgctxt "HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.DESC"
-msgid ""
-msgstr ""
-
-#. HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.EFFECT
-msgctxt "HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.EFFECT"
-msgid ""
-msgstr ""
-
 #. HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.NAME
 msgctxt "HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.NAME"
 msgid "<link=\"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR\">Insulated {HEPBRIDGETILE_NAME}</link>"
 msgstr ""
 
-#. HEPBridgeInsulationTile.STRINGS.OPTIONS.ADVANCEDNUCLEARRESEARCH.NAME
-msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.ADVANCEDNUCLEARRESEARCH.NAME"
-msgid ""
+#. HEPBridgeInsulationTile.STRINGS.MOD_DESCRIPTION
+msgctxt "HEPBridgeInsulationTile.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a Insulated variant of Radbolt Joint Plate."
 msgstr ""
 
-#. HEPBridgeInsulationTile.STRINGS.OPTIONS.NUCLEARREFINEMENT.NAME
-msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.NUCLEARREFINEMENT.NAME"
-msgid ""
-msgstr ""
-
-#. HEPBridgeInsulationTile.STRINGS.OPTIONS.NUCLEARSTORAGE.NAME
-msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.NUCLEARSTORAGE.NAME"
-msgid ""
+#. HEPBridgeInsulationTile.STRINGS.MOD_TITLE
+msgctxt "HEPBridgeInsulationTile.STRINGS.MOD_TITLE"
+msgid "Insulated Radbolt Joint Plate"
 msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.NAME
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.NAME"
 msgid "<style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style> require Research"
-msgstr ""
-
-#. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.TOOLTIP
-msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.TOOLTIP"
-msgid ""
 msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.NAME
@@ -57,3 +37,4 @@ msgstr ""
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.USE_OLD_ANIM.NAME"
 msgid "Use animation from early version of the mod"
 msgstr ""
+

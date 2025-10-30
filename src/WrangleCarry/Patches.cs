@@ -20,6 +20,7 @@ namespace WrangleCarry
 
         private static void PatchLater()
         {
+            Utils.InitLocalization(typeof(STRINGS));
             Utils.MuteMouthFlapSpeech(rage_kanim, rage_anims);
             Utils.PatchLater();
         }

@@ -3,6 +3,16 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. SandboxMutantPlant.STRINGS.MOD_DESCRIPTION
+msgctxt "SandboxMutantPlant.STRINGS.MOD_DESCRIPTION"
+msgid "Allows to quickly receive mutant Seeds and Plants in the Sandbox mode."
+msgstr "Позволяет быстро получать мутантные семена и растения в режиме Песочницы."
+
+#. SandboxMutantPlant.STRINGS.MOD_TITLE
+msgctxt "SandboxMutantPlant.STRINGS.MOD_TITLE"
+msgid "Sandbox: Mutant Plants"
+msgstr "Песочница: Растения-мутанты"
+
 #. SandboxMutantPlant.STRINGS.UI.USERMENUACTIONS.IDENTIFY_MUTATION.NAME
 msgctxt "SandboxMutantPlant.STRINGS.UI.USERMENUACTIONS.IDENTIFY_MUTATION.NAME"
 msgid "Identify"

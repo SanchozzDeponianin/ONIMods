@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. VaricolouredBalloons.STRINGS.MOD_DESCRIPTION
+msgctxt "VaricolouredBalloons.STRINGS.MOD_DESCRIPTION"
+msgid "Total randomization of the Balloon skin, choosing from all available (unlocked) skins if the Duplicant Artist has the assignment of a default red skin."
+msgstr "Полная рандомизация скина воздушного шара, выбор из всех доступных (разблокированных) скинов, если дупликанту-вдувателю назначен красный скин по умолчанию."
+
+#. VaricolouredBalloons.STRINGS.MOD_TITLE
+msgctxt "VaricolouredBalloons.STRINGS.MOD_TITLE"
+msgid "Varicoloured Balloons"
+msgstr "Разноцветные шары"
+

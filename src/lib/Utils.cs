@@ -131,8 +131,8 @@ namespace SanchozzONIMods.Lib
                 throw new ArgumentNullException(nameof(locstring_tree));
             LocstringTree = locstring_tree;
             var harmony = new Harmony($"{MyMod.mod.staticID}.{nameof(RegisterLocalization)}");
-            harmony.Patch(typeof(Db).GetMethod(nameof(Db.Initialize)),
-                prefix: new HarmonyMethod(typeof(Utils).GetMethod(nameof(Utils.BeforeDbInit), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)));
+            var patch = typeof(Utils).GetMethod(nameof(Utils.BeforeDbInit), BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            harmony.Patch(typeof(Db).GetMethod(nameof(Db.Initialize)), prefix: new HarmonyMethod(patch, Priority.High));
         }
 
         private static void BeforeDbInit()
@@ -166,7 +166,6 @@ namespace SanchozzONIMods.Lib
                         Debug.LogFormat("[{0}] try load LangFile: {1}", MyModName, lang_file);
 #endif
                         Localization.OverloadStrings(Localization.LoadStringsFile(lang_file, false));
-                        LocalizeDescription(locstring_tree_root);
                     }
                 }
                 catch (Exception e)
@@ -186,6 +185,7 @@ namespace SanchozzONIMods.Lib
             {
                 LogExcWarn(e);
             }
+            LocalizeDescription(locstring_tree_root);
             CreateOptionsLocStringKeys(locstring_tree_root);
         }
 

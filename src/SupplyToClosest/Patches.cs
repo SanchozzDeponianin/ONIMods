@@ -21,6 +21,7 @@ namespace SupplyToClosest
         [PLibMethod(RunAt.BeforeDbInit)]
         private static void BeforeDbInit(Harmony harmony)
         {
+            Utils.InitLocalization(typeof(STRINGS));
             harmony.PatchAll();
         }
 

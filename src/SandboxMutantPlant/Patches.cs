@@ -13,16 +13,8 @@ namespace SandboxMutantPlant
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
+            Utils.RegisterLocalization(typeof(STRINGS));
             base.OnLoad(harmony);
-        }
-
-        [HarmonyPatch(typeof(Localization), nameof(Localization.Initialize))]
-        internal static class Localization_Initialize
-        {
-            private static void Postfix()
-            {
-                Utils.InitLocalization(typeof(STRINGS));
-            }
         }
 
         // при включении песочницы обновляем кнопки в боковом экране

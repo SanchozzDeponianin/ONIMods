@@ -8,14 +8,14 @@ msgctxt "BuildableGeneShuffler.STRINGS.BUILDINGS.PREFABS.BUILDABLEGENESHUFFLER.D
 msgid "Pickled morb`s brains... mmm... yummy!"
 msgstr ""
 
-#. BuildableGeneShuffler.STRINGS.BUILDINGS.PREFABS.BUILDABLEGENESHUFFLER.EFFECT
-msgctxt "BuildableGeneShuffler.STRINGS.BUILDINGS.PREFABS.BUILDABLEGENESHUFFLER.EFFECT"
-msgid ""
+#. BuildableGeneShuffler.STRINGS.MOD_DESCRIPTION
+msgctxt "BuildableGeneShuffler.STRINGS.MOD_DESCRIPTION"
+msgid "Allows you to build your own Neural Vacillator. Vacillator Recharge not Included."
 msgstr ""
 
-#. BuildableGeneShuffler.STRINGS.BUILDINGS.PREFABS.BUILDABLEGENESHUFFLER.NAME
-msgctxt "BuildableGeneShuffler.STRINGS.BUILDINGS.PREFABS.BUILDABLEGENESHUFFLER.NAME"
-msgid ""
+#. BuildableGeneShuffler.STRINGS.MOD_TITLE
+msgctxt "BuildableGeneShuffler.STRINGS.MOD_TITLE"
+msgid "Buildable Neural Vacillator"
 msgstr ""
 
 #. BuildableGeneShuffler.STRINGS.OPTIONS.CONSTRUCTIONTIME.NAME

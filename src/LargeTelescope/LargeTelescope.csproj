@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Title>Enclosed Telescope Tune-Up</Title>
-    <Description>Tuning of a Enclosed Telescope: increased the radius and scanning speed, adjusted requirements, some improvements.</Description>
+    <Description>Increased the radius and scanning speed, adjusted requirements, some improvements.</Description>
     <ModVersion>2.1.4</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>

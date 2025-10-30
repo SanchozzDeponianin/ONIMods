@@ -27,6 +27,12 @@ namespace WornSuitDischarge
             ManualDeliveryKGPatch.Patch(harmony);
         }
 
+        [PLibMethod(RunAt.BeforeDbInit)]
+        private static void BeforeDbInit()
+        {
+            Utils.InitLocalization(typeof(STRINGS));
+        }
+
         // подкручиваем приоритет, чтобы задача доставки костюмов в доки считалась доставкой жизнеобеспечения.
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()

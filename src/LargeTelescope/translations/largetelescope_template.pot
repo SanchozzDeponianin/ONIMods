@@ -3,6 +3,16 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. LargeTelescope.STRINGS.MOD_DESCRIPTION
+msgctxt "LargeTelescope.STRINGS.MOD_DESCRIPTION"
+msgid "Increased the radius and scanning speed, adjusted requirements, some improvements."
+msgstr ""
+
+#. LargeTelescope.STRINGS.MOD_TITLE
+msgctxt "LargeTelescope.STRINGS.MOD_TITLE"
+msgid "Enclosed Telescope Tune-Up"
+msgstr ""
+
 #. LargeTelescope.STRINGS.OPTIONS.ADD_GLASS.NAME
 msgctxt "LargeTelescope.STRINGS.OPTIONS.ADD_GLASS.NAME"
 msgid "Add Glass to the construction cost of the {ENCLOSED_TELESCOPE}"

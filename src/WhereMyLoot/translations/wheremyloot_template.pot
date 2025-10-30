@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. WhereMyLoot.STRINGS.MOD_DESCRIPTION
+msgctxt "WhereMyLoot.STRINGS.MOD_DESCRIPTION"
+msgid "Allows you to get the expected loot from objects that have not been inspected but have been demolished."
+msgstr ""
+
+#. WhereMyLoot.STRINGS.MOD_TITLE
+msgctxt "WhereMyLoot.STRINGS.MOD_TITLE"
+msgid "Where's My Loot?"
+msgstr ""
+

@@ -61,7 +61,7 @@ msgstr "{0} дополнительное <style=\"KKeyword\">Мясо</style> п
 #. ButcherStation.STRINGS.MOD_DESCRIPTION
 msgctxt "ButcherStation.STRINGS.MOD_DESCRIPTION"
 msgid "Adds a new Stations allows the Ranchers to control the population and butchering too old, surplus, or unwanted Critters."
-msgstr "Добавляет новые станции, позволяющие Ранчерам контролировать популяцию и забивать слишком старых, излишних или нежелательных животных."
+msgstr "Добавляет новые станции, позволяющие Животноводам контролировать популяцию и забивать слишком старых, излишних или нежелательных животных."
 
 #. ButcherStation.STRINGS.MOD_TITLE
 msgctxt "ButcherStation.STRINGS.MOD_TITLE"

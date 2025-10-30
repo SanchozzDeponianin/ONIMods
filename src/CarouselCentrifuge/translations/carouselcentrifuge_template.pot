@@ -48,6 +48,16 @@ msgctxt "CarouselCentrifuge.STRINGS.DUPLICANTS.STATUSITEMS.CAROUSELVOMITING.TOOL
 msgid "This Duplicant has unceremoniously hurled as the result of a Dizziness\n------------------\nDuplicant-related \"spills\" can be cleaned up using the <style=\"KKeyword\">Mop Tool</style> <b><color=#F44A4A>[M]</b></color>"
 msgstr ""
 
+#. CarouselCentrifuge.STRINGS.MOD_DESCRIPTION
+msgctxt "CarouselCentrifuge.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a new recreation building. Funny dizzy entertainment. Sometimes too dizzy..."
+msgstr ""
+
+#. CarouselCentrifuge.STRINGS.MOD_TITLE
+msgctxt "CarouselCentrifuge.STRINGS.MOD_TITLE"
+msgid "Carousel"
+msgstr ""
+
 #. CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCEPERCENT.NAME
 msgctxt "CarouselCentrifuge.STRINGS.OPTIONS.DIZZINESSCHANCEPERCENT.NAME"
 msgid "Chance of <style=\"KKeyword\">Unforeseen consequences</style>"

@@ -6,6 +6,7 @@ using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
+using PeterHan.PLib.PatchManager;
 
 namespace WhereMyLoot
 {
@@ -15,6 +16,13 @@ namespace WhereMyLoot
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+        }
+
+        [PLibMethod(RunAt.BeforeDbInit)]
+        private static void BeforeDbInit()
+        {
+            Utils.InitLocalization(typeof(STRINGS));
         }
 
         [HarmonyPatch(typeof(Demolishable), "TriggerDestroy")]

@@ -8,6 +8,7 @@ namespace OldLiquidReservoir
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
+            Utils.RegisterLocalization(typeof(STRINGS));
             base.OnLoad(harmony);
         }
 

@@ -13,3 +13,13 @@ msgctxt "EndlessTelescope.STRINGS.BUILDING.STATUSITEMS.TELESCOPE_DEEP_SPACE.TOOL
 msgid "This building is currently investigating the far section of space,\nlocated beyond the distance of effective study.\n    • Effective distance: <b>{0}\n    • </b>Current distance: <b>{1}</b>\n    • Study Effectiveness: <b>{2}</b>"
 msgstr ""
 
+#. EndlessTelescope.STRINGS.MOD_DESCRIPTION
+msgctxt "EndlessTelescope.STRINGS.MOD_DESCRIPTION"
+msgid "Allows you to explore the entire space map, but the further away, the slower."
+msgstr ""
+
+#. EndlessTelescope.STRINGS.MOD_TITLE
+msgctxt "EndlessTelescope.STRINGS.MOD_TITLE"
+msgid "Endless Telescope"
+msgstr ""
+

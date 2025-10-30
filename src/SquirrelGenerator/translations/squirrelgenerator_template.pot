@@ -10,7 +10,7 @@ msgstr ""
 
 #. SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.EFFECT
 msgctxt "SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.EFFECT"
-msgid "Converts a creature’s muscular labor into electrical <link=\"POWER\">Power</link>.\n\nA {Squirrel} is happier when it runs in a wheel, but consumes more food."
+msgid "Converts a creature's muscular labor into electrical <link=\"POWER\">Power</link>.\n\nA {Squirrel} is happier when it runs in a wheel, but consumes more food."
 msgstr ""
 
 #. SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.NAME
@@ -41,6 +41,16 @@ msgstr ""
 #. SquirrelGenerator.STRINGS.MISC.TAGS.SEED_DESC
 msgctxt "SquirrelGenerator.STRINGS.MISC.TAGS.SEED_DESC"
 msgid "Seeds can be used not only to grow <link=\"PLANTS\">Plants</link>, but also to attract the attention of some <link=\"SQUIRREL\">Creatures</link>."
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.MOD_DESCRIPTION
+msgctxt "SquirrelGenerator.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a new Squirrel Wheel building that your Pips can use to running, and you will get a small profit of bonus electricity power."
+msgstr ""
+
+#. SquirrelGenerator.STRINGS.MOD_TITLE
+msgctxt "SquirrelGenerator.STRINGS.MOD_TITLE"
+msgid "Squirrel Wheel"
 msgstr ""
 
 #. SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGERATING.NAME
