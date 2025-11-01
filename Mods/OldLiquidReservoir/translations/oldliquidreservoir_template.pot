@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. OldLiquidReservoir.STRINGS.MOD_DESCRIPTION
+msgctxt "OldLiquidReservoir.STRINGS.MOD_DESCRIPTION"
+msgid "Returns the old visual art of the Liquid Reservoir from older \"early access\" versions of the game."
+msgstr ""
+
+#. OldLiquidReservoir.STRINGS.MOD_TITLE
+msgctxt "OldLiquidReservoir.STRINGS.MOD_TITLE"
+msgid "Old Liquid Reservoir"
+msgstr ""
+

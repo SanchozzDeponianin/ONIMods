@@ -1,4 +1,5 @@
-supportedContent: ALL
-minimumSupportedBuild: 650327
-version: 1.1.0
+requiredDlcIds:
+- DLC2_ID
+minimumSupportedBuild: 663500
+version: 1.1.1
 APIVersion: 2

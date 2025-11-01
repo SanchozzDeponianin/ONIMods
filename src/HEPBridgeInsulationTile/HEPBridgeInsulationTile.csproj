@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Insulated Radbolt Joint Plate</Title>
     <Description>Adds a Insulated variant of Radbolt Joint Plate.</Description>
-    <ModVersion>2.0.9</ModVersion>
+    <ModVersion>2.0.10</ModVersion>
     <RequiredDlcIds>EXPANSION1_ID</RequiredDlcIds>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>

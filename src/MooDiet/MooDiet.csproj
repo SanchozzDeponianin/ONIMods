@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Gassy Moo Eat Flowers</Title>
     <Description>Now Gassy Moo can eat Balm Lily Flowers and harvested Gas Grass.</Description>
-    <ModVersion>1.0.4</ModVersion>
+    <ModVersion>1.0.5</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

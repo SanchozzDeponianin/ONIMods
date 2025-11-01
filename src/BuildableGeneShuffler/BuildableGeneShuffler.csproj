@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Buildable Neural Vacillator</Title>
     <Description>Allows you to build your own Neural Vacillator. Vacillator Recharge not Included.</Description>
-    <ModVersion>1.0.10</ModVersion>
+    <ModVersion>1.0.11</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

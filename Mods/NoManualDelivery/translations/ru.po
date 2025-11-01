@@ -3,6 +3,16 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. NoManualDelivery.STRINGS.MOD_DESCRIPTION
+msgctxt "NoManualDelivery.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a \"Allow Manual Use\" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings."
+msgstr "Добавляет флажок \"Разрешить использование вручную\" для очень многих построек, чтобы эффективно использовать конвейерную систему и предотвратить доставку ресурсов дупликантами вручную в эти постройки."
+
+#. NoManualDelivery.STRINGS.MOD_TITLE
+msgctxt "NoManualDelivery.STRINGS.MOD_TITLE"
+msgid "No Manual Delivery"
+msgstr "Без ручной доставки"
+
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME"
 msgid "Duplicants can always pick up Food and Medicine."

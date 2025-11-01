@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Auto Drop Wrong Liquid</Title>
     <Description>Now an errand to empty the Hydroponic Farms storage of the wrong liquid is created automatically.</Description>
-    <ModVersion>1.0.1</ModVersion>
+    <ModVersion>1.0.2</ModVersion>
     <UsesPLib>false</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

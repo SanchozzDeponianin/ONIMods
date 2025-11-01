@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. WornSuitDischarge.STRINGS.MOD_DESCRIPTION
+msgctxt "WornSuitDischarge.STRINGS.MOD_DESCRIPTION"
+msgid "Discharges Worn Suits don't drops the Canisters when unequipping. Oxygen and Petroleum are returned to the Suit Dock for later reuse. Also a few tweaks of Suit Dock."
+msgstr ""
+
+#. WornSuitDischarge.STRINGS.MOD_TITLE
+msgctxt "WornSuitDischarge.STRINGS.MOD_TITLE"
+msgid "Worn Suit doesn't drop Canister & Suit Docks Tune-Up"
+msgstr ""
+

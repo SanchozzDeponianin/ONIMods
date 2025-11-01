@@ -1,5 +1,5 @@
 forbiddenDlcIds:
 - EXPANSION1_ID
-minimumSupportedBuild: 659075
-version: 1.2.3
+minimumSupportedBuild: 663500
+version: 1.2.4
 APIVersion: 2

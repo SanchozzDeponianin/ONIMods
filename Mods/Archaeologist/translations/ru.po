@@ -12,3 +12,14 @@ msgstr "Археолог"
 msgctxt "Archaeologist.STRINGS.DUPLICANTS.TRAITS.ARCHAEOLOGIST.SHORT_DESC_TOOLTIP"
 msgid "This Duplicant almost always finds <style=\"KKeyword\">Artifacts</style> when traveling to other planets"
 msgstr "Этот дупликант почти всегда находит <style=\"KKeyword\">артефакты</style>, когда путешествует к другим планетам"
+
+#. Archaeologist.STRINGS.MOD_DESCRIPTION
+msgctxt "Archaeologist.STRINGS.MOD_DESCRIPTION"
+msgid "Unlocks the Relic Hunter trait that exists in vanilla but is not used. A duplicant with this trait almost always finds Artifacts when traveling to other planets."
+msgstr "Разблокирует черту Охотник за реликвиями, которая существует в ванилле, но не используется. Дупликант с этой чертой почти всегда находит артефакты, когда путешествует к другим планетам"
+
+#. Archaeologist.STRINGS.MOD_TITLE
+msgctxt "Archaeologist.STRINGS.MOD_TITLE"
+msgid "Relic Hunter"
+msgstr "Охотник за реликвиями"
+

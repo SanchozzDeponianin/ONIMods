@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. DumpIncorrectFertilizers.STRINGS.MOD_DESCRIPTION
+msgctxt "DumpIncorrectFertilizers.STRINGS.MOD_DESCRIPTION"
+msgid "Now an errand to empty the Hydroponic Farms storage of the wrong liquid is created automatically."
+msgstr "Теперь задание на очистку Гидропонных ферм от неподходящей жидкости создается автоматически."
+
+#. DumpIncorrectFertilizers.STRINGS.MOD_TITLE
+msgctxt "DumpIncorrectFertilizers.STRINGS.MOD_TITLE"
+msgid "Auto Drop Wrong Liquid"
+msgstr "Авто-сброс неправильной жидкости"
+

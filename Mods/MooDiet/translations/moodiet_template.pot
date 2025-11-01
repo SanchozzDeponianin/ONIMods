@@ -8,6 +8,16 @@ msgctxt "MooDiet.STRINGS.CREATURES.MODIFIERS.MOOFLOWERFED.NAME"
 msgid "Flower Diet"
 msgstr ""
 
+#. MooDiet.STRINGS.MOD_DESCRIPTION
+msgctxt "MooDiet.STRINGS.MOD_DESCRIPTION"
+msgid "Now Gassy Moo can eat Balm Lily Flowers and harvested Gas Grass."
+msgstr ""
+
+#. MooDiet.STRINGS.MOD_TITLE
+msgctxt "MooDiet.STRINGS.MOD_TITLE"
+msgid "Gassy Moo Eat Flowers"
+msgstr ""
+
 #. MooDiet.STRINGS.OPTIONS.BECKONING.NAME
 msgctxt "MooDiet.STRINGS.OPTIONS.BECKONING.NAME"
 msgid "<style=\"KKeyword\">Accu-moo-lation</style> when <style=\"KKeyword\">Gassy Moo</style> eats <style=\"KKeyword\">Balm Lily Flowers</style>"

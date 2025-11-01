@@ -28,6 +28,16 @@ msgctxt "MechanicsStation.STRINGS.DUPLICANTS.MODIFIERS.MACHINETINKER.TOOLTIP"
 msgid "A skilled Duplicant has jerry rigged this <style=\"KKeyword\">Building</style> to temporarily run faster\n\nApplying this effect consumed one of <style=\"KKeyword\">{MACHINE_PARTS}</style>"
 msgstr ""
 
+#. MechanicsStation.STRINGS.MOD_DESCRIPTION
+msgctxt "MechanicsStation.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a new Mechanics Station, with which engineers could improve the performance of various buildings."
+msgstr ""
+
+#. MechanicsStation.STRINGS.MOD_TITLE
+msgctxt "MechanicsStation.STRINGS.MOD_TITLE"
+msgid "Mechanics Station"
+msgstr ""
+
 #. MechanicsStation.STRINGS.OPTIONS.CRAFTING_SPEED_MODIFIER.NAME
 msgctxt "MechanicsStation.STRINGS.OPTIONS.CRAFTING_SPEED_MODIFIER.NAME"
 msgid "<style=\"KKeyword\">Fabrication Speed</style> +X% value"

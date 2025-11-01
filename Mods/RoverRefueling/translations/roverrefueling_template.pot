@@ -43,6 +43,16 @@ msgctxt "RoverRefueling.STRINGS.DUPLICANTS.MODIFIERS.SCOUTBOTREFUELING.TOOLTIP"
 msgid "{ROVER} is happily charging at <link=\"ROVERREFUELINGSTATION\">{ROVER}'s Recharger</link>.\nmmm... yummy Chemical Beer!"
 msgstr ""
 
+#. RoverRefueling.STRINGS.MOD_DESCRIPTION
+msgctxt "RoverRefueling.STRINGS.MOD_DESCRIPTION"
+msgid "Allows you to charge the Rover's battery with chemical fuel."
+msgstr ""
+
+#. RoverRefueling.STRINGS.MOD_TITLE
+msgctxt "RoverRefueling.STRINGS.MOD_TITLE"
+msgid "Rover's Recharger"
+msgstr ""
+
 #. RoverRefueling.STRINGS.OPTIONS.CHARGE_TIME.NAME
 msgctxt "RoverRefueling.STRINGS.OPTIONS.CHARGE_TIME.NAME"
 msgid "Recharge time, seconds"

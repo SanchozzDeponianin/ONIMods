@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. VitalsDisplayRads.STRINGS.MOD_DESCRIPTION
+msgctxt "VitalsDisplayRads.STRINGS.MOD_DESCRIPTION"
+msgid "The Vitals screen now shows the amount of Absorbed Rad Dose."
+msgstr "Экран жизненных показателей теперь показывает величину поглощенной дозы радиации."
+
+#. VitalsDisplayRads.STRINGS.MOD_TITLE
+msgctxt "VitalsDisplayRads.STRINGS.MOD_TITLE"
+msgid "Vitals Display Rads"
+msgstr "Показатели Радиации"
+

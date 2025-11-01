@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Enclosed Telescope Tune-Up</Title>
     <Description>Increased the radius and scanning speed, adjusted requirements, some improvements.</Description>
-    <ModVersion>2.1.4</ModVersion>
+    <ModVersion>2.1.5</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

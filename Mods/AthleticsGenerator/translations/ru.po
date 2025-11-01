@@ -8,6 +8,16 @@ msgctxt "AthleticsGenerator.STRINGS.DUPLICANTS.ATTRIBUTES.ATHLETICS.POWERMODIFIE
 msgid "{0} Manual Generator Power"
 msgstr "Мощность Ручного генератора: {0}"
 
+#. AthleticsGenerator.STRINGS.MOD_DESCRIPTION
+msgctxt "AthleticsGenerator.STRINGS.MOD_DESCRIPTION"
+msgid "Now the Manual Generator produces more energy the higher the level of the Duplicant's Athletics attribute."
+msgstr "Теперь Ручной генератор вырабатывает тем больше энергии, чем выше уровень атрибута Атлетика у Дупликанта."
+
+#. AthleticsGenerator.STRINGS.MOD_TITLE
+msgctxt "AthleticsGenerator.STRINGS.MOD_TITLE"
+msgid "Athletic Manual Generator"
+msgstr "Атлетичный Ручной Генератор"
+
 #. AthleticsGenerator.STRINGS.OPTIONS.ENABLE_LIGHT.NAME
 msgctxt "AthleticsGenerator.STRINGS.OPTIONS.ENABLE_LIGHT.NAME"
 msgid "Enable Wattage meter light"

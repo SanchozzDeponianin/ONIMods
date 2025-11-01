@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Endless Telescope</Title>
     <Description>Allows you to explore the entire space map, but the further away, the slower.</Description>
-    <ModVersion>1.0.2</ModVersion>
+    <ModVersion>1.0.3</ModVersion>
     <RequiredDlcIds>EXPANSION1_ID</RequiredDlcIds>
     <UsesPLib>false</UsesPLib>
   </PropertyGroup>

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Any Ice Liquefier</Title>
     <Description>Allows you to choose which type of Ice will heat the Ice Liquefier.</Description>
-    <ModVersion>1.1.0</ModVersion>
+    <ModVersion>1.1.1</ModVersion>
     <RequiredDlcIds>DLC2_ID</RequiredDlcIds>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>

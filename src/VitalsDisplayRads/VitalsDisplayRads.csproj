@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Vitals Display Rads</Title>
     <Description>The Vitals screen now shows the amount of Absorbed Rad Dose.</Description>
-    <ModVersion>1.0.1</ModVersion>
+    <ModVersion>1.0.2</ModVersion>
     <RequiredDlcIds>EXPANSION1_ID</RequiredDlcIds>
     <UsesPLib>false</UsesPLib>
     <UsesPublicise>true</UsesPublicise>

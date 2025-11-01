@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Festive Halloween Spices</Title>
     <Description>Adds some exotic Spices with extraordinary effects to the Spice Grinder.</Description>
-    <ModVersion>1.0.7</ModVersion>
+    <ModVersion>1.0.8</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

@@ -10,7 +10,7 @@ msgstr "Наблюдать, как {Squirrel} бегает в нём восхи�
 
 #. SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.EFFECT
 msgctxt "SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.EFFECT"
-msgid "Converts a creature’s muscular labor into electrical <link=\"POWER\">Power</link>.\n\nA {Squirrel} is happier when it runs in a wheel, but consumes more food."
+msgid "Converts a creature's muscular labor into electrical <link=\"POWER\">Power</link>.\n\nA {Squirrel} is happier when it runs in a wheel, but consumes more food."
 msgstr "Преобразует мускульный труд существа в <link=\"POWER\">Электричество</link>.\n\n{Squirrel} более счастлив когда бегает в колесе, но потребляет больше пищи."
 
 #. SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.NAME
@@ -42,6 +42,16 @@ msgstr "Это существо обнаружило занятную механ
 msgctxt "SquirrelGenerator.STRINGS.MISC.TAGS.SEED_DESC"
 msgid "Seeds can be used not only to grow <link=\"PLANTS\">Plants</link>, but also to attract the attention of some <link=\"SQUIRREL\">Creatures</link>."
 msgstr "Семена можно использовать не только для выращивания <link=\"PLANTS\">растений</link>, но и для привлечения внимания некоторых <link=\"SQUIRREL\">существ</link>."
+
+#. SquirrelGenerator.STRINGS.MOD_DESCRIPTION
+msgctxt "SquirrelGenerator.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a new Squirrel Wheel building that your Pips can use to running, and you will get a small profit of bonus electricity power."
+msgstr "Новая постройка Беличье колесо, в котором ваши Пипы смогут бегать, а вы получите небольшую прибыль в виде бонусной электроэнергии."
+
+#. SquirrelGenerator.STRINGS.MOD_TITLE
+msgctxt "SquirrelGenerator.STRINGS.MOD_TITLE"
+msgid "Squirrel Wheel"
+msgstr "Беличье колесо"
 
 #. SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGERATING.NAME
 msgctxt "SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGERATING.NAME"
@@ -107,3 +117,4 @@ msgstr "Выработка тепла"
 msgctxt "SquirrelGenerator.STRINGS.OPTIONS.SELFHEATWATTS.TOOLTIP"
 msgid "<style=\"KKeyword\">Heat</style> Production,{DTU_S} of Squirrel Wheel"
 msgstr "Выработка <style=\"KKeyword\">Тепла</style>,{DTU_S} бельичьим колесом"
+

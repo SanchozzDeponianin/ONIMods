@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. PickupFloppingPacu.STRINGS.MOD_DESCRIPTION
+msgctxt "PickupFloppingPacu.STRINGS.MOD_DESCRIPTION"
+msgid "Allows Duplicants to pick up flopping Pacu."
+msgstr "Позволяет дупликантам подбирать плюхающихся Паку."
+
+#. PickupFloppingPacu.STRINGS.MOD_TITLE
+msgctxt "PickupFloppingPacu.STRINGS.MOD_TITLE"
+msgid "Pick up Flopping Pacu"
+msgstr "Подбери плюхающегося Паку"
+

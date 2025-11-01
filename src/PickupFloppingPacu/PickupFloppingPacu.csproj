@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Pick up Flopping Pacu</Title>
     <Description>Allows Duplicants to pick up flopping Pacu.</Description>
-    <ModVersion>1.0.1</ModVersion>
+    <ModVersion>1.0.2</ModVersion>
     <UsesPLib>false</UsesPLib>
   </PropertyGroup>
 </Project>
