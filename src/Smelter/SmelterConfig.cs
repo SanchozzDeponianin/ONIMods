@@ -262,6 +262,7 @@ namespace Smelter
                     {
                         time = recipe.time * fabricationTimeMultiplier,
                         description = recipe.description,
+                        customName = recipe.customName, //if the steel recipe is from a mod and uses a custom name, this is required, otherwise the SearchUtil.CacheTechs crashes due to an empty name
                         nameDisplay = recipe.nameDisplay,
                         fabricators = new List<Tag> { TagManager.Create(ID) }
                     };
