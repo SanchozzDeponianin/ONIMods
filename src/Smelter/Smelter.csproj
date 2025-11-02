@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Smelter</Title>
     <Description>Adds a new Smelter building designed to smelt metals in the early game, and a few new recipes.</Description>
-    <ModVersion>1.3.5</ModVersion>
+    <ModVersion>1.3.6</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
