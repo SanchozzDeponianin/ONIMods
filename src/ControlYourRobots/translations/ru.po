@@ -5,8 +5,8 @@ msgstr ""
 
 #. ControlYourRobots.STRINGS.MOD_DESCRIPTION
 msgctxt "ControlYourRobots.STRINGS.MOD_DESCRIPTION"
-msgid "Adds a couple of features to better control your Robots: \"Move To\" and \"Turn Off/On\" buttons, Door Access Control, etc."
-msgstr "Добавляет несколько фичей для лучшего управления вашими роботами: кнопки \"Переместить\" и \"Включить/выключить\", контроль доступа к дверям и т.д."
+msgid "Adds a couple of features to better control your Robots: \"Move To\" and \"Turn Off/On\" buttons, Energy saving mode when idling, etc."
+msgstr "Добавляет несколько фичей для лучшего управления вашими роботами: кнопки \"Переместить\" и \"Включить/выключить\", Режим энергосбережения при бездействии и т.д."
 
 #. ControlYourRobots.STRINGS.MOD_TITLE
 msgctxt "ControlYourRobots.STRINGS.MOD_TITLE"
@@ -37,11 +37,6 @@ msgstr "Флудо может брать Энергоячейку для сам�
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_LIQUID_SOURCE.NAME"
 msgid "Flydo can use Pitcher Pump, Bottle Fillers, Ice Liquefier ect"
 msgstr "Флудо может использовать Ручной насос, Набутыливатели, Чайник и т.п."
-
-#. ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_PASS_DOOR.NAME
-msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_PASS_DOOR.NAME"
-msgid "Flydo can pass through Doors"
-msgstr "Флудо может проходить через двери"
 
 #. ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_UNDERWATER.NAME
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_UNDERWATER.NAME"
@@ -82,16 +77,6 @@ msgstr "Таймаут, после которого Флудо перейдет 
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_VALUE.NAME"
 msgid "Battery consumption rate in energy saving mode, % of nominal value"
 msgstr "Скорость расхода батареи в режиме энергосбережения, % от номинала"
-
-#. ControlYourRobots.STRINGS.OPTIONS.RESTRICT_FLYDO_BY_DEFAULT.NAME
-msgctxt "ControlYourRobots.STRINGS.OPTIONS.RESTRICT_FLYDO_BY_DEFAULT.NAME"
-msgid "Prohibit Flydo's access to Doors by default"
-msgstr "Запретить доступ Flydo к дверям по умолчанию"
-
-#. ControlYourRobots.STRINGS.OPTIONS.RESTRICT_FLYDO_BY_DEFAULT.TOOLTIP
-msgctxt "ControlYourRobots.STRINGS.OPTIONS.RESTRICT_FLYDO_BY_DEFAULT.TOOLTIP"
-msgid "If enabled, the mod will automatically deny Flydo access\non all non-configured Doors for performance reasons."
-msgstr "Если включено, мод автоматически запретит доступ Flydo\nко всем ненастроенным дверям по соображениям производительности."
 
 #. ControlYourRobots.STRINGS.OPTIONS.ZZZ_ICON_ENABLE.NAME
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.ZZZ_ICON_ENABLE.NAME"

@@ -2,7 +2,7 @@
 
 namespace ControlYourRobots
 {
-    // мимикриацция под MinionAssignablesProxy для внедрения в контроль дверей и экран приоритетов
+    // мимикриацция под MinionAssignablesProxy для внедрения в экран приоритетов
     // один прокси-объект для всех роботов одного типа
     // методы OnЧетотам переопределены для избежания создания и верчения ненужными нам сущностями
 
@@ -41,21 +41,11 @@ namespace ControlYourRobots
         {
             handle.ClearScheduler();
             // самоликвидировать созданное лишнее если юзер запускал предыдущюю версию мода
-            // или отключил контроль дверей для летунов
             // остаться должен только один (с)
             foreach (var item in Cmps.Items)
             {
                 if (item == this)
-                {
-                    if (PrefabID == FetchDroneConfig.ID)
-                    {
-                        if (!ModOptions.Instance.flydo_can_pass_door)
-                            break;
-                        if (ModOptions.Instance.restrict_flydo_by_default)
-                            Game.Instance.Trigger(FlydoPatches.FirstFludoWasAppeared, this);
-                    }
                     return;
-                }
             }
             Util.KDestroyGameObject(gameObject);
         }

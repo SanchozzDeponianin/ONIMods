@@ -126,6 +126,9 @@ namespace HEPBridgeInsulationTile
                 var element = ElementLoader.FindElementByHash(hash);
                 element.oreTags = element.oreTags.AddToArray(secodary_material);
             }
+            // чтобы работало копирование настроек между простым редиректором и нашим.
+            Assets.GetBuildingDef(HighEnergyParticleRedirectorConfig.ID).BuildingComplete
+                .AddOrGet<CopyBuildingSettings>().copyGroupTag = HighEnergyParticleRedirectorConfig.ID;
         }
     }
 }

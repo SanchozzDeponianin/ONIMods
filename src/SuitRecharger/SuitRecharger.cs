@@ -298,8 +298,9 @@ namespace SuitRecharger
         private SuitRechargerWorkable workable;
 #pragma warning restore CS0649
 
-        private Storage o2Storage;
-        private Storage repairStorage;
+        internal Storage o2Storage;
+        internal Storage repairStorage;
+        internal Storage wasteStorage;
 
         // керосин
         [SerializeField]
@@ -419,6 +420,8 @@ namespace SuitRecharger
                     o2Storage = storage;
                 else if (storage.storageID == GameTags.NoOxygen)
                     repairStorage = storage;
+                else if (storage.storageID == GameTags.Garbage)
+                    wasteStorage = storage;
             }
 
             filterable.tagOptions.AddRange(RepairMaterials);
@@ -430,7 +433,7 @@ namespace SuitRecharger
         {
             base.OnSpawn();
             // вторичные входы и выходы для керосина и отходов
-            fuelTag = SimHashes.Petroleum.CreateTag();
+            fuelTag = GameTags.CombustibleLiquid;
             fuelInputCell = GetSecondaryUtilityCell(fuelPortInfo.offset);
             fuelConsumer = CreateConduitConsumer(ConduitType.Liquid, fuelInputCell, out fuelNetworkItem);
             fuelConsumer.capacityTag = fuelTag;
@@ -438,11 +441,13 @@ namespace SuitRecharger
 
             liquidWasteOutputCell = GetSecondaryUtilityCell(liquidWastePortInfo.offset);
             liquidWasteDispenser = CreateConduitDispenser(ConduitType.Liquid, liquidWasteOutputCell, out liquidWasteNetworkItem);
-            liquidWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Petroleum };
+            liquidWasteDispenser.storage = wasteStorage;
+            liquidWasteDispenser.elementFilter = new SimHashes[0];
             liquidWasteDispenser.invertElementFilter = true;
 
             gasWasteOutputCell = GetSecondaryUtilityCell(gasWastePortInfo.offset);
             gasWasteDispenser = CreateConduitDispenser(ConduitType.Gas, gasWasteOutputCell, out gasWasteNetworkItem);
+            gasWasteDispenser.storage = wasteStorage;
             gasWasteDispenser.elementFilter = new SimHashes[] { SimHashes.Oxygen };
             gasWasteDispenser.invertElementFilter = true;
 

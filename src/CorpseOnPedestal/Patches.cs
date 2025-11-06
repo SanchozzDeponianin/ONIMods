@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
 using KMod;
-
 using SanchozzONIMods.Lib;
 
 namespace CorpseOnPedestal
@@ -20,7 +20,7 @@ namespace CorpseOnPedestal
 
         // разрешить дупликов и гоботов на предестал
         [HarmonyPatch]
-        private static class MinionConfig_CreatePrefab
+        private static class BaseMinionRoverConfig_CreatePrefab
         {
             private static IEnumerable<MethodBase> TargetMethods()
             {
@@ -32,8 +32,9 @@ namespace CorpseOnPedestal
 
             private static void Postfix(GameObject __result)
             {
-                __result.AddOrGet<KPrefabID>().AddTag(GameTags.PedestalDisplayable, false);
-                __result.AddOrGet<Pickupable>().sortOrder = -3;
+                KPrefabID kpid = __result.AddOrGet<KPrefabID>();
+                kpid.AddTag(GameTags.PedestalDisplayable, false);
+                Assets.AddCountableTag(kpid.PrefabTag);
             }
         }
 
@@ -46,11 +47,13 @@ namespace CorpseOnPedestal
             {
                 __instance.dead_creature
                     .Enter(Discover)
+                    .ToggleTag(GameTags.Ornament)
                     .EventHandler(GameHashes.OnStore, PlayDeathAnim);
 
                 DeathMonitor.State pedestal = __instance.CreateState(nameof(pedestal), __instance.dead);
                 __instance.dead
-                    .Enter(Discover);
+                    .Enter(Discover)
+                    .ToggleTag(GameTags.Ornament);
 
                 __instance.dead.carried
                     .EnterTransition(pedestal, IsOnPedestal)
@@ -157,9 +160,15 @@ namespace CorpseOnPedestal
             private static void Postfix()
             {
                 foreach (var minion in Assets.GetPrefabsWithTag(GameTags.BaseMinion))
+                {
                     AllMinions.Add(minion.PrefabID());
+                    minion.AddOrGet<Pickupable>().sortOrder = -4;
+                }
                 foreach (var robot in Assets.GetPrefabsWithTag(GameTags.Robot))
+                {
                     AllRobots.Add(robot.PrefabID());
+                    robot.AddOrGet<Pickupable>().sortOrder = -3;
+                }
             }
         }
 
@@ -226,16 +235,17 @@ namespace CorpseOnPedestal
             }
         }
 
-        // иконка дуплика
+        // иконка дуплика как в пейсочнице
         // todo: может быть нарисовать иконку помёршего дуплика ?
-        [HarmonyPatch(typeof(ReceptacleSideScreen), "GetEntityIcon")]
-        private static class ReceptacleSideScreen_GetEntityIcon
+        [HarmonyPatch(typeof(Def), nameof(Def.GetUISprite))]
+        [HarmonyPatch(new Type[] { typeof(object), typeof(string), typeof(bool) })]
+        private static class Def_GetUISprite
         {
-            private static bool Prefix(Tag prefabTag, ref Sprite __result)
+            private static bool Prefix(object item, ref Tuple<Sprite, Color> __result)
             {
-                if (IsMinion(prefabTag))
+                if (item is GameObject go && go != null && go.HasTag(GameTags.BaseMinion))
                 {
-                    __result = Assets.GetSprite("sadDupe");
+                    __result = new(BaseMinionConfig.GetSpriteForMinionModel(go.PrefabID()), Color.white);
                     return false;
                 }
                 return true;

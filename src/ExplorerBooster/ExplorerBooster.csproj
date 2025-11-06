@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Dowsing Booster</Title>
     <Description>Grants a Bionic Duplicant the ability to regularly uncover hidden geysers while Defragmenting.</Description>
-    <ModVersion>1.0.0</ModVersion>
+    <ModVersion>1.0.1</ModVersion>
     <RequiredDlcIds>DLC3_ID</RequiredDlcIds>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>

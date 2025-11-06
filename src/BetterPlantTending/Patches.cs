@@ -155,7 +155,7 @@ namespace BetterPlantTending
 
             private static readonly EventSystem.IntraObjectHandler<Tinkerable> OnTagsChanged = new((tinkerable, data) =>
             {
-                if (((TagChangedEventData)data).tag == SpaceTreePlant.SpaceTreeReadyForHarvest)
+                if (((Boxed<TagChangedEventData>)data).value.tag == SpaceTreePlant.SpaceTreeReadyForHarvest)
                     tinkerable.QueueUpdateChore();
             });
         }

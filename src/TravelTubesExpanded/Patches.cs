@@ -39,18 +39,6 @@ namespace TravelTubesExpanded
             Utils.AddBuildingToTechnology("TravelTubes", ids);
         }
 
-#if false
-        // нехрен шляццо возле пускача
-        [HarmonyPatch(typeof(TravelTubeEntranceConfig), nameof(TravelTubeEntranceConfig.CreateBuildingDef))]
-        private static class TravelTubeEntranceConfig_CreateBuildingDef
-        {
-            private static void Postfix(BuildingDef __result)
-            {
-                __result.PreventIdleTraversalPastBuilding = true;
-            }
-        }
-#endif
-
         [HarmonyPatch(typeof(TravelTubeEntranceConfig), nameof(TravelTubeEntranceConfig.DoPostConfigureComplete))]
         private static class TravelTubeEntranceConfig_ConfigureBuildingTemplate
         {
@@ -63,11 +51,12 @@ namespace TravelTubesExpanded
 
         // возможность использовать мост над пускачом как вход в трубы
         [HarmonyPatch(typeof(TravelTubeEntrance), nameof(TravelTubeEntrance.TubeConnectionsChanged))]
+        [HarmonyPatch(new[] { typeof(UtilityConnections) })]
         private static class TravelTubeEntrance_TubeConnectionsChanged
         {
-            private static void Prefix(TravelTubeEntrance __instance, ref object data)
+            private static void Prefix(TravelTubeEntrance __instance, ref UtilityConnections connections)
             {
-                if ((UtilityConnections)data == 0)
+                if (connections == 0)
                 {
                     int bridge_cell = Grid.OffsetCell(Grid.PosToCell(__instance), 0, 2);
                     var go = Grid.Objects[bridge_cell, (int)ObjectLayer.TravelTubeConnection];
@@ -76,41 +65,11 @@ namespace TravelTubesExpanded
                         link.GetCells(out int a, out int b);
                         if (UtilityConnectionsExtensions.DirectionFromToCell(bridge_cell, a) == UtilityConnections.Up
                             || UtilityConnectionsExtensions.DirectionFromToCell(bridge_cell, b) == UtilityConnections.Up)
-                            data = UtilityConnections.Up;
+                            connections = UtilityConnections.Up;
                     }
                 }
             }
         }
-
-#if false
-        // нафигация дуплей через трубы
-        // todo: а нужно ли ?
-        [HarmonyPatch]
-        private static class NavGrid_Constructor
-        {
-            private static MethodBase TargetMethod()
-            {
-                return typeof(NavGrid).GetConstructors()[0];
-            }
-
-            private static void Prefix(string id, ref NavGrid.Transition[] transitions)
-            {
-                if (id == "MinionNavGrid")
-                {
-                    // поправим кост диагональных транзицый, а то он странный
-                    for (int i = 0; i < transitions.Length; i++)
-                    {
-                        var t = transitions[i];
-                        if (t.start == NavType.Tube && t.end == NavType.Tube && t.x != 0 && t.y != 0 && t.cost == 10)
-                        {
-                            t.cost = 7;
-                            transitions[i] = t;
-                        }
-                    }
-                }
-            }
-        }
-#endif
 
         // правим проверки нафигационных транзицый
         [HarmonyPatch(typeof(NavGrid.Transition), nameof(NavGrid.Transition.IsValid))]

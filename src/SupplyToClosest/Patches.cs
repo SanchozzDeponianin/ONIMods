@@ -25,6 +25,8 @@ namespace SupplyToClosest
             harmony.PatchAll();
         }
 
+        // todo: починить совместимость с FastTrack если будет необходимость
+#if false
         [PLibMethod(RunAt.OnStartGame)]
         private static void OnStartGame()
         {
@@ -53,6 +55,7 @@ namespace SupplyToClosest
             FastTrack_PathCacher_SetValid = null;
         }
         private static Action<PathProber, bool> FastTrack_PathCacher_SetValid;
+#endif
 
         private static FetchAreaChore.States.BoolParameter do_search_better; // ищем лучшую чору прям сейчас
         private static FetchAreaChore.States.BoolParameter already_searched; // уже искали, не нужно искать ещё раз
@@ -89,12 +92,12 @@ namespace SupplyToClosest
                     return;
                 // ищем лючшую чору, мимикрируем под
                 // Brain.UpdateBrain -> ChoreConsumer.FindNextChore -> GlobalChoreProvider.CollectChores
-                FastTrack_PathCacher_SetValid?.Invoke(consumerState.navigator.PathProber, false);
+                //FastTrack_PathCacher_SetValid?.Invoke(consumerState.navigator.PathProber, false);
                 consumerState.navigator.UpdateProbe(true);
                 if (!consumerState.consumer.GetNavigationCost(rootChore.destination, out int root_cost))
                     return;
                 cashed_path_cost.Set(root_cost, smi);
-                GlobalChoreProvider_Patch.UpdateFetchesWithoutClearables(GlobalChoreProvider.Instance, consumerState.navigator.PathProber);
+                GlobalChoreProvider_Patch.UpdateFetchesWithoutClearables(GlobalChoreProvider.Instance, consumerState.navigator);
                 consumerState.Refresh();
                 // поскольку выбранный для переноса кусок уже имеет резервацию (как минимум этим же дупликом)
                 // если этот кусок достаточно мал, то его UnreservedAmount == 0ф
@@ -198,12 +201,6 @@ namespace SupplyToClosest
         {
             private static MethodBase TargetMethod()
             {
-                // меняем прекондицию для флудо чтобы выполнялась гарантированно после FetchChore.IsFetchTargetAvailable
-                // как оно вообще работает с параметрами по умолчанию ?
-                var flydo_can = FetchChore.CanFetchDroneComplete;
-                flydo_can.sortOrder = 1;
-                flydo_can.canExecuteOnAnyThread = false;
-                Traverse.Create<FetchChore>().Field<Chore.Precondition>(nameof(FetchChore.CanFetchDroneComplete)).Value = flydo_can;
                 return typeof(FetchChore).GetConstructors()[0];
             }
 
@@ -221,7 +218,7 @@ namespace SupplyToClosest
             -2  ChorePreconditions.IsMoreSatisfyingEarly | FindBetterChore_IsMoreSatisfying
             -1  FindBetterChore_IsFetchablePickup
             0   FetchChore.IsFetchTargetAvailable
-            1   FetchChore.CanFetchDroneComplete
+            0   FetchChore.CanFetchDroneComplete
             1   FindBetterChore_IsCloseEnough
 
             todo: нужно ли проверять близость здесь ? без проверки дупли смогут относить на новые более приоритетные цели
@@ -313,16 +310,15 @@ namespace SupplyToClosest
                 id = nameof(FindBetterChore_IsFetchablePickup),
                 description = DUPLICANTS.CHORES.PRECONDITIONS.IS_FETCH_TARGET_AVAILABLE,
                 sortOrder = -1,
-                canExecuteOnAnyThread = false,
+                canExecuteOnAnyThread = true,
                 fn = delegate (ref Chore.Precondition.Context context, object data)
                 {
                     if (IsSearchBetterChore(ref context, out var areaChore))
                     {
-                        if (context.chore is FetchChore candidat_chore)
+                        if (context.chore is FetchChore candidat_chore && areaChore.smi.reservations.Count > 0)
                         {
-                            var target = areaChore.GetFetchTarget;
-                            if (target != null && target.TryGetComponent(out Pickupable pickupable)
-                               && FetchManager.IsFetchablePickup(pickupable, candidat_chore, candidat_chore.destination))
+                            var pickupable = areaChore.smi.reservations[0].pickupable;
+                            if (pickupable != null && FetchManager.IsFetchablePickup(pickupable, candidat_chore, candidat_chore.destination))
                             {
                                 context.data = pickupable;
                                 return true;
@@ -364,7 +360,7 @@ namespace SupplyToClosest
             internal static void CollectOnlyFetchChores(GlobalChoreProvider provider, ChoreConsumerState consumer_state, List<Chore.Precondition.Context> succeeded, List<Chore.Precondition.Context> failed_contexts)
             {
 #pragma warning disable CS8321
-                IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original) =>
+                static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original) =>
                     instructions.Transpile(original, RemoveCollectChores);
 #pragma warning restore CS8321
                 provider.CollectChores(consumer_state, succeeded, failed_contexts);
@@ -391,13 +387,13 @@ namespace SupplyToClosest
             // clearableManager.CollectAndSortClearables - так как мы всё равно не дёргаем Clearable
             [HarmonyReversePatch(HarmonyReversePatchType.Original)]
             [HarmonyPatch(typeof(GlobalChoreProvider), nameof(GlobalChoreProvider.UpdateFetches))]
-            internal static void UpdateFetchesWithoutClearables(GlobalChoreProvider provider, PathProber path_prober)
+            internal static void UpdateFetchesWithoutClearables(GlobalChoreProvider provider, Navigator navigator)
             {
 #pragma warning disable CS8321
-                IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original) =>
+                static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original) =>
                     instructions.Transpile(original, RemoveClearables);
 #pragma warning restore CS8321
-                provider.UpdateFetches(path_prober);
+                provider.UpdateFetches(navigator);
             }
 
             private static bool RemoveClearables(ref List<CodeInstruction> instructions)
@@ -413,10 +409,12 @@ namespace SupplyToClosest
                         int j = instructions.FindLastIndex(i, inst => inst.LoadsField(field));
                         if (j != -1)
                         {
-                            if (instructions[j - 1].opcode == OpCodes.Ldarg_0)
+                            var @this = instructions[j - 1];
+                            if (@this.opcode == OpCodes.Ldarg_0)
                             {
-                                instructions.RemoveRange(j, i - j + 1);
-                                instructions.Insert(j, new CodeInstruction(OpCodes.Pop));
+                                var nop = new CodeInstruction(OpCodes.Nop).MoveBlocksFrom(@this).MoveLabelsFrom(@this);
+                                instructions.RemoveRange(j - 1, i - j + 2);
+                                instructions.Insert(j - 1, nop);
                                 return true;
                             }
                         }

@@ -78,7 +78,7 @@ namespace ButcherStation
 
         private void OnOperationalChanged(object data)
         {
-            if ((bool)data)
+            if (((Boxed<bool>)data).value)
             {
                 kbac.Queue("on_pre");
                 kbac.Queue("on");

@@ -16,7 +16,9 @@ namespace BetterPlantTending
         #region Pip
         // научиваем белочек делать экстракцию декоративных безурожайных семян
         // а также доставать растений в горшках и ящиках
-        [HarmonyPatch(typeof(ClimbableTreeMonitor.Instance), nameof(ClimbableTreeMonitor.Instance.FindClimbableTreeVisitor))]
+        [HarmonyPatch(typeof(ClimbableTreeMonitor.Instance), nameof(ClimbableTreeMonitor.Instance.FindClimbableTree))]
+        [HarmonyPatch(new[] { typeof(object), typeof(ClimbableTreeMonitor.Instance.FindClimableTreeContext) },
+            new[] { ArgumentType.Normal, ArgumentType.Ref })]
         private static class ClimbableTreeMonitor_Instance_FindClimbableTree
         {
             private static bool CanReachBelow(Navigator navigator, int cell, KMonoBehaviour plant)
@@ -49,7 +51,7 @@ namespace BetterPlantTending
             private static bool transpiler(ref List<CodeInstruction> instructions, MethodBase method)
             {
                 var context_type = typeof(ClimbableTreeMonitor.Instance.FindClimableTreeContext);
-                var context = method.GetParameters().FirstOrDefault(p => p.ParameterType == context_type);
+                var context = method.GetParameters().FirstOrDefault(p => p.ParameterType == context_type.MakeByRefType());
                 var targets = context_type.GetFieldSafe(nameof(ClimbableTreeMonitor.Instance.FindClimableTreeContext.targets), false);
                 var getComponent = typeof(Component).GetMethod(nameof(Component.GetComponent), Type.EmptyTypes).MakeGenericMethod(typeof(StorageLocker));
                 var canReach = typeof(Navigator).GetMethodSafe(nameof(Navigator.CanReach), false, typeof(int));
@@ -58,7 +60,6 @@ namespace BetterPlantTending
 
                 if (context == null || targets == null || getComponent == null || canReach == null || canReachBelow == null || addPlant == null)
                     return false;
-
                 int i = instructions.FindIndex(inst => inst.Is(OpCodes.Isinst, typeof(KMonoBehaviour)));
                 if (i == -1 || !instructions[i + 1].IsStloc())
                     return false;

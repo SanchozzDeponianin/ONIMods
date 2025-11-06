@@ -29,9 +29,6 @@ namespace SuitRecharger
         private EnergyConsumer energyConsumer;
 #pragma warning restore CS0649
 
-        private Storage o2Storage;
-        private Storage repairStorage;
-
         private SuitTank suitTank;
         private JetSuitTank jetSuitTank;
         private LeadSuitTank leadSuitTank;
@@ -49,13 +46,6 @@ namespace SuitRecharger
             var kanim = Assets.GetAnim("anim_interacts_suitrecharger_kanim");
             overrideAnims = new KAnimFile[] { kanim };
             synchronizeAnims = true;
-            foreach (var storage in GetComponents<Storage>())
-            {
-                if (storage.storageID == GameTags.Oxygen)
-                    o2Storage = storage;
-                else if (storage.storageID == GameTags.NoOxygen)
-                    repairStorage = storage;
-            }
             if (SuitRecharging == null)
             {
                 SuitRecharging = new StatusItem(
@@ -211,14 +201,14 @@ namespace SuitRecharger
             if (suitTank != null && !suitTank.IsFull())
             {
                 float amount_to_refill = suitTank.capacity * dt / сhargeTime;
-                var oxygen = o2Storage.FindFirstWithMass(GameTags.Oxygen, amount_to_refill);
+                var oxygen = recharger.o2Storage.FindFirstWithMass(GameTags.Oxygen, amount_to_refill);
                 if (oxygen != null)
                 {
                     amount_to_refill = Mathf.Min(amount_to_refill, suitTank.capacity - suitTank.GetTankAmount());
                     amount_to_refill = Mathf.Min(amount_to_refill, oxygen.Mass);
                     if (amount_to_refill > 0f)
                     {
-                        o2Storage.Transfer(suitTank.storage, suitTank.elementTag, amount_to_refill, false, true);
+                        recharger.o2Storage.Transfer(suitTank.storage, suitTank.elementTag, amount_to_refill, false, true);
                         return false;
                     }
                 }
@@ -231,7 +221,7 @@ namespace SuitRecharger
             if (jetSuitTank != null && !jetSuitTank.IsFull())
             {
                 float amount_to_refill = JetSuitTank.FUEL_CAPACITY * dt / сhargeTime;
-                var fuel = o2Storage.FindFirstWithMass(recharger.fuelTag, amount_to_refill);
+                var fuel = recharger.o2Storage.FindFirstWithMass(recharger.fuelTag, amount_to_refill);
                 if (fuel != null)
                 {
                     amount_to_refill = Mathf.Min(amount_to_refill, JetSuitTank.FUEL_CAPACITY - jetSuitTank.amount);
@@ -282,7 +272,7 @@ namespace SuitRecharger
                     if (repairCost.material.IsValid)
                     {
                         float consume_mass = repairCost.amount * delta;
-                        var material = repairStorage.FindFirstWithMass(repairCost.material, consume_mass);
+                        var material = recharger.repairStorage.FindFirstWithMass(repairCost.material, consume_mass);
                         if (material != null)
                         {
                             material.Mass -= consume_mass;
@@ -312,7 +302,7 @@ namespace SuitRecharger
                     if (list.Count > 0)
                     {
                         foreach (var go in list)
-                            suitTank.storage.Transfer(go, o2Storage, false, true);
+                            suitTank.storage.Transfer(go, recharger.wasteStorage, false, true);
                         if (worker.TryGetComponent<Effects>(out var effects) && effects.HasEffect("SoiledSuit"))
                             effects.Remove("SoiledSuit");
                     }
@@ -326,7 +316,7 @@ namespace SuitRecharger
                     foreach (var go in list)
                     {
                         if (!go.HasTag(suitTank.elementTag))
-                            suitTank.storage.Transfer(go, o2Storage, false, true);
+                            suitTank.storage.Transfer(go, recharger.wasteStorage, false, true);
                     }
                     list.Recycle();
                 }
@@ -335,10 +325,11 @@ namespace SuitRecharger
                 if (suitTank.TryGetComponent<Durability>(out var durability)
                     && durability.IsTrueWornOut(worker.GetComponent<MinionResume>()))
                 {
-                    suitTank.storage.Transfer(o2Storage, suitTank.elementTag, suitTank.capacity, false, true);
+                    suitTank.storage.Transfer(recharger.o2Storage, suitTank.elementTag, suitTank.capacity, false, true);
                     if (jetSuitTank != null)
                     {
-                        o2Storage.AddLiquid(SimHashes.Petroleum, jetSuitTank.amount, durability.GetComponent<PrimaryElement>().Temperature, byte.MaxValue, 0, false, true);
+                        // todo: если клеи сделают правильную обработку остатков топлива при поломке вместо превращения в керосин - сделать тоже
+                        recharger.o2Storage.AddLiquid(SimHashes.Petroleum, jetSuitTank.amount, durability.GetComponent<PrimaryElement>().Temperature, byte.MaxValue, 0, false, true);
                         jetSuitTank.amount = 0f;
                     }
                     if (durability.TryGetComponent<Assignable>(out var assignable))

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ProcGen;
 using TUNING;
+using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.PatchManager;
@@ -42,6 +43,11 @@ namespace Hydrocactus
                         break;
                     }
                 }
+            }
+
+            private static void Postfix(GameObject __result)
+            {
+                __result.RemoveTag(GameTags.DeprecatedContent);
             }
         }
 

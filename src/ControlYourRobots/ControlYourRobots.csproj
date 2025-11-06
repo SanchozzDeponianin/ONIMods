@@ -2,8 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Title>Control your Robots</Title>
-    <Description>Adds a couple of features to better control your Robots: "Move To" and "Turn Off/On" buttons, Door Access Control, etc.</Description>
-    <ModVersion>1.7.0</ModVersion>
+    <Description>Adds a couple of features to better control your Robots: "Move To" and "Turn Off/On" buttons, Energy saving mode when idling, etc.</Description>
+    <ModVersion>1.7.1</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

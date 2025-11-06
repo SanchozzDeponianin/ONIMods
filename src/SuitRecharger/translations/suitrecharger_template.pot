@@ -10,7 +10,7 @@ msgstr ""
 
 #. SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.EFFECT
 msgctxt "SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.EFFECT"
-msgid "Recharges all kinds of <link=\"EQUIPMENT\">Exosuits</link> and <link=\"OXYGENMASK\">Oxygen Masks</link> and refuels them with <link=\"OXYGEN\">Oxygen</link> and <link=\"PETROLEUM\">Petroleum</link>.\n\nEmpties suits of <link=\"DIRTYWATER\">Polluted Water</link>.\n\nOptionally, it can be connected to <style=\"KKeyword\">Pipes</style> for waste disposal.\n\nCan repair not completely Worn Suits."
+msgid "Recharges all kinds of <link=\"EQUIPMENT\">Exosuits</link> and <link=\"OXYGENMASK\">Oxygen Masks</link> and refuels them with <link=\"OXYGEN\">Oxygen</link> and <link=\"COMBUSTIBLELIQUID\">Combustible Liquid</link>.\n\nEmpties suits of <link=\"DIRTYWATER\">Polluted Water</link>.\n\nOptionally, it can be connected to <style=\"KKeyword\">Pipes</style> for waste disposal.\n\nCan repair not completely Worn Suits."
 msgstr ""
 
 #. SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.NAME

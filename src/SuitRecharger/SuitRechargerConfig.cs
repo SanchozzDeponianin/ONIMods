@@ -66,7 +66,7 @@ namespace SuitRecharger
             go.AddOrGet<StorageDropper>();
 
             AddManualDeliveryKG(go, GameTags.Oxygen, O2_CAPACITY).SetStorage(o2_storage);
-            AddManualDeliveryKG(go, SimHashes.Petroleum.CreateTag(), FUEL_CAPACITY).SetStorage(o2_storage);
+            AddManualDeliveryKG(go, GameTags.CombustibleLiquid, FUEL_CAPACITY).SetStorage(o2_storage);
             go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject inst)
             {
                 var mdkgs = inst.GetComponents<ManualDeliveryKG>();
@@ -92,6 +92,11 @@ namespace SuitRecharger
             treeFilterable.filterByStorageCategoriesOnSpawn = false;
             treeFilterable.autoSelectStoredOnLoad = false;
             treeFilterable.uiHeight = TreeFilterable.UISideScreenHeight.Short;
+
+            var waste_storage = go.AddComponent<Storage>();
+            waste_storage.capacityKg = FUEL_CAPACITY;
+            waste_storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
+            waste_storage.storageID = GameTags.Garbage;
 
             var recharger = go.AddOrGet<SuitRecharger>();
             recharger.fuelPortInfo = fuelInputPort;

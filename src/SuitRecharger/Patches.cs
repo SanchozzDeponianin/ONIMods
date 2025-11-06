@@ -112,25 +112,28 @@ namespace SuitRecharger
         {
             private static void Postfix(RationalAi __instance)
             {
-                __instance.alive.EventHandler(GameHashes.TagsChanged, (smi, obj) =>
+                __instance.alive.EventHandler(GameHashes.TagsChanged, (smi, data) =>
                 {
-                    var tag = (TagChangedEventData)obj;
+                    var tag = ((Boxed<TagChangedEventData>)data).value;
                     if (tag.added == false && tag.tag == GameTags.HasSuitTank && GameScheduler.Instance != null)
-                    {
-                        GameScheduler.Instance.Schedule("StopRecharge", 2 * UpdateManager.SecondsPerSimTick, (o) =>
-                        {
-                            var driver = smi?.GetComponent<ChoreDriver>();
-                            if (driver != null)
-                            {
-                                var chore = driver.GetCurrentChore();
-                                if (chore != null && (chore.choreType == Db.Get().ChoreTypes.Recharge || chore.choreType == RecoverBreathRecharge || chore.choreType == Db.Get().ChoreTypes.RecoverBreath))
-                                {
-                                    driver.StopChore();
-                                }
-                            }
-                        }, null, null);
-                    }
+                        GameScheduler.Instance.Schedule("StopRecharge", 2 * UpdateManager.SecondsPerSimTick, StopRechargeChore, smi, null);
                 });
+            }
+
+            private static void StopRechargeChore(object data)
+            {
+                if (data is StateMachine.Instance smi && !smi.IsNullOrStopped())
+                {
+                    var driver = smi.GetComponent<ChoreDriver>();
+                    if (driver != null)
+                    {
+                        var chore = driver.GetCurrentChore();
+                        if (chore != null && (chore.choreType == Db.Get().ChoreTypes.Recharge || chore.choreType == RecoverBreathRecharge || chore.choreType == Db.Get().ChoreTypes.RecoverBreath))
+                        {
+                            driver.StopChore();
+                        }
+                    }
+                }
             }
         }
 

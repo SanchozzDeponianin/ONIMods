@@ -285,52 +285,7 @@ namespace ControlYourRobots
             }
         }
 
-        // поиск пути с учётом разрешения дверей
-        [HarmonyPatch(typeof(CreatureBrain), "OnPrefabInit")]
-        private static class CreatureBrain_OnPrefabInit
-        {
-            private static Tag[] Robot_AI_Tags = { GameTags.Robot, GameTags.DupeBrain };
-            private static void Postfix(CreatureBrain __instance)
-            {
-                if (__instance.HasAllTags(Robot_AI_Tags) && __instance.TryGetComponent<Navigator>(out var navigator)
-                    && (navigator.NavGridName == "RobotNavGrid" || navigator.NavGridName == FlydoPatches.FlydoGrid))
-                    navigator.SetAbilities(new RobotPathFinderAbilities(navigator));
-            }
-        }
-
-        // внедряем роботов в экран доступов двери
-        [HarmonyPatch(typeof(AccessControlSideScreen), nameof(AccessControlSideScreen.SetTarget))]
-        private static class AccessControlSideScreen_SetTarget
-        {
-            private static List<MinionAssignablesProxy> Inject(List<MinionAssignablesProxy> list)
-            {
-                list.AddRange(RobotAssignablesProxy.Cmps.Items);
-                return list;
-            }
-
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
-            {
-                return instructions.Transpile(original, transpiler);
-            }
-
-            private static bool transpiler(ref List<CodeInstruction> instructions)
-            {
-                var list = typeof(AccessControlSideScreen).GetFieldSafe("identityList", false);
-                var inject = typeof(AccessControlSideScreen_SetTarget).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments);
-                if (list != null && inject != null)
-                {
-                    int i = instructions.FindIndex(ins => ins.StoresField(list));
-                    if (i != -1)
-                    {
-                        instructions.Insert(i, new CodeInstruction(OpCodes.Call, inject));
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }
-
-        // внедряем портреты роботов в эээ.. экран доступов двери.. все портреты
+        // внедряем портреты роботов в эээ.. все портреты
         [HarmonyPatch(typeof(CrewPortrait), "Rebuild")]
         private static class CrewPortrait_SetIdentityObject
         {

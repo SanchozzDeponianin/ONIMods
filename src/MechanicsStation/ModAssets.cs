@@ -40,7 +40,7 @@ namespace MechanicsStation
             int maxRoomSize = TuningData<RoomProber.Tuning>.Get().maxRoomSize;
             var MAXIMUM_SIZE_MAX = new RoomConstraints.Constraint(
                 building_criteria: null,
-                room_criteria: (Room room) => room.cavity.numCells <= maxRoomSize,
+                room_criteria: (Room room) => room.cavity.NumCells <= maxRoomSize,
                 times_required: 1,
                 name: string.Format(ROOMS.CRITERIA.MAXIMUM_SIZE.NAME, maxRoomSize),
                 description: string.Format(ROOMS.CRITERIA.MAXIMUM_SIZE.DESCRIPTION, maxRoomSize),

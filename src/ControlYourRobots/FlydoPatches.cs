@@ -16,44 +16,6 @@ namespace ControlYourRobots
 
     internal static class FlydoPatches
     {
-        // кастомная нафигация для флудо с возможностью через двери
-        // на основе стандартной нафигации летунов 1х1
-
-        public const string FlydoGrid = "FludooGrid1x1";
-
-        [HarmonyPatch(typeof(GameNavGrids), MethodType.Constructor)]
-        [HarmonyPatch(new System.Type[] { typeof(Pathfinding) })]
-        private static class GameNavGrids_Constructor
-        {
-            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && (ModOptions.Instance.flydo_can_pass_door || ModOptions.Instance.flydo_prefers_straight);
-
-            private static void Postfix(GameNavGrids __instance, Pathfinding pathfinding)
-            {
-                var flyer = __instance.FlyerGrid1x1;
-                NavGrid.Transition[] transitions;
-                if (ModOptions.Instance.flydo_prefers_straight)
-                {
-                    transitions = new NavGrid.Transition[flyer.transitions.Length];
-                    for (int i = 0; i < flyer.transitions.Length; i++)
-                    {
-                        var transition = flyer.transitions[i];
-                        if (transition.start == NavType.Hover && transition.end == NavType.Hover && transition.y == 0)
-                            transition.cost -= 1;
-                        transitions[i] = transition;
-                    }
-                }
-                else
-                    transitions = flyer.transitions;
-                var flydo = new NavGrid(FlydoGrid, transitions, flyer.navTypeData, new CellOffset[] { CellOffset.none },
-                    new NavTableValidator[] {
-                        new GameNavGrids.FlyingValidator(false, false, ModOptions.Instance.flydo_can_pass_door),
-                        new GameNavGrids.SwimValidator() },
-                    flyer.updateRangeX, flyer.updateRangeY, flyer.maxLinksPerCell);
-                pathfinding.AddNavGrid(flydo);
-            }
-        }
-
         [HarmonyPatch(typeof(FetchDroneConfig), nameof(FetchDroneConfig.CreatePrefab))]
         private static class FetchDroneConfig_CreatePrefab
         {
@@ -61,8 +23,6 @@ namespace ControlYourRobots
             private static void Postfix(GameObject __result)
             {
                 __result.AddOrGet<RobotTurnOffOn>();
-                if (ModOptions.Instance.flydo_can_pass_door || ModOptions.Instance.flydo_prefers_straight)
-                    __result.GetComponent<Navigator>().NavGridName = FlydoGrid;
                 if (ModOptions.Instance.low_power_mode_flydo_landed)
                     __result.AddOrGetDef<RobotLandedIdleMonitor.Def>().timeout = ModOptions.Instance.low_power_mode_flydo_timeout;
                 // для правильного отображения величины заряда при сне
@@ -81,72 +41,6 @@ namespace ControlYourRobots
                         }
                     }
                 }
-            }
-        }
-
-        [HarmonyPatch(typeof(FetchDroneConfig), nameof(FetchDroneConfig.OnSpawn))]
-        private static class FetchDroneConfig_OnSpawn
-        {
-            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && ModOptions.Instance.flydo_can_pass_door;
-            private static void Postfix(GameObject inst)
-            {
-                if (inst.TryGetComponent(out Navigator navigator))
-                    navigator.transitionDriver.overrideLayers.Add(new Door1x1TransitionLayer(navigator));
-            }
-        }
-
-        // запрещаем летуну двери по умолчанию
-        public static readonly int FirstFludoWasAppeared = Hash.SDBMLower(nameof(FirstFludoWasAppeared));
-
-        private static void Restrict(this AccessControl door, object data)
-        {
-            if (door != null && data is RobotAssignablesProxy proxy && door.IsDefaultPermission(proxy))
-                door.SetPermission(proxy, AccessControl.Permission.Neither);
-        }
-
-        // запретить на существующих дверях когда первый флудо появился
-        [HarmonyPatch(typeof(AccessControl), "OnPrefabInit")]
-        private static class AccessControl_OnPrefabInit
-        {
-            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && ModOptions.Instance.flydo_can_pass_door
-                && ModOptions.Instance.restrict_flydo_by_default;
-            private static void Postfix(AccessControl __instance)
-            {
-                Game.Instance.Subscribe(FirstFludoWasAppeared, __instance.Restrict);
-            }
-        }
-
-        // запретить на вновь построенных дверях если флуды уже есть
-        [HarmonyPatch(typeof(AccessControl), "OnSpawn")]
-        private static class AccessControl_OnSpawn
-        {
-            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && ModOptions.Instance.flydo_can_pass_door
-                && ModOptions.Instance.restrict_flydo_by_default;
-            private static void Postfix(AccessControl __instance)
-            {
-                foreach (var proxy in RobotAssignablesProxy.Cmps.Items)
-                {
-                    if (proxy.PrefabID == FetchDroneConfig.ID)
-                    {
-                        __instance.Restrict(proxy);
-                        break;
-                    }
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(AccessControl), "OnCleanUp")]
-        private static class AccessControl_OnCleanUp
-        {
-            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && ModOptions.Instance.flydo_can_pass_door
-                && ModOptions.Instance.restrict_flydo_by_default;
-            private static void Prefix(AccessControl __instance)
-            {
-                Game.Instance.Unsubscribe(FirstFludoWasAppeared, __instance.Restrict);
             }
         }
 
@@ -175,8 +69,8 @@ namespace ControlYourRobots
 
             private static bool OnWakeUp(RobotElectroBankDeadStates.Instance smi, object data)
             {
-                return data is TagChangedEventData @event && @event.tag == RobotSuspend && !@event.added
-                    && IsElectrobankDelivered.Invoke(smi);
+                var @event = ((Boxed<TagChangedEventData>)data).value;
+                return @event.tag == RobotSuspend && !@event.added && IsElectrobankDelivered.Invoke(smi);
             }
 
             private static void Postfix(RobotElectroBankDeadStates __instance)
@@ -351,6 +245,32 @@ namespace ControlYourRobots
             {
                 return (pickupable.targetWorkable != null && pickupable.targetWorkable is LiquidPumpingStation) ?
                     Grid.CellAbove(pickupable.cachedCell) : pickupable.cachedCell;
+            }
+        }
+
+        // прямолинейность
+        [HarmonyPatch(typeof(GameNavGrids), MethodType.Constructor)]
+        [HarmonyPatch(new System.Type[] { typeof(Pathfinding) })]
+        private static class GameNavGrids_Constructor
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
+                && ModOptions.Instance.flydo_prefers_straight;
+
+            private static void Postfix(GameNavGrids __instance)
+            {
+                var flyer = __instance.RobotFlyerGrid1x1;
+                for (int i = 0; i < flyer.transitions.Length; i++)
+                {
+                    var transition = flyer.transitions[i];
+                    if (transition.start == NavType.Hover && transition.end == NavType.Hover && transition.y != 0)
+                    {
+                        if (transition.x == 0)
+                            transition.cost -= 1;
+                        else
+                            transition.cost += 1;
+                        flyer.transitions[i] = transition;
+                    }
+                }
             }
         }
     }

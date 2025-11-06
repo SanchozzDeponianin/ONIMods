@@ -92,15 +92,21 @@ namespace ExplorerBooster
             private static void Postfix(BionicUpgrade_ExplorerBoosterMonitor __instance)
             {
                 __instance.Inactive
-                    .EventHandlerTransition(GameHashes.TagsChanged, __instance.Active,
-                    (smi, data) => data is TagChangedEventData tag_data && tag_data.tag == GameTags.BionicBedTime && tag_data.added == true
-                    && BionicUpgrade_ExplorerBoosterMonitor.ShouldBeActive(smi));
+                    .EventHandlerTransition(GameHashes.TagsChanged, __instance.Active, (smi, data) =>
+                    {
+                        var @event = ((Boxed<TagChangedEventData>)data).value;
+                        return @event.tag == GameTags.BionicBedTime && @event.added == true
+                            && BionicUpgrade_ExplorerBoosterMonitor.ShouldBeActive(smi);
+                    });
 
                 __instance.Active
                     .TriggerOnEnter(GameHashes.BionicUpgradeWattageChanged, null)
-                    .EventHandlerTransition(GameHashes.TagsChanged, __instance.Inactive,
-                    (smi, data) => data is TagChangedEventData tag_data && tag_data.tag == GameTags.BionicBedTime && tag_data.added == false
-                    && !BionicUpgrade_ExplorerBoosterMonitor.IsInBedTimeChore(smi));
+                    .EventHandlerTransition(GameHashes.TagsChanged, __instance.Inactive, (smi, data) =>
+                    {
+                        var @event = ((Boxed<TagChangedEventData>)data).value;
+                        return @event.tag == GameTags.BionicBedTime && @event.added == false
+                            && !BionicUpgrade_ExplorerBoosterMonitor.IsInBedTimeChore(smi);
+                    });
             }
         }
     }

@@ -16,7 +16,7 @@ namespace SuitRecharger
                 {
                     public static LocString NAME = FormatAsLink("Suit Recharger", "SUITRECHARGER");
                     public static LocString DESC = "Suit Recharger allows Duplicants to recharge their Suits and Oxygen Masks without taking them off.";
-                    public static LocString EFFECT = $"Recharges all kinds of {FormatAsLink("Exosuits", "EQUIPMENT")} and {FormatAsLink("Oxygen Masks", "OXYGENMASK")} and refuels them with {FormatAsLink("Oxygen", "OXYGEN")} and {FormatAsLink("Petroleum", "PETROLEUM")}.\n\nEmpties suits of {FormatAsLink("Polluted Water", "DIRTYWATER")}.\n\nOptionally, it can be connected to {FormatAsKeyWord("Pipes")} for waste disposal.\n\nCan repair not completely Worn Suits.";
+                    public static LocString EFFECT = $"Recharges all kinds of {FormatAsLink("Exosuits", "EQUIPMENT")} and {FormatAsLink("Oxygen Masks", "OXYGENMASK")} and refuels them with {FormatAsLink("Oxygen", "OXYGEN")} and {FormatAsLink("Combustible Liquid", "COMBUSTIBLELIQUID")}.\n\nEmpties suits of {FormatAsLink("Polluted Water", "DIRTYWATER")}.\n\nOptionally, it can be connected to {FormatAsKeyWord("Pipes")} for waste disposal.\n\nCan repair not completely Worn Suits.";
                 }
             }
         }

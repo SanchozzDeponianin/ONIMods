@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Mechanics Station</Title>
     <Description>Adds a new Mechanics Station, with which engineers could improve the performance of various buildings.</Description>
-    <ModVersion>1.4.5</ModVersion>
+    <ModVersion>1.4.6</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

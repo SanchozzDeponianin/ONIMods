@@ -1,4 +1,5 @@
-﻿using STRINGS;
+﻿using System.Collections.Generic;
+using STRINGS;
 using static STRINGS.BUILDINGS.PREFABS;
 using static STRINGS.RESEARCH.TECHS;
 using SanchozzONIMods.Lib;
@@ -32,15 +33,9 @@ namespace HEPBridgeInsulationTile
         }
         public class OPTIONS
         {
-            public class RESEARCH_KLEI
-            {
-                public static LocString NAME = $"{UI.FormatAsKeyWord(HEPBRIDGETILE_NAME)} require Research";
-                public static LocString TOOLTIP = "";
-            }
             public class RESEARCH_MOD
             {
-                public static LocString NAME = $"{UI.FormatAsKeyWord($"Insulated {HEPBRIDGETILE_NAME}")} require Research";
-                public static LocString TOOLTIP = $"The Options UI the is imperfect.\nIn-game, {UI.FormatAsKeyWord($"Insulated {HEPBRIDGETILE_NAME}")} \nwill require Research equal to or higher \nthan {UI.FormatAsKeyWord(HEPBRIDGETILE_NAME)}.";
+                public static LocString NAME = "Required Research";
             }
             public class NUCLEARREFINEMENT
             {
@@ -63,8 +58,7 @@ namespace HEPBridgeInsulationTile
         internal static void DoReplacement()
         {
             string name = UI.StripLinkFormatting(HEPBRIDGETILE.NAME);
-            Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), new System.Collections.Generic.Dictionary<string, string>
-            {{HEPBRIDGETILE_NAME, name }});
+            Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), new Dictionary<string, string> { { HEPBRIDGETILE_NAME, name } });
             BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.DESC.ReplaceText($"{HEPBRIDGETILE.DESC.text}\n{INSULATEDWIRE.DESC.text}");
             string effect = HEPBRIDGETILE.EFFECT.text;
             int i = INSULATIONTILE.EFFECT.text.IndexOf("\n\n");
@@ -74,7 +68,6 @@ namespace HEPBridgeInsulationTile
             OPTIONS.NUCLEARREFINEMENT.NAME.ReplaceText(UI.StripLinkFormatting(NUCLEARREFINEMENT.NAME));
             OPTIONS.NUCLEARSTORAGE.NAME.ReplaceText(UI.StripLinkFormatting(NUCLEARSTORAGE.NAME));
             OPTIONS.ADVANCEDNUCLEARRESEARCH.NAME.ReplaceText(UI.StripLinkFormatting(ADVANCEDNUCLEARRESEARCH.NAME));
-            OPTIONS.RESEARCH_KLEI.TOOLTIP.ReplaceText(OPTIONS.RESEARCH_MOD.TOOLTIP);
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
             LocString.CreateLocStringKeys(typeof(MISC));
         }

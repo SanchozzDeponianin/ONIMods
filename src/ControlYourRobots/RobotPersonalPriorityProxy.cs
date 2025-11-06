@@ -21,6 +21,7 @@ namespace ControlYourRobots
             PrefabID = this.PrefabID();
             SetDefaultPriority();
             Cmps.Add(this);
+            RobotAssignablesProxy.GetRobotProxyID(PrefabID);
         }
 
         private void SetDefaultPriority()

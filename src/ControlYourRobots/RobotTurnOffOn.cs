@@ -22,7 +22,7 @@
 
         protected override void OnRefreshUserMenu(object data)
         {
-            if (!robotAi.IsNullOrStopped() && robotAi.IsInsideState(robotAi.sm.alive))
+            if (!kPrefabID.HasTag(GameTags.Stored) && !robotAi.IsNullOrStopped() && robotAi.IsInsideState(robotAi.sm.alive))
                 base.OnRefreshUserMenu(data);
         }
 

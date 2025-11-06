@@ -244,7 +244,11 @@ namespace WornSuitDischarge
                 var storage = go.GetComponent<Storage>();
                 AddManualDeliveryKG(go, GameTags.Oxygen, capacity).SetStorage(storage);
                 if (prefab_tag == JetSuitLockerConfig.ID)
-                    AddManualDeliveryKG(go, SimHashes.Petroleum.CreateTag(), JetSuitLocker.FUEL_CAPACITY).SetStorage(storage);
+                {
+                    // todo: убрать когда У56 усё
+                    Tag fuel = Utils.GameVersion >= 697549u ? GameTags.CombustibleLiquid : SimHashes.Petroleum.CreateTag();
+                    AddManualDeliveryKG(go, fuel, JetSuitLocker.FUEL_CAPACITY).SetStorage(storage);
+                }
                 go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject inst)
                 {
                     var mdkgs = inst.GetComponents<ManualDeliveryKG>();

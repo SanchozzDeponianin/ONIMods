@@ -40,15 +40,6 @@
             {
                 public static LocString NAME = "Battery consumption rate in energy saving mode, % of nominal value";
             }
-            public class FLYDO_CAN_PASS_DOOR
-            {
-                public static LocString NAME = "Flydo can pass through Doors";
-            }
-            public class RESTRICT_FLYDO_BY_DEFAULT
-            {
-                public static LocString NAME = "Prohibit Flydo's access to Doors by default";
-                public static LocString TOOLTIP = "If enabled, the mod will automatically deny Flydo access\non all non-configured Doors for performance reasons.";
-            }
             public class FLYDO_CAN_FOR_ITSELF
             {
                 public static LocString NAME = "Flydo can pick up the Power Bank for itself";

@@ -13,7 +13,7 @@ namespace MechanicsStation
         private BuildingElementEmitter buildingElementEmitter;
 #pragma warning restore CS0649
 
-        private readonly IDetouredField<BuildingElementEmitter, bool> DIRTY = PDetours.DetourField<BuildingElementEmitter, bool>("dirty");
+        private static readonly IDetouredField<BuildingElementEmitter, bool> DIRTY = PDetours.DetourField<BuildingElementEmitter, bool>("dirty");
 
         protected override void OnSpawn()
         {

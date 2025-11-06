@@ -18,19 +18,9 @@ msgctxt "HEPBridgeInsulationTile.STRINGS.MOD_TITLE"
 msgid "Insulated Radbolt Joint Plate"
 msgstr ""
 
-#. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.NAME
-msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_KLEI.NAME"
-msgid "<style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style> require Research"
-msgstr ""
-
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.NAME
 msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.NAME"
-msgid "<style=\"KKeyword\">Insulated {HEPBRIDGETILE_NAME}</style> require Research"
-msgstr ""
-
-#. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.TOOLTIP
-msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.TOOLTIP"
-msgid "The Options UI the is imperfect.\nIn-game, <style=\"KKeyword\">Insulated {HEPBRIDGETILE_NAME}</style> \nwill require Research equal to or higher \nthan <style=\"KKeyword\">{HEPBRIDGETILE_NAME}</style>."
+msgid "Required Research"
 msgstr ""
 
 #. HEPBridgeInsulationTile.STRINGS.OPTIONS.USE_OLD_ANIM.NAME
