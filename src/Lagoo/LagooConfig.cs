@@ -22,14 +22,26 @@ namespace Lagoo
         private const int EGG_SORT_ORDER = 0;
 
         public virtual string[] GetDlcIds() => null;
+        public virtual string[] GetAnyRequiredDlcIds() => null;
         public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
         public string[] GetForbiddenDlcIds() => null;
 
-        public static GameObject CreateSquirrelLagoo(string id, string name, string desc, string anim_file, bool is_baby)
+        private static void AddAnimOverrides(GameObject go, string override_file)
+        {
+            go.TryGetComponent(out KBatchedAnimController kbac);
+            go.TryGetComponent(out SymbolOverrideController syoc);
+            var @override = Assets.GetAnim(override_file);
+            kbac.AnimFiles = kbac.AnimFiles.Append(@override);
+            syoc.RemoveAllSymbolOverrides();
+            syoc.ApplySymbolOverridesByAffix(@override, ANIM_PREFIX);
+            kbac.AddAnimOverrides(@override, 1);
+        }
+
+        public static GameObject CreateSquirrelLagoo(string id, string name, string desc, string anim_file, string override_file, bool is_baby)
         {
             var lagoo = BaseSquirrelConfig.BaseSquirrel(id, name, desc, anim_file, TRAIT_ID, is_baby, ANIM_PREFIX, true);
-            lagoo = EntityTemplates.ExtendEntityToWildCreature(lagoo, SquirrelTuning.PEN_SIZE_PER_CREATURE_HUG);
-            //lagoo.AddOrGet<DecorProvider>().SetValues(DECOR.BONUS.TIER3);
+            AddAnimOverrides(lagoo, override_file);
+            EntityTemplates.ExtendEntityToWildCreature(lagoo, SquirrelTuning.PEN_SIZE_PER_CREATURE_HUG);
             var trait = Db.Get().CreateTrait(TRAIT_ID, name, name, null, false, null, true, true);
             trait.Add(new AttributeModifier(Db.Get().Amounts.Calories.maxAttribute.Id, SquirrelTuning.STANDARD_STOMACH_SIZE, name));
             trait.Add(new AttributeModifier(Db.Get().Amounts.Calories.deltaAttribute.Id,
@@ -74,7 +86,6 @@ namespace Lagoo
             blooded.TemperatureAmountName = temperature;
             blooded.complexity = WarmBlooded.ComplexityType.SimpleHeatProduction;
             blooded.IdealTemperature = temperature_monitor.GetIdealTemperature();
-            // todo: понаблюдать
             blooded.BaseGenerationKW = 0.3f;//BellyTuning.KW_GENERATED_TO_WARM_UP;
             blooded.BaseTemperatureModifierDescription = proper_name;
             return lagoo;
@@ -82,7 +93,7 @@ namespace Lagoo
 
         public GameObject CreatePrefab()
         {
-            var prefab = CreateSquirrelLagoo(ID, NAME, DESC, squirrel_kanim, false);
+            var prefab = CreateSquirrelLagoo(ID, NAME, DESC, squirrel_kanim, lagoo_kanim, false);
             const float fertility_cycles = CREATURES.LIFESPAN.TIER3 * CREATURES.FERTILITY_TIME_BY_LIFESPAN;
             const float incubation_cycles = CREATURES.LIFESPAN.TIER3 * CREATURES.INCUBATION_TIME_BY_LIFESPAN;
             EntityTemplates.ExtendEntityToFertileCreature(prefab, this, EGG_ID, EGG_NAME, EGG_DESC,
@@ -95,10 +106,6 @@ namespace Lagoo
 
         public void OnPrefabInit(GameObject prefab) { }
 
-        public void OnSpawn(GameObject inst)
-        {
-            if (inst.TryGetComponent(out KBatchedAnimController kbac))
-                kbac.AddAnimOverrides(Assets.GetAnim(lagoo_kanim), 1);
-        }
+        public void OnSpawn(GameObject inst) { }
     }
 }

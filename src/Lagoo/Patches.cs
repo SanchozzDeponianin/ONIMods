@@ -16,6 +16,8 @@ namespace Lagoo
     internal sealed class Patches : KMod.UserMod2
     {
         public const string squirrel_kanim = "squirrel_kanim";
+        public const string squirrel_build_kanim = "squirrel_build_kanim";
+        public const string squirrel_emotes_kanim = "squirrel_emotes_kanim";
         public const string baby_squirrel_kanim = "baby_squirrel_kanim";
         public const string egg_squirrel_kanim = "egg_squirrel_kanim";
 
@@ -30,9 +32,9 @@ namespace Lagoo
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
             new POptions().RegisterOptions(this, typeof(ModOptions));
             var kagm = new KAnimGroupManager();
-            kagm.RegisterAnims(squirrel_kanim, lagoo_kanim);
-            kagm.RegisterAnims(baby_squirrel_kanim, baby_lagoo_kanim);
-            kagm.RegisterAnims(egg_squirrel_kanim, egg_lagoo_kanim);
+            kagm.RegisterAnimsTogether(squirrel_kanim, lagoo_kanim);
+            kagm.RegisterAnimsTogether(baby_squirrel_kanim, baby_lagoo_kanim);
+            kagm.RegisterAnimsTogether(egg_squirrel_kanim, egg_lagoo_kanim);
         }
 
         // несмотря на наличие подсистемы SymbolOverride
@@ -41,30 +43,38 @@ namespace Lagoo
         // загрузим свою анимацию в общую группу с клеевской и продуплируем символы
         // а заодно и зе-ордер поправим. штатным белкам всеравно, а тут глаза должны быть поверх мордочки.
 
-        private static Dictionary<KAnimFile, KAnimFile> AnimFileMapping = new();
+        private static Dictionary<KAnimFile, KAnimFile> AnimFileGetUIMapping = new();
 
         [PLibMethod(RunAt.BeforeDbInit)]
         private static void BeforeDbInit()
         {
             Utils.InitLocalization(typeof(STRINGS));
             var squirrel = Assets.GetAnim(squirrel_kanim);
+            var master = Assets.GetAnim(squirrel_build_kanim);  // null in U56
+            var emotes = Assets.GetAnim(squirrel_emotes_kanim);
             var lagoo = Assets.GetAnim(lagoo_kanim);
-            MergeSymbols(squirrel, lagoo);
             AdjustZOrder(squirrel, "sq_mouth", "sq_eye");
+            AdjustZOrder(emotes, "sq_mouth", "sq_eye");
             AdjustZOrder(lagoo, "sq_mouth", "sq_eye");
+            CopySymbols(master ?? squirrel, lagoo, ANIM_PREFIX + "sq_mouth_cheeks");
+            AnimFileGetUIMapping[master ?? squirrel] = lagoo;
+
             var baby_squirrel = Assets.GetAnim(baby_squirrel_kanim);
             var baby_lagoo = Assets.GetAnim(baby_lagoo_kanim);
-            MergeSymbols(baby_squirrel, baby_lagoo);
             AdjustZOrder(baby_squirrel, "sq_mouth_baby", "sq_eye_baby");
             AdjustZOrder(baby_lagoo, "sq_mouth_baby", "sq_eye_baby");
-            MergeSymbols(Assets.GetAnim(egg_squirrel_kanim), Assets.GetAnim(egg_lagoo_kanim));
+            AnimFileGetUIMapping[baby_squirrel] = baby_lagoo;
+
+            var egg_squirrel = Assets.GetAnim(egg_squirrel_kanim);
+            var egg_lagoo = Assets.GetAnim(egg_lagoo_kanim);
+            CopySymbols(egg_squirrel, egg_lagoo);
+            AnimFileGetUIMapping[egg_squirrel] = egg_lagoo;
         }
 
-        private static void MergeSymbols(KAnimFile to, KAnimFile from)
+        private static void CopySymbols(KAnimFile to, KAnimFile from, params KAnimHashedString[] symbolsToCopy)
         {
             if (to != null && to.IsBuildLoaded && from != null && from.IsBuildLoaded)
             {
-                AnimFileMapping[to] = from;
                 var to_data = to.GetData();
                 var from_data = from.GetData();
                 if (to_data.batchTag == from_data.batchTag)
@@ -73,7 +83,21 @@ namespace Lagoo
                     var from_build = from_data.build;
                     if (to_build != null && to_build.symbols != null && from_build != null && from_build.symbols != null)
                     {
-                        to_build.symbols = to_build.symbols.Append(from_build.symbols);
+                        if (symbolsToCopy.Length > 0)
+                        {
+                            var symbols = new List<KAnim.Build.Symbol>(symbolsToCopy.Length);
+                            for (int i = 0; i < symbolsToCopy.Length; i++)
+                            {
+                                var symbol = from_build.GetSymbol(symbolsToCopy[i]);
+                                if (symbol != null)
+                                    symbols.Add(symbol);
+                            }
+                            to_build.symbols = to_build.symbols.Append(symbols.ToArray());
+                        }
+                        else // all
+                        {
+                            to_build.symbols = to_build.symbols.Append(from_build.symbols);
+                        }
                     }
                 }
             }
@@ -111,7 +135,7 @@ namespace Lagoo
             }
         }
 
-        // однако пара патчей все равно понадобится, так как продуплировать анимы == всё сложно
+        // однако пара патчей все равно понадобится, так как продуплировать анимации == всё сложно
         // UI сприты
         [HarmonyPatch(typeof(Def), nameof(Def.GetUISpriteFromMultiObjectAnim))]
         private static class Def_GetUISpriteFromMultiObjectAnim
@@ -120,13 +144,14 @@ namespace Lagoo
             {
                 if (((!string.IsNullOrEmpty(animName) && animName.StartsWith(ANIM_PREFIX))
                     || (!string.IsNullOrEmpty(symbolName) && symbolName.StartsWith(ANIM_PREFIX)))
-                    && animFile != null && AnimFileMapping.ContainsKey(animFile))
+                    && animFile != null && AnimFileGetUIMapping.ContainsKey(animFile))
                 {
-                    animFile = AnimFileMapping[animFile];
+                    animFile = AnimFileGetUIMapping[animFile];
                 }
             }
         }
 
+        // в основном вызывается из StorageTile
         [HarmonyPatch(typeof(Def), nameof(Def.GetAnimFileFromPrefabWithTag))]
         [HarmonyPatch(new Type[] { typeof(GameObject), typeof(string), typeof(string) },
             new ArgumentType[] { ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Out })]
@@ -134,10 +159,10 @@ namespace Lagoo
         {
             private static void Postfix(ref KAnimFile __result, string animName)
             {
-                if (!string.IsNullOrEmpty(animName) && animName.StartsWith(ANIM_PREFIX)
-                    && __result != null && AnimFileMapping.ContainsKey(__result))
+                if (!string.IsNullOrEmpty(animName) && animName.StartsWith(ANIM_PREFIX) && animName != ANIM_PREFIX
+                    && __result != null && AnimFileGetUIMapping.ContainsKey(__result))
                 {
-                    __result = AnimFileMapping[__result];
+                    __result = AnimFileGetUIMapping[__result];
                 }
             }
         }
@@ -180,17 +205,14 @@ namespace Lagoo
         }
 
         // серу в кормушку
-        [HarmonyPatch(typeof(CreatureFeederConfig), nameof(CreatureFeederConfig.ConfigurePost))]
-        public static class CreatureFeederConfig_ConfigurePost
+        [PLibMethod(RunAt.BeforeDbPostProcess)]
+        public static void AddCreatureFeederDiet()
         {
-            public static void Postfix(BuildingDef def)
+            var storageFilters = Assets.GetBuildingDef(CreatureFeederConfig.ID).BuildingComplete.GetComponent<Storage>().storageFilters;
+            foreach (var diet in DietManager.CollectDiets(new Tag[] { GameTags.Creatures.Species.SquirrelSpecies }))
             {
-                var storageFilters = def.BuildingComplete.GetComponent<Storage>().storageFilters;
-                foreach (var diet in DietManager.CollectDiets(new Tag[] { GameTags.Creatures.Species.SquirrelSpecies }))
-                {
-                    if (!storageFilters.Contains(diet.Key))
-                        storageFilters.Add(diet.Key);
-                }
+                if (diet.Value.CanEatAnySolid && !storageFilters.Contains(diet.Key))
+                    storageFilters.Add(diet.Key);
             }
         }
 
