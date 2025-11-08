@@ -294,10 +294,10 @@ namespace SuitRecharger
         {
             if (suitTank != null)
             {
+                var list = ListPool<GameObject, SuitRecharger>.Allocate();
                 // очистка ссанины
                 if (recharger.liquidWastePipeOK)
                 {
-                    var list = ListPool<GameObject, SuitRecharger>.Allocate();
                     suitTank.storage.Find(GameTags.Liquid, list);
                     if (list.Count > 0)
                     {
@@ -306,20 +306,25 @@ namespace SuitRecharger
                         if (worker.TryGetComponent<Effects>(out var effects) && effects.HasEffect("SoiledSuit"))
                             effects.Remove("SoiledSuit");
                     }
-                    list.Recycle();
+                    list.Clear();
                 }
                 // очистка перегара
-                if (recharger.gasWastePipeOK)
+                suitTank.storage.Find(GameTags.Gas, list);
+                foreach (var go in list)
                 {
-                    var list = ListPool<GameObject, SuitRecharger>.Allocate();
-                    suitTank.storage.Find(GameTags.Gas, list);
-                    foreach (var go in list)
+                    if (!go.HasTag(suitTank.elementTag))
                     {
-                        if (!go.HasTag(suitTank.elementTag))
+                        if (recharger.gasWastePipeOK)
                             suitTank.storage.Transfer(go, recharger.wasteStorage, false, true);
+                        else
+                        {
+                            suitTank.storage.Drop(go);
+                            if (go.TryGetComponent(out Dumpable dumpable))
+                                dumpable.Dump(transform.GetPosition());
+                        }
                     }
-                    list.Recycle();
                 }
+                list.Recycle();
                 // проверка целостности
                 // если пора ломать, то перекачиваем всё обратно и снимаем
                 if (suitTank.TryGetComponent<Durability>(out var durability)

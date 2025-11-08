@@ -64,6 +64,8 @@ namespace SuitRecharger
                     && assignable.TryGetComponent<Durability>(out var durability))
                 {
                     float d = durability.GetTrueDurability(context.consumerState.resume);
+                    if (d >= recharger.durabilityThreshold)
+                        return true;
                     if (recharger.enableRepair && AllRepairSuitCost.TryGetValue(equippable.def.Id.ToTag(), out var costs))
                     {
                         foreach (var cost in costs)
@@ -74,7 +76,7 @@ namespace SuitRecharger
                                 return true;
                         }
                     }
-                    return d >= recharger.durabilityThreshold;
+                    return false;
                 }
                 return true;
             }
@@ -337,7 +339,7 @@ namespace SuitRecharger
 
         // порог изношенности костюма, при превышении не заряжать, если ремонт не разрешен или невозможен
         [Serialize]
-        private float durabilityThreshold;
+        private float durabilityThreshold = -1f;
         public float DurabilityThreshold { get => durabilityThreshold; set => durabilityThreshold = Mathf.Clamp01(value); }
 
         private static float defaultDurabilityThreshold;
@@ -358,6 +360,7 @@ namespace SuitRecharger
         public float FuelAvailable { get; private set; }
         public Dictionary<Tag, float> RepairMaterialsAvailable { get; private set; } = new Dictionary<Tag, float>();
 
+        // для правильного учёта сложности оно должно быть считано из файло. так что дёргать это в OnPrefabInit слишком рано
         private static void CheckDifficultySetting()
         {
             var currentQualitySetting = CustomGameSettings.Instance.GetCurrentQualitySetting(CustomGameSettingConfigs.Durability);
@@ -468,11 +471,13 @@ namespace SuitRecharger
             // поскольку 1.3.0 добавили второе storage, надо выкинуть всё из первого
             foreach (var tag in RepairMaterials)
                 o2Storage.Drop(tag);
+
             if (DurabilityMode == DurabilitySetting.Unknown)
                 CheckDifficultySetting();
+            if (DurabilityThreshold < 0f)
+                DurabilityThreshold = defaultDurabilityThreshold;
             if (DurabilityMode == DurabilitySetting.Disabled)
                 enableRepair = false;
-            DurabilityThreshold = defaultDurabilityThreshold;
             filterable.currentlyUserAssignable = (DurabilityMode == DurabilitySetting.Enabled) && RepairMaterials.Count > 1;
             treeFilterable.dropIncorrectOnFilterChange = true;
             OnStorageChange();
