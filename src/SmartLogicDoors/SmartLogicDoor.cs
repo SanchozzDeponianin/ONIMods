@@ -81,11 +81,11 @@ namespace SmartLogicDoors
             UpdateLogicPortDescription();
             if (IsLogicPortConnected)
             {
-                Trigger((int)GameHashes.LogicEvent, new LogicValueChanged()
-                {
-                    portID = Door.OPEN_CLOSE_PORT_ID,
-                    newValue = ports.GetInputValue(Door.OPEN_CLOSE_PORT_ID)
-                });
+                var @event = LogicValueChanged.Pool.Get();
+                @event.portID = Door.OPEN_CLOSE_PORT_ID;
+                @event.newValue = ports.GetInputValue(Door.OPEN_CLOSE_PORT_ID);
+                Trigger((int)GameHashes.LogicEvent, @event);
+                LogicValueChanged.Pool.Release(@event);
                 return true;
             }
             return false;
