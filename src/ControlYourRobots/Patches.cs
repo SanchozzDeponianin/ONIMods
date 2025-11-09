@@ -285,6 +285,50 @@ namespace ControlYourRobots
             }
         }
 
+        // миграция настроек дверей под новую систему У57
+        [HarmonyPatch(typeof(AccessControl), "UpgradeSavesToPostRobotDoorPermissions")]
+        private static class UpgradeSavesToPostRobotDoorPermissions
+        {
+            private static readonly DetouredMethod<Action<AccessControl, KPrefabID>> ClearGridRestrictions
+                = typeof(AccessControl).DetourLazy<Action<AccessControl, KPrefabID>>("ClearGridRestrictions");
+
+            private static void Prefix(AccessControl __instance, AccessControl.Permission ____defaultPermission,
+            List<KeyValuePair<Ref<KPrefabID>, AccessControl.Permission>> ___savedPermissions)
+            {
+                var list = ListPool<Tuple<MinionAssignablesProxy, AccessControl.Permission>, AccessControl>.Allocate();
+                for (int i = ___savedPermissions.Count - 1; i >= 0; i--)
+                {
+                    var kprefabID = ___savedPermissions[i].Key.Get();
+                    if (kprefabID != null)
+                    {
+                        var proxy = kprefabID.GetComponent<RobotAssignablesProxy>();
+                        if (proxy != null)
+                        {
+                            list.Add(new(proxy, ___savedPermissions[i].Value));
+                            ___savedPermissions.RemoveAt(i);
+                            ClearGridRestrictions.Invoke(__instance, kprefabID);
+                        }
+                    }
+                }
+                foreach (var tuple in list)
+                {
+                    var robot_tag = ((RobotAssignablesProxy)tuple.first).PrefabID;
+                    var permission = tuple.second;
+#pragma warning disable CS0612
+                    // если ранее фича для запрета флудо всех дверей была включена, не будем мигрировать вариант "ты не пройдёш"
+                    if (robot_tag == GameTags.Robots.Models.FetchDrone && permission == AccessControl.Permission.Neither
+                        && ModOptions.Instance.flydo_can_pass_door && ModOptions.Instance.restrict_flydo_by_default)
+                        continue;
+#pragma warning restore CS0612
+                    if (GridRestrictionSerializer.Instance.ValidRobotTypes.Contains(robot_tag))
+                        __instance.SetPermission(robot_tag, permission);
+                }
+                list.Recycle();
+                if (____defaultPermission > AccessControl.Permission.Both)
+                    __instance.SetDefaultPermission(GameTags.Robot, ____defaultPermission);
+            }
+        }
+
         // внедряем портреты роботов в эээ.. все портреты
         [HarmonyPatch(typeof(CrewPortrait), "Rebuild")]
         private static class CrewPortrait_SetIdentityObject

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using UnityEngine;
 using Klei.AI;
@@ -19,7 +20,6 @@ namespace ExoticSpices
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
-            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
             new POptions().RegisterOptions(this, typeof(ModOptions));
             new KAnimGroupManager().RegisterInteractAnims(ANIM_IDLE_ZOMBIE, ANIM_LOCO_ZOMBIE, ANIM_LOCO_WALK_ZOMBIE, ANIM_REACT_BUTT_SCRATCH);
@@ -27,13 +27,14 @@ namespace ExoticSpices
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
-        private static void BeforeDbInit()
+        private static void BeforeDbInit(Harmony harmony)
         {
             Utils.InitLocalization(typeof(STRINGS));
             LoadSprites();
             PGameUtils.CopySoundsToAnim(ANIM_REACT_BUTT_SCRATCH, "anim_react_butt_scratch_kanim");
             PGameUtils.CopySoundsToAnim(ANIM_LOCO_ZOMBIE, "anim_loco_new_kanim");
             Utils.LoadEmbeddedAudioSheet("AudioSheets/SFXTags_Duplicants.csv");
+            harmony.PatchAll();
         }
 
         [PLibMethod(RunAt.AfterDbInit)]
@@ -159,7 +160,8 @@ namespace ExoticSpices
         {
             private static void Postfix(Flatulence __instance)
             {
-                if (__instance.TryGetComponent<Effects>(out var effects) && effects.HasEffect(GASSY_MOO_SPICE))
+                if (__instance.TryGetComponent<Effects>(out var effects) && effects.HasEffect(GASSY_MOO_SPICE)
+                    && !__instance.HasTag(GameTags.InTransitTube))
                 {
                     var smi = __instance.GetSMI<StaminaMonitor.Instance>();
                     if (!smi.IsNullOrStopped() && !smi.IsSleeping())
@@ -259,6 +261,97 @@ namespace ExoticSpices
                 var seed = new CarePackageInfo(EvilFlowerConfig.SEED_ID, ModOptions.Instance.carepackage_seeds_amount,
                     () => DiscoveredResources.Instance.IsDiscovered(EvilFlowerConfig.SEED_ID));
                 ___carePackages.Add(seed);
+            }
+        }
+
+        // спавн газовой травы через PlantFiberProducer и поправляем кодекс
+        [PLibMethod(RunAt.BeforeDbPostProcess)]
+        private static void BeforeDbPostProcess()
+        {
+            Assets.GetPrefab(GasGrassConfig.ID).AddOrGet<PlantFiberProducer>().amount = 1f;
+        }
+
+        [HarmonyPatch(typeof(GasGrassHarvestedConfig), nameof(GasGrassHarvestedConfig.CreatePrefab))]
+        private static class GasGrassHarvestedConfig_CreatePrefab
+        {
+            private static void Postfix(GameObject __result)
+            {
+                EntityTemplates.CreateAndRegisterCompostableFromPrefab(__result);
+            }
+        }
+
+        private static string SpawnGasGrass(string id, KMonoBehaviour cmp)
+        {
+            if (cmp != null && cmp.IsPrefabID(GasGrassConfig.ID))
+                return GasGrassHarvestedConfig.ID;
+            else
+                return id;
+        }
+
+        [HarmonyPatch(typeof(PlantFiberProducer), "SpawnPlantFiber")]
+        private static class PlantFiberProducer_SpawnPlantFiber
+        {
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
+            {
+                return instructions.Transpile(original, IL, transpiler);
+            }
+
+            private static bool transpiler(ref List<CodeInstruction> instructions, ILGenerator IL)
+            {
+                var get_proper_id = typeof(Patches).GetMethodSafe(nameof(SpawnGasGrass), true, PPatchTools.AnyArguments);
+                if (get_proper_id == null)
+                    return false;
+                int i = instructions.FindIndex(inst => inst.LoadsConstant(PlantFiberConfig.ID));
+                if (i == -1)
+                    return false;
+                instructions.Insert(++i, new CodeInstruction(OpCodes.Ldarg_0));
+                instructions.Insert(++i, new CodeInstruction(OpCodes.Call, get_proper_id));
+                return true;
+            }
+        }
+
+        [HarmonyPatch]
+        private static class Codex_GetElementEntryContext
+        {
+            private static MethodBase target;
+
+            private static bool Prepare()
+            {
+                target = typeof(CodexEntryGenerator_Elements).GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                    .FirstOrDefault(m => m.IsDefined(typeof(CompilerGeneratedAttribute))
+                        && m.Name.Contains(nameof(CodexEntryGenerator_Elements.GetElementEntryContext)));
+                return target != null;
+            }
+
+            private static MethodBase TargetMethod() => target;
+
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
+            {
+                return instructions.Transpile(original, IL, transpiler);
+            }
+
+            private static bool transpiler(ref List<CodeInstruction> instructions, ILGenerator IL)
+            {
+                var get_component = typeof(GameObject).GetMethodSafe(nameof(GameObject.GetComponent), false)
+                    .MakeGenericMethod(typeof(PlantFiberProducer));
+                var get_proper_id = typeof(Patches).GetMethodSafe(nameof(SpawnGasGrass), true, PPatchTools.AnyArguments);
+                if (get_component == null || get_proper_id == null)
+                    return false;
+                int j = instructions.FindIndex(inst => inst.Calls(get_component));
+                if (j == -1 || !instructions[j + 1].IsStloc())
+                    return false;
+
+                static bool IsPlantFiber(CodeInstruction inst) => inst.LoadsConstant(PlantFiberConfig.ID);
+                int i = instructions.FindIndex(j, IsPlantFiber);
+                if (i == -1)
+                    return false;
+                while (i > 0)
+                {
+                    instructions.Insert(++i, new CodeInstruction(instructions[j + 1].GetMatchingLoadInstruction()));
+                    instructions.Insert(++i, new CodeInstruction(OpCodes.Call, get_proper_id));
+                    i = instructions.FindIndex(i, IsPlantFiber);
+                }
+                return true;
             }
         }
     }

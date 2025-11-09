@@ -4,7 +4,7 @@ namespace ControlYourRobots
 {
     public class RobotAssignablesProxyConfig : IEntityConfig
     {
-        public static string ID = "RobotAssignablesProxy";
+        public const string ID = "RobotAssignablesProxy";
 
         public virtual string[] GetDlcIds() => null;
 

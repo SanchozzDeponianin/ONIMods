@@ -185,9 +185,9 @@ namespace ExoticSpices
 
             // посчитаем массу газа
             var moo = Traverse.Create<MooConfig>();
-            var grass = CROPS.CROP_TYPES.First(crop => crop.cropId == GasGrassHarvestedConfig.ID);
-            var mass_per_day = GRASS_PER_1000KKAL * moo.Field<float>("DAYS_PLANT_GROWTH_EATEN_PER_CYCLE").Value
-                * moo.Field<float>("KG_POOP_PER_DAY_OF_PLANT").Value * (grass.cropDuration / Constants.SECONDS_PER_CYCLE) / grass.numProduced;
+            var grass = CROPS.CROP_TYPES.First(crop => crop.cropId == PlantFiberConfig.ID);
+            var mass_per_day = GRASS_PER_1000KKAL * MooTuning.DAYS_PLANT_GROWTH_EATEN_PER_CYCLE
+                * MooTuning.KG_POOP_PER_DAY_OF_PLANT * (grass.cropDuration / Constants.SECONDS_PER_CYCLE);
             GassyMooSpiceEmitMass = mass_per_day * (TRAITS.FLATULENCE_EMIT_INTERVAL_MAX + TRAITS.FLATULENCE_EMIT_INTERVAL_MIN) / 2f / Constants.SECONDS_PER_CYCLE;
             switch (ModOptions.Instance.gassy_moo_spice.emit_mass)
             {
