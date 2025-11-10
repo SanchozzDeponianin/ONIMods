@@ -15,6 +15,7 @@ namespace ReBuildableAETN
         public static Tag MaterialBuildingTag = TagManager.Create("BuildingNeutroniumCore");
 
         public virtual string[] GetDlcIds() => null;
+        public virtual string[] GetAnyRequiredDlcIds() => null;
         public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
         public string[] GetForbiddenDlcIds() => null;
 
@@ -41,6 +42,7 @@ namespace ReBuildableAETN
                     GameTags.IndustrialIngredient,
                     GameTags.PedestalDisplayable,
                     GameTags.Artifact,
+                    GameTags.Ornament,
                     MaterialBuildingTag,
                 });
 

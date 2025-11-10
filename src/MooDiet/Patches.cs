@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using HarmonyLib;
-using Klei.AI;
 using TUNING;
+using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
@@ -10,8 +9,6 @@ using PeterHan.PLib.Options;
 
 namespace MooDiet
 {
-    using static STRINGS.CREATURES.MODIFIERS.MOOFLOWERFED;
-
     internal sealed class Patches : KMod.UserMod2
     {
         public override void OnLoad(Harmony harmony)
@@ -28,143 +25,107 @@ namespace MooDiet
             Utils.InitLocalization(typeof(STRINGS));
         }
 
-        // эффект при поедании цветов
-        public const string MOO_FLOWER_FED = "MooFlowerFed";
-
-        [PLibMethod(RunAt.AfterDbInit)]
-        private static void AfterDbInit()
+        [PLibMethod(RunAt.AfterDbPostProcess)]
+        private static void AfterDbPostProcess()
         {
-            var effect = new Effect(MOO_FLOWER_FED, NAME, TOOLTIP, 1f, false, false, true);
-            effect.Add(new AttributeModifier(Db.Get().Amounts.Beckoning.deltaAttribute.Id,
-                -MooTuning.WELLFED_EFFECT * ModOptions.Instance.flower_diet.beckoning_penalty, NAME));
-            Db.Get().effects.Add(effect);
-        }
-
-        // расширяем диету
-        public struct FoodInfo
-        {
-            public string ID;
-            public Tag output_ID;
-            public float calories_multiplier;
-            public float output_multiplier;
-            public Diet.Info.FoodType food_type;
-            public FoodInfo(string id, Tag output_ID, float calories_multiplier = 1f, float output_multiplier = 1f, Diet.Info.FoodType food_type = Diet.Info.FoodType.EatSolid)
+            var moo = Assets.GetPrefab(MooConfig.ID);
+            if (moo != null)
+                ExpandDiet(moo, MooConfig.POOP_ELEMENT);
+            var diesel = Assets.GetPrefab(DieselMooConfig.ID);
+            if (diesel != null)
+                ExpandDiet(diesel, DieselMooConfig.POOP_ELEMENT);
+            // добавляем в кормушку новый корм для коровы
+            var storage = Assets.GetBuildingDef(CreatureFeederConfig.ID).BuildingComplete.GetComponent<Storage>();
+            foreach (var diet in DietManager.CollectDiets(new Tag[] { GameTags.Creatures.Species.MooSpecies }))
             {
-                ID = id;
-                this.output_ID = output_ID;
-                this.calories_multiplier = calories_multiplier;
-                this.output_multiplier = output_multiplier;
-                this.food_type = food_type;
+                if (diet.Value.CanEatAnySolid && !storage.storageFilters.Contains(diet.Key))
+                    storage.storageFilters.Add(diet.Key);
             }
+            // todo: превращять траву в солому если мод специй не включен ???
         }
+
         public const string PalmeraTreePlant = "PalmeraTreePlant";
         public const string PalmeraBerry = "PalmeraBerry";
 
-        [PLibMethod(RunAt.BeforeDbPostProcess)]
-        private static void BeforeDbPostProcess()
+        private static void ExpandDiet(GameObject prefab, Tag producedTag)
         {
-            var moo_go = Assets.GetPrefab(MooConfig.ID);
-            if (moo_go == null)
-                return;
-            var ccm_def = moo_go.GetDef<CreatureCalorieMonitor.Def>();
+            var ccm_def = prefab.GetDef<CreatureCalorieMonitor.Def>();
             if (ccm_def != null && ccm_def.diet != null)
             {
-                var diet_info = ccm_def.diet.GetDietInfo(GasGrassConfig.ID);
-                if (diet_info == null)
+                var diet = ccm_def.diet;
+                // вытащим размер выхлопа на случай если VeryGassyMoos их увеличил
+                float poop_size;
+                var info = diet.GetDietInfo(GasGrassConfig.ID);
+                if (info != null)
+                    poop_size = info.producedConversionRate * MooTuning.CALORIES_PER_DAY_OF_PLANT_EATEN / info.caloriesPerKg;
+                else
+                    poop_size = MooTuning.KG_POOP_PER_DAY_OF_PLANT;
+
+                // Harvested Gas Grass / Exotic Spices
+                var producer = Assets.GetPrefab(GasGrassConfig.ID).GetComponent<PlantFiberProducer>();
+                if (producer != null && producer.amount > 0f)
                 {
-                    // 98% что это изза мода "Very Gassy Moos"
-                    // откатим некоторые его манипуляции
-                    diet_info = ccm_def.diet.GetDietInfo(GasGrassHarvestedConfig.ID);
-                    if (diet_info == null)
-                    {
-                        PUtil.LogWarning("Alarm! Cow don`t eat Grass!!!");
-                        return;
-                    }
-                    diet_info.consumedTags.Remove(GasGrassHarvestedConfig.ID);
-                    diet_info.consumedTags.Add(GasGrassConfig.ID);
-                    Traverse.Create(diet_info).Property<Diet.Info.FoodType>(nameof(Diet.Info.foodType)).Value = Diet.Info.FoodType.EatPlantDirectly;
+                    var fiber = CROPS.CROP_TYPES.Find(crop => crop.cropId == PlantFiberConfig.ID);
+                    float grass_per_day = producer.amount / fiber.cropDuration * Constants.SECONDS_PER_CYCLE
+                        * MooTuning.DAYS_PLANT_GROWTH_EATEN_PER_CYCLE / CROPS.WILD_GROWTH_RATE_MODIFIER;
+                    diet = ExpandDiet(diet, prefab, GasGrassHarvestedConfig.ID, producedTag, grass_per_day, poop_size, Diet.Info.FoodType.EatSolid);
                 }
-                // добавляем новые варианты к существующей диете
-                var new_foods = new List<FoodInfo>()
-                    {
-                        new FoodInfo(GasGrassHarvestedConfig.ID, MooConfig.POOP_ELEMENT),
-                        new FoodInfo(SwampLilyFlowerConfig.ID, ElementLoader.FindElementByHash(SimHashes.ChlorineGas).tag,
-                            ModOptions.Instance.flower_diet.lily_per_cow / MooConfig.DAYS_PLANT_GROWTH_EATEN_PER_CYCLE,
-                            ModOptions.Instance.flower_diet.gas_multiplier),
-                    };
+
+                // Balm Lily
+                if (ModOptions.Instance.flower_diet.eat_lily)
+                {
+                    float lily_per_day = ModOptions.Instance.flower_diet.lily_per_cow;
+                    diet = ExpandDiet(diet, prefab, SwampLilyConfig.ID, SimHashes.ChlorineGas.CreateTag(), lily_per_day, poop_size, Diet.Info.FoodType.EatPlantDirectly);
+                }
+                if (ModOptions.Instance.flower_diet.eat_flower)
+                {
+                    var flover = CROPS.CROP_TYPES.Find(crop => crop.cropId == SwampLilyFlowerConfig.ID);
+                    float flover_per_day = flover.numProduced / flover.cropDuration * Constants.SECONDS_PER_CYCLE
+                        * ModOptions.Instance.flower_diet.lily_per_cow;
+                    diet = ExpandDiet(diet, prefab, SwampLilyFlowerConfig.ID, SimHashes.ChlorineGas.CreateTag(), flover_per_day, poop_size, Diet.Info.FoodType.EatSolid);
+                }
+
                 // Palmera Tree
                 if (ModOptions.Instance.palmera_diet.eat_palmera && Assets.TryGetPrefab(PalmeraTreePlant) != null)
                 {
-                    new_foods.Add(new FoodInfo(PalmeraTreePlant, ElementLoader.FindElementByHash(SimHashes.Hydrogen).tag,
-                        ModOptions.Instance.palmera_diet.palmera_per_cow / MooConfig.DAYS_PLANT_GROWTH_EATEN_PER_CYCLE,
-                        food_type: Diet.Info.FoodType.EatPlantDirectly));
+                    float palmera_per_day = ModOptions.Instance.palmera_diet.palmera_per_cow;
+                    diet = ExpandDiet(diet, prefab, PalmeraTreePlant, SimHashes.Hydrogen.CreateTag(), palmera_per_day, poop_size, Diet.Info.FoodType.EatPlantDirectly);
                 }
                 if (ModOptions.Instance.palmera_diet.eat_berry && Assets.TryGetPrefab(PalmeraBerry) != null
                     && CROPS.CROP_TYPES.FindIndex(m => m.cropId == PalmeraBerry) != -1)
                 {
-                    new_foods.Add(new FoodInfo(PalmeraBerry, ElementLoader.FindElementByHash(SimHashes.Hydrogen).tag,
-                        ModOptions.Instance.palmera_diet.palmera_per_cow / MooConfig.DAYS_PLANT_GROWTH_EATEN_PER_CYCLE));
+                    var berry = CROPS.CROP_TYPES.Find(crop => crop.cropId == PalmeraBerry);
+                    float berry_per_day = berry.numProduced / berry.cropDuration * Constants.SECONDS_PER_CYCLE
+                        * ModOptions.Instance.palmera_diet.palmera_per_cow;
+                    diet = ExpandDiet(diet, prefab, PalmeraBerry, SimHashes.Hydrogen.CreateTag(), berry_per_day, poop_size, Diet.Info.FoodType.EatSolid);
                 }
-                var new_diet = ccm_def.diet.infos.ToList();
-                foreach (var food in new_foods)
-                {
-                    // сколько корове нужно растений на прокорм в день - фактически уже учтено в диете по умолчанию
-                    // просто разделим параметры на среднюю урожайность растения в день
-                    // а также, для цветов - поделим калорийность на фактор увеличения числа растений
-                    float crop_per_cycle = 1f;
-                    if (food.food_type != Diet.Info.FoodType.EatPlantDirectly)
-                    {
-                        var cropVal = CROPS.CROP_TYPES.Find(m => m.cropId == food.ID);
-                        crop_per_cycle = Constants.SECONDS_PER_CYCLE / cropVal.cropDuration * cropVal.numProduced;
-                    }
-                    new_diet.RemoveAll(info => info.consumedTags.Contains(food.ID)); // удаляем дупликаты от посторонних модов.
-                    new_diet.Add(new Diet.Info(
-                        consumed_tags: new HashSet<Tag>() { food.ID },
-                        produced_element: food.output_ID,
-                        calories_per_kg: diet_info.caloriesPerKg / crop_per_cycle / food.calories_multiplier,
-                        produced_conversion_rate: diet_info.producedConversionRate / crop_per_cycle / food.calories_multiplier * food.output_multiplier,
-                        food_type: food.food_type));
-                }
-                var hybridDiet = new Diet(new_diet.ToArray());
-                ccm_def.diet = hybridDiet;
-                var scm_def = moo_go.GetDef<SolidConsumerMonitor.Def>();
+                ccm_def.diet = diet;
+                var scm_def = prefab.GetDef<SolidConsumerMonitor.Def>();
                 if (scm_def != null)
-                    scm_def.diet = hybridDiet;
+                    scm_def.diet = diet;
             }
         }
 
-        // применяем эффект если корова сожрала цветы вместо травы
-        [HarmonyPatch(typeof(BeckoningMonitor.Instance), nameof(BeckoningMonitor.Instance.OnCaloriesConsumed))]
-        private static class BeckoningMonitor_Instance_OnCaloriesConsumed
+        private static Diet ExpandDiet(Diet diet, GameObject prefab, Tag consumed_tag, Tag producedTag,
+            float eaten_per_day, float poop_size, Diet.Info.FoodType foodType)
         {
-            private static void Postfix(BeckoningMonitor.Instance __instance, Effects ___effects, object data)
+            // удаляем дупликаты от посторонних модов
+            var dupe = diet.GetDietInfo(consumed_tag);
+            if (dupe != null)
             {
-                var @event = (CreatureCalorieMonitor.CaloriesConsumedEvent)data;
-                if (@event.tag == SwampLilyFlowerConfig.ID)
-                {
-                    var effect = ___effects.Get(MOO_FLOWER_FED);
-                    if (effect == null)
-                        effect = ___effects.Add(MOO_FLOWER_FED, true);
-                    effect.timeRemaining += @event.calories / __instance.def.caloriesPerCycle * Constants.SECONDS_PER_CYCLE;
-                }
+                PUtil.LogWarning("{0} ({1}) has duplicate diet entry: {2} ({3}), removing.".F(
+                    prefab.PrefabID().ProperNameStripLink(), prefab.PrefabID().ToString(), 
+                    consumed_tag.ProperNameStripLink(), consumed_tag.ToString()));
+                var infos = diet.infos.ToList();
+                dupe.consumedTags.Remove(consumed_tag);
+                if (dupe.consumedTags.Count == 0)
+                    infos.Remove(dupe);
+                diet = new Diet(infos.ToArray());
             }
+            return BaseMooConfig.ExpandDiet(diet, prefab, consumed_tag, producedTag,
+                caloriesPerKg: MooTuning.STANDARD_CALORIES_PER_CYCLE / eaten_per_day,
+                producedConversionRate: poop_size * MooTuning.DAYS_PLANT_GROWTH_EATEN_PER_CYCLE / eaten_per_day,
+                foodType, MooTuning.MIN_POOP_SIZE_IN_KG);
         }
-
-        // добавляем в кормушку новый корм для коровы
-        [HarmonyPatch(typeof(CreatureFeederConfig), nameof(CreatureFeederConfig.ConfigurePost))]
-        private static class CreatureFeederConfig_ConfigurePost
-        {
-            private static void Postfix(BuildingDef def)
-            {
-                var storage = def.BuildingComplete.GetComponent<Storage>();
-                foreach (var diet in DietManager.CollectDiets(new Tag[] { GameTags.Creatures.Species.MooSpecies }))
-                {
-                    if (!storage.storageFilters.Contains(diet.Key))
-                        storage.storageFilters.Add(diet.Key);
-                }
-            }
-        }
-
-        // todo: добавить в кодекс в раздел молока расширенную информацию об расширенной диете
     }
 }

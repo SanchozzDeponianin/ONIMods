@@ -7,18 +7,6 @@ namespace MooDiet
         public static LocString MOD_TITLE = "";
         public static LocString MOD_DESCRIPTION = "";
 
-        public class CREATURES
-        {
-            public class MODIFIERS
-            {
-                public class MOOFLOWERFED
-                {
-                    public static LocString NAME = "Flower Diet";
-                    public static LocString TOOLTIP = "";
-                }
-            }
-        }
-
         public class OPTIONS
         {
             public class FLOWER_DIET
@@ -30,31 +18,13 @@ namespace MooDiet
                 public static LocString NAME = $"{UI.FormatAsKeyWord("Balm Lily")} plants per one {UI.FormatAsKeyWord("Gassy Moo")}";
                 public static LocString TOOLTIP = "How many plants do you need to plant to feed one tamed happy Cow\nThe consumed mass per cycle is calculated automatically depending on the yield of the plant";
             }
-            public class GAS
+            public class EAT_LILY
             {
-                public static LocString NAME = "gas multiplier";
-                public static LocString TOOLTIP = "";
+                public static LocString NAME = $"{UI.FormatAsKeyWord("Gassy Moo")} can eat { UI.FormatAsKeyWord("Balm Lily")} live plants";
             }
-            public class BECKONING
+            public class EAT_FLOWER
             {
-                public static LocString NAME = $"{UI.FormatAsKeyWord("Accu-moo-lation")} when {UI.FormatAsKeyWord("Gassy Moo")} eats {UI.FormatAsKeyWord("Balm Lily Flowers")}";
-                public static LocString TOOLTIP = "Balm Lily is actually a free plant that does not require resources\nIn order to maintain the balance, there should be a penalty";
-            }
-            public class ZERO
-            {
-                public static LocString NAME = "Zero";
-            }
-            public class QUARTER
-            {
-                public static LocString NAME = "Quarter";
-            }
-            public class HALF
-            {
-                public static LocString NAME = "Half";
-            }
-            public class FULL
-            {
-                public static LocString NAME = "Full";
+                public static LocString NAME = $"{UI.FormatAsKeyWord("Gassy Moo")} can eat { UI.FormatAsKeyWord("Balm Lily Flowers")}";
             }
             public class PALMERA_DIET
             {

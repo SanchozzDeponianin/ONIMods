@@ -256,6 +256,8 @@ namespace ReBuildableAETN
         }
 
         // добавляем ядра во всякий хлам:
+        // todo: появилось много нового хлама, рассмотреть возможность добавления
+
         // стол директора, добавляем возможность обыскать
         // сетлокер и сырая воркабле должны быть добавлены в гамеобъект раньше любой другой воркабле, 
         // иначе хрень получается, поэтому транспилером
@@ -312,100 +314,79 @@ namespace ReBuildableAETN
             }
         }
 
-        // спутники
-        [HarmonyPatch]
-        private static class PropSurfaceSatellite3Config_CreatePrefab
+        [PLibMethod(RunAt.BeforeDbPostProcess)]
+        private static void AddLoot()
         {
-            private static IEnumerable<MethodBase> TargetMethods()
+            // спутники
+            foreach (var id in new[] { PropSurfaceSatellite1Config.ID, PropSurfaceSatellite2Config.ID, PropSurfaceSatellite3Config.ID })
             {
-                return new List<MethodBase>()
-                {
-                    typeof(PropSurfaceSatellite1Config).GetMethodSafe(nameof(PropSurfaceSatellite1Config.CreatePrefab), false),
-                    typeof(PropSurfaceSatellite2Config).GetMethodSafe(nameof(PropSurfaceSatellite2Config.CreatePrefab), false),
-                    typeof(PropSurfaceSatellite3Config).GetMethodSafe(nameof(PropSurfaceSatellite3Config.CreatePrefab), false),
-                };
+                var prefab = Assets.TryGetPrefab(id);
+                if (prefab != null)
+                    prefab.AddOrGet<MassiveHeatSinkCoreSpawner>().chance = ModOptions.Instance.GravitasPOIChance.RarePOIChance / 100f;
             }
-
-            private static void Postfix(GameObject __result)
+            // шкафчики и торг-о-мат
+            foreach (var id in new[] { "SetLocker", "MissileSetLocker", "PropExoSetLocker", "PropClothesHanger", "PropGravitasFirstAidKit", "VendingMachine" })
             {
-                __result.AddOrGet<MassiveHeatSinkCoreSpawner>().chance =
-                    ModOptions.Instance.GravitasPOIChance.RarePOIChance / 100f;
-            }
-        }
-
-        // шкафчик и торг-о-мат
-        [HarmonyPatch]
-        private static class SetLockerConfig_VendingMachineConfig_CreatePrefab
-        {
-            private static IEnumerable<MethodBase> TargetMethods()
-            {
-                return new MethodBase[] {
-                    typeof(SetLockerConfig).GetMethodSafe(nameof(SetLockerConfig.CreatePrefab), false, PPatchTools.AnyArguments),
-                    typeof(VendingMachineConfig).GetMethodSafe(nameof(VendingMachineConfig.CreatePrefab), false, PPatchTools.AnyArguments),
-                };
-            }
-
-            private static void Postfix(GameObject __result)
-            {
-                __result.AddOrGet<MassiveHeatSinkCoreSpawner>().chance =
-                    ModOptions.Instance.GravitasPOIChance.LockerPOIChance / 100f;
+                var prefab = Assets.TryGetPrefab(id);
+                if (prefab != null)
+                    prefab.AddOrGet<MassiveHeatSinkCoreSpawner>().chance = ModOptions.Instance.GravitasPOIChance.LockerPOIChance / 100f;
             }
         }
 
         // добавляем ядра в космос в длц:
         // нужно избежать записи id ядра в сейф, иначе при отключении мода будет плохо
 
+        // TODO: пока не вижу адекватного способа на У57 обойти записи id ядра в сейф
         // выборы следующего для сбора артифакта в космических пои.
-        // пусть будет условное значение "" означает ядро (некрасиво, но что поделать)
         [HarmonyPatch(typeof(ArtifactPOIStates.Instance), nameof(ArtifactPOIStates.Instance.PickNewArtifactToHarvest))]
         private static class ArtifactPOIStates_Instance_PickNewArtifactToHarvest
         {
-            private static bool Prepare() => DlcManager.IsExpansion1Active();
+            private static int TotalArtifactCount;
+            private static bool Prepare()
+            {
+                foreach (var x in ArtifactConfig.artifactItems.Keys)
+                    TotalArtifactCount += ArtifactConfig.artifactItems[x].Count;
+                return DlcManager.IsExpansion1Active();
+            }
 
-            private static bool Prefix(ArtifactPOIStates.Instance __instance, int ___numHarvests)
+            private static bool Prefix(ArtifactPOIStates.Instance __instance, int ___numHarvests, ref string __result)
             {
                 // пропускаем пои с явно прописанным стартовым артифактом
                 if (___numHarvests <= 0 && !string.IsNullOrEmpty(__instance.configuration.GetArtifactID()))
-                {
                     return true;
-                }
+                // сначала внедряем равновероятно с другими артифактами
                 var chance = ModOptions.Instance.SpaceOutPOIChance;
-                if (__instance.CanHarvestArtifact() && chance.Enabled && UnityEngine.Random.Range(0f, 100f) < chance.SpacePOIChance)
-                {
-                    __instance.artifactToHarvest = string.Empty;
-                    return false;
-                }
-                return true;
-            }
-#if DEBUG
-            private static void Postfix(ArtifactPOIStates.Instance __instance)
-            {
-                Debug.Log("PickNewArtifactToHarvest: " + __instance.artifactToHarvest);
-            }
-#endif
-        }
-
-        // передача ранее выбранного артифакта
-        [HarmonyPatch(typeof(ArtifactPOIStates.Instance), nameof(ArtifactPOIStates.Instance.GetArtifactToHarvest))]
-        private static class ArtifactPOIStates_Instance_GetArtifactToHarvest
-        {
-            private static bool Prepare() => DlcManager.IsExpansion1Active();
-
-            private static bool Prefix(ArtifactPOIStates.Instance __instance, ref string __result)
-            {
-                if (__instance.CanHarvestArtifact() && ModOptions.Instance.SpaceOutPOIChance.Enabled && __instance.artifactToHarvest == string.Empty)
+                if (chance.Enabled && UnityEngine.Random.Range(0, TotalArtifactCount) == 0)
                 {
                     __result = ID;
                     return false;
                 }
                 return true;
             }
-#if DEBUG
-            private static void Postfix(string __result)
+
+            private static void Postfix(ArtifactPOIStates.Instance __instance, ref string __result)
             {
-                Debug.Log("GetArtifactToHarvest: " + __result);
+                // но вместо сраной кружки - с шансом из настроек
+                var chance = ModOptions.Instance.SpaceOutPOIChance;
+                if (__result == "artifact_officemug"
+                    && chance.Enabled && UnityEngine.Random.Range(0f, 100f) < chance.SpacePOIChance)
+                {
+                    __result = ID;
+                }
             }
-#endif
+        }
+
+        // подчищаем предыдущее условное значение "" означает ядро
+        [HarmonyPatch(typeof(ArtifactPOIStates.Instance), nameof(ArtifactPOIStates.Instance.SpawnArtifactOnHexCell))]
+        private static class ArtifactPOIStates_Instance_SpawnArtifactOnHexCell
+        {
+            private static bool Prepare() => DlcManager.IsExpansion1Active();
+
+            private static void Prefix(ArtifactPOIStates.Instance __instance)
+            {
+                if (__instance.artifactToHarvest == string.Empty)
+                    __instance.artifactToHarvest = null;
+            }
         }
 
         private static bool IsNotGameArtifactID(string id) => string.IsNullOrEmpty(id) || id == ID;

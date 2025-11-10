@@ -3,35 +3,30 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
-#. MooDiet.STRINGS.CREATURES.MODIFIERS.MOOFLOWERFED.NAME
-msgctxt "MooDiet.STRINGS.CREATURES.MODIFIERS.MOOFLOWERFED.NAME"
-msgid "Flower Diet"
-msgstr "Цветочная диета"
-
 #. MooDiet.STRINGS.MOD_DESCRIPTION
 msgctxt "MooDiet.STRINGS.MOD_DESCRIPTION"
-msgid "Now Gassy Moo can eat Balm Lily Flowers and harvested Gas Grass."
-msgstr "Теперь Муу может есть цветы Бальзамической Лилии и срезанную Газовую Траву."
+msgid "Now Gassy Moo can eat Balm Lily Flowers."
+msgstr "Теперь Муу может есть цветы Бальзамной Лилии."
 
 #. MooDiet.STRINGS.MOD_TITLE
 msgctxt "MooDiet.STRINGS.MOD_TITLE"
 msgid "Gassy Moo Eat Flowers"
 msgstr "Муу ест цветы"
 
-#. MooDiet.STRINGS.OPTIONS.BECKONING.NAME
-msgctxt "MooDiet.STRINGS.OPTIONS.BECKONING.NAME"
-msgid "<style=\"KKeyword\">Accu-moo-lation</style> when <style=\"KKeyword\">Gassy Moo</style> eats <style=\"KKeyword\">Balm Lily Flowers</style>"
-msgstr "<style=\"KKeyword\">Акку-муу-ляция</style>, если <style=\"KKeyword\">Муу</style> питается <style=\"KKeyword\">цветами лилии</style>"
-
-#. MooDiet.STRINGS.OPTIONS.BECKONING.TOOLTIP
-msgctxt "MooDiet.STRINGS.OPTIONS.BECKONING.TOOLTIP"
-msgid "Balm Lily is actually a free plant that does not require resources\nIn order to maintain the balance, there should be a penalty"
-msgstr "Лилия - фактически бесплатное растение, не требующее ресурсов\nВ целях сохранения баланса должно быть пенальти"
-
 #. MooDiet.STRINGS.OPTIONS.EAT_BERRY.NAME
 msgctxt "MooDiet.STRINGS.OPTIONS.EAT_BERRY.NAME"
 msgid "<style=\"KKeyword\">Gassy Moo</style> can eat <style=\"KKeyword\">Palmera Berries</style>"
 msgstr "<style=\"KKeyword\">Муу</style> может есть <style=\"KKeyword\">ягоды пальмеры</style>"
+
+#. MooDiet.STRINGS.OPTIONS.EAT_FLOWER.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.EAT_FLOWER.NAME"
+msgid "<style=\"KKeyword\">Gassy Moo</style> can eat <style=\"KKeyword\">Balm Lily Flowers</style>"
+msgstr "<style=\"KKeyword\">Муу</style> может есть <style=\"KKeyword\">Цветы бальзамной лилии</style>"
+
+#. MooDiet.STRINGS.OPTIONS.EAT_LILY.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.EAT_LILY.NAME"
+msgid "<style=\"KKeyword\">Gassy Moo</style> can eat <style=\"KKeyword\">Balm Lily</style> live plants"
+msgstr "<style=\"KKeyword\">Муу</style> может есть живое растение <style=\"KKeyword\">Бальзамная лилия</style>"
 
 #. MooDiet.STRINGS.OPTIONS.EAT_PALMERA.NAME
 msgctxt "MooDiet.STRINGS.OPTIONS.EAT_PALMERA.NAME"
@@ -42,16 +37,6 @@ msgstr "<style=\"KKeyword\">Муу</style> может есть живое рас
 msgctxt "MooDiet.STRINGS.OPTIONS.FLOWER_DIET.CATEGORY"
 msgid "Balm Lily Flower Diet"
 msgstr "Диета из цветов лилии"
-
-#. MooDiet.STRINGS.OPTIONS.FULL.NAME
-msgctxt "MooDiet.STRINGS.OPTIONS.FULL.NAME"
-msgid "Full"
-msgstr "Полная"
-
-#. MooDiet.STRINGS.OPTIONS.HALF.NAME
-msgctxt "MooDiet.STRINGS.OPTIONS.HALF.NAME"
-msgid "Half"
-msgstr "Половина"
 
 #. MooDiet.STRINGS.OPTIONS.LILY_PER_COW.NAME
 msgctxt "MooDiet.STRINGS.OPTIONS.LILY_PER_COW.NAME"
@@ -82,14 +67,4 @@ msgstr "Только если установлен мод <style=\"KKeyword\">Pa
 msgctxt "MooDiet.STRINGS.OPTIONS.PALMERA_PER_COW.NAME"
 msgid "<style=\"KKeyword\">Palmera Tree</style> plants per one <style=\"KKeyword\">Gassy Moo</style>"
 msgstr "Растений <style=\"KKeyword\">дерево Пальмера</style> на одну <style=\"KKeyword\">Муу</style>"
-
-#. MooDiet.STRINGS.OPTIONS.QUARTER.NAME
-msgctxt "MooDiet.STRINGS.OPTIONS.QUARTER.NAME"
-msgid "Quarter"
-msgstr "Четверть"
-
-#. MooDiet.STRINGS.OPTIONS.ZERO.NAME
-msgctxt "MooDiet.STRINGS.OPTIONS.ZERO.NAME"
-msgid "Zero"
-msgstr "Ноль"
 

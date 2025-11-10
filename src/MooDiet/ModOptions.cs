@@ -4,14 +4,6 @@ using PeterHan.PLib.Options;
 
 namespace MooDiet
 {
-    public enum Beckoning
-    {
-        [Option] Zero,
-        [Option] Quarter,
-        [Option] Half,
-        [Option] Full = 4,
-    }
-
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
@@ -24,20 +16,13 @@ namespace MooDiet
             [Limit(6, 120)]
             public int lily_per_cow { get; set; } = 30;
 
-            // регулировку газа пока скроем
             [JsonProperty]
-            //[Option]
-            public int gas { get; set; } = 100;
-
-            [JsonIgnore]
-            public float gas_multiplier => gas / 100f;
+            [Option]
+            public bool eat_flower { get; set; } = true;
 
             [JsonProperty]
             [Option]
-            public Beckoning beckoning { get; set; } = Beckoning.Quarter;
-
-            [JsonIgnore]
-            public float beckoning_penalty => 1f - (float)beckoning / (float)Beckoning.Full;
+            public bool eat_lily { get; set; } = false;
         }
 
         [JsonProperty]

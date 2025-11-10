@@ -68,7 +68,7 @@ namespace ReBuildableAETN
             [JsonProperty]
             [Option]
             [Limit(0, 30)]
-            public int SpacePOIChance { get; set; } = 15;
+            public int SpacePOIChance { get; set; } = 10;
         }
 
         [JsonProperty]
