@@ -10,6 +10,15 @@ namespace ExplorerBooster
 
         public class DUPLICANTS
         {
+            public class STATUSITEMS
+            {
+                public class BIONICEXPLORERBOOSTER_FINISHED
+                {
+                    public static LocString NAME = "Dowsing Complete";
+                    public static LocString TOOLTIP = "There are no more Geysers to discover here";
+                }
+            }
+
             public class TRAITS
             {
                 public class STARTWITHBOOSTER_EXPLORER

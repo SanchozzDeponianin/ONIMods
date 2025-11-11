@@ -6,8 +6,9 @@
     <ModVersion>1.0.1</ModVersion>
     <RequiredDlcIds>DLC3_ID</RequiredDlcIds>
     <UsesPLib>true</UsesPLib>
+    <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>
   <ItemGroup>
-    <SharedCS Include="BaseOptions" />
+    <SharedCS Include="BaseOptions;StateMachinesExtensions;TranspilerUtils" />
   </ItemGroup>
 </Project>

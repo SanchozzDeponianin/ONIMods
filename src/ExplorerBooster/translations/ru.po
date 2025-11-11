@@ -3,6 +3,16 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. ExplorerBooster.STRINGS.DUPLICANTS.STATUSITEMS.BIONICEXPLORERBOOSTER_FINISHED.NAME
+msgctxt "ExplorerBooster.STRINGS.DUPLICANTS.STATUSITEMS.BIONICEXPLORERBOOSTER_FINISHED.NAME"
+msgid "Dowsing Complete"
+msgstr "Геосканирование завершено"
+
+#. ExplorerBooster.STRINGS.DUPLICANTS.STATUSITEMS.BIONICEXPLORERBOOSTER_FINISHED.TOOLTIP
+msgctxt "ExplorerBooster.STRINGS.DUPLICANTS.STATUSITEMS.BIONICEXPLORERBOOSTER_FINISHED.TOOLTIP"
+msgid "There are no more Geysers to discover here"
+msgstr "Здесь больше нет гейзеров, которые можно было бы обнаружить"
+
 #. ExplorerBooster.STRINGS.DUPLICANTS.TRAITS.STARTWITHBOOSTER_EXPLORER.SHORT_DESC
 msgctxt "ExplorerBooster.STRINGS.DUPLICANTS.TRAITS.STARTWITHBOOSTER_EXPLORER.SHORT_DESC"
 msgid "Starts with a preinstalled <b><link=\"BOOSTEREXPLORER\">Dowsing Booster</link></b>"
