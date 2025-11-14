@@ -125,6 +125,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExplorerBooster", "Explorer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadPlantsNotifier", "DeadPlantsNotifier\DeadPlantsNotifier.csproj", "{FE87E859-B174-4614-A909-5A6235236B41}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualDiningTable", "DualDiningTable\DualDiningTable.csproj", "{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Backup = Debug|Backup
@@ -549,6 +551,14 @@ Global
 		{FE87E859-B174-4614-A909-5A6235236B41}.Release|Backup.Build.0 = Release|Backup
 		{FE87E859-B174-4614-A909-5A6235236B41}.Release|Steam.ActiveCfg = Release|Steam
 		{FE87E859-B174-4614-A909-5A6235236B41}.Release|Steam.Build.0 = Release|Steam
+		{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}.Debug|Backup.ActiveCfg = Debug|Backup
+		{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}.Debug|Backup.Build.0 = Debug|Backup
+		{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}.Debug|Steam.ActiveCfg = Debug|Steam
+		{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}.Debug|Steam.Build.0 = Debug|Steam
+		{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}.Release|Backup.ActiveCfg = Release|Backup
+		{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}.Release|Backup.Build.0 = Release|Backup
+		{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}.Release|Steam.ActiveCfg = Release|Steam
+		{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

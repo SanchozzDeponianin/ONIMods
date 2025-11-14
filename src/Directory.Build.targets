@@ -7,6 +7,10 @@
     <Compile Include="@(SharedCS->'$(MSBuildProjectDirectory)/../lib/%(Identity).cs')" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="scml/**" />
+  </ItemGroup>
+
   <!-- пустышка для строк для модов у которых нет своих строк -->
   <Target Name="CreateStubStrings" BeforeTargets="ResolveAssemblyReferences;BeforeBuild"
           Condition=" '$(DistributeMod)' == 'true' And !Exists('$(MSBuildProjectDirectory)/STRINGS.cs') ">

@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. DualDiningTable.STRINGS.BUILDINGS.PREFABS.DUALMINIONDININGTABLE.EFFECT
+msgctxt "DualDiningTable.STRINGS.BUILDINGS.PREFABS.DUALMINIONDININGTABLE.EFFECT"
+msgid "Gives two Duplicants a place to eat."
+msgstr "Позволяет двоим дубликантам есть вместе."
+
+#. DualDiningTable.STRINGS.BUILDINGS.PREFABS.DUALMINIONDININGTABLE.NAME
+msgctxt "DualDiningTable.STRINGS.BUILDINGS.PREFABS.DUALMINIONDININGTABLE.NAME"
+msgid "<link=\"DUALMINIONDININGTABLE\">Rendezvous Table</link>"
+msgstr "<link=\"DUALMINIONDININGTABLE\">Двухместный стол</link>"
+
+#. DualDiningTable.STRINGS.MOD_DESCRIPTION
+msgctxt "DualDiningTable.STRINGS.MOD_DESCRIPTION"
+msgid "The two-seater equivalent of the Communal Table, gives two Duplicants a place to eat."
+msgstr "Двухместный эквивалент Общего стола, позволяет двоим дубликантам есть вместе."
+
+#. DualDiningTable.STRINGS.MOD_TITLE
+msgctxt "DualDiningTable.STRINGS.MOD_TITLE"
+msgid "Rendezvous Table"
+msgstr "Двухместный стол"
+
