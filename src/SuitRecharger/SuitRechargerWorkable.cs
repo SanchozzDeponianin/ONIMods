@@ -331,10 +331,10 @@ namespace SuitRecharger
                     && durability.IsTrueWornOut(worker.GetComponent<MinionResume>()))
                 {
                     suitTank.storage.Transfer(recharger.o2Storage, suitTank.elementTag, suitTank.capacity, false, true);
-                    if (jetSuitTank != null)
+                    if (jetSuitTank != null && jetSuitTank.amount > 0f)
                     {
-                        // todo: если клеи сделают правильную обработку остатков топлива при поломке вместо превращения в керосин - сделать тоже
-                        recharger.o2Storage.AddLiquid(SimHashes.Petroleum, jetSuitTank.amount, durability.GetComponent<PrimaryElement>().Temperature, byte.MaxValue, 0, false, true);
+                        var last_fuel = (jetSuitTank.lastFuelUsed == SimHashes.Vacuum) ? SimHashes.Petroleum : jetSuitTank.lastFuelUsed;
+                        recharger.o2Storage.AddLiquid(last_fuel, jetSuitTank.amount, durability.GetComponent<PrimaryElement>().Temperature, byte.MaxValue, 0, false, true);
                         jetSuitTank.amount = 0f;
                     }
                     if (durability.TryGetComponent<Assignable>(out var assignable))

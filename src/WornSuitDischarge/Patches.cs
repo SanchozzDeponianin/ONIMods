@@ -76,9 +76,10 @@ namespace WornSuitDischarge
                     suitStorage.Transfer(lockerStorage, suitTank.elementTag, suitTank.capacity, false, true);
                 }
                 var jetSuitTank = assignable.GetComponent<JetSuitTank>();
-                if (jetSuitTank != null && lockerStorage.HasTag(JetSuitLockerConfig.ID))
+                if (jetSuitTank != null && jetSuitTank.amount > 0f && lockerStorage.HasTag(JetSuitLockerConfig.ID))
                 {
-                    lockerStorage.AddLiquid(SimHashes.Petroleum, jetSuitTank.amount, assignable.GetComponent<PrimaryElement>().Temperature, byte.MaxValue, 0, false, true);
+                    var last_fuel = (jetSuitTank.lastFuelUsed == SimHashes.Vacuum) ? SimHashes.Petroleum : jetSuitTank.lastFuelUsed;
+                    lockerStorage.AddLiquid(last_fuel, jetSuitTank.amount, assignable.GetComponent<PrimaryElement>().Temperature, byte.MaxValue, 0, false, true);
                     jetSuitTank.amount = 0f;
                 }
             }
@@ -244,11 +245,7 @@ namespace WornSuitDischarge
                 var storage = go.GetComponent<Storage>();
                 AddManualDeliveryKG(go, GameTags.Oxygen, capacity).SetStorage(storage);
                 if (prefab_tag == JetSuitLockerConfig.ID)
-                {
-                    // todo: убрать когда У56 усё
-                    Tag fuel = Utils.GameVersion >= 697549u ? GameTags.CombustibleLiquid : SimHashes.Petroleum.CreateTag();
-                    AddManualDeliveryKG(go, fuel, JetSuitLocker.FUEL_CAPACITY).SetStorage(storage);
-                }
+                    AddManualDeliveryKG(go, GameTags.CombustibleLiquid, JetSuitLocker.FUEL_CAPACITY).SetStorage(storage);
                 go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject inst)
                 {
                     var mdkgs = inst.GetComponents<ManualDeliveryKG>();
