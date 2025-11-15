@@ -341,13 +341,8 @@ namespace ReBuildableAETN
         [HarmonyPatch(typeof(ArtifactPOIStates.Instance), nameof(ArtifactPOIStates.Instance.PickNewArtifactToHarvest))]
         private static class ArtifactPOIStates_Instance_PickNewArtifactToHarvest
         {
-            private static int TotalArtifactCount;
-            private static bool Prepare()
-            {
-                foreach (var x in ArtifactConfig.artifactItems.Keys)
-                    TotalArtifactCount += ArtifactConfig.artifactItems[x].Count;
-                return DlcManager.IsExpansion1Active();
-            }
+            private static int TotalArtifactCount = -1;
+            private static bool Prepare() => DlcManager.IsExpansion1Active();
 
             private static bool Prefix(ArtifactPOIStates.Instance __instance, int ___numHarvests, ref string __result)
             {
@@ -355,6 +350,8 @@ namespace ReBuildableAETN
                 if (___numHarvests <= 0 && !string.IsNullOrEmpty(__instance.configuration.GetArtifactID()))
                     return true;
                 // сначала внедряем равновероятно с другими артифактами
+                if (TotalArtifactCount < 0)
+                    TotalArtifactCount = ArtifactConfig.artifactItems[ArtifactType.Space].Count;
                 var chance = ModOptions.Instance.SpaceOutPOIChance;
                 if (chance.Enabled && UnityEngine.Random.Range(0, TotalArtifactCount) == 0)
                 {
