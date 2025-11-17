@@ -127,6 +127,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadPlantsNotifier", "DeadP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualDiningTable", "DualDiningTable\DualDiningTable.csproj", "{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrabsFlippCompost", "CrabsFlippCompost\CrabsFlippCompost.csproj", "{AB6B59E6-B62D-44B5-A546-A41E30A32E8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Backup = Debug|Backup
@@ -559,6 +561,14 @@ Global
 		{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}.Release|Backup.Build.0 = Release|Backup
 		{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}.Release|Steam.ActiveCfg = Release|Steam
 		{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}.Release|Steam.Build.0 = Release|Steam
+		{AB6B59E6-B62D-44B5-A546-A41E30A32E8B}.Debug|Backup.ActiveCfg = Debug|Backup
+		{AB6B59E6-B62D-44B5-A546-A41E30A32E8B}.Debug|Backup.Build.0 = Debug|Backup
+		{AB6B59E6-B62D-44B5-A546-A41E30A32E8B}.Debug|Steam.ActiveCfg = Debug|Steam
+		{AB6B59E6-B62D-44B5-A546-A41E30A32E8B}.Debug|Steam.Build.0 = Debug|Steam
+		{AB6B59E6-B62D-44B5-A546-A41E30A32E8B}.Release|Backup.ActiveCfg = Release|Backup
+		{AB6B59E6-B62D-44B5-A546-A41E30A32E8B}.Release|Backup.Build.0 = Release|Backup
+		{AB6B59E6-B62D-44B5-A546-A41E30A32E8B}.Release|Steam.ActiveCfg = Release|Steam
+		{AB6B59E6-B62D-44B5-A546-A41E30A32E8B}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

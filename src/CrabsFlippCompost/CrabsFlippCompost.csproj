@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Crabs flip Compost</Title>
+    <Description>Now your Crabs can flip Compost.</Description>
+    <ModVersion>1.0.0</ModVersion>
+    <UsesPLib>true</UsesPLib>
+  </PropertyGroup>
+  <ItemGroup>
+    <SharedCS Include="TranspilerUtils" />
+  </ItemGroup>
+</Project>
