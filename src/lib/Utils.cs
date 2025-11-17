@@ -1,11 +1,12 @@
 ﻿using System;
-using System.IO;
-using System.Text;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using KMod;
+using System.Text;
 using HarmonyLib;
+using KMod;
+
 #if USESPLIB
 using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
@@ -220,8 +221,19 @@ namespace SanchozzONIMods.Lib
             }
         }
 
+        private static string GetTemplateFileName(Type locstring_tree_root)
+        {
+            return Klei.FileSystem.Normalize(Path.Combine(Manager.GetDirectory(), "strings_templates",
+                string.Format("{0}_template.pot", locstring_tree_root.Namespace.ToLower())));
+        }
+
         private static void WriteTemplate(Type locstring_tree_root)
         {
+            if (File.Exists(GetTemplateFileName(locstring_tree_root)))
+            {
+                Localization.RegisterForTranslation(locstring_tree_root);
+                return;
+            }
             try
             {
                 // пихаем в шоблон описание
