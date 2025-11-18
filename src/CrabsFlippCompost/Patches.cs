@@ -80,6 +80,26 @@ namespace CrabsFlippCompost
             }
         }
 
+        // играть анимацию несколько раз
+        [HarmonyPatch(typeof(ApproachBehaviourStates), nameof(ApproachBehaviourStates.InitializeStates))]
+        private static class ApproachBehaviourStates_InitializeStates
+        {
+            private static void Postfix(ApproachBehaviourStates __instance)
+            {
+                __instance.interact.loop.Enter(QueueMoreAnims);
+            }
+            private static void QueueMoreAnims(ApproachBehaviourStates.Instance smi)
+            {
+                const int count = (FlippCompostMonitor.ANIM_LOOPS * 2) - 1;
+                var kbac = smi.Get<KAnimControllerBase>();
+                if (smi.def.monitorId == FlippCompostMonitor.ID && kbac != null)
+                {
+                    for (int i = 0; i < count; i++)
+                        kbac.Queue(smi.def.loopAnim);
+                }
+            }
+        }
+
         // новый статус в компосте, без чоры
         [HarmonyPatch(typeof(Compost.States), nameof(Compost.States.InitializeStates))]
         internal static class Compost_States

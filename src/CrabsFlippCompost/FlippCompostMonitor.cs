@@ -8,6 +8,7 @@ namespace CrabsFlippCompost
         public static readonly Tag ID = new(nameof(FlippCompostMonitor));
         public static readonly Tag COMPOST_ID = new(CompostConfig.ID);
         public static readonly Tag BEHAVIOUR_TAG = new("WantsToFlippCompost");
+        public const int ANIM_LOOPS = 3;
 
         public class Def : BaseDef
         {
@@ -76,9 +77,13 @@ namespace CrabsFlippCompost
                     bool fa = facing.GetFacing();
                     var fx = FXHelpers.CreateEffect("flipp_compost_fx_kanim", target.transform.position + (fa ? Vector3.right : Vector3.zero),
                         null, false, Grid.SceneLayer.BuildingFront, true);
-                    fx.initialAnim = fa ? "loop_r" : "loop_l";
+                    fx.initialAnim = "pre";
                     fx.destroyOnAnimComplete = true;
                     fx.gameObject.SetActive(true);
+                    fx.Play("pre");
+                    HashedString loop = fa ? "loop_r" : "loop_l";
+                    for (int i = 0; i < ANIM_LOOPS; i++)
+                        fx.Queue(loop);
                 }
             }
             public void OnSuccess()

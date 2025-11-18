@@ -1,3 +1,4 @@
 File,Anim,Type,RequiredDlcId,MinInterval,Name0,Frame0,Name1,Frame1,Name2,Frame2,Name3,Frame3,Name4,Frame4,Name5,Frame5,Name6,Frame6,Name7,Frame7,Name8,Frame8,Name9,Frame9,Name10,Frame10,Name11,Frame11
-flipp_compost_fx_kanim,loop_l,SoundEvent,,,Compost_shovel_out,22,Compost_bounce,23,,,,,,,,,,,,,,,,,,,,
-flipp_compost_fx_kanim,loop_r,SoundEvent,,,Compost_shovel_out,22,Compost_bounce,23,,,,,,,,,,,,,,,,,,,,
+flipp_compost_fx_kanim,pre,SoundEvent,,,Compost_shovel_in,1,,,,,,,,,,,,,,,,,,,,,,
+flipp_compost_fx_kanim,loop_l,SoundEvent,,,Compost_shovel_out,1,Compost_bounce,2,Compost_shovel_in,21,,,,,,,,,,,,,,,,,,
+flipp_compost_fx_kanim,loop_r,SoundEvent,,,Compost_shovel_out,1,Compost_bounce,2,Compost_shovel_in,21,,,,,,,,,,,,,,,,,,
