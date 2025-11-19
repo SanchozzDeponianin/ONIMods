@@ -44,6 +44,22 @@ namespace ControlYourRobots
             }
         }
 
+        // фикс застревания возле запертых дверей
+        [HarmonyPatch(typeof(FetchDroneConfig), nameof(FetchDroneConfig.OnSpawn))]
+        private static class FetchDroneConfig_OnSpawn
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID);
+
+            private static void Postfix(GameObject inst)
+            {
+                if (inst.TryGetComponent(out Navigator navigator))
+                {
+                    navigator.transitionDriver.overrideLayers.RemoveAll(layer => layer is DoorTransitionLayer);
+                    navigator.transitionDriver.overrideLayers.Add(new Door1x1TransitionLayer(navigator));
+                }
+            }
+        }
+
         // вкл выкл
         [HarmonyPatch(typeof(RobotElectroBankMonitor), nameof(RobotElectroBankMonitor.InitializeStates))]
         private static class RobotElectroBankMonitor_InitializeStates
