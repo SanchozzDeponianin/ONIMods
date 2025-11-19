@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. CrabsFlippCompost.STRINGS.MOD_DESCRIPTION
+msgctxt "CrabsFlippCompost.STRINGS.MOD_DESCRIPTION"
+msgid "Now your Crabs can flip Compost."
+msgstr ""
+
+#. CrabsFlippCompost.STRINGS.MOD_TITLE
+msgctxt "CrabsFlippCompost.STRINGS.MOD_TITLE"
+msgid "Crabs flip Compost"
+msgstr ""
+

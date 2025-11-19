@@ -1,0 +1,105 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.DESC
+msgctxt "SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.DESC"
+msgid "Suit Recharger allows Duplicants to recharge their Suits and Oxygen Masks without taking them off."
+msgstr "Заправщик костюмов позволяет дупликантам заряжать свои костюмы и кислородные маски, не снимая их."
+
+#. SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.EFFECT
+msgctxt "SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.EFFECT"
+msgid "Recharges all kinds of <link=\"EQUIPMENT\">Exosuits</link> and <link=\"OXYGENMASK\">Oxygen Masks</link> and refuels them with <link=\"OXYGEN\">Oxygen</link> and <link=\"COMBUSTIBLELIQUID\">Combustible Liquid</link>.\n\nEmpties suits of <link=\"DIRTYWATER\">Polluted Water</link>.\n\nOptionally, it can be connected to <style=\"KKeyword\">Pipes</style> for waste disposal.\n\nCan repair not completely Worn Suits."
+msgstr "Позволяет перезаряжать все виды <link=\"EQUIPMENT\">экзокостюмов</link> и <link=\"OXYGENMASK\">кислородных масок</link> и наполнять их <link=\"OXYGEN\">кислородом</link> и <link=\"COMBUSTIBLELIQUID\">горючими жидкостями</link>.\n\nТакже помогает выливать <link=\"DIRTYWATER\">загрязненную воду</link>.\n\nПри желании его можно подключить к <style=\"KKeyword\">трубам</style> для удаления отходов.\n\nМожет ремонтировать не полностью изношенные экзокостюмы."
+
+#. SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.NAME
+msgctxt "SuitRecharger.STRINGS.BUILDINGS.PREFABS.SUITRECHARGER.NAME"
+msgid "<link=\"SUITRECHARGER\">Suit Recharger</link>"
+msgstr "<link=\"SUITRECHARGER\">Заправщик костюмов</link>"
+
+#. SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.CURRENTLY_RECHARGING
+msgctxt "SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.CURRENTLY_RECHARGING"
+msgid "Currently Recharging"
+msgstr "В данный момент перезаряжается"
+
+#. SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ENOUGH_FUEL
+msgctxt "SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ENOUGH_FUEL"
+msgid "{Selected} does not have enough Fuel"
+msgstr "{Selected} не имеет достаточного количества топлива"
+
+#. SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ENOUGH_OXYGEN
+msgctxt "SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ENOUGH_OXYGEN"
+msgid "{Selected} does not have enough Oxygen"
+msgstr "{Selected} не имеет достаточного количества кислорода"
+
+#. SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_SUIT_EQUIPPED
+msgctxt "SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_SUIT_EQUIPPED"
+msgid "Does not have an equipped Suit"
+msgstr "Не обладает экипированным костюмом"
+
+#. SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_SUIT_HAS_ENOUGH_DURABILITY
+msgctxt "SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_SUIT_HAS_ENOUGH_DURABILITY"
+msgid "Suit is not durable enough"
+msgstr "Костюм недостаточно прочный"
+
+#. SuitRecharger.STRINGS.MOD_DESCRIPTION
+msgctxt "SuitRecharger.STRINGS.MOD_DESCRIPTION"
+msgid "Allows Duplicants to recharge their Suits and Oxygen Masks without taking them off."
+msgstr "Позволяет дупликантам перезаряжать свои экзокостюмы и кислородные маски, не снимая их."
+
+#. SuitRecharger.STRINGS.MOD_TITLE
+msgctxt "SuitRecharger.STRINGS.MOD_TITLE"
+msgid "Suit Recharger"
+msgstr "Заправщик костюмов"
+
+#. SuitRecharger.STRINGS.OPTIONS.FUEL_CAPACITY.NAME
+msgctxt "SuitRecharger.STRINGS.OPTIONS.FUEL_CAPACITY.NAME"
+msgid "Fuel storage capacity, kg"
+msgstr "Ёмкость хранилища топлива, кг"
+
+#. SuitRecharger.STRINGS.OPTIONS.O2_CAPACITY.NAME
+msgctxt "SuitRecharger.STRINGS.OPTIONS.O2_CAPACITY.NAME"
+msgid "Oxygen storage capacity, kg"
+msgstr "Ёмкость хранилища кислорода, кг"
+
+#. SuitRecharger.STRINGS.STATUSITEMS.FUEL_NOPIPE.TOOLTIP
+msgctxt "SuitRecharger.STRINGS.STATUSITEMS.FUEL_NOPIPE.TOOLTIP"
+msgid "\n<style=\"KKeyword\">Jet Suits</style> will be charged only with <link=\"OXYGEN\">Oxygen</link>"
+msgstr "\n<style=\"KKeyword\">Реактивные костюмы</style> будут заряжаться только <link=\"OXYGEN\">кислородом</link>"
+
+#. SuitRecharger.STRINGS.STATUSITEMS.GASWASTE_NOPIPE.TOOLTIP
+msgctxt "SuitRecharger.STRINGS.STATUSITEMS.GASWASTE_NOPIPE.TOOLTIP"
+msgid "\nWhen cleaning the <style=\"KKeyword\">Suit</style>, the gaseous waste will be released into the atmosphere"
+msgstr "\nПри очистке <style=\"KKeyword\">костюма</style> газообразные отходы будут выброшены в атмосферу"
+
+#. SuitRecharger.STRINGS.STATUSITEMS.LIQUIDWASTE_NOPIPE.TOOLTIP
+msgctxt "SuitRecharger.STRINGS.STATUSITEMS.LIQUIDWASTE_NOPIPE.TOOLTIP"
+msgid "\n<style=\"KKeyword\">Soiled Suits</style> will not be emptied of liquid waste"
+msgstr "\n<style=\"KKeyword\">Испачканные костюмы</style> не будут очищены от жидких отходов"
+
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.DURABILITY_THRESHOLD.TOOLTIP
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.DURABILITY_THRESHOLD.TOOLTIP"
+msgid "Duplicants will not use this Recharger when the <style=\"KKeyword\">Durability</style> of their Suits falls below <b>{0}%</b>\nand the Repair is disabled or there is not enough material to repair"
+msgstr "Дупликанты не будут использовать этот Заправщик, если <style=\"KKeyword\">Прочность</style> их костюмов упадет ниже <b>{0}%</b>\nи ремонт отключен или недостаточно материала для ремонта"
+
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.ENABLE_REPAIR.NAME
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.ENABLE_REPAIR.NAME"
+msgid "Enable Suits Repair"
+msgstr "Включить ремонт костюмов"
+
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.ENABLE_REPAIR.TOOLTIP
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.ENABLE_REPAIR.TOOLTIP"
+msgid "Suits Repair restores their <style=\"KKeyword\">Durability</style>, but requires colossal <style=\"KKeyword\">Power</style> and conventional materials to repair"
+msgstr "Ремонт костюмов восстанавливает их <style=\"KKeyword\">Прочность</style>, но требует колоссальной <style=\"KKeyword\">Мощности</style> и обычных материалов для ремонта"
+
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.FILTER_CATEGORY
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.FILTER_CATEGORY"
+msgid "Accepted Materials to repair"
+msgstr "Разрешенные материалы для ремонта"
+
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE"
+msgid "Suit Durability Threshold"
+msgstr "Порог прочности костюма"
+

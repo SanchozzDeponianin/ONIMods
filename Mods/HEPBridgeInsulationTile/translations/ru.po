@@ -1,0 +1,30 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.NAME
+msgctxt "HEPBridgeInsulationTile.STRINGS.BUILDINGS.PREFABS.HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR.NAME"
+msgid "<link=\"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR\">Insulated {HEPBRIDGETILE_NAME}</link>"
+msgstr "<link=\"HIGHENERGYPARTICLEWALLBRIDGEREDIRECTOR\">Теплоизолированная {HEPBRIDGETILE_NAME}</link>"
+
+#. HEPBridgeInsulationTile.STRINGS.MOD_DESCRIPTION
+msgctxt "HEPBridgeInsulationTile.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a Insulated variant of Radbolt Joint Plate."
+msgstr "Теплоизолированный вариант Накладки для радболта."
+
+#. HEPBridgeInsulationTile.STRINGS.MOD_TITLE
+msgctxt "HEPBridgeInsulationTile.STRINGS.MOD_TITLE"
+msgid "Insulated Radbolt Joint Plate"
+msgstr "Теплоизолированная Накладка для радболта"
+
+#. HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.NAME
+msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.RESEARCH_MOD.NAME"
+msgid "Required Research"
+msgstr "Требуется исследование"
+
+#. HEPBridgeInsulationTile.STRINGS.OPTIONS.USE_OLD_ANIM.NAME
+msgctxt "HEPBridgeInsulationTile.STRINGS.OPTIONS.USE_OLD_ANIM.NAME"
+msgid "Use animation from early version of the mod"
+msgstr "Использовать анимацию от ранней версии мода"
+
