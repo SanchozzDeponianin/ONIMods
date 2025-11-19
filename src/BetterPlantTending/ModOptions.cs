@@ -56,6 +56,12 @@ namespace BetterPlantTending
 
         [JsonProperty]
         [Option]
+        [RequireDLC(DlcManager.EXPANSION1_ID)]
+        [RequireDLC(DlcManager.DLC2_ID)]
+        public bool space_tree_allow_rottenHeaps { get; set; } = false;
+
+        [JsonProperty]
+        [Option]
         public bool oxyfern_fix_output_cell { get; set; } = true;
 
         [JsonProperty]

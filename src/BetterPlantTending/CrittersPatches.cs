@@ -140,8 +140,8 @@ namespace BetterPlantTending
             {
                 int myWorldId = smi.gameObject.GetMyWorldId();
                 var entries = ListPool<ScenePartitionerEntry, GameScenePartitioner>.Allocate();
-                var search_extents = new Extents(Grid.PosToCell(smi.master.transform.GetPosition()), radius);
-                GameScenePartitioner.Instance.GatherEntries(search_extents, GameScenePartitioner.Instance.plants, entries);
+                var ext = new Extents(Grid.PosToCell(smi.master.transform.GetPosition()), radius);
+                GameScenePartitioner.Instance.GatherEntries(ext.x, ext.y, ext.width, ext.height, GameScenePartitioner.Instance.plants, entries);
                 var plants = new List<KMonoBehaviour>();
                 foreach (var entry in entries)
                 {

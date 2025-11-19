@@ -16,6 +16,7 @@ namespace BetterPlantTending
         private const string GASGRASS = "{GASGRASS}";
         private const string WOOD_TREE = "{WOOD_TREE}";
         private const string SPACE_TREE = "{SPACE_TREE}";
+        private const string ROTTENHEAPS = "{ROTTENHEAPS}";
         private const string SUGARWATER = "{SUGARWATER}";
         private const string SALTPLANT = "{SALTPLANT}";
         private const string FILTERPLANT = "{FILTERPLANT}";
@@ -98,6 +99,11 @@ namespace BetterPlantTending
             {
                 public static LocString NAME = $"Unlock {SPACE_TREE} mutations";
                 public static LocString TOOLTIP = $"Now mutations affect the {SUGARWATER} production rate\nThe higher the {YIELDAMOUNT} and the shorter the {MATURITYMAX}, the higher the {SUGARWATER} production rate";
+            }
+            public class SPACE_TREE_ALLOW_ROTTENHEAPS
+            {
+                public static LocString NAME = $"Allow {ROTTENHEAPS} {SPACE_TREE} mutation";
+                public static LocString TOOLTIP = $"A {ROTTENHEAPS} {SPACE_TREE} can't produce {SUGARWATER} but is still good in a role for Wood production";
             }
             public class SPACE_TREE_ADJUST_PRODUCTIVITY
             {
@@ -191,6 +197,7 @@ namespace BetterPlantTending
                 { GASGRASS, CREATURES.SPECIES.GASGRASS.NAME },
                 { WOOD_TREE, CREATURES.SPECIES.WOOD_TREE.NAME },
                 { SPACE_TREE, CREATURES.SPECIES.SPACETREE.NAME },
+                { ROTTENHEAPS, CREATURES.PLANT_MUTATIONS.ROTTENHEAPS.NAME },
                 { SUGARWATER, ELEMENTS.SUGARWATER.NAME },
                 { SALTPLANT, CREATURES.SPECIES.SALTPLANT.NAME },
                 { FILTERPLANT, CREATURES.SPECIES.FILTERPLANT.NAME },

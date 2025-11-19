@@ -178,6 +178,16 @@ msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_ADJUST_PRODUCTIVITY.NAME"
 msgid "Adjust the {SUGARWATER} production rate of {SPACE_TREE} in proportion to the growth rate of its branches"
 msgstr "{SPACE_TREE} - скорость выработки {SUGARWATER}а пропорционально скорости роста его ветвей"
 
+#. BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_ALLOW_ROTTENHEAPS.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_ALLOW_ROTTENHEAPS.NAME"
+msgid "Allow {ROTTENHEAPS} {SPACE_TREE} mutation"
+msgstr "{SPACE_TREE} - разрешить мутацию {ROTTENHEAPS}"
+
+#. BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_ALLOW_ROTTENHEAPS.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_ALLOW_ROTTENHEAPS.TOOLTIP"
+msgid "A {ROTTENHEAPS} {SPACE_TREE} can't produce {SUGARWATER} but is still good in a role for Wood production"
+msgstr "{SPACE_TREE} \"{ROTTENHEAPS}\" не может производить {SUGARWATER}, но всё ещё хорошо для производства древесины"
+
 #. BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.NAME
 msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.NAME"
 msgid "Unlock {SPACE_TREE} mutations"

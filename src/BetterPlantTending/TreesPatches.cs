@@ -261,6 +261,20 @@ namespace BetterPlantTending
             }
         }
 
+        // не производить сироп если ветка засохла
+        // актуально для "тёмной" мутации
+        [HarmonyPatch(typeof(SpaceTreeBranch.Instance), nameof(SpaceTreeBranch.Instance.Productivity), MethodType.Getter)]
+        private static class SpaceTreeBranch_Instance_Productivity_IsWilting
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC2_ID);
+
+            private static bool Prefix(SpaceTreeBranch.Instance __instance, ref float __result)
+            {
+                __result = 0f;
+                return !__instance.wiltCondition.IsWilting();
+            }
+        }
+
         // ускоряем производство сиропа пропорционально баффам
         // просто посчитаем мультиплеры к атрибуту скорости роста
         [HarmonyPatch(typeof(SpaceTreeBranch.Instance), nameof(SpaceTreeBranch.Instance.Productivity), MethodType.Getter)]
