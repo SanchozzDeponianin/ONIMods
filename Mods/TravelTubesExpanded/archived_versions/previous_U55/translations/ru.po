@@ -1,0 +1,80 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEBUNKERWALLBRIDGE.DESC
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEBUNKERWALLBRIDGE.DESC"
+msgid "Tube crossings can run transit tubes through walls without leaking gas or liquid.\nCan withstand extreme pressures and impacts."
+msgstr "Пересечения позволяют пропускать транзитные трубы сквозь стены без утечки жидкости или газа.\nВыдерживает невероятно высокое давление и сильные удары."
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEBUNKERWALLBRIDGE.EFFECT
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEBUNKERWALLBRIDGE.EFFECT"
+msgid "Allows <link=\"TRAVELTUBE\">Transit Tubes</link> to be run through wall and floor tile.\n\nFunctions as <link=\"BUNKERTILE\">Bunker Tile</link>."
+msgstr "Позволяет прокладывать <link=\"TRAVELTUBE\">транзитные трубы</link> через стены и пол.\n\nФункционирует как <link=\"BUNKERTILE\">Бункерная плитка</link>."
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEBUNKERWALLBRIDGE.NAME
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEBUNKERWALLBRIDGE.NAME"
+msgid "<link=\"TRAVELTUBEBUNKERWALLBRIDGE\">Transit Tube Bunker Crossing</link>"
+msgstr "<link=\"TRAVELTUBEBUNKERWALLBRIDGE\">Бункерное пересечение транзитной трубы</link>"
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.DESC
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.DESC"
+msgid "Tube crossings can run transit tubes through ladders and fire poles."
+msgstr "Пересечения позволяют пропускать транзитные трубы через лестницы и пожарные столбы."
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.EFFECT
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.EFFECT"
+msgid "Allows <link=\"TRAVELTUBE\">Transit Tubes</link> to be run through ladders and fire poles.\n\nFunctions as <link=\"FIREPOLE\">Fire Pole</link>."
+msgstr "Позволяет прокладывать <link=\"TRAVELTUBE\">транзитные трубы</link> через лестницы и пожарные столбы.\n\nФункционирует как <link=\"FIREPOLE\">Пожарный столб</link>."
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.NAME
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.NAME"
+msgid "<link=\"TRAVELTUBEFIREPOLEBRIDGE\">Transit Tube Fire Pole Crossing</link>"
+msgstr "<link=\"TRAVELTUBEFIREPOLEBRIDGE\">Пересечение транзитной трубы со столбом</link>"
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEINSULATEDWALLBRIDGE.DESC
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEINSULATEDWALLBRIDGE.DESC"
+msgid "Tube crossings can run transit tubes through walls without leaking gas or liquid.\nThe low thermal conductivity of insulated crossing slows any heat passing through them."
+msgstr "Пересечения позволяют пропускать транзитные трубы сквозь стены без утечки жидкости или газа.\nНизкая теплопроводность теплоизолированных плиток замедляет передачу тепла."
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEINSULATEDWALLBRIDGE.EFFECT
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEINSULATEDWALLBRIDGE.EFFECT"
+msgid "Allows <link=\"TRAVELTUBE\">Transit Tubes</link> to be run through wall and floor tile.\n\nFunctions as <link=\"INSULATIONTILE\">Insulated Tile</link>."
+msgstr "Позволяет прокладывать <link=\"TRAVELTUBE\">транзитные трубы</link> через стены и пол.\n\nФункционирует как <link=\"INSULATIONTILE\">Теплоизолированная плитка</link>."
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEINSULATEDWALLBRIDGE.NAME
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEINSULATEDWALLBRIDGE.NAME"
+msgid "<link=\"TRAVELTUBEINSULATEDWALLBRIDGE\">Transit Tube Insulated Crossing</link>"
+msgstr "<link=\"TRAVELTUBEINSULATEDWALLBRIDGE\">Теплоизолированное пересечение транзитной трубы</link>"
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBELADDERBRIDGE.DESC
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBELADDERBRIDGE.DESC"
+msgid "Tube crossings can run transit tubes through ladders and fire poles."
+msgstr "Пересечения позволяют пропускать транзитные трубы через лестницы и пожарные столбы."
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBELADDERBRIDGE.EFFECT
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBELADDERBRIDGE.EFFECT"
+msgid "Allows <link=\"TRAVELTUBE\">Transit Tubes</link> to be run through ladders and fire poles.\n\nFunctions as <link=\"LADDER\">Ladder</link>."
+msgstr "Позволяет прокладывать <link=\"TRAVELTUBE\">транзитные трубы</link> через лестницы и пожарные столбы.\n\nФункционирует как <link=\"LADDER\">Лестница</link>."
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBELADDERBRIDGE.NAME
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBELADDERBRIDGE.NAME"
+msgid "<link=\"TRAVELTUBELADDERBRIDGE\">Transit Tube Ladder Crossing</link>"
+msgstr "<link=\"TRAVELTUBELADDERBRIDGE\">Пересечение транзитной трубы с лестницей</link>"
+
+#. TravelTubesExpanded.STRINGS.MOD_DESCRIPTION
+msgctxt "TravelTubesExpanded.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a new Transit Tube Insulated, Bunker, Ladder, Fire Pole Crossing buildings and several tweaks for the Transit Tube system."
+msgstr "Добавляет несколько новых построек: Пересечение транзитной трубы Теплоизолированное, Бункерное, с Лестницей, с Пожарным столбом, а также несколько твиков для системы транзитных труб."
+
+#. TravelTubesExpanded.STRINGS.MOD_TITLE
+msgctxt "TravelTubesExpanded.STRINGS.MOD_TITLE"
+msgid "Transit Tubes Expanded"
+msgstr "Улучшенные Транзитные Трубы"
+
+#. TravelTubesExpanded.STRINGS.OPTIONS.KJOULES_PER_LAUNCH.NAME
+msgctxt "TravelTubesExpanded.STRINGS.OPTIONS.KJOULES_PER_LAUNCH.NAME"
+msgid "Transit Tube Access <style=\"KKeyword\">Power</style> consumption per launch, kJ"
+msgstr "Потребление <style=\"KKeyword\">Энергии</style> Входом транзитной трубы на каждый запуск, кДж"
+

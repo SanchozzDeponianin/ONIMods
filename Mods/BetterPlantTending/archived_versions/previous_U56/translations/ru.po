@@ -1,0 +1,215 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. BetterPlantTending.STRINGS.DUPLICANTS.ATTRIBUTES.EXTRASEEDCHANCE.NAME
+msgctxt "BetterPlantTending.STRINGS.DUPLICANTS.ATTRIBUTES.EXTRASEEDCHANCE.NAME"
+msgid "Extra Seed Chance"
+msgstr "Шанс дополнительных семян"
+
+#. BetterPlantTending.STRINGS.MOD_DESCRIPTION
+msgctxt "BetterPlantTending.STRINGS.MOD_DESCRIPTION"
+msgid "Provides a number of improvements for how your Farmers, Worms and Beetles take care of plants."
+msgstr "Ряд улучшений о том, как ваши фермеры, черви и жуки ухаживают за растениями."
+
+#. BetterPlantTending.STRINGS.MOD_TITLE
+msgctxt "BetterPlantTending.STRINGS.MOD_TITLE"
+msgid "Better Farming Effects and Tweaks"
+msgstr "Улучшенные фермерские эффекты и твики"
+
+#. BetterPlantTending.STRINGS.OPTIONS.ALLOW_TENDING_TOGETHER.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.ALLOW_TENDING_TOGETHER.NAME"
+msgid "Insectoids of different species being able to accelerate plants together at the same time"
+msgstr "Инсектоиды разных видов способны ускорять рост растений совместно одновременно"
+
+#. BetterPlantTending.STRINGS.OPTIONS.ALLOW_TINKER_DECORATIVE.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.ALLOW_TINKER_DECORATIVE.NAME"
+msgid "Enable tinkering decorative plants by default"
+msgstr "Ускорять рост декоративных растений по умолчанию"
+
+#. BetterPlantTending.STRINGS.OPTIONS.ALLOW_TINKER_DECORATIVE.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.ALLOW_TINKER_DECORATIVE.TOOLTIP"
+msgid "To obtaining additional seeds\nThis affects newly spawned plants.\nFor existing plants, use the {TINKER} button"
+msgstr "Для получения дополнительных семян\nЭто влияет на вновь появившиеся растения.\nДля существующих растений используйте кнопку {TINKER}"
+
+#. BetterPlantTending.STRINGS.OPTIONS.ALLOW_TINKER_SAPTREE.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.ALLOW_TINKER_SAPTREE.NAME"
+msgid "Enable tinkering {SAPTREE}"
+msgstr "Ускорять рост {SAPTREE}"
+
+#. BetterPlantTending.STRINGS.OPTIONS.ALLOW_TINKER_SAPTREE.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.ALLOW_TINKER_SAPTREE.TOOLTIP"
+msgid "To accelerate the absorption of food and increase the conversion rate of calories into Resine"
+msgstr "Для ускорения поглощения пищи и увеличения конверсии калорий в резину"
+
+#. BetterPlantTending.STRINGS.OPTIONS.BASE_CHANCE_DECORATIVE.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.BASE_CHANCE_DECORATIVE.NAME"
+msgid "Base chance to obtain an extra seed of decorative plants"
+msgstr "Базовый шанс получить дополнительные семена декоративных растений"
+
+#. BetterPlantTending.STRINGS.OPTIONS.BASE_CHANCE_DECORATIVE.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.BASE_CHANCE_DECORATIVE.TOOLTIP"
+msgid "Extra seeds are obtained when farmers and insectoids apply their accelerating effects to plants\nThe chances from the effects of insectoids and the farmer's own chance are added to the base chance"
+msgstr "Дополнительные семена появляются, когда фермеры и инсектоиды применяют свои ускоряющие эффекты к растениям\nШансы от эффектов инсектоидов и собственный шанс фермера прибавляются к базовому шансу"
+
+#. BetterPlantTending.STRINGS.OPTIONS.BASE_CHANCE_NOT_DECORATIVE.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.BASE_CHANCE_NOT_DECORATIVE.NAME"
+msgid "Base chance to obtain an extra seed of non-decorative plants"
+msgstr "Базовый шанс получить дополнительные семена не-декоративных растений"
+
+#. BetterPlantTending.STRINGS.OPTIONS.BLUE_GRASS_ADJUST_GAS_CONSUMPTION.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.BLUE_GRASS_ADJUST_GAS_CONSUMPTION.NAME"
+msgid "Adjust the gas absorption rate of {BLUE_GRASS} in proportion to the growth rate"
+msgstr "{BLUE_GRASS} - скорость поглощения газа пропорционально скорости роста"
+
+#. BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_ADJUST_RADIATION_BY_GROW_SPEED.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_ADJUST_RADIATION_BY_GROW_SPEED.NAME"
+msgid "Adjust the radiation emission of {COLDBREATHER} in proportion to the growth rate"
+msgstr "{COLDBREATHER} - излучение радиации пропорционально скорости роста"
+
+#. BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_DECREASE_RADIATION_BY_WILDNESS.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_DECREASE_RADIATION_BY_WILDNESS.NAME"
+msgid "Decrease the radiation emission of wild {COLDBREATHER}"
+msgstr "Дикий {COLDBREATHER} - уменьшить излучение радиации"
+
+#. BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_DECREASE_RADIATION_BY_WILDNESS.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.COLDBREATHER_DECREASE_RADIATION_BY_WILDNESS.TOOLTIP"
+msgid "To be honest, it should have been done by the <style=\"KKeyword\">Klei</style> themselves"
+msgstr "Честно говоря, это должны были сделать сами <style=\"KKeyword\">Klei</style>"
+
+#. BetterPlantTending.STRINGS.OPTIONS.CRITTER_TRAP_ADJUST_GAS_PRODUCTION.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.CRITTER_TRAP_ADJUST_GAS_PRODUCTION.NAME"
+msgid "Adjust the gas production rate of {CRITTERTRAPPLANT} in proportion to the growth rate"
+msgstr "{CRITTERTRAPPLANT} - скорость выработки газа пропорционально скорости роста"
+
+#. BetterPlantTending.STRINGS.OPTIONS.CRITTER_TRAP_ADJUST_GAS_PRODUCTION.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.CRITTER_TRAP_ADJUST_GAS_PRODUCTION.TOOLTIP"
+msgid "So you will always get the same amount of Gas for each sacrificed Creature"
+msgstr "Таким образом, вы всегда будете получать одинаковое количество газа за каждое принесенное в жертву Существо"
+
+#. BetterPlantTending.STRINGS.OPTIONS.CRITTER_TRAP_CAN_GIVE_SEEDS.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.CRITTER_TRAP_CAN_GIVE_SEEDS.NAME"
+msgid "The {CRITTERTRAPPLANT} can produce seeds when harvesting"
+msgstr "{CRITTERTRAPPLANT} может давать семена при сборе урожая"
+
+#. BetterPlantTending.STRINGS.OPTIONS.CRITTER_TRAP_DECREASE_GAS_PRODUCTION_BY_WILDNESS.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.CRITTER_TRAP_DECREASE_GAS_PRODUCTION_BY_WILDNESS.NAME"
+msgid "Decrease the gas production rate of wild {CRITTERTRAPPLANT}"
+msgstr "Дикая {CRITTERTRAPPLANT} - уменьшить скорость выработки газа"
+
+#. BetterPlantTending.STRINGS.OPTIONS.DINOFERN_ADJUST_GAS_CONSUMPTION.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.DINOFERN_ADJUST_GAS_CONSUMPTION.NAME"
+msgid "Adjust the gas absorption rate of {DINOFERN} in proportion to the growth rate"
+msgstr "{DINOFERN} - скорость поглощения газа пропорционально скорости роста"
+
+#. BetterPlantTending.STRINGS.OPTIONS.DINOFERN_CAN_GIVE_SEEDS.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.DINOFERN_CAN_GIVE_SEEDS.NAME"
+msgid "The {DINOFERN} can produce seeds when harvesting"
+msgstr "{DINOFERN} может давать семена при сборе урожая"
+
+#. BetterPlantTending.STRINGS.OPTIONS.EXTRA_SEEDS.CATEGORY
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.EXTRA_SEEDS.CATEGORY"
+msgid "Extra seeds for non-yielding plants"
+msgstr "Дополнительные семена для безурожайных растений"
+
+#. BetterPlantTending.STRINGS.OPTIONS.FARM_TINKER_BONUS_DECOR.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.FARM_TINKER_BONUS_DECOR.NAME"
+msgid "The {FARMTINKER} effect gives a bonus to the decor"
+msgstr "Эффект {FARMTINKER} дает бонус к декору"
+
+#. BetterPlantTending.STRINGS.OPTIONS.HYDROCACTUS_ADJUST_GAS_CONSUMPTION.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.HYDROCACTUS_ADJUST_GAS_CONSUMPTION.NAME"
+msgid "Adjust the gas absorption rate of {FILTERPLANT} in proportion to the growth rate"
+msgstr "{FILTERPLANT} - скорость поглощения газа пропорционально скорости роста"
+
+#. BetterPlantTending.STRINGS.OPTIONS.MODIFIER_BUTTERFLY.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.MODIFIER_BUTTERFLY.NAME"
+msgid "Additional chance from the {BUTTERFLYCROPTENDED} effect"
+msgstr "Дополнительный шанс от эффекта {BUTTERFLYCROPTENDED}"
+
+#. BetterPlantTending.STRINGS.OPTIONS.MODIFIER_DIVERGENT.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.MODIFIER_DIVERGENT.NAME"
+msgid "Additional chance from the {DIVERGENTCROPTENDED} effect"
+msgstr "Дополнительный шанс от эффекта {DIVERGENTCROPTENDED}"
+
+#. BetterPlantTending.STRINGS.OPTIONS.MODIFIER_WORM.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.MODIFIER_WORM.NAME"
+msgid "Additional chance from the {WORMCROPTENDED} effect"
+msgstr "Дополнительный шанс от эффекта {WORMCROPTENDED}"
+
+#. BetterPlantTending.STRINGS.OPTIONS.OXYFERN_FIX_OUTPUT_CELL.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.OXYFERN_FIX_OUTPUT_CELL.NAME"
+msgid "Move the output cell of {OXYFERN} 1 up"
+msgstr "{OXYFERN} - переместить выходную ячейку на 1 выше"
+
+#. BetterPlantTending.STRINGS.OPTIONS.PIP_REQUIRED_TO_EXTRACT.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.PIP_REQUIRED_TO_EXTRACT.NAME"
+msgid "A {SQUIRREL} is required to extract the seeds"
+msgstr "Для извлечения семян требуется {SQUIRREL}"
+
+#. BetterPlantTending.STRINGS.OPTIONS.PIP_REQUIRED_TO_EXTRACT.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.PIP_REQUIRED_TO_EXTRACT.TOOLTIP"
+msgid "If you turn it off, the seeds themselves will drop after a while"
+msgstr "Если вы выключите это, семена сами выпадут через некоторое время"
+
+#. BetterPlantTending.STRINGS.OPTIONS.PREVENT_FERTILIZATION_IRRIGATION_NOT_GROWNING.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.PREVENT_FERTILIZATION_IRRIGATION_NOT_GROWNING.NAME"
+msgid "Non-growing plants will not consume solid and liquid fertilizers"
+msgstr "Не-растущие растения не будут потреблять твёрдые и жидкие удобрения"
+
+#. BetterPlantTending.STRINGS.OPTIONS.PREVENT_TENDING_GROWN_OR_WILTING.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.PREVENT_TENDING_GROWN_OR_WILTING.NAME"
+msgid "Farmers will not tinkering with wilted or non-growing plants"
+msgstr "Фермеры не будут ускорять рост увядших или не-растущих растений"
+
+#. BetterPlantTending.STRINGS.OPTIONS.PREVENT_TENDING_GROWN_OR_WILTING.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.PREVENT_TENDING_GROWN_OR_WILTING.TOOLTIP"
+msgid "Including fully grown plants, sleeping {GASGRASS} and the hunger {CRITTERTRAPPLANT}"
+msgstr "В том числе полностью выращенные растения, спящая {GASGRASS} и голодная {CRITTERTRAPPLANT}"
+
+#. BetterPlantTending.STRINGS.OPTIONS.SALTPLANT_ADJUST_GAS_CONSUMPTION.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.SALTPLANT_ADJUST_GAS_CONSUMPTION.NAME"
+msgid "Adjust the gas absorption rate of {SALTPLANT} in proportion to the growth rate"
+msgstr "{SALTPLANT} - скорость поглощения газа пропорционально скорости роста"
+
+#. BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_ADJUST_PRODUCTIVITY.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_ADJUST_PRODUCTIVITY.NAME"
+msgid "Adjust the {SUGARWATER} production rate of {SPACE_TREE} in proportion to the growth rate of its branches"
+msgstr "{SPACE_TREE} - скорость выработки {SUGARWATER}а пропорционально скорости роста его ветвей"
+
+#. BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.NAME"
+msgid "Unlock {SPACE_TREE} mutations"
+msgstr "{SPACE_TREE} - разблокировать мутации"
+
+#. BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.SPACE_TREE_UNLOCK_MUTATION.TOOLTIP"
+msgid "Now mutations affect the {SUGARWATER} production rate\nThe higher the {YIELDAMOUNT} and the shorter the {MATURITYMAX}, the higher the {SUGARWATER} production rate"
+msgstr "Теперь мутации влияют на скорость производства {SUGARWATER}а\nЧем выше {YIELDAMOUNT} и чем короче {MATURITYMAX}, тем выше скорость производства {SUGARWATER}а"
+
+#. BetterPlantTending.STRINGS.OPTIONS.TREE_UNLOCK_MUTATION.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.TREE_UNLOCK_MUTATION.NAME"
+msgid "Unlock {WOOD_TREE} mutations"
+msgstr "{WOOD_TREE} - разблокировать мутации"
+
+#. BetterPlantTending.STRINGS.OPTIONS.TREE_UNLOCK_MUTATION.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.TREE_UNLOCK_MUTATION.TOOLTIP"
+msgid "These mutations are provided within the game, but were not used for some reason"
+msgstr "Эти мутации предусмотрены в игре, но по какой-то причине не использовались"
+
+#. BetterPlantTending.STRINGS.UI.UISIDESCREENS.PLANTERSIDESCREEN.BONUS_SEEDS
+msgctxt "BetterPlantTending.STRINGS.UI.UISIDESCREENS.PLANTERSIDESCREEN.BONUS_SEEDS"
+msgid "Base <link=\"PLANTS\">Extra Seed</link> Harvest Chance: {0}"
+msgstr "Шанс получения <link=\"PLANTS\">доп. семени</link>: {0}"
+
+#. BetterPlantTending.STRINGS.UI.UISIDESCREENS.PLANTERSIDESCREEN.TOOLTIPS.BONUS_SEEDS
+msgctxt "BetterPlantTending.STRINGS.UI.UISIDESCREENS.PLANTERSIDESCREEN.TOOLTIPS.BONUS_SEEDS"
+msgid "This plant has a {0} chance to produce new seeds when tended or pollinated\n\nAffected by: {1}{2}"
+msgstr "У этого растения есть {0} шанс произвести новые семена при уходе и опылении\n\nВлияет: {1}{2}"
+
+#. BetterPlantTending.STRINGS.UI.UISIDESCREENS.PLANTERSIDESCREEN.TOOLTIPS.SQUIRREL_NEEDED
+msgctxt "BetterPlantTending.STRINGS.UI.UISIDESCREENS.PLANTERSIDESCREEN.TOOLTIPS.SQUIRREL_NEEDED"
+msgid "\n\nA {SQUIRREL} is required to extract the seeds"
+msgstr "\n\nДля извлечения семян требуется {SQUIRREL}"
+

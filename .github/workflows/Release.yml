@@ -16,7 +16,6 @@ jobs:
     - id: create-zip
       name: Create Zip
       run: |
-        date -u +TAG_NAME=AllModsRelease_%Y-%m-%d-%H-%M-%S >> "$GITHUB_OUTPUT"
         mkdir Zipped
         cd Mods/
         zip -rlq ../Zipped/0_All_Mods.zip ./*
@@ -37,7 +36,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        tag_name: ${{ steps.create-zip.outputs.TAG_NAME }}
+        tag_name: "AllModsRelease"
         release_name: "Local Mod Download"
         body_path: ".github/Release.md"
         draft: false
@@ -49,7 +48,7 @@ jobs:
         repo_token: ${{ github.token }}
         file: Zipped/*.*
         file_glob: true
-        tag: ${{ steps.create-zip.outputs.TAG_NAME }}
+        tag: "AllModsRelease"
         prerelease: false
         overwrite: true
       env:

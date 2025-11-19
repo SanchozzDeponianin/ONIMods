@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. SupplyToClosest.STRINGS.MOD_DESCRIPTION
+msgctxt "SupplyToClosest.STRINGS.MOD_DESCRIPTION"
+msgid "Forces Duplicants to choose a closer storage when performing delivery orders."
+msgstr ""
+
+#. SupplyToClosest.STRINGS.MOD_TITLE
+msgctxt "SupplyToClosest.STRINGS.MOD_TITLE"
+msgid "Supply to Closest"
+msgstr ""
+

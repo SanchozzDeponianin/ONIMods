@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. CorpseOnPedestal.STRINGS.MOD_DESCRIPTION
+msgctxt "CorpseOnPedestal.STRINGS.MOD_DESCRIPTION"
+msgid "Now you can \"decorate\" your base with the corpses of dead Duplicants and discharged Robots, placing them on Pedestals."
+msgstr "Теперь вы можете \"украсить\" свою базу трупами погибших дупликантов и разряженных роботов, положив их на пьедесталы."
+
+#. CorpseOnPedestal.STRINGS.MOD_TITLE
+msgctxt "CorpseOnPedestal.STRINGS.MOD_TITLE"
+msgid "Corpses on Pedestals"
+msgstr "Трупы на Пьедесталах"
+
