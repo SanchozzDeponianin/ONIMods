@@ -1,7 +1,7 @@
 # Sanchozz's mods for Oxygen Not Included
 Steam Workshop: https://steamcommunity.com/profiles/76561198341359629/myworkshopfiles/?appid=457140
 
-Last tested on game version: **674504**
+Last tested on game version: **700386**
 
 Limited support for so-called beta versions:
 
@@ -39,6 +39,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Mechanics Station](https://steamcommunity.com/sharedfiles/filedetails/?id=1938117526) | Adds a new Mechanics Station, with which engineers could improve the performance of various buildings. | Yes | Yes |
 | [More Emotions](https://steamcommunity.com/sharedfiles/filedetails/?id=3204363352) | Adds more Duplicants emotions and reactions to various everyday situations. | Yes | Yes |
 | [Potato Power Banks](https://steamcommunity.com/sharedfiles/filedetails/?id=3386552780) | Adds five new Potato Power Banks exclusive for Bionics and Flydo. | Yes | Yes | 
+| [Rendezvous Table](https://steamcommunity.com/sharedfiles/filedetails/?id=3609497409) | The two-seater equivalent of the Communal Table, gives two Duplicants a place to eat. | Yes | Yes |
 | [Rover's Recharger](https://steamcommunity.com/sharedfiles/filedetails/?id=2761462871) | Allows the Rover to charge its chemical battery with chemical fuel. | No | Yes |
 | [Smelter](https://steamcommunity.com/sharedfiles/filedetails/?id=2350553957) | Adds a new Smelter building designed to smelt metals in the early game, and a few new recipes. | Yes | Yes |
 | [Squirrel Wheel](https://steamcommunity.com/sharedfiles/filedetails/?id=2086704949) | Adds a new Squirrel Wheel building that your Pips can use to running, and you will get a small profit of bonus electricity power. | Yes | Yes |
@@ -58,6 +59,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Configurable Automation-controlled Doors](https://steamcommunity.com/sharedfiles/filedetails/?id=2820163949) | Allows you to select, for each Door individually, the desired state with a green / red automation signal, including the "Auto" state. | Yes | Yes |
 | [Control your Robots](https://steamcommunity.com/sharedfiles/filedetails/?id=3086964745) | Adds a couple of features to better control your Robots: "Move To" and "Turn Off/On" buttons, Door Access Control, etc. | Yes | Yes |
 | [Corpses on Pedestals](https://steamcommunity.com/sharedfiles/filedetails/?id=3240895274) | Now you can "decorate" your base with the corpses of dead Duplicants and discharged Robots, placing them on Pedestals. | Yes | Yes |
+| [Crabs flip Compost](https://steamcommunity.com/sharedfiles/filedetails/?id=3609497880) | Now your Crabs can flip Compost. | Yes | Yes |
 | [Eat every day](https://steamcommunity.com/sharedfiles/filedetails/?id=2573532147) | It forces duplicants to eat every day, even at the "no sweat" difficulty level, which guarantees a stable morale bonus. | Yes | Yes |
 | [Enclosed Telescope Tune-Up](https://steamcommunity.com/sharedfiles/filedetails/?id=2630438094) | Tuning of a Enclosed Telescope: increased the radius and scanning speed, adjusted requirements, some improvements. | Yes | Yes |
 | [Endless Telescope](https://steamcommunity.com/sharedfiles/filedetails/?id=3079759380) |  Allows you to explore the entire space map, but the further away, the slower. | No | Yes |
