@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Rendezvous Table</Title>
     <Description>The two-seater equivalent of the Communal Table, gives two Duplicants a place to eat.</Description>
-    <ModVersion>1.0.0</ModVersion>
+    <ModVersion>1.0.1</ModVersion>
     <UsesPLib>true</UsesPLib>
     <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>

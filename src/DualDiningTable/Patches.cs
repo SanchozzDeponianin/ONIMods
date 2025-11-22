@@ -21,11 +21,20 @@ namespace DualDiningTable
         }
 
         [PLibMethod(RunAt.AfterDbInit)]
-        private static void AfterDbInit()
+        private static void AfterDbInit(Harmony harmony)
         {
             Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Furniture, DualMinionDiningTableConfig.ID,
                 BUILD_SUBCATEGORY.dining, MultiMinionDiningTableConfig.ID);
             Utils.AddBuildingToTechnology("Luxury", DualMinionDiningTableConfig.ID);
+
+            var room_criteria = RoomConstraints.MULTI_MINION_DINING_TABLE.building_criteria?.Method;
+            if (room_criteria != null)
+                harmony.Patch(room_criteria, postfix: new HarmonyMethod(typeof(Patches), nameof(RoomCriteriaPatch)));
+        }
+
+        private static void RoomCriteriaPatch(KPrefabID bc, ref bool __result)
+        {
+            __result = __result || bc.IsPrefabID(DualMinionDiningTableConfig.ID) || bc.gameObject.name == DualMinionDiningTable.SEAT_ID;
         }
 
         // открытие при обыске стола в руинах
