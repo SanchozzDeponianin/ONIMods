@@ -93,7 +93,7 @@ namespace SupplyToClosest
                 // ищем лючшую чору, мимикрируем под
                 // Brain.UpdateBrain -> ChoreConsumer.FindNextChore -> GlobalChoreProvider.CollectChores
                 //FastTrack_PathCacher_SetValid?.Invoke(consumerState.navigator.PathProber, false);
-                consumerState.navigator.UpdateProbe(true);
+                consumerState.navigator.UpdateProbe(false);
                 if (!consumerState.consumer.GetNavigationCost(rootChore.destination, out int root_cost))
                     return;
                 cashed_path_cost.Set(root_cost, smi);
