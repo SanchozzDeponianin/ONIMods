@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{477BAC88-9C7
 		lib\ManualDeliveryKGPatch.cs = lib\ManualDeliveryKGPatch.cs
 		lib\ModdedSpicesSerializationManager.cs = lib\ModdedSpicesSerializationManager.cs
 		lib\MultiRoomTracker.cs = lib\MultiRoomTracker.cs
+		lib\RotPileSilentNotification.cs = lib\RotPileSilentNotification.cs
 		lib\StateMachinesExtensions.cs = lib\StateMachinesExtensions.cs
 		lib\StorageDropper.cs = lib\StorageDropper.cs
 		lib\TranspilerUtils.cs = lib\TranspilerUtils.cs
@@ -128,6 +129,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualDiningTable", "DualDiningTable\DualDiningTable.csproj", "{A7D8DCAE-63EE-4B18-A395-A55B67B6DEBD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrabsFlippCompost", "CrabsFlippCompost\CrabsFlippCompost.csproj", "{AB6B59E6-B62D-44B5-A546-A41E30A32E8B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoComposter", "AutoComposter\AutoComposter.csproj", "{EC60C9EA-CD99-409A-8B1B-3DF0CBA59B7C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -569,6 +572,14 @@ Global
 		{AB6B59E6-B62D-44B5-A546-A41E30A32E8B}.Release|Backup.Build.0 = Release|Backup
 		{AB6B59E6-B62D-44B5-A546-A41E30A32E8B}.Release|Steam.ActiveCfg = Release|Steam
 		{AB6B59E6-B62D-44B5-A546-A41E30A32E8B}.Release|Steam.Build.0 = Release|Steam
+		{EC60C9EA-CD99-409A-8B1B-3DF0CBA59B7C}.Debug|Backup.ActiveCfg = Debug|Backup
+		{EC60C9EA-CD99-409A-8B1B-3DF0CBA59B7C}.Debug|Backup.Build.0 = Debug|Backup
+		{EC60C9EA-CD99-409A-8B1B-3DF0CBA59B7C}.Debug|Steam.ActiveCfg = Debug|Steam
+		{EC60C9EA-CD99-409A-8B1B-3DF0CBA59B7C}.Debug|Steam.Build.0 = Debug|Steam
+		{EC60C9EA-CD99-409A-8B1B-3DF0CBA59B7C}.Release|Backup.ActiveCfg = Release|Backup
+		{EC60C9EA-CD99-409A-8B1B-3DF0CBA59B7C}.Release|Backup.Build.0 = Release|Backup
+		{EC60C9EA-CD99-409A-8B1B-3DF0CBA59B7C}.Release|Steam.ActiveCfg = Release|Steam
+		{EC60C9EA-CD99-409A-8B1B-3DF0CBA59B7C}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

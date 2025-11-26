@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. AutoComposter.STRINGS.BUILDING.STATUSITEMS.COMPOSTACCEPTSMUTANTSEEDS.NAME
+msgctxt "AutoComposter.STRINGS.BUILDING.STATUSITEMS.COMPOSTACCEPTSMUTANTSEEDS.NAME"
+msgid "Compost accepts mutant seeds"
+msgstr "Компост принимает семена-мутанты"
+
+#. AutoComposter.STRINGS.BUILDING.STATUSITEMS.COMPOSTACCEPTSMUTANTSEEDS.TOOLTIP
+msgctxt "AutoComposter.STRINGS.BUILDING.STATUSITEMS.COMPOSTACCEPTSMUTANTSEEDS.TOOLTIP"
+msgid "This Compost is allowed to use <style=\"KKeyword\">Mutant Seeds</style> as compostable"
+msgstr "Этот компост может использовать <style=\"KKeyword\">мутировавшие семена</style> для компостирования"
+
+#. AutoComposter.STRINGS.MOD_DESCRIPTION
+msgctxt "AutoComposter.STRINGS.MOD_DESCRIPTION"
+msgid "Adds to the Compost a filter menu and auto-composting capability."
+msgstr "Добавляет в Компост меню фильтров и возможность автоматического компостирования."
+
+#. AutoComposter.STRINGS.MOD_TITLE
+msgctxt "AutoComposter.STRINGS.MOD_TITLE"
+msgid "Filterable Auto-Compost"
+msgstr "Авто-Компост с фильтрами"
+
