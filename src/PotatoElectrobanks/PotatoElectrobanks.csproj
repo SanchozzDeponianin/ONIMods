@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Potato Power Banks</Title>
     <Description>Adds five new Potato Power Banks exclusive for Bionics and Flydo.</Description>
-    <ModVersion>1.0.3</ModVersion>
+    <ModVersion>1.0.4</ModVersion>
     <RequiredDlcIds>DLC3_ID</RequiredDlcIds>
     <UsesPLib>true</UsesPLib>
     <UsesPublicise>true</UsesPublicise>

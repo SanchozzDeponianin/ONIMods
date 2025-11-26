@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. PotatoElectrobanks.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.ELECTROBANK_POTATO.DESC
+msgctxt "PotatoElectrobanks.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.ELECTROBANK_POTATO.DESC"
+msgid "A disposable <link=\"ELECTROBANK\">Bio Power Bank</link> made with {0}.\n\nDuplicants can produce new <link=\"ELECTROBANK\">Bio Power Banks</link> at the <link=\"CRAFTINGTABLE\">Crafting Station</link>.\n\nMust be kept dry."
+msgstr "Одноразовая <link=\"ELECTROBANK\">Биоэнергоячейка</link> изготовленная из: {0}.\n\nДупликанты могут создавать <link=\"ELECTROBANK\">Биоэнергоячейки</link> на <link=\"CRAFTINGTABLE\">верстаке</link>.\n\nНе мочить!"
+
+#. PotatoElectrobanks.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.ELECTROBANK_POTATO.NAME
+msgctxt "PotatoElectrobanks.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.ELECTROBANK_POTATO.NAME"
+msgid "<link=\"ELECTROBANKPOTATO{1}\">Bio \"{0}\" Power Bank</link>"
+msgstr "<link=\"ELECTROBANKPOTATO{1}\">Биоэнергоячейка \"{0}\"</link>"
+
+#. PotatoElectrobanks.STRINGS.MOD_DESCRIPTION
+msgctxt "PotatoElectrobanks.STRINGS.MOD_DESCRIPTION"
+msgid "Adds five new Potato Power Banks exclusive for Bionics and Flydo."
+msgstr "Пять новых \"картофельных\" Биоэнергоячеек специально для Биониклов и Флудо."
+
+#. PotatoElectrobanks.STRINGS.MOD_TITLE
+msgctxt "PotatoElectrobanks.STRINGS.MOD_TITLE"
+msgid "Potato Power Banks"
+msgstr "Биоэнергоячейки"
+

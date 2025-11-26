@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. PotatoElectrobanks.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.ELECTROBANK_POTATO.DESC
+msgctxt "PotatoElectrobanks.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.ELECTROBANK_POTATO.DESC"
+msgid "A disposable <link=\"ELECTROBANK\">Bio Power Bank</link> made with {0}.\n\nDuplicants can produce new <link=\"ELECTROBANK\">Bio Power Banks</link> at the <link=\"CRAFTINGTABLE\">Crafting Station</link>.\n\nMust be kept dry."
+msgstr ""
+
+#. PotatoElectrobanks.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.ELECTROBANK_POTATO.NAME
+msgctxt "PotatoElectrobanks.STRINGS.ITEMS.INDUSTRIAL_PRODUCTS.ELECTROBANK_POTATO.NAME"
+msgid "<link=\"ELECTROBANKPOTATO{1}\">Bio \"{0}\" Power Bank</link>"
+msgstr ""
+
+#. PotatoElectrobanks.STRINGS.MOD_DESCRIPTION
+msgctxt "PotatoElectrobanks.STRINGS.MOD_DESCRIPTION"
+msgid "Adds five new Potato Power Banks exclusive for Bionics and Flydo."
+msgstr ""
+
+#. PotatoElectrobanks.STRINGS.MOD_TITLE
+msgctxt "PotatoElectrobanks.STRINGS.MOD_TITLE"
+msgid "Potato Power Banks"
+msgstr ""
+

@@ -45,7 +45,7 @@ namespace PotatoElectrobanks
             list.Add(CreateElectrobank(ID_Sucrose, "Sucrose", 40f,
                 "electrobank_sucrose_kanim", DlcManager.DLC3));
             // светляк
-            list.Add(CreateElectrobank(ID_Shinebug_Egg, LightBugConfig.EGG_ID, 5f,
+            list.Add(CreateElectrobank(ID_Shinebug_Egg, LightBugConfig.EGG_ID, 1f,
                 "electrobank_shinebug_egg_kanim", DlcManager.DLC3));
             // склизьняк
             list.Add(CreateElectrobank(ID_Plugslug_Egg, StaterpillarConfig.EGG_ID, 1f,
