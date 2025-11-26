@@ -37,7 +37,7 @@ namespace BetterPlantTending
             if (DlcManager.IsContentSubscribed(DlcManager.DLC2_ID))
             {
                 TreesPatches.SpaceTree_ResolveTooltipCallback_Patch();
-                if (!ModOptions.Instance.space_tree_allow_rottenHeaps)
+                if (DlcManager.FeaturePlantMutationsEnabled() && !ModOptions.Instance.space_tree_allow_rottenHeaps)
                     Db.Get().PlantMutations.rottenHeaps.RestrictPrefabID(SpaceTreeConfig.ID).RestrictPrefabID(SpaceTreeConfig.SEED_ID);
             }
         }
