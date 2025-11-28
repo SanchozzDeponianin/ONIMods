@@ -84,8 +84,9 @@ namespace NoManualDelivery
             // Aquatic Farm https://steamcommunity.com/sharedfiles/filedetails/?id=1910961538
             "AquaticFarm",
             // Advanced Refrigeration https://steamcommunity.com/sharedfiles/filedetails/?id=2021324045
+            // Ronivan's Legacy https://steamcommunity.com/sharedfiles/filedetails/?id=3557584850
             "SimpleFridge", "FridgeRed", "FridgeYellow", "FridgeBlue", "FridgeAdvanced",
-            "FridgePod", "SpaceBox", "HightechSmallFridge", "HightechBigFridge",
+            "FridgePod", "SpaceBox", "HightechSmallFridge", "HightechBigFridge", "AIO_FridgeLarge"
             // Storage Pod  https://steamcommunity.com/sharedfiles/filedetails/?id=1873476551
             "StoragePodConfig",
             // Big Storage  https://steamcommunity.com/sharedfiles/filedetails/?id=1913589787
