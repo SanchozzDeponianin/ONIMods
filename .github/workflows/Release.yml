@@ -1,6 +1,13 @@
 name: Create Release
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+  push:
+    tags:
+      - Release
+    paths-ignore:
+      - '.github/**'
+      - '.Docs/**'
 
 permissions:
   contents: write # Grant write permission for creating releases
@@ -8,6 +15,7 @@ permissions:
 
 jobs:
   make_release:
+    if: github.event.base_ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     steps:
