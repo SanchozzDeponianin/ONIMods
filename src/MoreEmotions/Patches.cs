@@ -394,10 +394,20 @@ namespace MoreEmotions
         }
 
         // вытирание рук об себя а) после умывайника б) после вытирания
-        private static void CreateHandWipeChore(WorkerBase worker)
+        private static void CreateHandWipeReactable(WorkerBase worker)
         {
-            if (worker.TryGetComponent(out ChoreProvider provider))
-                new EmoteChore(provider, Db.Get().ChoreTypes.EmoteHighPriority, MoreMinionEmotes.Instance.HandWipe);
+            if (worker != null && worker.gameObject != null)
+            {
+                var monitor = worker.gameObject.GetSMI<ReactionMonitor.Instance>();
+                if (!monitor.IsNullOrStopped())
+                {
+                    var reactable = new SelfEmoteReactable(worker.gameObject, "HandWipe", Db.Get().ChoreTypes.EmoteHighPriority, 0f, 5f, 5f, 0f);
+                    reactable.SetEmote(MoreMinionEmotes.Instance.HandWipe)
+                        .AddPrecondition(ReactorIsOnFloor);
+                    reactable.preventChoreInterruption = true;
+                    monitor.AddOneshotReactable(reactable);
+                }
+            }
         }
 
         [HarmonyPatch(typeof(HandSanitizer.Work), "OnCompleteWork")]
@@ -411,7 +421,7 @@ namespace MoreEmotions
                 {
                     var id = __instance.PrefabID();
                     if (id == WashBasinConfig.ID || id == WashSinkConfig.ID)
-                        CreateHandWipeChore(worker);
+                        CreateHandWipeReactable(worker);
                 }
             }
         }
@@ -424,7 +434,7 @@ namespace MoreEmotions
             private static void Postfix(WorkerBase worker)
             {
                 if (UnityEngine.Random.value < 0.25f)
-                    CreateHandWipeChore(worker);
+                    CreateHandWipeReactable(worker);
             }
         }
 
