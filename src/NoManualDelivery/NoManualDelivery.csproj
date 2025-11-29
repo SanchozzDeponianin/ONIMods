@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>No Manual Delivery</Title>
     <Description>Adds a "Allow Manual Use" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings.</Description>
-    <ModVersion>1.6.11</ModVersion>
+    <ModVersion>1.6.12</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

@@ -86,7 +86,7 @@ namespace NoManualDelivery
             // Advanced Refrigeration https://steamcommunity.com/sharedfiles/filedetails/?id=2021324045
             // Ronivan's Legacy https://steamcommunity.com/sharedfiles/filedetails/?id=3557584850
             "SimpleFridge", "FridgeRed", "FridgeYellow", "FridgeBlue", "FridgeAdvanced",
-            "FridgePod", "SpaceBox", "HightechSmallFridge", "HightechBigFridge", "AIO_FridgeLarge"
+            "FridgePod", "SpaceBox", "HightechSmallFridge", "HightechBigFridge", "AIO_FridgeLarge",
             // Storage Pod  https://steamcommunity.com/sharedfiles/filedetails/?id=1873476551
             "StoragePodConfig",
             // Big Storage  https://steamcommunity.com/sharedfiles/filedetails/?id=1913589787
@@ -140,7 +140,8 @@ namespace NoManualDelivery
                         || go.TryGetComponent<TinkerStation>(out _)
                         )
                     {
-                        go.AddOrGet<Automatable2>();
+                        if (!go.TryGetComponent<Automatable>(out _))
+                            go.AddOrGet<Automatable2>();
                     }
                 }
             }
@@ -384,15 +385,15 @@ namespace NoManualDelivery
             }
         }
 
-        // чайник. 
-        // убираем AnimOverrides если воду из чайника берёт рука
+        // чайник, боттлеры, ручной насос
+        // убираем AnimOverrides если воду берёт рука
         [HarmonyPatch(typeof(Workable), nameof(Workable.GetAnim))]
         private static class Workable_GetAnim
         {
             private static bool Prepare() => ModOptions.Instance.AllowTransferArmPickupGasLiquid;
-            private static void Postfix(Workable __instance, WorkerBase worker, ref Workable.AnimInfo __result)
+            private static void Postfix(WorkerBase worker, ref Workable.AnimInfo __result)
             {
-                if (__instance is IceKettleWorkable && !worker.UsesMultiTool())
+                if (!worker.UsesMultiTool())
                     __result.overrideAnims = null;
             }
         }
