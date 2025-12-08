@@ -6,6 +6,7 @@ using ProcGen;
 using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
 using PeterHan.PLib.Options;
 
@@ -28,13 +29,14 @@ namespace Lagoo
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
-            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
             new POptions().RegisterOptions(this, typeof(ModOptions));
             var kagm = new KAnimGroupManager();
             kagm.RegisterAnimsTogether(squirrel_kanim, lagoo_kanim);
             kagm.RegisterAnimsTogether(baby_squirrel_kanim, baby_lagoo_kanim);
             kagm.RegisterAnimsTogether(egg_squirrel_kanim, egg_lagoo_kanim);
+            var worldgen = typeof(SettingsCache).GetMethodSafe(nameof(SettingsCache.LoadFiles), true, typeof(List<Klei.YamlIO.Error>));
+            harmony.Patch(worldgen, postfix: new HarmonyMethod(typeof(SettingsCache_LoadFiles), "Postfix"));
         }
 
         // несмотря на наличие подсистемы SymbolOverride
@@ -46,9 +48,10 @@ namespace Lagoo
         private static Dictionary<KAnimFile, KAnimFile> AnimFileGetUIMapping = new();
 
         [PLibMethod(RunAt.BeforeDbInit)]
-        private static void BeforeDbInit()
+        private static void BeforeDbInit(Harmony harmony)
         {
             Utils.InitLocalization(typeof(STRINGS));
+            harmony.PatchAll();
             var squirrel = Assets.GetAnim(squirrel_kanim);
             var master = Assets.GetAnim(squirrel_build_kanim);  // null in U56
             var emotes = Assets.GetAnim(squirrel_emotes_kanim);
@@ -246,7 +249,7 @@ namespace Lagoo
         }
 
         // добавляем в ворлдген
-        [HarmonyPatch(typeof(SettingsCache), nameof(SettingsCache.LoadFiles), typeof(List<Klei.YamlIO.Error>))]
+        //[HarmonyPatch(typeof(SettingsCache), nameof(SettingsCache.LoadFiles), typeof(List<Klei.YamlIO.Error>))]
         private static class SettingsCache_LoadFiles
         {
             // id из worldgen/mobs.yaml

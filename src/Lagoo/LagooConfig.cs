@@ -66,7 +66,11 @@ namespace Lagoo
             lagoo.AddOrGet<DiseaseSourceVisualizer>().alwaysShowDisease = GERM_ID_EMMITED_ON_POOP;
             // обнимашки с дуплями с уменьшенным таймером
             if (!is_baby)
-                lagoo.AddOrGetDef<HugMonitor.Def>().hugFrenzyCooldown = 0.5f * HugMonitor.HUGTUNING.HUG_FRENZY_DURATION;
+            {
+                var def = lagoo.AddOrGetDef<HugMonitor.Def>();
+                def.hugFrenzyDuration = 0.5f * HugMonitor.HUGTUNING.HUG_FRENZY_DURATION;
+                def.hugFrenzyCooldown = 0.5f * HugMonitor.HUGTUNING.HUG_FRENZY_DURATION;
+            }
             // выживаем в холоде
             var temperature_monitor = lagoo.AddOrGetDef<CritterTemperatureMonitor.Def>();
             temperature_monitor.temperatureColdDeadly = -70f + Constants.CELSIUS2KELVIN;
