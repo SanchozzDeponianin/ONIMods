@@ -57,7 +57,8 @@ namespace SquirrelGenerator
                 TargetWheel = null;
                 var pooledList = ListPool<ScenePartitionerEntry, GameScenePartitioner>.Allocate();
                 var extents = new Extents(Grid.PosToCell(master.transform.GetPosition()), ModOptions.Instance.SearchWheelRadius);
-                GameScenePartitioner.Instance.GatherEntries(extents, GameScenePartitioner.Instance.completeBuildings, pooledList);
+                GameScenePartitioner.Instance.GatherEntries(extents.x, extents.y, extents.width, extents.height,
+                    GameScenePartitioner.Instance.completeBuildings, pooledList);
                 int mincost = MAX_NAVIGATE_DISTANCE;
                 foreach (ScenePartitionerEntry item in pooledList)
                 {

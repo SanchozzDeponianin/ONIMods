@@ -15,7 +15,6 @@ namespace CrabsFlippCompost
         {
             if (this.LogModVersion()) return;
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
-            base.OnLoad(harmony);
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -23,6 +22,7 @@ namespace CrabsFlippCompost
         {
             Utils.InitLocalization(typeof(STRINGS));
             Utils.LoadEmbeddedAudioSheet("AudioSheets/SFXTags.csv");
+            harmony.PatchAll();
         }
 
         // добавить крабам новое поведение

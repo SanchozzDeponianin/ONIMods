@@ -2,6 +2,7 @@
 using TUNING;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
+using static STRINGS.SEARCH_TERMS;
 
 namespace SquirrelGenerator
 {
@@ -38,6 +39,10 @@ namespace SquirrelGenerator
             buildingDef.LogicInputPorts = LogicOperationalController.CreateSingleInputPortList(new CellOffset(0, 0));
             buildingDef.SelfHeatKilowattsWhenActive = ModOptions.Instance.SelfHeatWatts / Constants.KW2DTU_S;
             PGameUtils.CopySoundsToAnim("generatorsquirrel_kanim", "generatormanual_kanim");
+            buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.POWER);
+            buildingDef.AddSearchTerms(GENERATOR);
+            buildingDef.AddSearchTerms(CRITTER);
+            buildingDef.AddSearchTerms(RANCHING);
             return buildingDef;
         }
 

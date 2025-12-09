@@ -22,15 +22,15 @@ namespace ButcherStation
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
-            base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
             new POptions().RegisterOptions(this, typeof(ModOptions));
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
-        private static void Localize()
+        private static void BeforeDbInit(Harmony harmony)
         {
             Utils.InitLocalization(typeof(STRINGS));
+            harmony.PatchAll();
         }
 
         [PLibMethod(RunAt.AfterDbInit)]

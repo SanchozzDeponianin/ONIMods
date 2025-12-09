@@ -1,21 +1,12 @@
 name: Create Release
 
-on: 
-  workflow_dispatch:
-  push:
-    tags:
-      - Release
-    paths-ignore:
-      - '.github/**'
-      - '.Docs/**'
+on: workflow_dispatch
 
 permissions:
   contents: write # Grant write permission for creating releases
-#  actions: write # Grant write permission to delete old workflow runs
 
 jobs:
   make_release:
-    if: github.event.base_ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     steps:
@@ -61,11 +52,3 @@ jobs:
         overwrite: true
       env:
         GITHUB_TOKEN: ${{ github.token }}
-
-    # - name: Delete workflow runs
-    #   uses: Mattraks/delete-workflow-runs@v2
-    #   with:
-    #     token: ${{ github.token }}
-    #     repository: ${{ github.repository }}
-    #     retain_days: 1
-    #     keep_minimum_runs: 3

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Crabs flip Compost</Title>
     <Description>Now your Crabs can flip Compost.</Description>
-    <ModVersion>1.0.0</ModVersion>
+    <ModVersion>1.0.1</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
