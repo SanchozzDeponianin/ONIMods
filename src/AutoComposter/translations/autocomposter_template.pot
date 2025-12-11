@@ -23,3 +23,43 @@ msgctxt "AutoComposter.STRINGS.MOD_TITLE"
 msgid "Filterable Auto-Compost"
 msgstr ""
 
+#. AutoComposter.STRINGS.OPTIONS.HIDE_FROM_FILTERS.NAME
+msgctxt "AutoComposter.STRINGS.OPTIONS.HIDE_FROM_FILTERS.NAME"
+msgid "Hide it from the filter menu"
+msgstr ""
+
+#. AutoComposter.STRINGS.OPTIONS.HIDE_FROM_FILTERS.TOOLTIP
+msgctxt "AutoComposter.STRINGS.OPTIONS.HIDE_FROM_FILTERS.TOOLTIP"
+msgid "Also marked to compost items cannot be stored to Storage Bin, etc"
+msgstr ""
+
+#. AutoComposter.STRINGS.OPTIONS.HIDE_FROM_RESOURCES.NAME
+msgctxt "AutoComposter.STRINGS.OPTIONS.HIDE_FROM_RESOURCES.NAME"
+msgid "Hide it from the Resouces screen"
+msgstr ""
+
+#. AutoComposter.STRINGS.OPTIONS.HIDE_FROM_RESOURCES.TOOLTIP
+msgctxt "AutoComposter.STRINGS.OPTIONS.HIDE_FROM_RESOURCES.TOOLTIP"
+msgid "Also unpin if some marked to compost items was pinned"
+msgstr ""
+
+#. AutoComposter.STRINGS.OPTIONS.LABEL.NAME
+msgctxt "AutoComposter.STRINGS.OPTIONS.LABEL.NAME"
+msgid "What to do with the {COMPOSTABLE} category ?"
+msgstr ""
+
+#. AutoComposter.STRINGS.OPTIONS.LABEL.TOOLTIP
+msgctxt "AutoComposter.STRINGS.OPTIONS.LABEL.TOOLTIP"
+msgid "The {COMPOSTABLE} category was not added by this mod.\nIt has been in the game since 2017 and contains items marked to compost with the {BUTTON} button"
+msgstr ""
+
+#. AutoComposter.STRINGS.OPTIONS.MAKE_SPECIAL.NAME
+msgctxt "AutoComposter.STRINGS.OPTIONS.MAKE_SPECIAL.NAME"
+msgid "Make it {SPECIAL} in the filter menu"
+msgstr ""
+
+#. AutoComposter.STRINGS.OPTIONS.MAKE_SPECIAL.TOOLTIP
+msgctxt "AutoComposter.STRINGS.OPTIONS.MAKE_SPECIAL.TOOLTIP"
+msgid "Move it to bottom in the filter menu of the Storage Bin, etc, like Eggs"
+msgstr ""
+

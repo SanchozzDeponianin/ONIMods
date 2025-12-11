@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -9,6 +10,7 @@ using SanchozzONIMods.Lib;
 using SanchozzONIMods.Shared;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
+using PeterHan.PLib.Options;
 
 namespace AutoComposter
 {
@@ -18,15 +20,37 @@ namespace AutoComposter
         {
             if (this.LogModVersion()) return;
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
             base.OnLoad(harmony);
             RotPileSilentNotification.Patch(harmony);
+            // гипотетически могут пофиксить путём удаления, поэтому завернём
+            try
+            {
+                harmony.Patch(typeof(Compostable), nameof(Compostable.MarkForCompost),
+                    prefix: new HarmonyMethod(typeof(Compostable_MarkForCompost), nameof(Compostable_MarkForCompost.Prefix)));
+            }
+            catch (Exception e)
+            {
+                Utils.LogExcWarn(e);
+            }
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
         private static void BeforeDbInit(Harmony harmony)
         {
             Utils.InitLocalization(typeof(STRINGS));
-            LocString.CreateLocStringKeys(typeof(STRINGS.BUILDING));
+            // издеваемся над категорией
+            if (ModOptions.Instance.hide_from_filters)
+            {
+                Filterable.filterableCategories.Remove(GameTags.Compostable);
+                TUNING.STORAGEFILTERS.NOT_EDIBLE_SOLIDS.Remove(GameTags.Compostable);
+                TUNING.STORAGEFILTERS.STORAGE_LOCKERS_STANDARD.Remove(GameTags.Compostable);
+                TUNING.STORAGEFILTERS.STORAGE_SOLID_CARGO_BAY.Remove(GameTags.Compostable);
+            }
+            if (ModOptions.Instance.make_special)
+                TUNING.STORAGEFILTERS.SPECIAL_STORAGE.Add(GameTags.Compostable);
+            if (ModOptions.Instance.hide_from_resources)
+                GameTags.UnitCategories.Remove(GameTags.Compostable);
         }
 
         internal static readonly HashSet<Tag> DirectlyCompostables = new();
@@ -80,7 +104,10 @@ namespace AutoComposter
         private static void ConfigureCompost(GameObject go)
         {
             var storage = go.AddOrGet<Storage>();
-            storage.storageFilters = new(StorageCompostCategories) { GameTags.Compostable };
+            storage.storageFilters = new(StorageCompostCategories);
+            if (!ModOptions.Instance.hide_from_filters)
+                storage.storageFilters.Add(GameTags.Compostable);
+            storage.storageFullMargin = TUNING.STORAGE.STORAGE_LOCKER_FILLED_MARGIN;
             storage.allowSettingOnlyFetchMarkedItems = false;
             storage.storageID = GameTags.Compostable;
 
@@ -111,7 +138,19 @@ namespace AutoComposter
             if (go != null && go.TryGetComponent(out KPrefabID kprefab) && DiscoveredResources.Instance != null
                 && PrefabToCompostCategory.TryGetValue(kprefab.PrefabTag, out var category))
             {
-                DiscoveredResources.Instance.Discover(kprefab.PrefabTag, category);
+                DiscoveredResources.Instance.DiscoverCategory(category, kprefab.PrefabTag);
+            }
+        }
+
+        // унпинываем компостируемое если категория скрыта
+        [HarmonyPatch(typeof(WorldInventory), nameof(WorldInventory.OnSpawn))]
+        private static class WorldInventory_OnSpawn
+        {
+            private static bool Prepare() => ModOptions.Instance.hide_from_resources;
+            private static void Prefix(WorldInventory __instance)
+            {
+                __instance.pinnedResources.RemoveAll(tag => CanBeMarkedCompostables.Contains(tag));
+                __instance.notifyResources.RemoveAll(tag => CanBeMarkedCompostables.Contains(tag));
             }
         }
 
@@ -131,13 +170,12 @@ namespace AutoComposter
         }
 
         // предотвращаем вываливание компостируемых штук при загрузке сейфа и при автокомпостировании
-        [HarmonyPatch(typeof(Compostable), nameof(Compostable.MarkForCompost))]
+        //[HarmonyPatch(typeof(Compostable), nameof(Compostable.MarkForCompost))]
         private static class Compostable_MarkForCompost
         {
-            private static bool Prefix(Compostable __instance)
+            internal static bool Prefix(Compostable __instance)
             {
-                if (__instance != null && __instance.TryGetComponent(out Pickupable pickupable)
-                    && pickupable.storage != null && pickupable.storage.storageID == GameTags.Compostable)
+                if (__instance != null && __instance.TryGetComponent(out Pickupable pickupable) && pickupable.storage != null)
                 {
                     DiscoveredResources.Instance.Discover(pickupable.KPrefabID.PrefabTag);
                     return false;

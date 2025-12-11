@@ -67,6 +67,7 @@ namespace AutoComposter
             filtered.storage = garbage;
             Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
             Subscribe((int)GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate);
+            Subscribe((int)GameHashes.OnStorageInteracted, OnStorageInteractedDelegate);
             Subscribe((int)GameHashes.OperationalChanged, filtered.OnFunctionalChanged);
         }
 
@@ -84,6 +85,7 @@ namespace AutoComposter
         {
             Unsubscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
             Unsubscribe((int)GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate);
+            Unsubscribe((int)GameHashes.OnStorageInteracted, OnStorageInteractedDelegate);
             Unsubscribe((int)GameHashes.OperationalChanged, filtered.OnFunctionalChanged);
             if (storage != null)
                 storage.OnStorageChange -= OnStorageChange;
@@ -124,6 +126,15 @@ namespace AutoComposter
             }
         }
 
+        private static readonly EventSystem.IntraObjectHandler<AutoComposter> OnStorageInteractedDelegate =
+            new((component, data) => component.OnStorageInteracted(data));
+
+        private void OnStorageInteracted(object data)
+        {
+            if (data is Storage storage && storage != null && storage.storageID == GameTags.Compostable)
+                CheckPause();
+        }
+
         private void OnStorageChange(object _) => CheckPause();
 
         private void CheckPause()
@@ -154,7 +165,7 @@ namespace AutoComposter
                     if (go.TryGetComponent(out Compostable compostable) && !compostable.isMarkedForCompost
                         && go.TryGetComponent(out Pickupable pickupable))
                     {
-                        //garbage.Drop(go);
+                        garbage.Drop(go);
                         var compost = EntitySplitter.Split(pickupable, pickupable.TotalAmount, compostable.compostPrefab);
                         if (compost != null)
                             storage.Store(compost.gameObject, true);
