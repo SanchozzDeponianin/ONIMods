@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using STRINGS;
 using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
+using PeterHan.PLib.Core;
+using PeterHan.PLib.Detours;
+using PeterHan.PLib.PatchManager;
 
 namespace AnyIceMachine
 {
@@ -13,8 +17,25 @@ namespace AnyIceMachine
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
-            Utils.RegisterLocalization(typeof(STRINGS));
             base.OnLoad(harmony);
+            new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+        }
+
+        internal static Type PipedEverythingConsumer;
+        internal static Type PipedEverythingDispenser;
+        internal static Type PipedEverythingDispenserS;
+
+        [PLibMethod(RunAt.BeforeDbInit)]
+        private static void BeforeDbInit()
+        {
+            Utils.InitLocalization(typeof(STRINGS));
+            PipedEverythingConsumer = PPatchTools.GetTypeSafe("PipedEverything.ConduitConsumerOptional", "PipedEverything");
+            PipedEverythingDispenser = PPatchTools.GetTypeSafe("PipedEverything.ConduitDispenserOptional", "PipedEverything");
+            PipedEverythingDispenserS = PPatchTools.GetTypeSafe("PipedEverything.ConduitDispenserOptionalSolid", "PipedEverything");
+            var api = PPatchTools.GetTypeSafe("PipedEverything.PipedEverythingState", "PipedEverything");
+            // id, is_input, x, y, filter, color = null, storageIndex, storageCapacity
+            api?.Detour<Action<string, bool, int, int, string[], Color32?, int?, float?>>("AddConfig")
+                ?.Invoke(IceMachineConfig.ID, false, 0, 1, new[] { "Liquid" }, null, 1, 0f);
         }
 
         public static Dictionary<Tag, Tag> ELEMENT_OPTIONS = new()
@@ -59,6 +80,7 @@ namespace AnyIceMachine
             {
                 __instance.Subscribe((int)GameHashes.CopySettings, __instance.OnCopySettings);
                 __instance.SetChosenIce(__instance.targetProductionElement.CreateTag());
+                __instance.SetPipedEverythingDispenser();
             }
         }
 
@@ -97,7 +119,8 @@ namespace AnyIceMachine
                     float delta = __instance.heatRemovalRate * dt / __instance.waterStorage.items.Count;
                     foreach (var item in __instance.waterStorage.items)
                     {
-                        GameUtil.DeltaThermalEnergy(item.GetComponent<PrimaryElement>(), -delta, smi.master.targetTemperature);
+                        if (item != null && item.TryGetComponent(out PrimaryElement pe) && pe.Mass > 0f)
+                            GameUtil.DeltaThermalEnergy(pe, -delta, smi.master.targetTemperature);
                     }
                     var target_element = __instance.targetProductionElement == SimHashes.Sucrose ? SimHashes.Ice : __instance.targetProductionElement;
                     for (int i = __instance.waterStorage.items.Count; i > 0; i--)

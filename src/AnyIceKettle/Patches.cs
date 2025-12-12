@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text.RegularExpressions;
@@ -24,10 +25,15 @@ namespace AnyIceKettle
             ModOptions.Reload();
         }
 
+        internal static Type PipedEverythingConsumerS;
+        internal static Type PipedEverythingDispenser;
+
         [PLibMethod(RunAt.BeforeDbInit)]
         private static void BeforeDbInit()
         {
             Utils.InitLocalization(typeof(STRINGS));
+            PipedEverythingConsumerS = PPatchTools.GetTypeSafe("PipedEverything.ConduitConsumerOptionalSolid", "PipedEverything");
+            PipedEverythingDispenser = PPatchTools.GetTypeSafe("PipedEverything.ConduitDispenserOptional", "PipedEverything");
         }
 
         // заменяем тоолтип
