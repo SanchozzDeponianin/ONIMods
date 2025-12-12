@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Title>Automatic Dispenser Only Transfer From Lower Priority</Title>
-    <Description>.</Description>
+    <Title>Automatic Dispenser: transfer only from Lower Priority</Title>
+    <Description>Your Dupes will no longer transfer resources from a higher priority Storage Bins to a lower priority Automatic Dispenser.</Description>
     <ModVersion>1.1.0</ModVersion>
   </PropertyGroup>
 </Project>
