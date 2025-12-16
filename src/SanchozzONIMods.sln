@@ -132,6 +132,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrabsFlippCompost", "CrabsF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoComposter", "AutoComposter\AutoComposter.csproj", "{EC60C9EA-CD99-409A-8B1B-3DF0CBA59B7C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MorePlantMutations", "MorePlantMutations\MorePlantMutations.csproj", "{65AC396B-7617-4366-9588-8AC2D3940F91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Backup = Debug|Backup
@@ -580,6 +582,14 @@ Global
 		{EC60C9EA-CD99-409A-8B1B-3DF0CBA59B7C}.Release|Backup.Build.0 = Release|Backup
 		{EC60C9EA-CD99-409A-8B1B-3DF0CBA59B7C}.Release|Steam.ActiveCfg = Release|Steam
 		{EC60C9EA-CD99-409A-8B1B-3DF0CBA59B7C}.Release|Steam.Build.0 = Release|Steam
+		{65AC396B-7617-4366-9588-8AC2D3940F91}.Debug|Backup.ActiveCfg = Debug|Backup
+		{65AC396B-7617-4366-9588-8AC2D3940F91}.Debug|Backup.Build.0 = Debug|Backup
+		{65AC396B-7617-4366-9588-8AC2D3940F91}.Debug|Steam.ActiveCfg = Debug|Steam
+		{65AC396B-7617-4366-9588-8AC2D3940F91}.Debug|Steam.Build.0 = Debug|Steam
+		{65AC396B-7617-4366-9588-8AC2D3940F91}.Release|Backup.ActiveCfg = Release|Backup
+		{65AC396B-7617-4366-9588-8AC2D3940F91}.Release|Backup.Build.0 = Release|Backup
+		{65AC396B-7617-4366-9588-8AC2D3940F91}.Release|Steam.ActiveCfg = Release|Steam
+		{65AC396B-7617-4366-9588-8AC2D3940F91}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

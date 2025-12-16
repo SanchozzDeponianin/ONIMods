@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="r10">
+    <folder id="0">
+        <file id="0" name="ginger_mutate1_0.png" width="46" height="47" pivot_x="0.611276" pivot_y="0.408696"/>
+        <file id="1" name="ginger_mutate2_0.png" width="47" height="46" pivot_x="0.210526" pivot_y="0.450128"/>
+        <file id="2" name="grass_mutate1_0.png" width="66" height="81" pivot_x="0.610354" pivot_y="0.226164"/>
+        <file id="3" name="grass_mutate1_1.png" width="60" height="66" pivot_x="0.672941" pivot_y="0.282051"/>
+        <file id="4" name="grass_mutate2_0.png" width="79" height="50" pivot_x="0.148649" pivot_y="0.421801"/>
+        <file id="5" name="grass_mutate2_1.png" width="92" height="61" pivot_x="0.154804" pivot_y="0.404826"/>
+        <file id="6" name="rot_mutate1_0.png" width="82" height="84" pivot_x="0.634146" pivot_y="0.416667"/>
+        <file id="7" name="rot_mutate2_0.png" width="82" height="84" pivot_x="0.341463" pivot_y="0.440476"/>
+        <file id="8" name="ginger_mutate1_1.png" width="46" height="47" pivot_x="0.611276" pivot_y="0.408696"/>
+        <file id="9" name="ginger_mutate2_1.png" width="47" height="46" pivot_x="0.210526" pivot_y="0.450128"/>
+        <file id="10" name="rot_mutate1_1.png" width="82" height="84" pivot_x="0.634146" pivot_y="0.416667"/>
+        <file id="11" name="rot_mutate2_1.png" width="82" height="84" pivot_x="0.341463" pivot_y="0.440476"/>
+    </folder>
+    <entity id="0" name="more_mutate_snaps">
+        <animation id="0" name="x" length="1000" interval="100">
+            <mainline>
+                <key id="0"/>
+            </mainline>
+        </animation>
+    </entity>
+</spriter_data>

@@ -38,6 +38,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Lagoo](https://steamcommunity.com/sharedfiles/filedetails/?id=3417326857) | Lagoo is a deeply mutated Pip, adapted to survive in a harsh cold climate. | Yes | Yes |
 | [Mechanics Station](https://steamcommunity.com/sharedfiles/filedetails/?id=1938117526) | Adds a new Mechanics Station, with which engineers could improve the performance of various buildings. | Yes | Yes |
 | [More Emotions](https://steamcommunity.com/sharedfiles/filedetails/?id=3204363352) | Adds more Duplicants emotions and reactions to various everyday situations. | Yes | Yes |
+| [More Plant Mutations](https://steamcommunity.com/sharedfiles/filedetails/?id=3625100610) | Adds some new plant mutations. | No | Yes |
 | [Potato Power Banks](https://steamcommunity.com/sharedfiles/filedetails/?id=3386552780) | Adds five new Potato Power Banks exclusive for Bionics and Flydo. | Yes | Yes | 
 | [Rendezvous Table](https://steamcommunity.com/sharedfiles/filedetails/?id=3609497409) | The two-seater equivalent of the Communal Table, gives two Duplicants a place to eat. | Yes | Yes |
 | [Rover's Recharger](https://steamcommunity.com/sharedfiles/filedetails/?id=2761462871) | Allows the Rover to charge its chemical battery with chemical fuel. | No | Yes |

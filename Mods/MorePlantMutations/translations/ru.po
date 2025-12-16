@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GINGER.DESCRIPTION
+msgctxt "MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GINGER.DESCRIPTION"
+msgid "Plants with this mutation are pickier about their conditions but yield so spicy!"
+msgstr "Растения с этой мутацией более требовательны к условиям выращивания, но дают очень острый урожай!"
+
+#. MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GINGER.NAME
+msgctxt "MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GINGER.NAME"
+msgid "Spicy"
+msgstr "Пряность"
+
+#. MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GLOWSTICK.DESCRIPTION
+msgctxt "MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GLOWSTICK.DESCRIPTION"
+msgid "These plants glow as if they've been to Chernobyl."
+msgstr "Эти растения светятся так, словно побывали в Чернобыле."
+
+#. MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GLOWSTICK.NAME
+msgctxt "MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GLOWSTICK.NAME"
+msgid "Radiance"
+msgstr "Лучезарность"
+
+#. MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GRASSY.DESCRIPTION
+msgctxt "MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GRASSY.DESCRIPTION"
+msgid "Plants with this mutation are very husky."
+msgstr "Растения с этой мутацией очень мохнатые."
+
+#. MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GRASSY.NAME
+msgctxt "MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GRASSY.NAME"
+msgid "Husky"
+msgstr "Мохнатость"
+
+#. MorePlantMutations.STRINGS.MOD_DESCRIPTION
+msgctxt "MorePlantMutations.STRINGS.MOD_DESCRIPTION"
+msgid "Adds some new plant mutations."
+msgstr "Добавляет несколько новых мутаций растений."
+
+#. MorePlantMutations.STRINGS.MOD_TITLE
+msgctxt "MorePlantMutations.STRINGS.MOD_TITLE"
+msgid "More Plant Mutations"
+msgstr "Новые мутации растений"
+
+#. MorePlantMutations.STRINGS.OPTIONS.ADJUST_RADIATION_BY_GROW_SPEED.NAME
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.ADJUST_RADIATION_BY_GROW_SPEED.NAME"
+msgid "Adjust the radiation emission in proportion to the growth rate"
+msgstr "Излучение радиации пропорционально скорости роста"
+
+#. MorePlantMutations.STRINGS.OPTIONS.BPT_INTERGRATION.CATEGORY
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.BPT_INTERGRATION.CATEGORY"
+msgid "Sync with {BPT_TITLE} mod"
+msgstr "Синхронизация с модом {BPT_TITLE}"
+
+#. MorePlantMutations.STRINGS.OPTIONS.BPT_LABEL.NAME
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.BPT_LABEL.NAME"
+msgid "If {BPT_TITLE} mod is installed and enabled, for consistency,\nthe {GLOWSTICK} plant mutantion follows the {COLDBREATHER} settings\ninstead of the settings specified above."
+msgstr "Если мод {BPT_TITLE} установлен и включен, для единообразия,\nмутация растений {GLOWSTICK} будет следовать настройкам {COLDBREATHER}\nвместо настроек, указанных выше."
+
+#. MorePlantMutations.STRINGS.OPTIONS.BPT_TITLE
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.BPT_TITLE"
+msgid "Better Farming Effects and Tweaks"
+msgstr "Улучшенные фермерские эффекты и твики"
+
+#. MorePlantMutations.STRINGS.OPTIONS.DECREASE_RADIATION_BY_WILDNESS.NAME
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.DECREASE_RADIATION_BY_WILDNESS.NAME"
+msgid "Decrease the radiation emission of wild plant"
+msgstr "Уменьшить излучение радиации дикого растения"
+
+#. MorePlantMutations.STRINGS.OPTIONS.EMIT_LIGHT.NAME
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.EMIT_LIGHT.NAME"
+msgid "Emits light"
+msgstr "Излучает свет"
+
+#. MorePlantMutations.STRINGS.OPTIONS.EMIT_LIGHT.TOOLTIP
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.EMIT_LIGHT.TOOLTIP"
+msgid "Except for plants that prefer darkness\nTurn it off if you only need radiation"
+msgstr "Кроме растений, предпочитающих темноту.\nВыключите это, если вам нужна только радиация."
+
+#. MorePlantMutations.STRINGS.OPTIONS.ENABLE.NAME
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.ENABLE.NAME"
+msgid "Enable sync"
+msgstr "Включить синхронизацию"
+
+#. MorePlantMutations.STRINGS.OPTIONS.GLOWSTICK.CATEGORY
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.GLOWSTICK.CATEGORY"
+msgid "{GLOWSTICK} plant mutantion"
+msgstr "Мутация растений {GLOWSTICK}"
+
