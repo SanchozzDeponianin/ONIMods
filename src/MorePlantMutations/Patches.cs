@@ -90,10 +90,12 @@ namespace MorePlantMutations
             foreach (var plant in Assets.GetPrefabsWithComponent<MutantPlant>())
             {
                 if (!plant.HasTag(GameTags.Seed) && !plant.HasTag(GameTags.CropSeed) && !plant.HasTag(GameTags.Compostable)
-                    && plant.TryGetComponent(out Modifiers modifiers)
-                    && !modifiers.initialAttributes.Contains(GlowStickMutation.EmitRadsMultiplier.Id))
+                    && plant.TryGetComponent(out Modifiers modifiers))
                 {
-                    modifiers.initialAttributes.Add(GlowStickMutation.EmitRadsMultiplier.Id);
+                    if (!modifiers.initialAttributes.Contains(GlowStickMutation.EmitRadsMultiplier.Id))
+                        modifiers.initialAttributes.Add(GlowStickMutation.EmitRadsMultiplier.Id);
+                    if (!modifiers.initialAttributes.Contains(Db.Get().Attributes.Luminescence.Id))
+                        modifiers.initialAttributes.Add(Db.Get().Attributes.Luminescence.Id);
                 }
             }
         }

@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GINGER.DESCRIPTION
+msgctxt "MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GINGER.DESCRIPTION"
+msgid "Plants with this mutation are pickier about their conditions but yield so spicy!"
+msgstr "有这种变异的植物对条件更挑剔，需要更长时间收获额外的滋补根。"
+
+#. MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GINGER.NAME
+msgctxt "MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GINGER.NAME"
+msgid "Spicy"
+msgstr "辛辣"
+
+#. MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GLOWSTICK.DESCRIPTION
+msgctxt "MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GLOWSTICK.DESCRIPTION"
+msgid "These plants glow as if they've been to Chernobyl."
+msgstr "这些植物散发辐射，生长需求不包含黑暗条件的植物还会发光。"
+
+#. MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GLOWSTICK.NAME
+msgctxt "MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GLOWSTICK.NAME"
+msgid "Radiance"
+msgstr "荧光"
+
+#. MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GRASSY.DESCRIPTION
+msgctxt "MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GRASSY.DESCRIPTION"
+msgid "Plants with this mutation are very husky."
+msgstr "有这种变异的植物长出更多植物外壳。"
+
+#. MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GRASSY.NAME
+msgctxt "MorePlantMutations.STRINGS.CREATURES.PLANT_MUTATIONS.GRASSY.NAME"
+msgid "Husky"
+msgstr "魁梧"
+
+#. MorePlantMutations.STRINGS.MOD_DESCRIPTION
+msgctxt "MorePlantMutations.STRINGS.MOD_DESCRIPTION"
+msgid "Adds some new plant mutations."
+msgstr "添加几种新的植物变异，并为原版的旺盛变异增加新的视觉效果。"
+
+#. MorePlantMutations.STRINGS.MOD_TITLE
+msgctxt "MorePlantMutations.STRINGS.MOD_TITLE"
+msgid "More Plant Mutations"
+msgstr "更多植物变异"
+
+#. MorePlantMutations.STRINGS.OPTIONS.ADJUST_RADIATION_BY_GROW_SPEED.NAME
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.ADJUST_RADIATION_BY_GROW_SPEED.NAME"
+msgid "Adjust the radiation emission in proportion to the growth rate"
+msgstr "按生长速率调整辐射发射量"
+
+#. MorePlantMutations.STRINGS.OPTIONS.BPT_INTERGRATION.CATEGORY
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.BPT_INTERGRATION.CATEGORY"
+msgid "Sync with {BPT_TITLE} mod"
+msgstr "与{BPT_TITLE} mod同步"
+
+#. MorePlantMutations.STRINGS.OPTIONS.BPT_LABEL.NAME
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.BPT_LABEL.NAME"
+msgid "If {BPT_TITLE} mod is installed and enabled, for consistency,\nthe {GLOWSTICK} plant mutantion follows the {COLDBREATHER} settings\ninstead of the settings specified above."
+msgstr "如果已启用{BPT_TITLE} mod，为了保持一致，\n{GLOWSTICK}植物变异遵循其{COLDBREATHER}设定，\n而不是以上设定。"
+
+#. MorePlantMutations.STRINGS.OPTIONS.BPT_TITLE
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.BPT_TITLE"
+msgid "Better Farming Effects and Tweaks"
+msgstr "Better Farming Effects and Tweaks（更好农业效果和调整）"
+
+#. MorePlantMutations.STRINGS.OPTIONS.DECREASE_RADIATION_BY_WILDNESS.NAME
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.DECREASE_RADIATION_BY_WILDNESS.NAME"
+msgid "Decrease the radiation emission of wild plant"
+msgstr "减少野生植物的辐射排放"
+
+#. MorePlantMutations.STRINGS.OPTIONS.EMIT_LIGHT.NAME
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.EMIT_LIGHT.NAME"
+msgid "Emits light"
+msgstr "发光"
+
+#. MorePlantMutations.STRINGS.OPTIONS.EMIT_LIGHT.TOOLTIP
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.EMIT_LIGHT.TOOLTIP"
+msgid "Except for plants that prefer darkness\nTurn it off if you only need radiation"
+msgstr "让生长需求不包含黑暗条件的植物发光\n如果你只想要辐射就关闭"
+
+#. MorePlantMutations.STRINGS.OPTIONS.ENABLE.NAME
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.ENABLE.NAME"
+msgid "Enable sync"
+msgstr "启用同步"
+
+#. MorePlantMutations.STRINGS.OPTIONS.GLOWSTICK.CATEGORY
+msgctxt "MorePlantMutations.STRINGS.OPTIONS.GLOWSTICK.CATEGORY"
+msgid "{GLOWSTICK} plant mutantion"
+msgstr "{GLOWSTICK}植物变异"
+
