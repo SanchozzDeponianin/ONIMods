@@ -26,14 +26,14 @@ namespace TravelTubesExpanded
         private static void BeforeDbInit()
         {
             Utils.InitLocalization(typeof(STRINGS));
-            LocString.CreateLocStringKeys(typeof(STRINGS.BUILDINGS));
         }
 
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()
         {
             var ids = new string[] { TravelTubeInsulatedWallBridgeConfig.ID, TravelTubeBunkerWallBridgeConfig.ID,
-                TravelTubeLadderBridgeConfig.ID, TravelTubeFirePoleBridgeConfig.ID };
+                TravelTubeLadderBridgeConfig.ID, TravelTubeFirePoleBridgeConfig.ID,
+                TravelTubeCrossBridgeConfig.ID, TravelTubeDoorConfig.ID };
             for (int i = ids.Length - 1; i >= 0; i--)
                 Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Base, ids[i], BUILD_SUBCATEGORY.transport, TravelTubeWallBridgeConfig.ID);
             Utils.AddBuildingToTechnology("TravelTubes", ids);
@@ -71,6 +71,57 @@ namespace TravelTubesExpanded
             }
         }
 
+        // внедряем длинную транзицыю для прохода скрещивания по горизонтали
+        [HarmonyPatch]
+        private static class NavGrid_Constructor
+        {
+            private static MethodBase TargetMethod() => typeof(NavGrid).GetConstructors()[0];
+
+            private static void Prefix(string id, ref NavGrid.Transition[] transitions)
+            {
+                if (id == "MinionNavGrid")
+                    transitions = AddLongJump(transitions);
+            }
+
+            internal static NavGrid.Transition[] AddLongJump(NavGrid.Transition[] transitions)
+            {
+                var jump = new NavGrid.Transition(
+                    start: NavType.Tube,
+                    end: NavType.Tube,
+                    x: 2,
+                    y: 0,
+                    start_axis: NavAxis.NA,
+                    is_looping: true,
+                    loop_has_pre: false,
+                    is_escape: false,
+                    cost: 10,
+                    anim: "",
+                    void_offsets: new CellOffset[0],
+                    solid_offsets: new CellOffset[] { new CellOffset(1, 0) }, // требовать твердый блок посередине
+                    valid_nav_offsets: new NavOffset[] { new NavOffset(NavType.Tube, 1, 0) }, // требовать трубность посередине
+                    invalid_nav_offsets: new NavOffset[0],
+                    critter: false,
+                    animSpeed: 0.5f);
+                var stub = null as GameNavGrids; // затычка чтобы дёрнуть методы эксземпляра без this
+                return stub.CombineTransitions(transitions, stub.MirrorTransitions(new[] { jump }));
+            }
+        }
+
+        // самопатч для затычки, callvirt => call
+        [HarmonyPatch(typeof(NavGrid_Constructor), nameof(NavGrid_Constructor.AddLongJump))]
+        private static class NavGrid_AddLongJump
+        {
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                foreach (var instr in instructions)
+                {
+                    if (instr.opcode == OpCodes.Callvirt && instr.operand is MethodBase method && method.DeclaringType == typeof(GameNavGrids))
+                        instr.opcode = OpCodes.Call;
+                }
+                return instructions;
+            }
+        }
+
         // правим проверки нафигационных транзицый
         [HarmonyPatch(typeof(NavGrid.Transition), nameof(NavGrid.Transition.IsValid))]
         private static class NavGrid_Transition_IsValid
@@ -94,6 +145,7 @@ namespace TravelTubesExpanded
                 return instructions;
             }
 
+            // возможность проскочить через скрещивание длинным прыжком
             // возможность проскочить через пускачь
             // возможность пройти через два моста прислонённых другкдругу
             /*
@@ -201,6 +253,54 @@ namespace TravelTubesExpanded
                                 return true;
                             }
                         }
+                    }
+                }
+                // теперь скрещивание
+                if (transition.y == 0 && Math.Abs(transition.x) == 2)
+                {
+                    int cross = Grid.OffsetCell(from, transition.x / 2, 0);
+                    var go_cross = Grid.Objects[cross, (int)ObjectLayer.TravelTubeConnection];
+                    if (go_cross == null || !go_cross.IsPrefabID(TravelTubeCrossBridgeConfig.ID))
+                    {
+                        to = Grid.InvalidCell;
+                        return true;
+                    }
+                    else
+                    {
+                        bool pass_from = false, pass_to = false;
+                        if (link_from != null)
+                        {
+                            link_from.GetCells(out a, out b);
+                            if (cross == a || cross == b)
+                                pass_from = true;
+                        }
+                        else
+                        {
+                            if (UtilityConnectionsExtensions.DirectionFromToCell(cross, from)
+                                == Game.Instance.travelTubeSystem.GetConnections(from, false))
+                            {
+                                pass_from = true;
+                            }
+                        }
+                        if (link_to != null)
+                        {
+                            link_to.GetCells(out a, out b);
+                            if (cross == a || cross == b)
+                                pass_to = true;
+                        }
+                        else
+                        {
+                            if (UtilityConnectionsExtensions.DirectionFromToCell(cross, to)
+                                == Game.Instance.travelTubeSystem.GetConnections(to, false))
+                            {
+                                pass_to = true;
+                            }
+                        }
+                        if (!pass_from || !pass_to)
+                        {
+                            to = Grid.InvalidCell;
+                        }
+                        return true;
                     }
                 }
                 // теперь пара мостов
@@ -367,6 +467,46 @@ namespace TravelTubesExpanded
                     }
                 }
                 return false;
+            }
+        }
+
+        // коррекция проверки статуса наличия выхода для трубы с длинным прыжком у скрещивания
+        [HarmonyPatch(typeof(TravelTube), nameof(TravelTube.OnDirtyNavCellUpdated))]
+        private static class TravelTube_OnDirtyNavCellUpdated
+        {
+            private static UtilityConnections DirectionFromToCell(int from_cell, int to_cell)
+            {
+                if (Math.Abs(from_cell - to_cell) == 2)
+                    from_cell = (from_cell + to_cell) / 2;
+                return UtilityConnectionsExtensions.DirectionFromToCell(from_cell, to_cell);
+            }
+
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
+            {
+                return instructions.Transpile(original, ReplaceDirection);
+            }
+
+            private static bool ReplaceDirection(ref List<CodeInstruction> instructions)
+            {
+                var direction = typeof(UtilityConnectionsExtensions).GetMethodSafe(nameof(DirectionFromToCell), true, typeof(int), typeof(int));
+                var correction = typeof(TravelTube_OnDirtyNavCellUpdated).GetMethodSafe(nameof(DirectionFromToCell), true, typeof(int), typeof(int));
+                if (direction != null && correction != null)
+                {
+                    instructions = PPatchTools.ReplaceMethodCallSafe(instructions, direction, correction).ToList();
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        // скрываем роботов из трубной двери
+        [HarmonyPatch(typeof(AccessControlSideScreen), nameof(AccessControlSideScreen.RefreshContainerObjects))]
+        private static class AccessControlSideScreen_RefreshContainerObjects
+        {
+            private static void Postfix(AccessControlSideScreen __instance)
+            {
+                if (__instance.target != null && __instance.target.IsPrefabID(TravelTubeDoorConfig.ID))
+                    __instance.robotSectionHeader.SetActive(false);
             }
         }
     }

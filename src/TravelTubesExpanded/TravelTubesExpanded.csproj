@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Transit Tubes Expanded</Title>
     <Description>Adds a new Transit Tube Insulated, Bunker, Ladder, Fire Pole Crossing buildings and several tweaks for the Transit Tube system.</Description>
-    <ModVersion>1.1.2</ModVersion>
+    <ModVersion>1.2.0</ModVersion>
     <UsesPLib>true</UsesPLib>
     <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>

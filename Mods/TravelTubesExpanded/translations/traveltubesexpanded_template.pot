@@ -18,6 +18,31 @@ msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEBUNKERWALLBRIDG
 msgid "<link=\"TRAVELTUBEBUNKERWALLBRIDGE\">Transit Tube Bunker Crossing</link>"
 msgstr ""
 
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBECROSSBRIDGE.DESC
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBECROSSBRIDGE.DESC"
+msgid "Duplicants can pass over it horizontally or vertically, but not diagonally."
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBECROSSBRIDGE.EFFECT
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBECROSSBRIDGE.EFFECT"
+msgid "Allows one <link=\"TRAVELTUBE\">Transit Tubes</link> section to be run through another without joining them.\n\nFunctions as regular tile."
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBECROSSBRIDGE.NAME
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBECROSSBRIDGE.NAME"
+msgid "<link=\"TRAVELTUBECROSSBRIDGE\">Transit Tube Bridge</link>"
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEDOOR.EFFECT
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEDOOR.EFFECT"
+msgid "Allows use Door controls inside <link=\"TRAVELTUBE\">Transit Tubes</link>.\n\nFunctions as <link=\"DOOR\">Door</link> and <link=\"TRAVELTUBEWALLBRIDGE\">Transit Tube Crossing</link>."
+msgstr ""
+
+#. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEDOOR.NAME
+msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEDOOR.NAME"
+msgid "<link=\"TRAVELTUBEDOOR\">Transit Tube Door</link>"
+msgstr ""
+
 #. TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.DESC
 msgctxt "TravelTubesExpanded.STRINGS.BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.DESC"
 msgid "Tube crossings can run transit tubes through ladders and fire poles."

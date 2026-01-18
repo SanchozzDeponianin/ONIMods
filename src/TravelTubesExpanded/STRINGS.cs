@@ -1,4 +1,5 @@
 ﻿using STRINGS;
+using SanchozzONIMods.Lib;
 
 namespace TravelTubesExpanded
 {
@@ -35,6 +36,18 @@ namespace TravelTubesExpanded
                     public static LocString DESC = "Tube crossings can run transit tubes through ladders and fire poles.";
                     public static LocString EFFECT = $"Allows {UI.FormatAsLink("Transit Tubes", "TRAVELTUBE")} to be run through ladders and fire poles.\n\nFunctions as {UI.FormatAsLink("Fire Pole", "FIREPOLE")}.";
                 }
+                public class TRAVELTUBECROSSBRIDGE
+                {
+                    public static LocString NAME = UI.FormatAsLink("Transit Tube Bridge", "TRAVELTUBECROSSBRIDGE");
+                    public static LocString DESC = "Duplicants can pass over it horizontally or vertically, but not diagonally.";
+                    public static LocString EFFECT = $"Allows one {UI.FormatAsLink("Transit Tubes", "TRAVELTUBE")} section to be run through another without joining them.\n\nFunctions as regular tile.";
+                }
+                public class TRAVELTUBEDOOR
+                {
+                    public static LocString NAME = UI.FormatAsLink("Transit Tube Door", "TRAVELTUBEDOOR");
+                    public static LocString DESC = "";
+                    public static LocString EFFECT = $"Allows use Door controls inside {UI.FormatAsLink("Transit Tubes", "TRAVELTUBE")}.\n\nFunctions as {UI.FormatAsLink("Door", "DOOR")} and {UI.FormatAsLink("Transit Tube Crossing", "TRAVELTUBEWALLBRIDGE")}.";
+                }
             }
         }
         public class OPTIONS
@@ -43,6 +56,12 @@ namespace TravelTubesExpanded
             {
                 public static LocString NAME = $"Transit Tube Access {UI.FormatAsKeyWord("Power")} consumption per launch, kJ";
             }
+        }
+
+        internal static void DoReplacement()
+        {
+            BUILDINGS.PREFABS.TRAVELTUBEDOOR.DESC.ReplaceText(global::STRINGS.BUILDINGS.PREFABS.DOOR.DESC.text);
+            LocString.CreateLocStringKeys(typeof(BUILDINGS));
         }
     }
 }
