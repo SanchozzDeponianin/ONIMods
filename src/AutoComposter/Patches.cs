@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -23,16 +22,6 @@ namespace AutoComposter
             new POptions().RegisterOptions(this, typeof(ModOptions));
             base.OnLoad(harmony);
             RotPileSilentNotification.Patch(harmony);
-            // гипотетически могут пофиксить путём удаления, поэтому завернём
-            try
-            {
-                harmony.Patch(typeof(Compostable), nameof(Compostable.MarkForCompost),
-                    prefix: new HarmonyMethod(typeof(Compostable_MarkForCompost), nameof(Compostable_MarkForCompost.Prefix)));
-            }
-            catch (Exception e)
-            {
-                Utils.LogExcWarn(e);
-            }
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -163,21 +152,6 @@ namespace AutoComposter
                 if (__instance.root is AutoComposter composter && !composter.IsNullOrDestroyed())
                 {
                     __result = composter.IsOperational;
-                    return false;
-                }
-                return true;
-            }
-        }
-
-        // предотвращаем вываливание компостируемых штук при загрузке сейфа и при автокомпостировании
-        //[HarmonyPatch(typeof(Compostable), nameof(Compostable.MarkForCompost))]
-        private static class Compostable_MarkForCompost
-        {
-            internal static bool Prefix(Compostable __instance)
-            {
-                if (__instance != null && __instance.TryGetComponent(out Pickupable pickupable) && pickupable.storage != null)
-                {
-                    DiscoveredResources.Instance.Discover(pickupable.KPrefabID.PrefabTag);
                     return false;
                 }
                 return true;

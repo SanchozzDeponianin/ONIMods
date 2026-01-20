@@ -168,7 +168,10 @@ namespace AutoComposter
                         garbage.Drop(go);
                         var compost = EntitySplitter.Split(pickupable, pickupable.TotalAmount, compostable.compostPrefab);
                         if (compost != null)
+                        {
+                            DiscoveredResources.Instance.Discover(compost.KPrefabID.PrefabTag);
                             storage.Store(compost.gameObject, true);
+                        }
                     }
                     else
                         garbage.Transfer(go, storage, false, true);
