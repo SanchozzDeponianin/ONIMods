@@ -5,7 +5,6 @@ using UnityEngine;
 using KSerialization;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
-using PeterHan.PLib.Detours;
 using STRINGS;
 
 namespace AnyIceKettle
@@ -18,13 +17,6 @@ namespace AnyIceKettle
     public class AnyIceKettle : KMonoBehaviour, FewOptionSideScreen.IFewOptionSideScreen
     {
         private static readonly handler OnCopySettingsDelegate = new((cmp, data) => cmp.OnCopySettings(data));
-
-        internal static readonly IDetouredField<IceKettle.Instance, Element> ElementToMelt
-            = PDetours.DetourField<IceKettle.Instance, Element>("elementToMelt");
-
-        private static readonly System.Action<IceKettleWorkable, List<GameObject>> RestoreStoredItemsInteractions
-            = typeof(IceKettleWorkable).Detour<System.Action<IceKettleWorkable, List<GameObject>>>("RestoreStoredItemsInteractions");
-
         private static Element[] IceOres;
         private static SimHashes[] outputLiquids;
 
@@ -44,11 +36,11 @@ namespace AnyIceKettle
         [MyCmpReq]
         private IceKettleWorkable workable;
 
-        [MyCmpAdd]
-        private CopyBuildingSettings copy;
+        [MyCmpReq]
+        private TreeFilterable filterable;
 #pragma warning restore CS0649
 
-        protected override void OnPrefabInit()
+        public override void OnPrefabInit()
         {
             if (IceOres == null)
             {
@@ -68,7 +60,7 @@ namespace AnyIceKettle
             Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
         }
 
-        protected override void OnSpawn()
+        public override void OnSpawn()
         {
             base.OnSpawn();
             // same as IceKettle.Instance constructor
@@ -86,7 +78,7 @@ namespace AnyIceKettle
             }
             ice_mdkg.RequestedItemTag = chosenIce;
             var ice = ElementLoader.GetElement(chosenIce);
-            ElementToMelt.Set(kettle, ice);
+            kettle.elementToMelt = ice;
             SetPipedEverythingConsumer();
             SetPipedEverythingDispenser();
             // если юзер отключил настройки
@@ -108,7 +100,7 @@ namespace AnyIceKettle
                 chosenIce = newChosenIce;
                 ice_mdkg.RequestedItemTag = chosenIce;
                 kettleStorage.DropAll();
-                ElementToMelt.Set(kettle, ElementLoader.GetElement(chosenIce));
+                kettle.elementToMelt = ElementLoader.GetElement(chosenIce);
                 SetPipedEverythingConsumer();
                 if (kettle.IsInsideState(kettle.sm.operational.melting.working))
                 {
@@ -125,11 +117,11 @@ namespace AnyIceKettle
         {
             if (outputStorage.items.Count > 0)
             {
-                if (outputStorage.items[0].PrefabID() != ElementToMelt.Get(kettle).highTempTransition.tag)
+                if (outputStorage.items[0].PrefabID() != kettle.elementToMelt.highTempTransition.tag)
                 {
                     var dropped = ListPool<GameObject, Storage>.Allocate();
                     outputStorage.DropAll(collect_dropped_items: dropped);
-                    RestoreStoredItemsInteractions(workable, dropped);
+                    workable.RestoreStoredItemsInteractions(dropped);
                     dropped.Recycle();
                 }
             }
@@ -154,7 +146,7 @@ namespace AnyIceKettle
 
         public void OnOptionSelected(option option) => SetChosenIce(option.tag);
 
-        private void SetPipedEverythingConsumer()
+        internal void SetPipedEverythingConsumer()
         {
             if (PipedEverythingConsumerS != null)
             {
@@ -172,7 +164,7 @@ namespace AnyIceKettle
                         }
                         else if (storage == fuelStorage)
                         {
-                            traverse.Field<Tag[]>("tagFilter").Value[0] = fuel_mdkg.RequestedItemTag;
+                            traverse.Field<Tag[]>("tagFilter").Value = filterable.AcceptedTags.ToArray();
                             traverse.Field<float>("capacityKG").Value = fuel_mdkg.capacity;
                             fuelStorage.capacityKg = fuel_mdkg.capacity;
                         }

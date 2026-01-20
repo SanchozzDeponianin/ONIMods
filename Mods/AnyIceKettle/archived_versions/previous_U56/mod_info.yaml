@@ -1,0 +1,5 @@
+requiredDlcIds:
+- DLC2_ID
+minimumSupportedBuild: 693461
+version: 1.2.0
+APIVersion: 2

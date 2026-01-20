@@ -1,0 +1,20 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. AnyIceKettle.STRINGS.MOD_DESCRIPTION
+msgctxt "AnyIceKettle.STRINGS.MOD_DESCRIPTION"
+msgid "Allows you to choose which type of Ice will heat the Ice Liquefier."
+msgstr ""
+
+#. AnyIceKettle.STRINGS.MOD_TITLE
+msgctxt "AnyIceKettle.STRINGS.MOD_TITLE"
+msgid "Any Ice Liquefier"
+msgstr ""
+
+#. AnyIceKettle.STRINGS.OPTIONS.LABEL.NAME
+msgctxt "AnyIceKettle.STRINGS.OPTIONS.LABEL.NAME"
+msgid "Allow melting of some non-Ice stuff"
+msgstr ""
+

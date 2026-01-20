@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
+using System.Linq;
 using System.Text.RegularExpressions;
 using STRINGS;
 using UnityEngine;
@@ -20,8 +19,7 @@ namespace AnyIceKettle
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
-            if (DlcManager.IsContentSubscribed(DlcManager.EXPANSION1_ID) || DlcManager.IsContentSubscribed(DlcManager.DLC3_ID))
-                new POptions().RegisterOptions(this, typeof(ModOptions));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
             ModOptions.Reload();
         }
 
@@ -48,18 +46,63 @@ namespace AnyIceKettle
             var originCB = status.resolveTooltipCallback ?? status.resolveStringCallback;
             status.resolveTooltipCallback = (str, data) =>
             {
-                var ice = AnyIceKettle.ElementToMelt.Get((IceKettle.Instance)data);
+                var ice = ((IceKettle.Instance)data).elementToMelt;
                 str = str.Replace("{1}", ice.tag.ProperName()).Replace("{2}", ice.highTempTransition.tag.ProperName());
                 return originCB(str, data);
             };
         }
 
-        [HarmonyPatch(typeof(IceKettleConfig), nameof(IceKettleConfig.ConfigureBuildingTemplate))]
-        private static class IceKettleConfig_ConfigureBuildingTemplate
+        private static Dictionary<Tag, float> FuelWeights = new();
+
+        [PLibMethod(RunAt.BeforeDbPostProcess)]
+        private static void BeforeDbPostProcess()
         {
-            private static void Postfix(GameObject go)
+            var go = Assets.GetBuildingDef(IceKettleConfig.ID).BuildingComplete;
+            go.AddOrGet<AnyIceKettle>();
+            if (FuelWeights.Count == 0)
             {
-                go.AddOrGet<AnyIceKettle>();
+                foreach (var tag in GameTags.BasicWoods)
+                    FuelWeights[tag] = 1f;
+            }
+            var filterable = go.AddOrGet<TreeFilterable>();
+            filterable.dropIncorrectOnFilterChange = true;
+            filterable.preventAutoAddOnDiscovery = true;
+            filterable.filterByStorageCategoriesOnSpawn = false;
+            filterable.autoSelectStoredOnLoad = false;
+            filterable.copySettingsEnabled = false;
+            filterable.uiHeight = TreeFilterable.UISideScreenHeight.Short;
+            var flat = go.AddOrGet<FlatTagFilterable>();
+            flat.headerText = UI.METERS.FUEL.TOOLTIP;
+            flat.tagOptions.AddRange(FuelWeights.Keys);
+            flat.selectedTags.AddRange(GameTags.BasicWoods);
+            go.AddOrGet<AnyFuelKettle>().discoverResourcesOnSpawn = GameTags.BasicWoods.ToList();
+            go.AddOrGetDef<IceKettle.Def>().fuelElementTag = GameTags.Solid;
+            go.AddOrGet<CopyBuildingSettings>();
+        }
+
+        // вытаскиваем все что можно в уголь в печке
+        [HarmonyPatch(typeof(KilnConfig), nameof(KilnConfig.ConfigureRecipes))]
+        private static class KilnConfig_ConfigureRecipes
+        {
+            [HarmonyPriority(Priority.High)]
+            private static void Postfix()
+            {
+                var carbon = SimHashes.RefinedCarbon.CreateTag();
+                var recipe = ComplexRecipeManager.Get().preProcessRecipes.FirstOrDefault(recipe => recipe.fabricators.Contains(KilnConfig.ID)
+                    && recipe.results.Length > 0 && recipe.results[0].material == carbon && recipe.ingredients.Length > 0
+                    && recipe.ingredients[0].possibleMaterials != null && recipe.ingredients[0].possibleMaterialAmounts != null
+                    && recipe.ingredients[0].possibleMaterials.Length == recipe.ingredients[0].possibleMaterialAmounts.Length);
+                if (recipe != null)
+                {
+                    int w = Array.IndexOf(recipe.ingredients[0].possibleMaterials, WoodLogConfig.TAG);
+                    if (w != -1)
+                    {
+                        float wood = recipe.ingredients[0].possibleMaterialAmounts[w];
+                        FuelWeights[carbon] = recipe.results[0].amount / wood;
+                        for (int i = 0; i < recipe.ingredients[0].possibleMaterials.Length; i++)
+                            FuelWeights[recipe.ingredients[0].possibleMaterials[i]] = recipe.ingredients[0].possibleMaterialAmounts[i] / wood;
+                    }
+                }
             }
         }
 
@@ -68,43 +111,104 @@ namespace AnyIceKettle
         {
             private static void Postfix(IceKettle __instance)
             {
-                // проверка перед плавлением, на случай если лёд был сброшен
+                // проверка перед плавлением, на случай если лёд или топливо были сброшены
                 __instance.operational.melting.working
-                    .EnterTransition(__instance.operational.melting.exit, smi => !IceKettle.HasEnoughSolidsToMelt(smi));
+                    .EnterTransition(__instance.operational.melting.exit, smi => !IceKettle.CanMeltNextBatch(smi));
                 // сбросим воду, если выбор сменился во время наливания
                 __instance.inUse.Exit(smi => smi.Get<AnyIceKettle>().DropExcessLiquid());
             }
         }
 
-        // заменить все smi.def.targetElementTag на smi.elementToMelt.tag
+        // доступное топливо с учётом его веса
+        [HarmonyPatch(typeof(IceKettle.Instance), nameof(IceKettle.Instance.FuelUnitsAvailable), MethodType.Getter)]
+        private static class IceKettle_Instance_FuelUnitsAvailable
+        {
+            private static bool Prefix(IceKettle.Instance __instance, ref float __result)
+            {
+                __result = 0f;
+                for (int i = 0; i < __instance.fuelStorage.Count; i++)
+                {
+                    var go = __instance.fuelStorage[i];
+                    if (go != null && go.TryGetComponent(out PrimaryElement pe) && FuelWeights.ContainsKey(pe.Element.tag))
+                        __result += pe.Mass / FuelWeights[pe.Element.tag];
+                }
+                __result = Mathf.RoundToInt(__result * 1000f) / 1000f; // like Storage.MassStored()
+                return false;
+            }
+        }
+
+        // проще всё переписать
         [HarmonyPatch(typeof(IceKettle.Instance), nameof(IceKettle.Instance.MeltNextBatch))]
         private static class IceKettle_Instance_MeltNextBatch
         {
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            private static bool Prefix(IceKettle.Instance __instance)
             {
-                return instructions.Transpile(original, transpiler);
+                MeltNextBatch(__instance);
+                return false;
             }
-            private static bool transpiler(ref List<CodeInstruction> instructions)
+
+            private static void MeltNextBatch(IceKettle.Instance smi)
             {
-                var def = typeof(IceKettle.GenericInstance).GetPropertySafe<IceKettle.Def>("def", false)?.GetGetMethod();
-                var target_tag = typeof(IceKettle.Def).GetFieldSafe(nameof(IceKettle.Def.targetElementTag), false);
-                var element_to_melt = typeof(IceKettle.Instance).GetFieldSafe("elementToMelt", false);
-                var element_tag = typeof(Element).GetFieldSafe(nameof(Element.tag), false);
-                bool found = false;
-                if (def != null && target_tag != null && element_to_melt != null && element_tag != null)
+                if (!IceKettle.CanMeltNextBatch(smi))
+                    return;
+                smi.kettleStorage.FindFirst(smi.elementToMelt.tag).TryGetComponent(out PrimaryElement ice_pe);
+                float fuel_amount = Mathf.Min(smi.FuelUnitsAvailable,
+                    smi.GetUnitsOfFuelRequiredToMelt(smi.elementToMelt, smi.def.KGToMeltPerBatch, ice_pe.Temperature));
+                smi.kettleStorage.ConsumeAndGetDisease(smi.elementToMelt.id.CreateTag(), smi.def.KGToMeltPerBatch,
+                    out float ice_mass, out var disease_info, out _);
+                smi.outputStorage.AddElement(smi.elementToMelt.highTempTransitionTarget, ice_mass, smi.def.TargetTemperature,
+                    disease_info.idx, disease_info.count);
+                ConsumeFuelWithWeight(smi.fuelStorage, fuel_amount, out float fuel_mass_consumed, out float temperature);
+                float exhaust_mass = fuel_mass_consumed * smi.def.ExhaustMassPerUnitOfLumber;
+                var exhaust = ElementLoader.FindElementByHash(smi.def.exhaust_tag);
+                SimMessages.AddRemoveSubstance(Grid.PosToCell(smi), exhaust.id, null, exhaust_mass, temperature, byte.MaxValue, 0);
+            }
+
+            // поглощение топлива с учётом веса
+            private static void ConsumeFuelWithWeight(Storage storage, float fuel_amount, out float mass_consumed, out float aggregate_temperature)
+            {
+                mass_consumed = 0f;
+                aggregate_temperature = 0f;
+                int i = 0;
+                while (i < storage.Count && fuel_amount > 0f)
                 {
-                    for (int i = 0; i < instructions.Count; i++)
+                    var go = storage[i];
+                    if (go != null && go.TryGetComponent(out PrimaryElement pe) && FuelWeights.ContainsKey(pe.Element.tag))
                     {
-                        if (instructions[i].LoadsField(target_tag) && instructions[i - 1].Calls(def))
-                        {
-                            instructions[i - 1].opcode = OpCodes.Ldfld;
-                            instructions[i - 1].operand = element_to_melt;
-                            instructions[i].operand = element_tag;
-                            found = true;
-                        }
+                        float weight = FuelWeights[pe.Element.tag];
+                        storage.ConsumeAndGetDisease(pe.Element.tag, fuel_amount * weight, out float consumed, out _, out float temperature);
+                        aggregate_temperature = Klei.SimUtil.CalculateFinalTemperature(mass_consumed, aggregate_temperature, consumed, temperature);
+                        mass_consumed += consumed;
+                        fuel_amount -= consumed / weight;
                     }
+                    i++;
                 }
-                return found;
+            }
+        }
+
+        // корректируем прибитый гвоздями IsFunctional
+        [HarmonyPatch(typeof(FilteredStorage), nameof(FilteredStorage.IsFunctional))]
+        private static class FilteredStorage_IsFunctional
+        {
+            private static bool Prefix(FilteredStorage __instance, ref bool __result)
+            {
+                if (__instance.root is AnyFuelKettle kettle && !kettle.IsNullOrDestroyed())
+                {
+                    __result = kettle.IsOperational;
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        // корректируем прибитый гвоздями SideScreen
+        [HarmonyPatch(typeof(FlatTagFilterSideScreen), nameof(FlatTagFilterSideScreen.GetSideScreenSortOrder))]
+        private static class FlatTagFilterSideScreen_GetSideScreenSortOrder
+        {
+            private static void Postfix(FlatTagFilterSideScreen __instance, ref int __result)
+            {
+                if (!__instance.tagFilterable.IsNullOrDestroyed() && __instance.tagFilterable.IsPrefabID(IceKettleConfig.ID))
+                    __result = -5;
             }
         }
     }
