@@ -20,5 +20,33 @@ namespace NoManualDelivery
         [JsonProperty]
         [Option]
         public bool AllowTransferArmPickupGasLiquid { get; set; } = false;
+
+        [JsonProperty]
+        [Option]
+        public SmartMode HoldMode { get; set; } = new();
+
+        [JsonObject(MemberSerialization.OptIn)]
+        public class SmartMode
+        {
+            [JsonIgnore]
+            public bool Enabled => Chores || Items;
+
+            [JsonProperty]
+            [Option]
+            public bool Chores { get; set; } = true;
+
+            [JsonProperty]
+            [Option]
+            public bool ByDefault { get; set; } = true;
+
+            [JsonProperty]
+            [Option]
+            public bool Items { get; set; } = true;
+
+            [JsonProperty]
+            [Option]
+            [Limit(2, 60)]
+            public int Timeout { get; set; } = 8;
+        }
     }
 }

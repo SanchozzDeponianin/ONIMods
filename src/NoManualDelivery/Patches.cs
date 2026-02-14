@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
 using TUNING;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
-using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
+using PeterHan.PLib.UI;
 
 namespace NoManualDelivery
 {
@@ -124,6 +125,14 @@ namespace NoManualDelivery
             "asquared31415.PipedLiquidBottler",
         };
 
+        private static List<string> BuildingWithoutHoldMode = new()
+        {
+            SweepBotStationConfig.ID,
+            LiquidPumpingStationConfig.ID,
+            LiquidBottlerConfig.ID,
+            GasBottlerConfig.ID,
+        };
+
         // добавляем компонент к постройкам
         [PLibMethod(RunAt.BeforeDbPostProcess)]
         private static void BeforeDbPostProcess()
@@ -140,15 +149,79 @@ namespace NoManualDelivery
                         || go.TryGetComponent<TinkerStation>(out _)
                         )
                     {
-                        if (!go.TryGetComponent<Automatable>(out _))
-                            go.AddOrGet<Automatable2>();
+                        if (go.TryGetComponent(out Automatable automatable))
+                            UnityEngine.Object.DestroyImmediate(automatable);
+                        var automatable2 = go.AddOrGet<Automatable2>();
+                        automatable2.allowHold = ModOptions.Instance.HoldMode.Chores && !BuildingWithoutHoldMode.Contains(def.PrefabID);
+                        automatable2.SetAutomation(false, ModOptions.Instance.HoldMode.ByDefault);
                     }
+                }
+            }
+            AutomatableHolder.LongTimeout = ModOptions.Instance.HoldMode.Timeout;
+        }
+
+        [PLibMethod(RunAt.OnStartGame)]
+        private static void OnStartGame()
+        {
+            if (ModOptions.Instance.HoldMode.Enabled)
+                Game.Instance.FindOrAdd<TransferArmGroupProber>();
+        }
+
+        [PLibMethod(RunAt.OnEndGame)]
+        private static void OnEndGame()
+        {
+            TransferArmGroupProber.DestroyInstance();
+        }
+
+        [PLibMethod(RunAt.OnDetailsScreenInit)]
+        private static void OnDetailsScreenInit()
+        {
+            PUIUtils.AddSideScreenContent<Automatable2SideScreen>();
+        }
+
+        [HarmonyPatch(typeof(AutomatableSideScreen), nameof(AutomatableSideScreen.IsValidForTarget))]
+        private static class AutomatableSideScreen_IsValidForTarget
+        {
+            private static void Postfix(GameObject target, ref bool __result)
+            {
+                if (__result && target.TryGetComponent<Automatable>(out var automatable) && automatable is Automatable2)
+                    __result = false;
+            }
+        }
+
+
+        private static Tag[] AlwaysCouldBePickedUpByMinionTags = new Tag[0];
+
+        // разрешить дупликам забирать жеготных из инкубатора, всегда хватать еду, всегда брать воду из чайника
+        // запретить дупликам подбирать вещи если они "зарезервированы" "умным режимом"
+        [HarmonyPatch(typeof(Pickupable), nameof(Pickupable.CouldBePickedUpByMinion), new Type[] { typeof(int) })]
+        private static class Pickupable_CouldBePickedUpByMinion
+        {
+            private static bool Prefix(Pickupable __instance, int carrierID, ref bool __result, ref bool __state)
+            {
+                if (__instance.KPrefabID.HasAnyTags(AlwaysCouldBePickedUpByMinionTags)
+                    || (ModOptions.Instance.AllowAlwaysPickupKettle && __instance.targetWorkable is IceKettleWorkable))
+                {
+                    __result = __instance.CouldBePickedUpCommon(carrierID);
+                    __state = false;
+                    return false;
+                }
+                __state = true;
+                return true;
+            }
+
+            private static void Postfix(Pickupable __instance, ref bool __result, bool __state)
+            {
+                if (__state && __result && PickupableHolder != null && TryGetHolder(__instance, out var holder))
+                {
+                    __result = holder.IsTimeOut();
                 }
             }
         }
 
+        #region twiks
         // разрешить дупликам доставку для Tinkerable объектов, типа генераторов
-        [HarmonyPatch(typeof(Tinkerable), "UpdateChore")]
+        [HarmonyPatch(typeof(Tinkerable), nameof(Tinkerable.UpdateChore))]
         private static class Tinkerable_UpdateChore
         {
             private static void Postfix(Chore ___chore)
@@ -159,27 +232,6 @@ namespace NoManualDelivery
                     chore.GetPreconditions().RemoveAll(x => x.condition.id == id);
                     chore.automatable = null;
                 }
-            }
-        }
-
-        private static Tag[] AlwaysCouldBePickedUpByMinionTags = new Tag[0];
-
-        // разрешить дупликам забирать жеготных из инкубатора, всегда хватать еду, всегда брать воду из чайника
-        [HarmonyPatch(typeof(Pickupable), nameof(Pickupable.CouldBePickedUpByMinion), new Type[] { typeof(int) })]
-        private static class Pickupable_CouldBePickedUpByMinion
-        {
-            private static Func<Pickupable, int, bool> CouldBePickedUpCommon =
-                typeof(Pickupable).Detour<Func<Pickupable, int, bool>>("CouldBePickedUpCommon");
-
-            private static bool Prefix(Pickupable __instance, int carrierID, ref bool __result)
-            {
-                if (__instance.KPrefabID.HasAnyTags(AlwaysCouldBePickedUpByMinionTags)
-                    || (ModOptions.Instance.AllowAlwaysPickupKettle && __instance.targetWorkable is IceKettleWorkable))
-                {
-                    __result = CouldBePickedUpCommon(__instance, carrierID);
-                    return false;
-                }
-                return true;
             }
         }
 
@@ -204,7 +256,7 @@ namespace NoManualDelivery
             private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var CouldBePickedUpByMinion = typeof(Pickupable).GetMethodSafe(nameof(Pickupable.CouldBePickedUpByMinion), false, typeof(int));
-                var CouldBePickedUpCommon = typeof(Pickupable).GetMethodSafe("CouldBePickedUpCommon", false, typeof(int));
+                var CouldBePickedUpCommon = typeof(Pickupable).GetMethodSafe(nameof(Pickupable.CouldBePickedUpCommon), false, typeof(int));
                 if (CouldBePickedUpByMinion != null && CouldBePickedUpCommon != null)
                 {
                     instructions = PPatchTools.ReplaceMethodCallSafe(instructions, CouldBePickedUpByMinion, CouldBePickedUpCommon).ToList();
@@ -214,49 +266,10 @@ namespace NoManualDelivery
             }
         }
 
-        // чтобы не испортить заголовок окна - сместить галку вниз
-        // похоже второго патча достаточно
-#if false
-        [HarmonyPatch(typeof(DetailsScreen), "OnPrefabInit")]
-        private static class DetailsScreen_OnPrefabInit
-        {
-            private static void Prefix(List<DetailsScreen.SideScreenRef> ___sideScreens)
-            {
-                DetailsScreen.SideScreenRef sideScreen;
-                for (int i = 0; i < ___sideScreens.Count; i++)
-                {
-
-                    if (___sideScreens[i].name == "Automatable Side Screen")
-                    {
-                        sideScreen = ___sideScreens[i];
-                        ___sideScreens.RemoveAt(i);
-                        ___sideScreens.Insert(0, sideScreen);
-                        break;
-                    }
-                }
-            }
-        }
-#endif
-
-        [HarmonyPatch(typeof(SideScreenContent), nameof(SideScreenContent.GetSideScreenSortOrder))]
-        private static class SideScreenContent_GetSideScreenSortOrder
-        {
-            // ранее в прошлом вылетало на линухах. todo: мониторить ситуацию
-            //private static bool Prepare() => Environment.OSVersion.Platform.Equals(PlatformID.Win32NT);
-            private static void Postfix(SideScreenContent __instance, ref int __result)
-            {
-                if (__instance is AutomatableSideScreen)
-                    __result = -10;
-            }
-        }
-
         // станция бота-подметашки
         // при изменении хранилища станция принудительно помечает все ресурсы "для переноски"
         // изза этого дуплы всегда будут игнорировать установленную галку (другая задача переноски, не учитывает галку вообще)
         // поэтому нужно при установленной галке - отменить пометки "для переноски"
-
-        private static readonly IDetouredField<SweepBotStation, Storage> SWEEP_STORAGE = PDetours.DetourField<SweepBotStation, Storage>("sweepStorage");
-
         private static void FixSweepBotStationStorage(Storage sweepStorage)
         {
             bool automationOnly = (sweepStorage.automatable?.GetAutomationOnly()) ?? false;
@@ -272,17 +285,16 @@ namespace NoManualDelivery
             }
         }
 
-        private static void UpdateSweepBotStationStorage(KMonoBehaviour kMonoBehaviour)
+        internal static void UpdateSweepBotStationStorage(KMonoBehaviour kMonoBehaviour)
         {
-            if (kMonoBehaviour.TryGetComponent<SweepBotStation>(out var sweepBotStation))
+            if (kMonoBehaviour.TryGetComponent<SweepBotStation>(out var sweepBotStation)
+                && sweepBotStation.sweepStorage != null)
             {
-                var storage = SWEEP_STORAGE.Get(sweepBotStation);
-                if (storage != null)
-                    FixSweepBotStationStorage(storage);
+                FixSweepBotStationStorage(sweepBotStation.sweepStorage);
             }
         }
 
-        [HarmonyPatch(typeof(SweepBotStation), "OnStorageChanged")]
+        [HarmonyPatch(typeof(SweepBotStation), nameof(SweepBotStation.OnStorageChanged))]
         private static class SweepBotStation_OnStorageChanged
         {
             private static void Postfix(Storage ___sweepStorage)
@@ -291,8 +303,7 @@ namespace NoManualDelivery
             }
         }
 
-        // нужно обновить хранилище при загрузке, и при изменении галки
-        [HarmonyPatch(typeof(SweepBotStation), "OnSpawn")]
+        [HarmonyPatch(typeof(SweepBotStation), nameof(SweepBotStation.OnSpawn))]
         private static class SweepBotStation_OnSpawn
         {
             private static void Postfix(Storage ___sweepStorage)
@@ -301,36 +312,8 @@ namespace NoManualDelivery
             }
         }
 
-        [HarmonyPatch(typeof(Automatable), "OnCopySettings")]
-        private static class Automatable_OnCopySettings
-        {
-            private static void Postfix(Automatable __instance)
-            {
-                UpdateSweepBotStationStorage(__instance);
-            }
-        }
-
-        [HarmonyPatch(typeof(AutomatableSideScreen), "OnAllowManualChanged")]
-        private static class AutomatableSideScreen_OnAllowManualChanged
-        {
-            private static void Postfix(Automatable ___targetAutomatable)
-            {
-                UpdateSweepBotStationStorage(___targetAutomatable);
-            }
-        }
-
         // домег бомжега. галку нужно не показывать до поры. кнопку копировать настройки тоже.
-        [HarmonyPatch(typeof(AutomatableSideScreen), nameof(AutomatableSideScreen.IsValidForTarget))]
-        private static class AutomatableSideScreen_IsValidForTarget
-        {
-            private static void Postfix(GameObject target, ref bool __result)
-            {
-                if (__result && target.TryGetComponent<Automatable2>(out var automatable))
-                    __result = automatable.showInUI;
-            }
-        }
-
-        [HarmonyPatch(typeof(CopyBuildingSettings), "OnRefreshUserMenu")]
+        [HarmonyPatch(typeof(CopyBuildingSettings), nameof(CopyBuildingSettings.OnRefreshUserMenu))]
         private static class CopyBuildingSettings_OnRefreshUserMenu
         {
             private static bool Prefix(CopyBuildingSettings __instance)
@@ -400,7 +383,7 @@ namespace NoManualDelivery
 
         // ящег-збрасыватель
         // пофиксим ручное переключение вкл/выкл
-        [HarmonyPatch(typeof(ObjectDispenser), "Toggle")]
+        [HarmonyPatch(typeof(ObjectDispenser), nameof(ObjectDispenser.Toggle))]
         internal static class AutomaticDispenser_Toggle
         {
             private static void Postfix(ObjectDispenser.Instance ___smi, bool ___switchedOn)
@@ -408,17 +391,211 @@ namespace NoManualDelivery
                 ___smi.SetSwitchState(___switchedOn);
             }
         }
-    }
+        #endregion
 
-    // нужно, чтобы установить галку по умолчанию
-    public class Automatable2 : Automatable
-    {
-        [SerializeField]
-        public bool showInUI = true;
-        protected override void OnPrefabInit()
+        #region smartmode
+        // "умный режим" - разрешить доставку дупликам только если рука не может это сделать за некоторый таймаут
+        // "резервируем" чоры доставки в зоне досягаемости руки
+        // todo: гипотетически это можно переписать через пачти к существующим прекондициям. нужно ли ?
+        [HarmonyPatch]
+        private static class FetchChore_Constructor
         {
-            base.OnPrefabInit();
-            SetAutomationOnly(false);
+            private static bool Prepare() => ModOptions.Instance.HoldMode.Chores;
+
+            // если свежесозданная чора в зоне досягаемости руки - зарезервируем на короткое время
+            private static MethodBase TargetMethod() => typeof(FetchChore).GetConstructors()[0];
+
+            [HarmonyPriority(Priority.Low)]
+            private static void Postfix(FetchChore __instance)
+            {
+                if (__instance.automatable is Automatable2)
+                {
+                    var holder = new AutomatableHolder();
+                    if (__instance.destination != null && TransferArmGroupProber.Get().IsReachable(Grid.PosToCell(__instance.destination)))
+                        holder.SetShortTimeout();
+                    __instance.AddPrecondition(IsAllowedByAutomationHoldEarly, holder);
+                    __instance.AddPrecondition(IsAllowedByAutomationHoldLater, holder);
+                }
+            }
+
+            // если чора в зоне досягаемости руки но рука выполняет другую чору - зарезервируем
+            // должно запускаться до ChorePreconditions.IsMoreSatisfyingEarly
+            private static Chore.Precondition IsAllowedByAutomationHoldEarly = new()
+            {
+                id = nameof(IsAllowedByAutomationHoldEarly),
+                description = global::STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ALLOWED_BY_AUTOMATION,
+                sortOrder = -3,
+                canExecuteOnAnyThread = true,
+                fn = delegate (ref Chore.Precondition.Context context, object data)
+                {
+                    if (context.consumerState.hasSolidTransferArm && context.consumerState.choreDriver.HasChore())
+                    {
+                        var automatable = ((FetchChore)context.chore).automatable as Automatable2;
+                        if (automatable != null)
+                            ((AutomatableHolder)data).SetLongTimeout();
+                    }
+                    return true;
+                }
+            };
+
+            // если кусок для переноски найден и:
+            //  - это рука - рука может это сделать, продлим таймаут
+            //  - это не рука - запрещаем дупликам если таймаут не истёк
+            // должно запускаться после FetchChore.IsFetchTargetAvailable
+            private static Chore.Precondition IsAllowedByAutomationHoldLater = new()
+            {
+                id = nameof(IsAllowedByAutomationHoldLater),
+                description = global::STRINGS.DUPLICANTS.CHORES.PRECONDITIONS.IS_ALLOWED_BY_AUTOMATION,
+                sortOrder = 2,
+                canExecuteOnAnyThread = false,
+                fn = delegate (ref Chore.Precondition.Context context, object data)
+                {
+                    var automatable = ((FetchChore)context.chore).automatable as Automatable2;
+                    if (automatable == null)
+                        return true;
+                    if (context.consumerState.hasSolidTransferArm)
+                    {
+                        if (context.data as Pickupable != null)
+                            ((AutomatableHolder)data).RefreshTimestamp();
+                        return true;
+                    }
+                    else
+                        return !automatable.GetAutomationHold() || ((AutomatableHolder)data).IsTimeOut();
+                }
+            };
         }
+
+        // "резервируем" предметы на полу в зоне досягаемости руки, если она может их доставить
+        // если до было !HasChore а после стало HasChore, значит произошел полный поиск чоры без скипа через IsMoreSatisfying
+        // и мы можем полагаться на GetSuceededPreconditionContexts как список возможных чор
+        [HarmonyPatch(typeof(SolidTransferArm), nameof(SolidTransferArm.Sim))]
+        private static class SolidTransferArm_Sim
+        {
+            private static bool Prepare() => ModOptions.Instance.HoldMode.Items;
+
+            private static void Prefix(SolidTransferArm __instance, ref bool __state)
+            {
+                __state = !__instance.choreDriver.HasChore();
+            }
+
+            private static void Postfix(SolidTransferArm __instance, bool __state)
+            {
+                if (__state && __instance.choreDriver.HasChore())
+                {
+                    // todo: цыклы можно оптимизировать
+                    var contexts = __instance.choreConsumer.GetSuceededPreconditionContexts();
+                    for (int i = 0; i < contexts.Count; i++)
+                    {
+                        var chore = contexts[i].chore as FetchChore;
+                        if (chore != null && chore.destination != null)
+                        {
+                            for (int j = 0; j < __instance.pickupables.Count; j++)
+                            {
+                                var pickupable = __instance.pickupables[j];
+                                if (pickupable != null && pickupable.storage == null
+                                    && FetchManager.IsFetchablePickup(pickupable, chore, chore.destination)
+                                    && TryGetHolder(pickupable, out var holder))
+                                {
+                                    holder.RefreshTimestamp();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // для отслеживания областей досягаемости рук
+        [HarmonyPatch(typeof(SolidTransferArm), nameof(SolidTransferArm.AsyncUpdate))]
+        private static class SolidTransferArm_AsyncUpdate
+        {
+            private static bool Prepare() => ModOptions.Instance.HoldMode.Enabled;
+            /*
+                MinionGroupProber.Get().Occupy(list1);
+            +++ TransferArmGroupProber.Get().Occupy(list1);
+                MinionGroupProber.Get().Vacate(list2);
+            +++ TransferArmGroupProber.Get().Vacate(list2);
+            */
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                return instructions.Transpile(method, transpiler);
+            }
+
+            private static bool transpiler(ref List<CodeInstruction> instructions)
+            {
+                var occupy = typeof(MinionGroupProber).GetMethodSafe(nameof(MinionGroupProber.Occupy), false, typeof(List<int>));
+                var vacate = typeof(MinionGroupProber).GetMethodSafe(nameof(MinionGroupProber.Vacate), false, typeof(List<int>));
+                var get = typeof(TransferArmGroupProber).GetMethodSafe(nameof(TransferArmGroupProber.Get), true);
+                if (occupy != null && vacate != null && get != null)
+                {
+                    int i = instructions.FindIndex(inst => inst.Calls(occupy));
+                    int j = instructions.FindIndex(inst => inst.Calls(vacate));
+                    if (i == -1 || j == -1)
+                        return false;
+                    // в обратном порядке
+                    instructions.Insert(j + 1, instructions[j].Clone());
+                    instructions.Insert(j + 1, instructions[j - 1].Clone());
+                    instructions.Insert(j + 1, new CodeInstruction(OpCodes.Call, get));
+                    instructions.Insert(i + 1, instructions[i].Clone());
+                    instructions.Insert(i + 1, instructions[i - 1].Clone());
+                    instructions.Insert(i + 1, new CodeInstruction(OpCodes.Call, get));
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(SolidTransferArm), nameof(SolidTransferArm.OnCleanUp))]
+        private static class SolidTransferArm_OnCleanUp
+        {
+            private static bool Prepare() => ModOptions.Instance.HoldMode.Enabled;
+            private static void Prefix(HashSet<int> ___reachableCells)
+            {
+                TransferArmGroupProber.Get().Vacate(___reachableCells.ToList());
+            }
+        }
+
+        // присоседимся к FetchableMonitor чтобы дёргать из Pickupable без GetComponent
+        private static FetchableMonitor.ObjectParameter<AutomatableHolder> PickupableHolder;
+
+        [HarmonyPatch(typeof(FetchableMonitor), nameof(FetchableMonitor.InitializeStates))]
+        private static class FetchableMonitor_InitializeStates
+        {
+            private static bool Prepare() => ModOptions.Instance.HoldMode.Enabled;
+            private static void Postfix(FetchableMonitor __instance)
+            {
+                PickupableHolder = __instance.AddParameter(nameof(AutomatableHolder), new FetchableMonitor.ObjectParameter<AutomatableHolder>());
+                __instance.root.EventHandler(GameHashes.OnStore, OnStore);
+            }
+            private static void OnStore(FetchableMonitor.Instance smi)
+            {
+                if (smi.pickupable.storage != null)
+                    PickupableHolder.Get(smi)?.SetZeroTimeout();
+            }
+        }
+
+        private static bool TryGetHolder(Pickupable pickupable, out AutomatableHolder holder)
+        {
+            if (pickupable != null && pickupable.fetchable_monitor != null)
+            {
+                holder = PickupableHolder.Get(pickupable.fetchable_monitor);
+                if (holder == null)
+                {
+                    holder = new();
+                    PickupableHolder.Set(holder, pickupable.fetchable_monitor);
+                    // при первом обращении, а это скорее всего сразу после спавна
+                    // если кусок в зоне досягаемости руки - зарезервируем ненадолго
+                    if (pickupable.storage == null && TransferArmGroupProber.Get().IsReachable(pickupable.cachedCell))
+                        holder.SetShortTimeout();
+                }
+                return true;
+            }
+            else
+            {
+                holder = null;
+                return false;
+            }
+        }
+        #endregion
     }
 }

@@ -13,10 +13,15 @@ msgctxt "NoManualDelivery.STRINGS.MOD_TITLE"
 msgid "No Manual Delivery"
 msgstr "Без ручной доставки"
 
+#. NoManualDelivery.STRINGS.AUTOMATABLE_TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.AUTOMATABLE_TOOLTIP"
+msgid "Allow only if the {SOLIDTRANSFERARM} can't do it in a certain time"
+msgstr "Разрешить только если {SOLIDTRANSFERARM} не сможет сделать это за определенное время"
+
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME"
-msgid "Duplicants can always pick up Food and Medicine."
-msgstr "Дупликанты всегда могут брать еду и лекарства."
+msgid "Duplicants can always pick up Food and Medicine"
+msgstr "Дупликанты всегда могут брать еду и лекарства"
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP"
@@ -25,8 +30,8 @@ msgstr "Дупликанты будут игнорировать чекбокс 
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.NAME
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.NAME"
-msgid "Duplicants can always pick up Water from {ICEKETTLE}."
-msgstr "Дупликанты всегда могут брать Воду из {ICEKETTLE}."
+msgid "Duplicants can always pick up Water from {ICEKETTLE}"
+msgstr "Дупликанты всегда могут брать Воду из {ICEKETTLE}"
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.TOOLTIP
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.TOOLTIP"
@@ -35,11 +40,46 @@ msgstr "Дупликанты будут игнорировать чекбокс 
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME"
-msgid "{SOLIDTRANSFERARM} can pick up and deliver liquid/gas Bottles and Canisters."
-msgstr "{SOLIDTRANSFERARM} может подбирать и доставлять \nжидкостные/газовые бутылки и канистры."
+msgid "{SOLIDTRANSFERARM} can pick up and deliver liquid/gas Bottles and Canisters"
+msgstr "{SOLIDTRANSFERARM} может подбирать и доставлять \nжидкостные/газовые бутылки и канистры"
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP"
 msgid "Also adds the {ALLOWMANUALBUTTON} checkbox to the Pitcher Pump, Canister Filler, Bottle Emptier and Canister Emptier."
 msgstr "Также добавляет чекбокс {ALLOWMANUALBUTTON}\nк Ручному насосу, Заполнителю канистр, Опустошителю бутылок и Опустошителю канистр."
+
+#. NoManualDelivery.STRINGS.OPTIONS.BYDEFAULT.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.BYDEFAULT.NAME"
+msgid "Turn it on for newly built Buildings"
+msgstr "Включить это для свежепостроенных построек"
+
+#. NoManualDelivery.STRINGS.OPTIONS.CHORES.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.CHORES.NAME"
+msgid "Enable for Buildings"
+msgstr "Включить для построек"
+
+#. NoManualDelivery.STRINGS.OPTIONS.CHORES.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.CHORES.TOOLTIP"
+msgid "Additional the {ALLOWMANUALBUTTON} checkbox mode with ★.\nDuplicants will deliver items only if the {SOLIDTRANSFERARM} can't do it in a certain time."
+msgstr "Дополнительный режим чекбокса {ALLOWMANUALBUTTON} со ★.\nДупликанты доставят предметы только если {SOLIDTRANSFERARM} не сможет сделать это за определенное время."
+
+#. NoManualDelivery.STRINGS.OPTIONS.HOLDMODE.CATEGORY
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.HOLDMODE.CATEGORY"
+msgid "★ Intellectual mode"
+msgstr "★ Интеллектуальный режим"
+
+#. NoManualDelivery.STRINGS.OPTIONS.ITEMS.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ITEMS.NAME"
+msgid "Enable for Items on the floor"
+msgstr "Включить для предметов на полу"
+
+#. NoManualDelivery.STRINGS.OPTIONS.ITEMS.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ITEMS.TOOLTIP"
+msgid "Duplicants will pick up Items on the floor only if the {SOLIDTRANSFERARM} can't do it in a certain time."
+msgstr "Дупликанты будут подбирать предметы на полу только если {SOLIDTRANSFERARM} не сможет сделать это за определенное время."
+
+#. NoManualDelivery.STRINGS.OPTIONS.TIMEOUT.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.TIMEOUT.NAME"
+msgid "Timeout"
+msgstr "Тайм-аут"
 

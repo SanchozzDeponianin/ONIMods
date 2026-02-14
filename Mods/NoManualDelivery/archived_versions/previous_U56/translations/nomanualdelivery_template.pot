@@ -3,11 +3,6 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
-#. NoManualDelivery.STRINGS.AUTOMATABLE_TOOLTIP
-msgctxt "NoManualDelivery.STRINGS.AUTOMATABLE_TOOLTIP"
-msgid "Allow only if the {SOLIDTRANSFERARM} can't do it in a certain time"
-msgstr ""
-
 #. NoManualDelivery.STRINGS.MOD_DESCRIPTION
 msgctxt "NoManualDelivery.STRINGS.MOD_DESCRIPTION"
 msgid "Adds a \"Allow Manual Use\" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings."
@@ -20,7 +15,7 @@ msgstr ""
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME"
-msgid "Duplicants can always pick up Food and Medicine"
+msgid "Duplicants can always pick up Food and Medicine."
 msgstr ""
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP
@@ -30,7 +25,7 @@ msgstr ""
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.NAME
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.NAME"
-msgid "Duplicants can always pick up Water from {ICEKETTLE}"
+msgid "Duplicants can always pick up Water from {ICEKETTLE}."
 msgstr ""
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.TOOLTIP
@@ -40,46 +35,11 @@ msgstr ""
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME"
-msgid "{SOLIDTRANSFERARM} can pick up and deliver liquid/gas Bottles and Canisters"
+msgid "{SOLIDTRANSFERARM} can pick up and deliver liquid/gas Bottles and Canisters."
 msgstr ""
 
 #. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP
 msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP"
 msgid "Also adds the {ALLOWMANUALBUTTON} checkbox to the Pitcher Pump, Canister Filler, Bottle Emptier and Canister Emptier."
-msgstr ""
-
-#. NoManualDelivery.STRINGS.OPTIONS.BYDEFAULT.NAME
-msgctxt "NoManualDelivery.STRINGS.OPTIONS.BYDEFAULT.NAME"
-msgid "Turn it on for newly built Buildings"
-msgstr ""
-
-#. NoManualDelivery.STRINGS.OPTIONS.CHORES.NAME
-msgctxt "NoManualDelivery.STRINGS.OPTIONS.CHORES.NAME"
-msgid "Enable for Buildings"
-msgstr ""
-
-#. NoManualDelivery.STRINGS.OPTIONS.CHORES.TOOLTIP
-msgctxt "NoManualDelivery.STRINGS.OPTIONS.CHORES.TOOLTIP"
-msgid "Additional the {ALLOWMANUALBUTTON} checkbox mode with ★.\nDuplicants will deliver items only if the {SOLIDTRANSFERARM} can't do it in a certain time."
-msgstr ""
-
-#. NoManualDelivery.STRINGS.OPTIONS.HOLDMODE.CATEGORY
-msgctxt "NoManualDelivery.STRINGS.OPTIONS.HOLDMODE.CATEGORY"
-msgid "★ Intellectual mode"
-msgstr ""
-
-#. NoManualDelivery.STRINGS.OPTIONS.ITEMS.NAME
-msgctxt "NoManualDelivery.STRINGS.OPTIONS.ITEMS.NAME"
-msgid "Enable for Items on the floor"
-msgstr ""
-
-#. NoManualDelivery.STRINGS.OPTIONS.ITEMS.TOOLTIP
-msgctxt "NoManualDelivery.STRINGS.OPTIONS.ITEMS.TOOLTIP"
-msgid "Duplicants will pick up Items on the floor only if the {SOLIDTRANSFERARM} can't do it in a certain time."
-msgstr ""
-
-#. NoManualDelivery.STRINGS.OPTIONS.TIMEOUT.NAME
-msgctxt "NoManualDelivery.STRINGS.OPTIONS.TIMEOUT.NAME"
-msgid "Timeout"
 msgstr ""
 

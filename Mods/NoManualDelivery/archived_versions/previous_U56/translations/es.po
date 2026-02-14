@@ -1,0 +1,37 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+"Last-Translator: edubistkrank\n"
+"Language: es_ES\n"
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME"
+msgid "Duplicants can always pick up Food and Medicine."
+msgstr "Los Duplicantes siempre pueden coger Comida y Medicinas."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP"
+msgid "Duplicants will ignore the {ALLOWMANUALBUTTON} checkbox when picking up food and medicine to eat it."
+msgstr "Los Duplicantes ignorarán la casilla {ALLOWMANUALBUTTON} cuando cojan Comida y Medicina para comer."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.NAME"
+msgid "Duplicants can always pick up Water from {ICEKETTLE}."
+msgstr "Los Duplicantes siempre podrán coger Agua de la {ICEKETTLE}."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.TOOLTIP"
+msgid "Duplicants will ignore the {ALLOWMANUALBUTTON} checkbox when picking up Water from {ICEKETTLE}."
+msgstr "Los Duplicantes ignorarán la casilla {ALLOWMANUALBUTTON} cuando cojan Agua de la {ICEKETTLE}."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME"
+msgid "{SOLIDTRANSFERARM} can pick up and deliver liquid/gas Bottles and Canisters."
+msgstr "El {SOLIDTRANSFERARM} podrá coger y entregar Botellas y Bombonas de líquido/gas."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP"
+msgid "Also adds the {ALLOWMANUALBUTTON} checkbox to the Pitcher Pump, Canister Filler, Bottle Emptier and Canister Emptier."
+msgstr "Añade la casilla {ALLOWMANUALBUTTON} a Bomba Manual, Llenador de Bombonas, Vaciador de Botellas y Vaciador de Bombonas."
+

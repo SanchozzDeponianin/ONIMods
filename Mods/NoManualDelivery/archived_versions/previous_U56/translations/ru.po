@@ -1,0 +1,45 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. NoManualDelivery.STRINGS.MOD_DESCRIPTION
+msgctxt "NoManualDelivery.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a \"Allow Manual Use\" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings."
+msgstr "Добавляет флажок \"Разрешить использование вручную\" для очень многих построек, чтобы эффективно использовать конвейерную систему и предотвратить доставку ресурсов дупликантами вручную в эти постройки."
+
+#. NoManualDelivery.STRINGS.MOD_TITLE
+msgctxt "NoManualDelivery.STRINGS.MOD_TITLE"
+msgid "No Manual Delivery"
+msgstr "Без ручной доставки"
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME"
+msgid "Duplicants can always pick up Food and Medicine."
+msgstr "Дупликанты всегда могут брать еду и лекарства."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP"
+msgid "Duplicants will ignore the {ALLOWMANUALBUTTON} checkbox when picking up food and medicine to eat it."
+msgstr "Дупликанты будут игнорировать чекбокс {ALLOWMANUALBUTTON}\nкогда подбирают еду и лекарства, чтобы съесть их."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.NAME"
+msgid "Duplicants can always pick up Water from {ICEKETTLE}."
+msgstr "Дупликанты всегда могут брать Воду из {ICEKETTLE}."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.TOOLTIP"
+msgid "Duplicants will ignore the {ALLOWMANUALBUTTON} checkbox when picking up Water from {ICEKETTLE}."
+msgstr "Дупликанты будут игнорировать чекбокс {ALLOWMANUALBUTTON} когда берут воду из {ICEKETTLE}."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME"
+msgid "{SOLIDTRANSFERARM} can pick up and deliver liquid/gas Bottles and Canisters."
+msgstr "{SOLIDTRANSFERARM} может подбирать и доставлять \nжидкостные/газовые бутылки и канистры."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP"
+msgid "Also adds the {ALLOWMANUALBUTTON} checkbox to the Pitcher Pump, Canister Filler, Bottle Emptier and Canister Emptier."
+msgstr "Также добавляет чекбокс {ALLOWMANUALBUTTON}\nк Ручному насосу, Заполнителю канистр, Опустошителю бутылок и Опустошителю канистр."
+
