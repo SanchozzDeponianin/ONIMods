@@ -233,6 +233,10 @@ namespace ControlYourRobots
                         {
                             instructions[i].operand = can_reach_approachable;
                             instructions.RemoveAt(i - 1);
+                            // похоже начиная с У57 стало небезопасно дёргать Navigator.CanReach(IApproachable) вне главного потока
+                            var precondition = FetchChore.CanFetchDroneComplete;
+                            precondition.canExecuteOnAnyThread = false;
+                            Traverse.Create(typeof(FetchChore)).Field<Chore.Precondition>(nameof(FetchChore.CanFetchDroneComplete)).Value = precondition;
                         }
                     }
                     return true;
