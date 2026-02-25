@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>More Plant Mutations</Title>
     <Description>Adds some new plant mutations.</Description>
-    <ModVersion>1.0.1</ModVersion>
+    <ModVersion>1.0.2</ModVersion>
     <RequiredDlcIds>EXPANSION1_ID</RequiredDlcIds>
     <UsesPLib>true</UsesPLib>
     <UsesPublicise>true</UsesPublicise>

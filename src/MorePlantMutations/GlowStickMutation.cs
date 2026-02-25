@@ -19,7 +19,7 @@ namespace MorePlantMutations
             EmitRadsMultiplier = new Attribute(
                 id: nameof(GlowStickMutation) + "." + nameof(EmitRadsMultiplier),
                 is_trainable: false,
-                show_in_ui: Attribute.Display.Details,
+                show_in_ui: Attribute.Display.Never,
                 is_profession: false,
                 base_value: 0f);
             Db.Get().PlantAttributes.Add(EmitRadsMultiplier);
