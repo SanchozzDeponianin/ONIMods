@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
+using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
 using PeterHan.PLib.Options;
 
@@ -98,6 +100,27 @@ namespace CrabsProfit
                 def.onGrowDropID = CrabFreshWaterShellConfig.ID;
                 def.onGrowDropUnits = ModOptions.Instance.BabyShellMass;
                 FixDrop(__result);
+            }
+        }
+
+        // подавляем всплывающее
+        [HarmonyPatch]
+        private static class PopFXManager_SpawnFX
+        {
+            private static bool Prepare() => TargetMethod() != null;
+            private static MethodBase TargetMethod()
+            {
+                return typeof(PopFXManager).GetOverloadWithMostArguments(nameof(PopFXManager.SpawnFX), false,
+                    typeof(Sprite), typeof(Sprite), typeof(string));
+            }
+            private static bool Prefix(string text, ref PopFX __result)
+            {
+                if (text == RandomOreConfig.ProperName)
+                {
+                    __result = null;
+                    return false;
+                }
+                return true;
             }
         }
     }

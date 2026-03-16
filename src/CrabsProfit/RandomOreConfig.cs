@@ -10,10 +10,12 @@ namespace CrabsProfit
     {
         public const string ID = "CrabsProfitRandomOre";
         public static readonly Tag TAG = TagManager.Create(ID);
+        internal static string ProperName;
 
         public virtual string[] GetDlcIds() => null;
         public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
         public string[] GetForbiddenDlcIds() => null;
+        public string[] GetAnyRequiredDlcIds() => null;
 
         public GameObject CreatePrefab()
         {
@@ -33,20 +35,24 @@ namespace CrabsProfit
                 isPickupable: false,
                 sortOrder: 0,
                 element: SimHashes.Creature,
-                additionalTags: null);
+                additionalTags: new() { GameTags.HideFromCodex, GameTags.HideFromSpawnTool });
+            ProperName = go.GetProperName();
             return go;
         }
 
         public void OnPrefabInit(GameObject inst) { }
         public void OnSpawn(GameObject inst)
         {
-            var ore = GameUtil.KInstantiate(Assets.GetPrefab(GetRandomOreId()), inst.transform.position, Grid.SceneLayer.Ore);
+            var prefab = Assets.GetPrefab(GetRandomOreId());
+            var ore = GameUtil.KInstantiate(prefab, inst.transform.position, Grid.SceneLayer.Ore);
             var ore_pe = ore.GetComponent<PrimaryElement>();
             var my_pe = inst.GetComponent<PrimaryElement>();
             ore_pe.Units = my_pe.Units;
             ore_pe.Temperature = my_pe.Temperature;
             ore.SetActive(true);
             ore_pe.AddDisease(my_pe.DiseaseIdx, my_pe.DiseaseCount, string.Empty);
+            PopFXManager.Instance.SpawnFX(Def.GetUISprite(prefab, "ui", false).first, PopFXManager.Instance.sprite_Plus,
+                prefab.GetProperName(), ore.transform, Vector3.zero);
             Util.KDestroyGameObject(inst);
         }
 

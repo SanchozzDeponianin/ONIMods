@@ -14,6 +14,7 @@ namespace CrabsProfit
         public virtual string[] GetDlcIds() => null;
         public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
         public string[] GetForbiddenDlcIds() => null;
+        public string[] GetAnyRequiredDlcIds() => null;
 
         public GameObject CreatePrefab()
         {
