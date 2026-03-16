@@ -24,17 +24,6 @@ namespace DumpIncorrectFertilizers
             return new WorkChore<DumpIncorrectFertilizersWorkable>(Db.Get().ChoreTypes.EmptyStorage, workable, only_when_operational: false);
         }
 
-        [HarmonyPatch(typeof(FertilizationMonitor), nameof(FertilizationMonitor.InitializeStates))]
-        private static class FertilizationMonitor_InitializeStates
-        {
-            private static void Postfix(FertilizationMonitor __instance)
-            {
-                __instance.replanted.starved.wrongFert
-                    .ToggleStatusItem(Db.Get().BuildingStatusItems.AwaitingEmptyBuilding)
-                    .ToggleRecurringChore(smi => CreateDumpChore(smi.sm.fertilizerStorage.Get(smi)), smi => smi.sm.fertilizerStorage.Get(smi) != null);
-            }
-        }
-
         [HarmonyPatch(typeof(IrrigationMonitor), nameof(IrrigationMonitor.InitializeStates))]
         private static class IrrigationMonitor_InitializeStates
         {
