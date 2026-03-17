@@ -174,12 +174,12 @@ namespace ControlYourRobots
             }
         }
 
-        // флудо может брать бутылки из наливайки, чайника, набутыливателей и т.п. и штуки под водой
+        // флудо может брать бутылки из наливайки, чайника, набутыливателей и т.п.
         [HarmonyPatch]
         private static class FetchChore_IsFetchTargetAvailable
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID)
-                && (ModOptions.Instance.flydo_can_liquid_source || ModOptions.Instance.flydo_can_underwater);
+                && ModOptions.Instance.flydo_can_liquid_source;
 
             private static IEnumerable<MethodBase> TargetMethods()
             {
@@ -194,11 +194,6 @@ namespace ControlYourRobots
             /*
                 if (blablabla
             ---     && (pickupable.targetWorkable == null || pickupable.targetWorkable as Pickupable != null)
-                    && blablabla...navigator.CanReach(
-            ---         pickupable.cachedCell))
-            +++         pickupable.GetProperlyCell))
-            или
-            +++         pickupable))
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
             {
@@ -208,47 +203,9 @@ namespace ControlYourRobots
             private static bool transpiler(ref List<CodeInstruction> instructions, MethodBase method)
             {
                 var targetWorkable = typeof(Pickupable).GetFieldSafe(nameof(Pickupable.targetWorkable), false);
-                var cachedCell = typeof(Pickupable).GetPropertySafe<int>(nameof(Pickupable.cachedCell), false)?.GetGetMethod();
-                var properlyCell = typeof(FetchChore_IsFetchTargetAvailable).GetMethodSafe(nameof(GetProperlyCell), true, PPatchTools.AnyArguments);
-                var can_reach_cell = typeof(Navigator).GetMethodSafe(nameof(Navigator.CanReach), false, typeof(int));
-                var can_reach_approachable = typeof(Navigator).GetMethodSafe(nameof(Navigator.CanReach), false, typeof(IApproachable));
-
-                if (targetWorkable != null && cachedCell != null && properlyCell != null && can_reach_cell != null && can_reach_approachable != null)
-                {
-                    int i;
-                    if (ModOptions.Instance.flydo_can_liquid_source)
-                    {
-                        instructions.RemoveAll(inst => inst.LoadsField(targetWorkable));
-                        if (!ModOptions.Instance.flydo_can_underwater)
-                        {
-                            i = instructions.FindIndex(inst => inst.Calls(cachedCell));
-                            if (i != -1)
-                                instructions[i].operand = properlyCell;
-                        }
-                    }
-                    if (ModOptions.Instance.flydo_can_underwater)
-                    {
-                        i = instructions.FindIndex(inst => inst.Calls(can_reach_cell));
-                        if (i != -1 && instructions[i - 1].Calls(cachedCell))
-                        {
-                            instructions[i].operand = can_reach_approachable;
-                            instructions.RemoveAt(i - 1);
-                            // похоже начиная с У57 стало небезопасно дёргать Navigator.CanReach(IApproachable) вне главного потока
-                            var precondition = FetchChore.CanFetchDroneComplete;
-                            precondition.canExecuteOnAnyThread = false;
-                            Traverse.Create(typeof(FetchChore)).Field<Chore.Precondition>(nameof(FetchChore.CanFetchDroneComplete)).Value = precondition;
-                        }
-                    }
-                    return true;
-                }
+                if (targetWorkable != null)
+                    return instructions.RemoveAll(inst => inst.LoadsField(targetWorkable)) > 0;
                 return false;
-            }
-
-            // правильная клетка для проверки достижимости флудой для наливайки
-            private static int GetProperlyCell(Pickupable pickupable)
-            {
-                return (pickupable.targetWorkable != null && pickupable.targetWorkable is LiquidPumpingStation) ?
-                    Grid.CellAbove(pickupable.cachedCell) : pickupable.cachedCell;
             }
         }
 

@@ -54,11 +54,6 @@ namespace ControlYourRobots
         [JsonProperty]
         [Option]
         [RequireDLC(DlcManager.DLC3_ID)]
-        public bool flydo_can_underwater { get; set; } = false;
-
-        [JsonProperty]
-        [Option]
-        [RequireDLC(DlcManager.DLC3_ID)]
         public bool flydo_prefers_straight { get; set; } = false;
 
         [JsonProperty]

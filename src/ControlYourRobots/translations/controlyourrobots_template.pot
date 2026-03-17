@@ -38,11 +38,6 @@ msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_LIQUID_SOURCE.NAME"
 msgid "Flydo can use Pitcher Pump, Bottle Fillers, Ice Liquefier ect"
 msgstr ""
 
-#. ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_UNDERWATER.NAME
-msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_CAN_UNDERWATER.NAME"
-msgid "Flydo can pick up underwater things"
-msgstr ""
-
 #. ControlYourRobots.STRINGS.OPTIONS.FLYDO_PREFERS_STRAIGHT.NAME
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.FLYDO_PREFERS_STRAIGHT.NAME"
 msgid "Flydo prefers a straight movement instead of a zigzag"

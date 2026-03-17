@@ -48,10 +48,6 @@
             {
                 public static LocString NAME = "Flydo can use Pitcher Pump, Bottle Fillers, Ice Liquefier ect";
             }
-            public class FLYDO_CAN_UNDERWATER
-            {
-                public static LocString NAME = "Flydo can pick up underwater things";
-            }
             public class FLYDO_PREFERS_STRAIGHT
             {
                 public static LocString NAME = "Flydo prefers a straight movement instead of a zigzag";
