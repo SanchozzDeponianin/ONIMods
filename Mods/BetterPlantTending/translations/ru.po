@@ -165,8 +165,8 @@ msgstr "Фермеры не будут ускорять рост увядших 
 
 #. BetterPlantTending.STRINGS.OPTIONS.PREVENT_TENDING_GROWN_OR_WILTING.TOOLTIP
 msgctxt "BetterPlantTending.STRINGS.OPTIONS.PREVENT_TENDING_GROWN_OR_WILTING.TOOLTIP"
-msgid "Including fully grown plants, sleeping {GASGRASS} and the hunger {CRITTERTRAPPLANT}"
-msgstr "В том числе полностью выращенные растения, спящая {GASGRASS} и голодная {CRITTERTRAPPLANT}"
+msgid "Including fully grown plants pending harvest, the hunger {CRITTERTRAPPLANT}, the {SPACE_TREE} full of {SUGARWATER} ect"
+msgstr "В том числе полностью выращенные растения ожидающие сбора, голодная {CRITTERTRAPPLANT}, {SPACE_TREE} полное {SUGARWATER}а итд"
 
 #. BetterPlantTending.STRINGS.OPTIONS.SALTPLANT_ADJUST_GAS_CONSUMPTION.NAME
 msgctxt "BetterPlantTending.STRINGS.OPTIONS.SALTPLANT_ADJUST_GAS_CONSUMPTION.NAME"

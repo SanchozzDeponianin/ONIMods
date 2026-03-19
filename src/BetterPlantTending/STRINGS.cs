@@ -79,7 +79,7 @@ namespace BetterPlantTending
             public class PREVENT_TENDING_GROWN_OR_WILTING
             {
                 public static LocString NAME = "Farmers will not tinkering with wilted or non-growing plants";
-                public static LocString TOOLTIP = $"Including fully grown plants, sleeping {GASGRASS} and the hunger {CRITTERTRAPPLANT}";
+                public static LocString TOOLTIP = $"Including fully grown plants pending harvest, the hunger {CRITTERTRAPPLANT}, the {SPACE_TREE} full of {SUGARWATER} ect";
             }
             public class PREVENT_FERTILIZATION_IRRIGATION_NOT_GROWNING
             {

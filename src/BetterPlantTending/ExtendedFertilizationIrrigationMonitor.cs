@@ -48,8 +48,6 @@
 
         public static void Subscribe(StateMachine.Instance smi)
         {
-            if (!ModOptions.Instance.prevent_fertilization_irrigation_not_growning)
-                return;
             if (smi.IsNullOrDestroyed() || smi.GetMaster().IsNullOrDestroyed())
                 return;
             var monitor = smi.GetComponent<ExtendedFertilizationIrrigationMonitor>();
@@ -68,8 +66,6 @@
 
         public static void QueueUpdateAbsorbing(StateMachine.Instance smi)
         {
-            if (!ModOptions.Instance.prevent_fertilization_irrigation_not_growning)
-                return;
             if (smi.IsNullOrDestroyed() || smi.GetMaster().IsNullOrDestroyed())
                 return;
             var monitor = smi.GetComponent<ExtendedFertilizationIrrigationMonitor>();

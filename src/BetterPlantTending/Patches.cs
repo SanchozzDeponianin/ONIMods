@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
+using SanchozzONIMods.Shared;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
@@ -19,6 +20,7 @@ namespace BetterPlantTending
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
+            RotPileSilentNotification.Patch(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
             new POptions().RegisterOptions(this, typeof(ModOptions));
             ModOptions.Reload();
@@ -68,17 +70,6 @@ namespace BetterPlantTending
                             def.ignoreEffectGroup = new HashedString[] { def.effectId };
                     }
                 }
-            }
-        }
-
-        // подавим нотификацию когда собирается гнилой мутантный урожай
-        [HarmonyPatch(typeof(RotPile), nameof(RotPile.TryCreateNotification))]
-        private static class RotPile_TryCreateNotification
-        {
-            private static bool Prepare() => DlcManager.FeaturePlantMutationsEnabled();
-            private static bool Prefix(RotPile __instance)
-            {
-                return __instance.GetProperName() != global::STRINGS.ITEMS.FOOD.ROTPILE.NAME;
             }
         }
 
@@ -286,8 +277,7 @@ namespace BetterPlantTending
         private static bool ShouldAbsorb(StateMachine.Instance smi)
         {
             bool absorb = !smi.gameObject.HasTag(GameTags.Wilting);
-            if (absorb && ModOptions.Instance.prevent_fertilization_irrigation_not_growning
-                && smi.gameObject.TryGetComponent<ExtendedFertilizationIrrigationMonitor>(out var monitor))
+            if (absorb && smi.gameObject.TryGetComponent<ExtendedFertilizationIrrigationMonitor>(out var monitor))
                 absorb = absorb && monitor.ShouldAbsorb;
             return absorb;
         }
@@ -295,6 +285,7 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(FertilizationMonitor.Instance), nameof(FertilizationMonitor.Instance.StartAbsorbing))]
         private static class FertilizationMonitor_Instance_StartAbsorbing
         {
+            private static bool Prepare() => ModOptions.Instance.prevent_fertilization_irrigation_not_growning;
             private static bool Prefix(FertilizationMonitor.Instance __instance)
             {
                 bool absorb = ShouldAbsorb(__instance);
@@ -307,11 +298,7 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(FertilizationMonitor), nameof(FertilizationMonitor.InitializeStates))]
         private static class FertilizationMonitor_InitializeStates
         {
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-            {
-                return PPatchTools.ReplaceConstant(instructions, (int)GameHashes.WiltRecover, (int)GameHashes.TagsChanged, true);
-            }
-
+            private static bool Prepare() => ModOptions.Instance.prevent_fertilization_irrigation_not_growning;
             private static void Postfix(FertilizationMonitor __instance)
             {
                 __instance.replanted.fertilized.absorbing
@@ -323,6 +310,7 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(IrrigationMonitor.Instance), nameof(IrrigationMonitor.Instance.UpdateAbsorbing))]
         private static class IrrigationMonitor_Instance_UpdateIrrigation
         {
+            private static bool Prepare() => ModOptions.Instance.prevent_fertilization_irrigation_not_growning;
             private static void Prefix(IrrigationMonitor.Instance __instance, ref bool allow)
             {
                 allow = allow && ShouldAbsorb(__instance);
@@ -332,6 +320,7 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(IrrigationMonitor), nameof(IrrigationMonitor.InitializeStates))]
         private static class IrrigationMonitor_InitializeStates
         {
+            private static bool Prepare() => ModOptions.Instance.prevent_fertilization_irrigation_not_growning;
             private static void Postfix(IrrigationMonitor __instance)
             {
                 __instance.replanted.irrigated.absorbing
@@ -343,6 +332,7 @@ namespace BetterPlantTending
         [HarmonyPatch]
         private static class EntityTemplates_ExtendPlantToFertilizableIrrigated
         {
+            private static bool Prepare() => ModOptions.Instance.prevent_fertilization_irrigation_not_growning;
             private static IEnumerable<MethodBase> TargetMethods()
             {
                 return new List<MethodBase>()
@@ -363,6 +353,7 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(PlantBranch), nameof(PlantBranch.InitializeStates))]
         private static class PlantBranch_InitializeStates
         {
+            private static bool Prepare() => ModOptions.Instance.prevent_fertilization_irrigation_not_growning;
             private static void Postfix(PlantBranch __instance)
             {
                 __instance.root.EventHandler(GameHashes.Grow, (smi, data) =>
@@ -376,7 +367,8 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(SpaceTreePlant.Instance), nameof(SpaceTreePlant.Instance.OnBranchWiltStateChanged))]
         private static class SpaceTreePlant_Instance_OnBranchWiltStateChanged
         {
-            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC2_ID);
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
+                && ModOptions.Instance.prevent_fertilization_irrigation_not_growning;
 
             private static void Postfix(SpaceTreePlant.Instance __instance)
             {
@@ -388,7 +380,8 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(SpaceTreePlant), nameof(SpaceTreePlant.InitializeStates))]
         private static class SpaceTreePlant_InitializeStates
         {
-            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC2_ID);
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC2_ID)
+                && ModOptions.Instance.prevent_fertilization_irrigation_not_growning;
 
             private static void Postfix(SpaceTreePlant __instance)
             {
@@ -402,7 +395,8 @@ namespace BetterPlantTending
         [HarmonyPatch(typeof(VineBranch), nameof(VineBranch.InitializeStates))]
         private static class VineBranch_InitializeStates
         {
-            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC4_ID);
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC4_ID)
+                && ModOptions.Instance.prevent_fertilization_irrigation_not_growning;
 
             private static void QueueUpdate(VineBranch.Instance smi)
             {
