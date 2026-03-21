@@ -11,11 +11,8 @@ namespace CrabsProfit
         public const string ID = "CrabsProfitRandomOre";
         public static readonly Tag TAG = TagManager.Create(ID);
         internal static string ProperName;
-
-        public virtual string[] GetDlcIds() => null;
         public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
         public string[] GetForbiddenDlcIds() => null;
-        public string[] GetAnyRequiredDlcIds() => null;
 
         public GameObject CreatePrefab()
         {

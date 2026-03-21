@@ -5,6 +5,7 @@
     <Description>.</Description>
     <ModVersion>1.5.0</ModVersion>
     <DistributeMod>false</DistributeMod>
+    <TargetFramework>net48</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />

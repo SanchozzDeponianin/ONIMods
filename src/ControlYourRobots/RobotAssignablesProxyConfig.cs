@@ -6,8 +6,6 @@ namespace ControlYourRobots
     {
         public const string ID = "RobotAssignablesProxy";
 
-        public virtual string[] GetDlcIds() => null;
-
         public GameObject CreatePrefab()
         {
             var go = EntityTemplates.CreateEntity(ID, ID, true);

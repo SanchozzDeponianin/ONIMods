@@ -14,8 +14,6 @@ namespace ReBuildableAETN
         public static Tag TAG = TagManager.Create(ID);
         public static Tag MaterialBuildingTag = TagManager.Create("BuildingNeutroniumCore");
 
-        public virtual string[] GetDlcIds() => null;
-        public virtual string[] GetAnyRequiredDlcIds() => null;
         public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
         public string[] GetForbiddenDlcIds() => null;
 

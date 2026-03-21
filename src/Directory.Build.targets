@@ -61,10 +61,8 @@ namespace $(AssemblyName)
   </Target>
 
   <Target Name="CheckDependencies" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>First you need to compile the 'MSBuildTasksHelper' project.</ErrorText>
-    </PropertyGroup>
-    <Error Condition=" '$(DistributeMod)' == 'true' And !Exists('$(MSBuildTasksHelperDLL)') " Text="$(ErrorText)" />
+    <Error Condition=" '$(DistributeMod)' == 'true' And !Exists('$(MSBuildTasksHelperDLL)') "
+           Text="First you need to compile the 'MSBuildTasksHelper' project." />
   </Target>
 
   <!-- вкоряченные ресурсы -->
@@ -172,7 +170,6 @@ namespace $(AssemblyName)
     </SanchozzONIMods.GetReallyReferencedAssembliesAtFolder>
 
     <ILRepack
-        TargetPlatformVersion="v4"
         TargetKind="SameAsPrimaryAssembly"
         OutputFile="$(TargetPath)"
         InputAssemblies="@(InputAssemblies)"

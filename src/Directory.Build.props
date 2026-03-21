@@ -5,13 +5,14 @@
 
   <!-- конфигурации -->
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Platforms>Steam;Backup</Platforms>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>Latest</LangVersion>
     <OutputType>Library</OutputType>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NoWarn>MSB3277</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -91,7 +92,7 @@
   <ItemGroup Condition=" '$(DistributeMod)' == 'true' ">
     <!-- чтобы была документация
     <Reference Include="0Harmony" HintPath="$(GameFolder)/0Harmony.dll" /> -->
-    <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+    <PackageReference Include="Lib.Harmony" Version="2.4.2" />
     <Reference Include="Newtonsoft.Json" HintPath="$(GameFolder)/Newtonsoft.Json.dll" />
     <Reference Include="UnityEngine" HintPath="$(GameFolder)/UnityEngine.dll" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(GameFolder)/UnityEngine.CoreModule.dll" />
@@ -101,7 +102,6 @@
     <Reference Include="UnityEngine.UIModule" HintPath="$(GameFolder)/UnityEngine.UIModule.dll" />
     <Reference Include="Unity.TextMeshPro" HintPath="$(GameFolder)/Unity.TextMeshPro.dll" />
     <Reference Include="FMODUnity" HintPath="$(GameFolder)/FMODUnity.dll" />
-    <Reference Include="netstandard" HintPath="$(GameFolder)/netstandard.dll" />
   </ItemGroup>
 
   <!-- PLib -->

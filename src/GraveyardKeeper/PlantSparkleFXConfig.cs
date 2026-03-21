@@ -13,8 +13,6 @@ namespace GraveyardKeeper
             return go;
         }
 
-        public virtual string[] GetDlcIds() => null;
-
         public void OnPrefabInit(GameObject inst) { }
 
         public void OnSpawn(GameObject inst) { }

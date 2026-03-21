@@ -21,8 +21,6 @@ namespace Lagoo
         public const string ANIM_PREFIX = "lagoo_";
         private const int EGG_SORT_ORDER = 0;
 
-        public virtual string[] GetDlcIds() => null;
-        public virtual string[] GetAnyRequiredDlcIds() => null;
         public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
         public string[] GetForbiddenDlcIds() => null;
 

@@ -10,11 +10,8 @@ namespace CrabsProfit
     {
         public const string ID = "CrabFreshWaterShell";
         public static readonly Tag TAG = TagManager.Create(ID, CRAB_SHELL.VARIANT_FRESH_WATER.NAME);
-
-        public virtual string[] GetDlcIds() => null;
         public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
         public string[] GetForbiddenDlcIds() => null;
-        public string[] GetAnyRequiredDlcIds() => null;
 
         public GameObject CreatePrefab()
         {
