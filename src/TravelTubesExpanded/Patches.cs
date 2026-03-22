@@ -499,6 +499,20 @@ namespace TravelTubesExpanded
             }
         }
 
+        // если дупель проходит через скрещивание, отрубим ему асинхронный пересчёт путей
+        [HarmonyPatch(typeof(AsyncPathProber.Manager), nameof(AsyncPathProber.Manager.makeWorkOrder))]
+        private static class AsyncPathProber_Manager_MakeWorkOrder
+        {
+            private static void Postfix(ref AsyncPathProber.WorkOrder __result)
+            {
+                if (Grid.IsValidCell(__result.originCell) && __result.startingNavType == NavType.Tube
+                    && Grid.Objects[__result.originCell, (int)ObjectLayer.TravelTubeConnection] != null)
+                {
+                    __result.originCell = Grid.InvalidCell;
+                }
+            }
+        }
+
         // скрываем роботов из трубной двери
         [HarmonyPatch(typeof(AccessControlSideScreen), nameof(AccessControlSideScreen.RefreshContainerObjects))]
         private static class AccessControlSideScreen_RefreshContainerObjects
