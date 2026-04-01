@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
    
-    - id: create-zip
-      name: Create Zip
+    - name: Create Zip
+      id: create-zip
       run: |
         mkdir Zipped
         cd Mods/
@@ -21,34 +21,30 @@ jobs:
         find * -maxdepth 0 -type d -exec zip -rlq "../Zipped/{}.zip" "{}" \;
 
     - name: Delete old releases
-      uses: dev-drprasad/delete-older-releases@v0.3.4
-      with:
-        keep_latest: 0
-        delete_tag_pattern: AllModsRelease*
-        delete_tags: true
+      id: delete_release
       env:
         GITHUB_TOKEN: ${{ github.token }}
+      continue-on-error: true
+      run: |
+        gh release delete AllModsRelease --cleanup-tag --yes
 
     - name: Create GitHub release
       id: create_release
-      uses: actions/create-release@v1.1.4
       env:
         GITHUB_TOKEN: ${{ github.token }}
-      with:
-        tag_name: "AllModsRelease"
-        release_name: "Local Mod Download"
-        body_path: ".github/Release.md"
-        draft: false
-        prerelease: false
+      run: |
+        gh release create AllModsRelease --draft=true --prerelease=false --latest=false --title "Local Mod Download" --notes-file ".github/Release.md"
 
     - name: Upload files to github release
-      uses: svenstaro/upload-release-action@v2
-      with:
-        repo_token: ${{ github.token }}
-        file: Zipped/*.*
-        file_glob: true
-        tag: "AllModsRelease"
-        prerelease: false
-        overwrite: true
+      id: upload_files
       env:
         GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        gh release upload AllModsRelease "Zipped/*.zip" --clobber
+        
+    - name: Publish GitHub release
+      id: publish_release
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        gh release edit AllModsRelease --draft=false --prerelease=false --latest=true
