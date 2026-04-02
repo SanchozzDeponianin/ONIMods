@@ -60,8 +60,8 @@ msgstr "<style=\"KKeyword\">Малый металлический панцирь
 
 #. CrabsProfit.STRINGS.OPTIONS.BASE_ORE.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.BASE_ORE.NAME"
-msgid "Basic Ores"
-msgstr "Основные руды"
+msgid "<style=\"KKeyword\">Basic Ores</style>"
+msgstr "<style=\"KKeyword\">Основные руды</style>"
 
 #. CrabsProfit.STRINGS.OPTIONS.CHEMICAL_PROCESSING_ORE.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.CHEMICAL_PROCESSING_ORE.NAME"
@@ -90,13 +90,13 @@ msgstr "{CRABWOOD}, количество мяса, шт"
 
 #. CrabsProfit.STRINGS.OPTIONS.DLC1_ORE.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.DLC1_ORE.NAME"
-msgid "Spaced Out! Ores"
-msgstr "Руды Spaced Out!"
+msgid "<style=\"KKeyword\">Spaced Out!</style> Ores"
+msgstr "Руды <style=\"KKeyword\">Spaced Out!</style>"
 
 #. CrabsProfit.STRINGS.OPTIONS.EXOTIC_ORE.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.EXOTIC_ORE.NAME"
-msgid "Exotic Ores"
-msgstr "Экзотические руды"
+msgid "<style=\"KKeyword\">Exotic Ores</style>"
+msgstr "<style=\"KKeyword\">Экзотические руды</style>"
 
 #. CrabsProfit.STRINGS.OPTIONS.EXOTIC_ORE.TOOLTIP
 msgctxt "CrabsProfit.STRINGS.OPTIONS.EXOTIC_ORE.TOOLTIP"

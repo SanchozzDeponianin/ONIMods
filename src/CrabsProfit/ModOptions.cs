@@ -135,11 +135,13 @@ namespace CrabsProfit
 
             [JsonIgnore]
             [Option]
+            [RequireDLC(DlcManager.EXPANSION1_ID)]
             public LocText DLC1_Ore => null;
 
             [JsonProperty]
             [Option]
             [Limit(min_rare, max)]
+            [RequireDLC(DlcManager.EXPANSION1_ID)]
             public int UraniumOre { get; set; } = 1;
 
             [JsonIgnore]
@@ -163,16 +165,19 @@ namespace CrabsProfit
 
             [JsonIgnore]
             [Option]
+            [RequireMod("RonivansLegacy_ChemicalProcessing")]
             public LocText Chemical_Processing_Ore => null;
 
             [JsonProperty]
             [Option]
             [Limit(min_rare, max)]
+            [RequireMod("RonivansLegacy_ChemicalProcessing")]
             public int ArgentiteOre { get; set; } = 0;
 
             [JsonProperty]
             [Option]
             [Limit(min_rare, max)]
+            [RequireMod("RonivansLegacy_ChemicalProcessing")]
             public int AurichalciteOre { get; set; } = 0;
         }
 

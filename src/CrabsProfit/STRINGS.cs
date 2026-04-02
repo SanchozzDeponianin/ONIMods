@@ -67,15 +67,15 @@ namespace CrabsProfit
             }
             public class BASE_ORE
             {
-                public static LocString NAME = "Basic Ores";
+                public static LocString NAME = UI.FormatAsKeyWord("Basic Ores");
             }
             public class DLC1_ORE
             {
-                public static LocString NAME = "Spaced Out! Ores";
+                public static LocString NAME = $"{UI.FormatAsKeyWord("Spaced Out!")} Ores";
             }
             public class EXOTIC_ORE
             {
-                public static LocString NAME = "Exotic Ores";
+                public static LocString NAME = UI.FormatAsKeyWord("Exotic Ores");
                 public static LocString TOOLTIP = "These Ores exist in the game, but are not used.\nThey can be used by some mods.";
             }
             public class CHEMICAL_PROCESSING_ORE

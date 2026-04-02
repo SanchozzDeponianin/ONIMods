@@ -60,7 +60,7 @@ msgstr ""
 
 #. CrabsProfit.STRINGS.OPTIONS.BASE_ORE.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.BASE_ORE.NAME"
-msgid "Basic Ores"
+msgid "<style=\"KKeyword\">Basic Ores</style>"
 msgstr ""
 
 #. CrabsProfit.STRINGS.OPTIONS.CHEMICAL_PROCESSING_ORE.NAME
@@ -90,12 +90,12 @@ msgstr ""
 
 #. CrabsProfit.STRINGS.OPTIONS.DLC1_ORE.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.DLC1_ORE.NAME"
-msgid "Spaced Out! Ores"
+msgid "<style=\"KKeyword\">Spaced Out!</style> Ores"
 msgstr ""
 
 #. CrabsProfit.STRINGS.OPTIONS.EXOTIC_ORE.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.EXOTIC_ORE.NAME"
-msgid "Exotic Ores"
+msgid "<style=\"KKeyword\">Exotic Ores</style>"
 msgstr ""
 
 #. CrabsProfit.STRINGS.OPTIONS.EXOTIC_ORE.TOOLTIP
