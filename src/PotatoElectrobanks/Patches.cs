@@ -4,7 +4,9 @@ using TUNING;
 using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
+using SanchozzONIMods.Shared;
 using PeterHan.PLib.PatchManager;
+using PeterHan.PLib.Options;
 
 namespace PotatoElectrobanks
 {
@@ -23,7 +25,9 @@ namespace PotatoElectrobanks
         {
             if (!DlcManager.IsContentSubscribed(DlcManager.DLC3_ID) || this.LogModVersion()) return;
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
+            new POptions().RegisterOptions(this, typeof(ModOptions));
             base.OnLoad(harmony);
+            RotPileSilentNotification.Patch(harmony);
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -38,8 +42,11 @@ namespace PotatoElectrobanks
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AfterDbInit()
         {
-            STORAGEFILTERS.POWER_BANKS.Remove(GameTags.ChargedPortableBattery);
-            STORAGEFILTERS.POWER_BANKS.Add(NonPotatoPortableBattery);
+            if (!ModOptions.Instance.allow_discharger)
+            {
+                STORAGEFILTERS.POWER_BANKS.Remove(GameTags.ChargedPortableBattery);
+                STORAGEFILTERS.POWER_BANKS.Add(NonPotatoPortableBattery);
+            }
             STORAGEFILTERS.FOOD.Add(PotatoPortableBattery);
         }
 
@@ -277,16 +284,6 @@ namespace PotatoElectrobanks
                 {
                     pe.Mass = pe.Units;
                 }
-            }
-        }
-
-        // подавим нотификацию для гнили
-        [HarmonyPatch(typeof(RotPile), nameof(RotPile.TryCreateNotification))]
-        private static class RotPile_TryCreateNotification
-        {
-            private static bool Prefix(RotPile __instance)
-            {
-                return __instance.GetProperName() != global::STRINGS.ITEMS.FOOD.ROTPILE.NAME;
             }
         }
     }

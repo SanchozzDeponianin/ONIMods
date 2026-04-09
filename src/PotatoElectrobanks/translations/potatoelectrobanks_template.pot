@@ -23,3 +23,8 @@ msgctxt "PotatoElectrobanks.STRINGS.MOD_TITLE"
 msgid "Potato Power Banks"
 msgstr ""
 
+#. PotatoElectrobanks.STRINGS.OPTIONS.ALLOW_DISCHARGER.NAME
+msgctxt "PotatoElectrobanks.STRINGS.OPTIONS.ALLOW_DISCHARGER.NAME"
+msgid "Allow use in <style=\"KKeyword\">Dischargers</style>"
+msgstr ""
+

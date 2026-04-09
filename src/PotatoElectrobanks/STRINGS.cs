@@ -22,6 +22,14 @@ namespace PotatoElectrobanks
             }
         }
 
+        public class OPTIONS
+        {
+            public class ALLOW_DISCHARGER
+            {
+                public static LocString NAME = $"Allow use in {FormatAsKeyWord("Dischargers")}";
+            }
+        }
+
         internal static void DoReplacement()
         {
             LocString.CreateLocStringKeys(typeof(ITEMS));
