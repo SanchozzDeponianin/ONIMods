@@ -9,6 +9,10 @@ namespace MoreEmotions
     [RestartRequired]
     internal sealed class ModOptions : BaseOptions<ModOptions>
     {
+        [JsonIgnore]
+        [Option]
+        public LocText new_features => null;
+
         [JsonProperty]
         [Option]
         public bool wake_up_lazy_ass { get; set; } = true;
@@ -40,10 +44,6 @@ namespace MoreEmotions
         [JsonProperty]
         [Option]
         public bool full_bladder_add_effect { get; set; } = true;
-
-        [JsonProperty]
-        [Option]
-        public bool contaminated_food_emote { get; set; } = true;
 
         [JsonProperty]
         [Option]
@@ -83,10 +83,30 @@ namespace MoreEmotions
 
         [JsonProperty]
         [Option]
+        public bool need_shower_emote { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
         public bool fall_contusion_emote { get; set; } = true;
 
         [JsonProperty]
         [Option]
         public bool fall_contusion_add_effect { get; set; } = true;
+
+        [JsonIgnore]
+        [Option]
+        public LocText old_features => null;
+
+        [JsonProperty]
+        [Option]
+        public bool contaminated_food_emote { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool effect_added_emotes { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool radiation_pain_emote { get; set; } = true;
     }
 }

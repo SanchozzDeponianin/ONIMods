@@ -98,6 +98,16 @@ msgctxt "MoreEmotions.STRINGS.OPTIONS.DOUBLE_GREETING.NAME"
 msgid "Two \"Dual\" greetings with fists and hands"
 msgstr ""
 
+#. MoreEmotions.STRINGS.OPTIONS.EFFECT_ADDED_EMOTES.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.EFFECT_ADDED_EMOTES.NAME"
+msgid "Emotions of various Effects"
+msgstr ""
+
+#. MoreEmotions.STRINGS.OPTIONS.EFFECT_ADDED_EMOTES.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.OPTIONS.EFFECT_ADDED_EMOTES.TOOLTIP"
+msgid "Sore Back, Soggy Feet, Sopping Wet, Popped Eardrums, ect"
+msgstr ""
+
 #. MoreEmotions.STRINGS.OPTIONS.FALL_CONTUSION_ADD_EFFECT.NAME
 msgctxt "MoreEmotions.STRINGS.OPTIONS.FALL_CONTUSION_ADD_EFFECT.NAME"
 msgid "Enable debuff"
@@ -141,6 +151,26 @@ msgstr ""
 #. MoreEmotions.STRINGS.OPTIONS.MOONWALK_GREETING.NAME
 msgctxt "MoreEmotions.STRINGS.OPTIONS.MOONWALK_GREETING.NAME"
 msgid "\"Dancing\" greeting"
+msgstr ""
+
+#. MoreEmotions.STRINGS.OPTIONS.NEED_SHOWER_EMOTE.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.NEED_SHOWER_EMOTE.NAME"
+msgid "The \"I need a Shower right now\" Emotion"
+msgstr ""
+
+#. MoreEmotions.STRINGS.OPTIONS.NEW_FEATURES.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.NEW_FEATURES.NAME"
+msgid "<style=\"KKeyword\">New features:</style>"
+msgstr ""
+
+#. MoreEmotions.STRINGS.OPTIONS.OLD_FEATURES.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.OLD_FEATURES.NAME"
+msgid "<style=\"KKeyword\">Resurrected features:</style>"
+msgstr ""
+
+#. MoreEmotions.STRINGS.OPTIONS.RADIATION_PAIN_EMOTE.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.RADIATION_PAIN_EMOTE.NAME"
+msgid "The \"Radiation Pain\" Emotion"
 msgstr ""
 
 #. MoreEmotions.STRINGS.OPTIONS.RESPECT_GRAVE_ADD_EFFECT.NAME

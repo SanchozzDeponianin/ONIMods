@@ -14,6 +14,7 @@ body:
       multiple: false
       options:
         - Any Ice Liquefier
+        - Any Ice Maker
         - Aquatic Farm
         - Artifacts in Care Packages
         - Athletic Manual Generator
@@ -25,9 +26,11 @@ body:
         - Control your Robots
         - Configurable Automation-controlled Doors
         - Crabs Profit
+        - Dowsing Booster
         - Enclosed Telescope Tune-Up
         - Endless Telescope
         - Festive Halloween Spices
+        - Filterable Auto-Compost
         - Gassy Moo Eat Flowers
         - Graveyard Keeper
         - Hydrocactus
@@ -35,9 +38,12 @@ body:
         - Lagoo Revived
         - Mechanics Station
         - More Emotions
+        - More Plant Mutations
         - No Manual Delivery
+        - "Plants have died - Where ?"
         - Potato Power Banks
         - Rebuildable AETN
+        - Rendezvous Table
         - Relic Hunter
         - "Rover's Recharger"
         - "Sandbox: Mutant Plants"

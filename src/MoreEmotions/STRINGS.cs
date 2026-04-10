@@ -1,5 +1,6 @@
 ﻿using Klei.AI;
 using SanchozzONIMods.Lib;
+using static STRINGS.UI;
 
 namespace MoreEmotions
 {
@@ -44,6 +45,10 @@ namespace MoreEmotions
 
         public class OPTIONS
         {
+            public class NEW_FEATURES
+            {
+                public static LocString NAME = FormatAsKeyWord("New features:");
+            }
             public class WAKE_UP_LAZY_ASS
             {
                 public static LocString NAME = "\"Wake Up Lazy Ass!\"";
@@ -81,11 +86,6 @@ namespace MoreEmotions
             {
                 public static LocString NAME = "Enable debuff";
                 public static LocString TOOLTIP = "";
-            }
-            public class CONTAMINATED_FOOD_EMOTE
-            {
-                public static LocString NAME = "Yuck! Microbes!";
-                public static LocString TOOLTIP = "The emotion when a Duplicant eating contaminated Food";
             }
             public class STARVATION_EMOTE
             {
@@ -129,6 +129,10 @@ namespace MoreEmotions
                 public static LocString NAME = $"The \"Wet Hands\" Emotion";
                 public static LocString TOOLTIP = "Sometimes it happens after mopping or using the Washbasin";
             }
+            public class NEED_SHOWER_EMOTE
+            {
+                public static LocString NAME = $"The \"I need a Shower right now\" Emotion";
+            }
             public class FALL_CONTUSION_EMOTE
             {
                 public static LocString NAME = "Animation after falling from a height to the floor";
@@ -137,6 +141,25 @@ namespace MoreEmotions
             {
                 public static LocString NAME = "Enable debuff";
                 public static LocString TOOLTIP = $"If the height was more than {CONTUSION_HEIGHT}\n";
+            }
+
+            public class OLD_FEATURES
+            {
+                public static LocString NAME = FormatAsKeyWord("Resurrected features:");
+            }
+            public class CONTAMINATED_FOOD_EMOTE
+            {
+                public static LocString NAME = "Yuck! Microbes!";
+                public static LocString TOOLTIP = "The emotion when a Duplicant eating contaminated Food";
+            }
+            public class EFFECT_ADDED_EMOTES
+            {
+                public static LocString NAME = "Emotions of various Effects";
+                public static LocString TOOLTIP = "Sore Back, Soggy Feet, Sopping Wet, Popped Eardrums, ect";
+            }
+            public class RADIATION_PAIN_EMOTE
+            {
+                public static LocString NAME = "The \"Radiation Pain\" Emotion";
             }
         }
 

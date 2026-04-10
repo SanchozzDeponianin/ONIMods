@@ -27,6 +27,7 @@ namespace MoreEmotions
         public Emote FullBladder;
         public Emote EatHand;
         public Emote HandWipe;
+        public Emote Odor;
         public Emote Laugh;
         public Emote Respect;
         public Emote Respect_NoHat;
@@ -44,7 +45,7 @@ namespace MoreEmotions
         {
             InitializeEmotes();
             Instance = this;
-            Utils.MuteMouthFlapSpeech(FullBladder, Laugh, PutOff, MoonWalk);
+            Utils.MuteMouthFlapSpeech(FullBladder, Laugh, Odor, PutOff, MoonWalk);
         }
 
         private void InitializeEmotes()
@@ -63,6 +64,12 @@ namespace MoreEmotions
                 new EmoteStep{anim = "work_pst"}
             }, "anim_out_of_reach_binge_eat_kanim");
             HandWipe = new Emote(this, nameof(HandWipe), DEFAULT_STEPS, "anim_react_hand_wipe_kanim");
+            Odor = new Emote(this, nameof(Odor), new EmoteStep[]
+            {
+                new EmoteStep{anim = "idle_pre"},
+                new EmoteStep{anim = "idle_default"},
+                new EmoteStep{anim = "idle_pst"}
+            }, "anim_odor_kanim");
             Laugh = new Emote(this, nameof(Laugh), DEFAULT_STEPS, "anim_react_laugh_kanim");
             Respect = new Emote(this, nameof(Respect), DEFAULT_STEPS, "anim_react_respect_kanim");
             Respect_NoHat = new Emote(this, nameof(Respect_NoHat), new EmoteStep[] { new EmoteStep { anim = "react_no_hat" } }, "anim_react_respect_kanim");

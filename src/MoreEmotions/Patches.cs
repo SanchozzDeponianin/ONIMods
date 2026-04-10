@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using Klei.AI;
 using TUNING;
 using UnityEngine;
@@ -75,6 +76,7 @@ namespace MoreEmotions
             return true;
         }
 
+        #region Sleep
         // пинать нарколептика
         public static GameHashes SleepDisturbedByKick = (GameHashes)Hash.SDBMLower(nameof(SleepDisturbedByKick));
         private const float STAMINA_THRESHOLD = 0.2f;
@@ -296,7 +298,8 @@ namespace MoreEmotions
                 }
             }
         }
-
+        #endregion
+        #region Sortir
         // а) очень хочет в сортир
         // б) обделался и был обсмеян
         [HarmonyPatch(typeof(BladderMonitor), nameof(BladderMonitor.InitializeStates))]
@@ -349,7 +352,8 @@ namespace MoreEmotions
                 else return null;
             }
         }
-
+        #endregion
+        #region Hungry
         // очень голодная анимация
         [HarmonyPatch(typeof(CalorieMonitor), nameof(CalorieMonitor.InitializeStates))]
         private static class CalorieMonitor_InitializeStates
@@ -392,7 +396,8 @@ namespace MoreEmotions
                 }
             }
         }
-
+        #endregion
+        #region Wet Hands
         // вытирание рук об себя а) после умывайника б) после вытирания
         private static void CreateHandWipeReactable(WorkerBase worker)
         {
@@ -437,7 +442,45 @@ namespace MoreEmotions
                     CreateHandWipeReactable(worker);
             }
         }
+        #endregion
+        #region Shower
+        // нюх нюх при походе в душъ
+        [HarmonyPatch(typeof(Shower.ShowerSM), nameof(Shower.ShowerSM.CreateShowerChore))]
+        private static class Shower_ShowerSM_CreateShowerChore
+        {
+            private static bool Prepare() => ModOptions.Instance.need_shower_emote;
+            private static void Postfix(Chore __result)
+            {
+                var chore = (StandardChoreBase)__result;
+                chore.onBegin += CreateOdorReactable;
+                chore.onComplete += CancelReactable;
+            }
 
+            private static void CreateOdorReactable(Chore chore)
+            {
+                if (UnityEngine.Random.value < 0.25f)
+                {
+                    var monitor = chore.driver.GetSMI<ReactionMonitor.Instance>();
+                    if (!monitor.IsNullOrStopped())
+                    {
+                        var reactable = new SelfEmoteReactable(chore.driver.gameObject, "Odor", Db.Get().ChoreTypes.EmoteHighPriority, 0f, 30f, 60f, 10f);
+                        reactable.SetEmote(MoreMinionEmotes.Instance.Odor)
+                            .AddPrecondition(ReactorIsOnFloor);
+                        reactable.preventChoreInterruption = true;
+                        monitor.AddOneshotReactable(reactable);
+                    }
+                }
+            }
+
+            private static void CancelReactable(Chore chore)
+            {
+                var monitor = chore.driver.GetSMI<ReactionMonitor.Instance>();
+                if (!monitor.IsNullOrStopped())
+                    monitor.CancelOneShotReactables(MoreMinionEmotes.Instance.Odor);
+            }
+        }
+        #endregion
+        #region Death
         // скорьбь а) возле трупа б) возле могилы
         [HarmonyPatch(typeof(DeathMonitor), nameof(DeathMonitor.InitializeStates))]
         private static class DeathMonitor_InitializeStates
@@ -497,7 +540,8 @@ namespace MoreEmotions
                 return reactable;
             }
         }
-
+        #endregion
+        #region Stress
         // успокаивание стрессующего
         [HarmonyPatch(typeof(StressBehaviourMonitor), nameof(StressBehaviourMonitor.InitializeStates))]
         private static class StressBehaviourMonitor_InitializeStates
@@ -509,7 +553,8 @@ namespace MoreEmotions
                 __instance.stressed.tierOne.ToggleStateMachine(smi => new StressCheeringMonitor.Instance(smi.master));
             }
         }
-
+        #endregion
+        #region Greeting
 #if DEBUG
         // для тесту, приветствие чащее
         [HarmonyPatch(typeof(DupeGreetingManager), "OnPrefabInit")]
@@ -633,7 +678,8 @@ namespace MoreEmotions
                 return false;
             }
         }
-
+        #endregion
+        #region Germs
         // возвращаем анимацию заражённой еды
         // но прикрутим её также к другим возможным источникам - типа коффее
         private static GermExposureMonitor.State react_contaminated_food;
@@ -675,7 +721,8 @@ namespace MoreEmotions
                 }
             }
         }
-
+        #endregion
+        #region Kontuzia
         // контузия при падении
         [HarmonyPatch(typeof(FallMonitor), nameof(FallMonitor.InitializeStates))]
         private static class FallMonitor_InitializeStates
@@ -737,5 +784,108 @@ namespace MoreEmotions
                 __result = __result.Append(smi => new ContusionFX.Instance(smi.master));
             }
         }
+        #endregion
+        #region Effects
+        // исправляем эмоции в соотвествии с 
+        // https://forums.kleientertainment.com/klei-bug-tracker/oni/about-emotions-animations-when-dupe-receiving-an-effect-r51053
+        [HarmonyPatch(typeof(Emote), nameof(Emote.IsValidForController))]
+        internal static class Emote_IsValidForController
+        {
+            private static bool Prepare() => EffectInstance_RegisterEmote.Prepare() || RadiationMonitor_CheckRadiationLevel.Prepare();
+
+            private static bool Prefix(Emote __instance, KBatchedAnimController animController, ref bool __result)
+            {
+                bool kbac_has_anim = true;
+                for (int i = 0; i < __instance.StepCount; i++)
+                {
+                    if (!animController.HasAnimation(__instance[i].anim))
+                    {
+                        kbac_has_anim = false;
+                        break;
+                    }
+                }
+                if (kbac_has_anim)
+                {
+                    __result = true;
+                    return false;
+                }
+
+                var kanimFileData = (__instance.AnimSet == null) ? null : __instance.AnimSet.GetData();
+                if (kanimFileData == null)
+                {
+                    __result = false;
+                    return false;
+                }
+
+                bool file_has_anim = true;
+                for (int j = 0; j < __instance.StepCount; j++)
+                {
+                    bool found = false;
+                    for (int k = 0; k < kanimFileData.animCount; k++)
+                    {
+                        if (kanimFileData.GetAnim(k).hash == __instance[j].anim)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        file_has_anim = false;
+                        break;
+                    }
+                }
+                __result = file_has_anim;
+                return false;
+            }
+        }
+
+        // исправляем эмоции при получении эффектов
+        [HarmonyPatch]
+        internal static class EffectInstance_RegisterEmote
+        {
+            internal static bool Prepare() => ModOptions.Instance.effect_added_emotes;
+
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                return typeof(EffectInstance).GetMethods().Where(m => m.Name == nameof(EffectInstance.RegisterEmote));
+            }
+
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                // для мокрых ног и полностью - заменяем reactionId на основе имени анимации а не самого эффекта
+                var name = typeof(Resource).GetFieldSafe(nameof(Effect.Name), false);
+                var anim = typeof(EffectInstance_RegisterEmote).GetMethodSafe(nameof(GetAnimName), true, typeof(Effect));
+                if (name != null && anim != null)
+                {
+                    foreach (var inst in instructions)
+                        if (inst.LoadsField(name))
+                        {
+                            inst.opcode = OpCodes.Call;
+                            inst.operand = anim;
+                            break;
+                        }
+                }
+                return PPatchTools.ReplaceConstant(instructions, float.NegativeInfinity, 10f, true);
+            }
+
+            private static string GetAnimName(Effect effect)
+            {
+                return effect.emoteAnim ?? effect.emote?.AnimSet?.name ?? effect.Name;
+            }
+        }
+
+        // исправляем эмоции при радиации
+        // todo: рассмотреть возможность настраивать тайминги
+        [HarmonyPatch(typeof(RadiationMonitor), nameof(RadiationMonitor.CheckRadiationLevel))]
+        internal static class RadiationMonitor_CheckRadiationLevel
+        {
+            internal static bool Prepare() => DlcManager.FeatureRadiationEnabled() && ModOptions.Instance.radiation_pain_emote;
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                return PPatchTools.ReplaceConstant(instructions, float.NegativeInfinity, 20f, true);
+            }
+        }
+        #endregion
     }
 }
