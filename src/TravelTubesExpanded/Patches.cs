@@ -26,6 +26,8 @@ namespace TravelTubesExpanded
         private static void BeforeDbInit()
         {
             Utils.InitLocalization(typeof(STRINGS));
+            var type = PPatchTools.GetTypeSafe("TravelTubesFlydo.Patches", "TravelTubesFlydo");
+            AccessControlSideScreen_RefreshContainerObjects.AllowFlydo = type != null;
         }
 
         [PLibMethod(RunAt.AfterDbInit)]
@@ -517,10 +519,14 @@ namespace TravelTubesExpanded
         [HarmonyPatch(typeof(AccessControlSideScreen), nameof(AccessControlSideScreen.RefreshContainerObjects))]
         private static class AccessControlSideScreen_RefreshContainerObjects
         {
+            internal static bool AllowFlydo = false;
             private static void Postfix(AccessControlSideScreen __instance)
             {
-                if (__instance.target != null && __instance.target.IsPrefabID(TravelTubeDoorConfig.ID))
+                if (__instance.target != null && __instance.target.IsPrefabID(TravelTubeDoorConfig.ID)
+                    && !(AllowFlydo && Game.IsDlcActiveForCurrentSave(DlcManager.DLC3_ID)))
+                {
                     __instance.robotSectionHeader.SetActive(false);
+                }
             }
         }
     }
