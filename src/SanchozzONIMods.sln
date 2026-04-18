@@ -134,6 +134,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutoComposter", "AutoCompos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MorePlantMutations", "MorePlantMutations\MorePlantMutations.csproj", "{65AC396B-7617-4366-9588-8AC2D3940F91}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelTubesFlydo", "TravelTubesFlydo\TravelTubesFlydo.csproj", "{65B4051B-C24E-4C4F-A734-3523E389D94C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Backup = Debug|Backup
@@ -590,6 +592,14 @@ Global
 		{65AC396B-7617-4366-9588-8AC2D3940F91}.Release|Backup.Build.0 = Release|Backup
 		{65AC396B-7617-4366-9588-8AC2D3940F91}.Release|Steam.ActiveCfg = Release|Steam
 		{65AC396B-7617-4366-9588-8AC2D3940F91}.Release|Steam.Build.0 = Release|Steam
+		{65B4051B-C24E-4C4F-A734-3523E389D94C}.Debug|Backup.ActiveCfg = Debug|Backup
+		{65B4051B-C24E-4C4F-A734-3523E389D94C}.Debug|Backup.Build.0 = Debug|Backup
+		{65B4051B-C24E-4C4F-A734-3523E389D94C}.Debug|Steam.ActiveCfg = Debug|Steam
+		{65B4051B-C24E-4C4F-A734-3523E389D94C}.Debug|Steam.Build.0 = Debug|Steam
+		{65B4051B-C24E-4C4F-A734-3523E389D94C}.Release|Backup.ActiveCfg = Release|Backup
+		{65B4051B-C24E-4C4F-A734-3523E389D94C}.Release|Backup.Build.0 = Release|Backup
+		{65B4051B-C24E-4C4F-A734-3523E389D94C}.Release|Steam.ActiveCfg = Release|Steam
+		{65B4051B-C24E-4C4F-A734-3523E389D94C}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

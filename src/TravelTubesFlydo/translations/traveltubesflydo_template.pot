@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. TravelTubesFlydo.STRINGS.MOD_DESCRIPTION
+msgctxt "TravelTubesFlydo.STRINGS.MOD_DESCRIPTION"
+msgid "Now Flydo can use Transit Tubes"
+msgstr ""
+
+#. TravelTubesFlydo.STRINGS.MOD_TITLE
+msgctxt "TravelTubesFlydo.STRINGS.MOD_TITLE"
+msgid "Flydo uses Transit Tubes"
+msgstr ""
+
