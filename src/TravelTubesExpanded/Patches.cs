@@ -505,10 +505,11 @@ namespace TravelTubesExpanded
         [HarmonyPatch(typeof(AsyncPathProber.Manager), nameof(AsyncPathProber.Manager.makeWorkOrder))]
         private static class AsyncPathProber_Manager_MakeWorkOrder
         {
-            private static void Postfix(ref AsyncPathProber.WorkOrder __result)
+            private static void Postfix(ref AsyncPathProber.WorkOrder __result, Navigator nav)
             {
                 if (Grid.IsValidCell(__result.originCell) && __result.startingNavType == NavType.Tube
-                    && Grid.Objects[__result.originCell, (int)ObjectLayer.TravelTubeConnection] != null)
+                    && Grid.Objects[__result.originCell, (int)ObjectLayer.TravelTubeConnection] != null
+                    && nav.IsMoving())
                 {
                     __result.originCell = Grid.InvalidCell;
                 }
