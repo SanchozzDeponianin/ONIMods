@@ -59,11 +59,14 @@ body:
         If there was no crash, please attach it anyway so that I can see which version of the game and mod is actually loaded.  
         This file is located at:  
 
-        Windows: C:\Users\%username%\AppData\LocalLow\Klei\Oxygen Not Included\Player.log
+        Windows:       C:\Users\%username%\AppData\LocalLow\Klei\Oxygen Not Included\Player.log
 
-        Mac:     ~/Library/Logs/Klei/Oxygen Not Included/Player.log
+        Mac:           ~/Library/Logs/Klei/Oxygen Not Included/Player.log
 
-        Linux:   ~/.config/unity3d/Klei/Oxygen Not Included/Player.log
+        Linux native:  ~/.config/unity3d/Klei/Oxygen Not Included/Player.log
+
+        Linux+Proton:  /path/to/your/SteamLibrary/steamapps/compatdata/457140/pfx/drive_c/users/steamuser/AppData/LocalLow/Klei/Oxygen Not Included/Player.log
+
       placeholder: |
         Click in here to enable drag and drop and to either use that or the built in file selector by clicking the bottom bar afterwards.  
         Then add your log file here.  
