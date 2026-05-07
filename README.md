@@ -15,9 +15,10 @@ Steam sometimes serves outdated mod versions, and Oxygen Not Included is also av
 
 ![Location where local mods should be installed](Docs/localmods.png)
 
-+ Windows: `%USERPROFILE%\Documents\Klei\OxygenNotIncluded\mods\Local` Replace the documents path with the path to your Documents folder if this folder has been redirected.
-+ Mac OS:  `/Users/user name/Library/Application Support/unity.Klei.Oxygen Not Included/mods/Local` Replace user name with your user name.
-+ Linux:   `~/.config/unity3d/Klei/Oxygen Not Included/mods/Local`
++ Windows:       `%USERPROFILE%\Documents\Klei\OxygenNotIncluded\mods\Local` Replace the documents path with the path to your Documents folder if this folder has been redirected.
++ Mac OS:        `/Users/user name/Library/Application Support/unity.Klei.Oxygen Not Included/mods/Local` Replace user name with your user name.
++ Linux native:  `~/.config/unity3d/Klei/Oxygen Not Included/mods/Local`
++ Linux+Proton:  `/path/to/your/SteamLibrary/steamapps/compatdata/457140/pfx/drive_c/users/steamuser/Documents/Klei/OxygenNotIncluded/mods/Local` Specify the path to your SteamLibrary where the ONI is installed
 
 Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 
