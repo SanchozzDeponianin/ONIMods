@@ -458,7 +458,7 @@ namespace MoreEmotions
 
             private static void CreateOdorReactable(Chore chore)
             {
-                if (UnityEngine.Random.value < 0.25f)
+                if (UnityEngine.Random.value < 0.25f && chore.driver != null && chore.driver.gameObject != null)
                 {
                     var monitor = chore.driver.GetSMI<ReactionMonitor.Instance>();
                     if (!monitor.IsNullOrStopped())
@@ -474,9 +474,12 @@ namespace MoreEmotions
 
             private static void CancelReactable(Chore chore)
             {
-                var monitor = chore.driver.GetSMI<ReactionMonitor.Instance>();
-                if (!monitor.IsNullOrStopped())
-                    monitor.CancelOneShotReactables(MoreMinionEmotes.Instance.Odor);
+                if (chore.driver != null && chore.driver.gameObject != null)
+                {
+                    var monitor = chore.driver.GetSMI<ReactionMonitor.Instance>();
+                    if (!monitor.IsNullOrStopped())
+                        monitor.CancelOneShotReactables(MoreMinionEmotes.Instance.Odor);
+                }
             }
         }
         #endregion
