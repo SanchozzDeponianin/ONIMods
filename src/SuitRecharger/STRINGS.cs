@@ -59,6 +59,7 @@ namespace SuitRecharger
                 public class SUITRECHARGERSIDESCREEN
                 {
                     public static LocString TITLE = "Suit Durability Threshold";
+                    public static LocString TITLE_BIONIC = "What to do with Bionic Duplicants ?";
                     public static LocString FILTER_CATEGORY = "Accepted Materials to repair";
 
                     public class DURABILITY_THRESHOLD
@@ -73,6 +74,18 @@ namespace SuitRecharger
                     {
                         public static LocString NAME = "Enable Suits Repair";
                         public static LocString TOOLTIP = $"Suits Repair restores their {FormatAsKeyWord("Durability")}, but requires colossal {FormatAsKeyWord("Power")} and conventional materials to repair";
+                    }
+
+                    public class FILL_BIONIC_SUIT
+                    {
+                        public static LocString NAME = "Recharge Bionic Duplicants Suits";
+                        public static LocString TOOLTIP = $"Recharge {FormatAsKeyWord("Suits")} equipped by Bionic Duplicants with {FormatAsKeyWord("Oxygen")}";
+                    }
+
+                    public class FILL_BIONIC_INTERNAL
+                    {
+                        public static LocString NAME = "Recharge Bionic Duplicants Tanks";
+                        public static LocString TOOLTIP = $"Recharge internal O<sub>2</sub> tanks of Bionic Duplicants with {FormatAsKeyWord("Oxygen")}\nBut only when {FormatAsKeyWord("Suit")} is equipped";
                     }
                 }
             }

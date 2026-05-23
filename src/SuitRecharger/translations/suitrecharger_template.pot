@@ -93,6 +93,26 @@ msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.ENABLE_R
 msgid "Suits Repair restores their <style=\"KKeyword\">Durability</style>, but requires colossal <style=\"KKeyword\">Power</style> and conventional materials to repair"
 msgstr ""
 
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.FILL_BIONIC_INTERNAL.NAME
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.FILL_BIONIC_INTERNAL.NAME"
+msgid "Recharge Bionic Duplicants Tanks"
+msgstr ""
+
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.FILL_BIONIC_INTERNAL.TOOLTIP
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.FILL_BIONIC_INTERNAL.TOOLTIP"
+msgid "Recharge internal O<sub>2</sub> tanks of Bionic Duplicants with <style=\"KKeyword\">Oxygen</style>\nBut only when <style=\"KKeyword\">Suit</style> is equipped"
+msgstr ""
+
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.FILL_BIONIC_SUIT.NAME
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.FILL_BIONIC_SUIT.NAME"
+msgid "Recharge Bionic Duplicants Suits"
+msgstr ""
+
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.FILL_BIONIC_SUIT.TOOLTIP
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.FILL_BIONIC_SUIT.TOOLTIP"
+msgid "Recharge <style=\"KKeyword\">Suits</style> equipped by Bionic Duplicants with <style=\"KKeyword\">Oxygen</style>"
+msgstr ""
+
 #. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.FILTER_CATEGORY
 msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.FILTER_CATEGORY"
 msgid "Accepted Materials to repair"
@@ -101,5 +121,10 @@ msgstr ""
 #. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE
 msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE"
 msgid "Suit Durability Threshold"
+msgstr ""
+
+#. SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE_BIONIC
+msgctxt "SuitRecharger.STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE_BIONIC"
+msgid "What to do with Bionic Duplicants ?"
 msgstr ""
 

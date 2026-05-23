@@ -93,6 +93,7 @@
     <!-- чтобы была документация
     <Reference Include="0Harmony" HintPath="$(GameFolder)/0Harmony.dll" /> -->
     <PackageReference Include="Lib.Harmony" Version="2.4.2" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
     <Reference Include="Newtonsoft.Json" HintPath="$(GameFolder)/Newtonsoft.Json.dll" />
     <Reference Include="UnityEngine" HintPath="$(GameFolder)/UnityEngine.dll" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(GameFolder)/UnityEngine.CoreModule.dll" />

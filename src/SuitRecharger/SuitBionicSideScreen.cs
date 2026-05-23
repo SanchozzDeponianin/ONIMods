@@ -5,13 +5,12 @@ using PeterHan.PLib.UI;
 
 namespace SuitRecharger
 {
-    internal class SuitRechargerSideScreen : SideScreenContent
+    internal class SuitBionicSideScreen : SideScreenContent
     {
         private const string prefix = "STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.";
         private SuitRecharger target;
-        // каллбаки для чекбоксов и слидеров
-        private Action<bool> enable_repair;
-        private Action<float> durability_threshold;
+        private Action<bool> fill_bionic_suit;
+        private Action<bool> fill_bionic_internal;
 
         protected override void OnPrefabInit()
         {
@@ -26,13 +25,10 @@ namespace SuitRecharger
                 FlexSize = Vector2.right,
                 BackColor = PUITuning.Colors.Transparent,
             }
-                // ползун прочности
-                .AddSliderBox(prefix, nameof(durability_threshold), 0f, 100f,
-                    f => { if (target != null) target.DurabilityThreshold = f / 100f; }, out durability_threshold)
-
-                // включить ремонт
-                .AddCheckBox(prefix, nameof(enable_repair),
-                    b => { if (target != null) target.EnableRepair = b; }, out enable_repair, out _)
+                .AddCheckBox(prefix, nameof(fill_bionic_suit),
+                    b => { if (target != null) target.fillBionicSuitTank = b; }, out fill_bionic_suit, out _)
+                .AddCheckBox(prefix, nameof(fill_bionic_internal),
+                    b => { if (target != null) target.fillBionicInternalTank = b; }, out fill_bionic_internal, out _)
                 .AddTo(gameObject);
             ContentContainer = gameObject;
             base.OnPrefabInit();
@@ -43,13 +39,13 @@ namespace SuitRecharger
         {
             if (target != null)
             {
-                enable_repair?.Invoke(target.EnableRepair);
-                durability_threshold?.Invoke(target.DurabilityThreshold * 100f);
+                fill_bionic_suit?.Invoke(target.fillBionicSuitTank);
+                fill_bionic_internal?.Invoke(target.fillBionicInternalTank);
             }
         }
 
         public override bool IsValidForTarget(GameObject target) =>
-            SuitRecharger.DurabilityMode == SuitRecharger.DurabilitySetting.Enabled && target.TryGetComponent<SuitRecharger>(out _);
+            SuitRecharger.BionicMode && target.TryGetComponent<SuitRecharger>(out _);
 
         public override void SetTarget(GameObject target)
         {
@@ -58,7 +54,7 @@ namespace SuitRecharger
         }
 
         public override void ClearTarget() => target = null;
-        public override string GetTitle() => STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE.text;
-        public override int GetSideScreenSortOrder() => 500;
+        public override string GetTitle() => STRINGS.UI.UISIDESCREENS.SUITRECHARGERSIDESCREEN.TITLE_BIONIC.text;
+        public override int GetSideScreenSortOrder() => 400;
     }
 }

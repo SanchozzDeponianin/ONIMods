@@ -15,7 +15,6 @@ namespace SuitRecharger
         private static float warmupTime;
         private static float LeadSuitChargeWattage;
         private static float TeleportSuitChargeWattage;
-        private static FieldInfo TeleportSuitBatteryCharge;
         private float elapsedTime;
 
 #pragma warning disable CS0649
@@ -35,6 +34,8 @@ namespace SuitRecharger
         private Component teleportSuitTank;
         private Durability durability;
         private SuitRecharger.RepairSuitCost repairCost;
+        private bool isBionic;
+        private BionicOxygenTankMonitor.Instance bionicInternalTank;
 
         protected override void OnPrefabInit()
         {
@@ -88,7 +89,6 @@ namespace SuitRecharger
                     var batteryChargeTime = 60f;
                     try
                     {
-                        TeleportSuitBatteryCharge = PPatchTools.GetTypeSafe("TeleportSuitMod.TeleportSuitTank")?.GetFieldSafe("batteryCharge", false);
                         var options = Traverse.CreateWithType("TeleportSuitMod.TeleportSuitOptions").Property("Instance").GetValue();
                         batteryChargeTime = Traverse.Create(options).Property<float>("suitBatteryChargeTime").Value;
                     }
@@ -106,6 +106,9 @@ namespace SuitRecharger
         {
             SetWorkTime(float.PositiveInfinity);
             repairCost = default;
+            isBionic = worker.IsPrefabID(GameTags.Minions.Models.Bionic);
+            if (isBionic)
+                bionicInternalTank = worker.GetSMI<BionicOxygenTankMonitor.Instance>();
             var suit = worker.GetComponent<MinionIdentity>().GetEquipment().GetAssignable(Db.Get().AssignableSlots.Suit);
             if (suit != null)
             {
@@ -113,7 +116,8 @@ namespace SuitRecharger
                 suit.TryGetComponent(out jetSuitTank);
                 suit.TryGetComponent(out leadSuitTank);
                 suit.TryGetComponent(out durability);
-                teleportSuitTank = suit.GetComponent("TeleportSuitMod.TeleportSuitTank");
+                if (TeleportSuitCompat.BatteryCharge != null)
+                    suit.TryGetComponent(TeleportSuitCompat.TankType, out teleportSuitTank);
 
                 durability.ApplyEquippedDurability(worker.GetComponent<MinionResume>());
                 // если есть несколько материалов подходящих для ремонта
@@ -154,12 +158,19 @@ namespace SuitRecharger
                     if (!leadSuitTank.NeedsRecharging())
                         worker.RemoveTag(GameTags.SuitBatteryLow);
                 }
+                if (teleportSuitTank != null && TeleportSuitCompat.NeedsRecharging != null
+                    && !TeleportSuitCompat.NeedsRecharging(teleportSuitTank))
+                {
+                    worker.RemoveTag(GameTags.SuitBatteryOut);
+                    worker.RemoveTag(GameTags.SuitBatteryLow);
+                }
             }
             suitTank = null;
             jetSuitTank = null;
             leadSuitTank = null;
             teleportSuitTank = null;
             durability = null;
+            bionicInternalTank = null;
         }
 
         protected override void OnCompleteWork(WorkerBase worker)
@@ -173,7 +184,7 @@ namespace SuitRecharger
             elapsedTime += dt;
             if (elapsedTime <= warmupTime) // ничего не заряжаем во время начальной анимации
                 return false;
-            bool oxygen_charged = ChargeSuit(dt);
+            bool oxygen_charged = ChargeSuit(dt) && ChargeBionicInternalTank(dt);
             bool fuel_charged = FuelSuit(dt);
             bool battery_charged = FillBattery(dt);
             bool teleport_charged = FillTeleportBattery(dt);
@@ -198,6 +209,8 @@ namespace SuitRecharger
 
         private bool ChargeSuit(float dt)
         {
+            if (isBionic && !recharger.fillBionicSuitTank)
+                return true;
             if (suitTank != null && !suitTank.IsFull())
             {
                 float amount_to_refill = suitTank.capacity * dt / сhargeTime;
@@ -209,6 +222,28 @@ namespace SuitRecharger
                     if (amount_to_refill > 0f)
                     {
                         recharger.o2Storage.Transfer(suitTank.storage, suitTank.elementTag, amount_to_refill, false, true);
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        private bool ChargeBionicInternalTank(float dt)
+        {
+            if (!isBionic || !recharger.fillBionicInternalTank)
+                return true;
+            if (bionicInternalTank != null && !bionicInternalTank.storage.IsFull())
+            {
+                float amount_to_refill = bionicInternalTank.storage.capacityKg * dt / сhargeTime;
+                var oxygen = recharger.o2Storage.FindFirstWithMass(GameTags.Oxygen, amount_to_refill);
+                if (oxygen != null)
+                {
+                    amount_to_refill = Mathf.Min(amount_to_refill, bionicInternalTank.SpaceAvailableInTank);
+                    amount_to_refill = Mathf.Min(amount_to_refill, oxygen.Mass);
+                    if (amount_to_refill > 0f)
+                    {
+                        recharger.o2Storage.Transfer(bionicInternalTank.storage, GameTags.Oxygen, amount_to_refill, false, true);
                         return false;
                     }
                 }
@@ -241,7 +276,7 @@ namespace SuitRecharger
         {
             if (leadSuitTank != null && !leadSuitTank.IsFull())
             {
-                leadSuitTank.batteryCharge += dt / сhargeTime;
+                leadSuitTank.batteryCharge = Mathf.Clamp01(leadSuitTank.batteryCharge + dt / сhargeTime);
                 return false;
             }
             return true;
@@ -249,12 +284,12 @@ namespace SuitRecharger
 
         private bool FillTeleportBattery(float dt)
         {
-            if (TeleportSuitBatteryCharge != null && teleportSuitTank != null)
+            if (TeleportSuitCompat.BatteryCharge != null && teleportSuitTank != null)
             {
-                float batteryCharge = (float)TeleportSuitBatteryCharge.GetValue(teleportSuitTank);
+                float batteryCharge = (float)TeleportSuitCompat.BatteryCharge.GetValue(teleportSuitTank);
                 if (batteryCharge < 1f)
                 {
-                    TeleportSuitBatteryCharge.SetValue(teleportSuitTank, batteryCharge + dt / сhargeTime);
+                    TeleportSuitCompat.BatteryCharge.SetValue(teleportSuitTank, Mathf.Clamp01(batteryCharge + dt / сhargeTime));
                     return false;
                 }
             }

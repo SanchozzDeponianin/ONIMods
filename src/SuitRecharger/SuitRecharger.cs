@@ -6,9 +6,7 @@ using KSerialization;
 using TUNING;
 using UnityEngine;
 using HarmonyLib;
-using SanchozzONIMods.Lib;
 using static STRINGS.DUPLICANTS.CHORES;
-using static SuitRecharger.STRINGS.DUPLICANTS.CHORES.PRECONDITIONS;
 
 namespace SuitRecharger
 {
@@ -28,165 +26,6 @@ namespace SuitRecharger
         }
         public static readonly Dictionary<Tag, RepairSuitCost[]> AllRepairSuitCost = new();
         public static readonly List<Tag> RepairMaterials = new();
-
-        // проверка что костюм действительно надет
-        private static readonly Chore.Precondition IsSuitEquipped = new()
-        {
-            id = nameof(IsSuitEquipped),
-            description = IS_SUIT_EQUIPPED,
-            sortOrder = -1,
-            canExecuteOnAnyThread = true,
-            fn = delegate (ref Chore.Precondition.Context context, object data)
-            {
-                return context.consumerState.prefabid.HasTag(GameTags.HasSuitTank);
-            }
-        };
-
-        private static bool TryGetAssignableSuit(Equipment equipment, out Assignable assignable)
-        {
-            assignable = null;
-            if (equipment != null)
-                assignable = equipment.GetSlot(Db.Get().AssignableSlots.Suit)?.assignable;
-            return assignable != null;
-        }
-
-        // проверка возможности ремонта и что костюм имеет достаточную прочность чтобы не сломаться в процессе зарядки
-        private static readonly Chore.Precondition IsSuitHasEnoughDurability = new()
-        {
-            id = nameof(IsSuitHasEnoughDurability),
-            description = IS_SUIT_HAS_ENOUGH_DURABILITY,
-            sortOrder = 5,
-            fn = delegate (ref Chore.Precondition.Context context, object data)
-            {
-                if (data is SuitRecharger recharger && recharger != null
-                    && TryGetAssignableSuit(context.consumerState.equipment, out var assignable)
-                    && assignable is Equippable equippable
-                    && assignable.TryGetComponent<Durability>(out var durability))
-                {
-                    float d = durability.GetTrueDurability(context.consumerState.resume);
-                    if (d >= recharger.durabilityThreshold)
-                        return true;
-                    if (recharger.enableRepair && AllRepairSuitCost.TryGetValue(equippable.def.Id.ToTag(), out var costs))
-                    {
-                        foreach (var cost in costs)
-                        {
-                            float need = cost.amount * (1f - d);
-                            recharger.RepairMaterialsAvailable.TryGetValue(cost.material, out float available);
-                            if (need <= available)
-                                return true;
-                        }
-                    }
-                    return false;
-                }
-                return true;
-            }
-        };
-
-        // проверка что костюму требуется заправка.
-        private static readonly Chore.Precondition DoesSuitNeedRecharging = new()
-        {
-            id = nameof(DoesSuitNeedRecharging),
-            description = PRECONDITIONS.DOES_SUIT_NEED_RECHARGING_URGENT,
-            sortOrder = 1,
-            fn = delegate (ref Chore.Precondition.Context context, object data)
-            {
-                bool result = false;
-                if (TryGetAssignableSuit(context.consumerState.equipment, out var assignable)
-                    && assignable.TryGetComponent<SuitTank>(out var suit_tank))
-                {
-                    if (suit_tank.NeedsRecharging())
-                        result = true;
-                    else
-                    {
-                        if (assignable.TryGetComponent<JetSuitTank>(out var jet_suit_tank) && jet_suit_tank.NeedsRecharging())
-                            result = true;
-                    }
-                }
-                return result;
-            }
-        };
-
-        // проверка что костюму требуется срочная заправка 
-        private static readonly Chore.Precondition DoesSuitNeedRechargingUrgent = new()
-        {
-            id = nameof(DoesSuitNeedRechargingUrgent),
-            description = PRECONDITIONS.HAS_URGE,
-            sortOrder = 1,
-            fn = delegate (ref Chore.Precondition.Context context, object data)
-            {
-                bool result = false;
-                if (TryGetAssignableSuit(context.consumerState.equipment, out var assignable)
-                    && assignable.TryGetComponent<SuitTank>(out var suit_tank)
-                    && suit_tank.IsEmpty())
-                {
-                    result = true;
-                }
-                return result;
-            }
-        };
-
-        // проверка что кислорода достаточно для полной заправки 
-        private static readonly Chore.Precondition IsEnoughOxygen = new()
-        {
-            id = nameof(IsEnoughOxygen),
-            description = IS_ENOUGH_OXYGEN,
-            sortOrder = 2,
-            fn = delegate (ref Chore.Precondition.Context context, object data)
-            {
-                bool result = true;
-                if (data is SuitRecharger recharger && recharger != null
-                    && TryGetAssignableSuit(context.consumerState.equipment, out var assignable)
-                    && assignable.TryGetComponent<SuitTank>(out var suit_tank)
-                    && recharger.OxygenAvailable < (suit_tank.capacity - suit_tank.GetTankAmount()))
-                {
-                    result = false;
-                }
-                return result;
-            }
-        };
-
-        // проверка что топлива достаточно для полной заправки
-        // если одновременно требуется заправкa кислорода - то пофиг на топливо
-        private static readonly Chore.Precondition IsEnoughFuel = new()
-        {
-            id = nameof(IsEnoughFuel),
-            description = IS_ENOUGH_FUEL,
-            sortOrder = 3,
-            fn = delegate (ref Chore.Precondition.Context context, object data)
-            {
-                bool result = true;
-                if (data is SuitRecharger recharger && recharger != null
-                    && TryGetAssignableSuit(context.consumerState.equipment, out var assignable)
-                    && assignable.TryGetComponent<JetSuitTank>(out var jet_suit_tank)
-                    && recharger.FuelAvailable < (JetSuitTank.FUEL_CAPACITY - jet_suit_tank.amount)
-                    && assignable.TryGetComponent<SuitTank>(out var suit_tank)
-                    && !suit_tank.NeedsRecharging())
-                {
-                    result = false;
-                }
-                return result;
-            }
-        };
-
-        // проверка что заправка не "уже выполняется"
-        private static readonly Chore.Precondition NotCurrentlyRecharging = new()
-        {
-            id = nameof(NotCurrentlyRecharging),
-            description = CURRENTLY_RECHARGING,
-            sortOrder = 0,
-            canExecuteOnAnyThread = true,
-            fn = delegate (ref Chore.Precondition.Context context, object data)
-            {
-                bool result = true;
-                var currentChore = context.consumerState.choreDriver.GetCurrentChore();
-                if (currentChore != null)
-                {
-                    string id = currentChore.choreType.Id;
-                    result = (id != RecoverBreathRecharge.Id && id != Db.Get().ChoreTypes.Recharge.Id);
-                }
-                return result;
-            }
-        };
 
         internal static ChoreType RecoverBreathRecharge;
         internal static void Init()
@@ -245,14 +84,14 @@ namespace SuitRecharger
             public Chore CreateNormalChore(StatesInstance smi)
             {
                 var chore = CreateUseChore(smi, Db.Get().ChoreTypes.Recharge, PriorityScreen.PriorityClass.personalNeeds);
-                chore.AddPrecondition(DoesSuitNeedRecharging, null);
+                chore.AddPrecondition(Preconditions.Instance.DoesSuitNeedRecharging, smi.master);
                 return chore;
             }
 
             public Chore CreateRecoverBreathChore(StatesInstance smi)
             {
                 var chore = CreateUseChore(smi, RecoverBreathRecharge, PriorityScreen.PriorityClass.compulsory);
-                chore.AddPrecondition(DoesSuitNeedRechargingUrgent, null);
+                chore.AddPrecondition(Preconditions.Instance.DoesSuitNeedRechargingUrgent, smi.master);
                 return chore;
             }
 
@@ -269,12 +108,12 @@ namespace SuitRecharger
                         add_to_daily_report: false);
                 smi.activeUseChores.Add(chore);
                 chore.onExit += (exiting_chore) => smi.activeUseChores.Remove(exiting_chore);
-                chore.AddPrecondition(IsSuitEquipped, null);
-                chore.AddPrecondition(NotCurrentlyRecharging);
+                chore.AddPrecondition(Preconditions.Instance.IsSuitEquipped, null);
+                chore.AddPrecondition(Preconditions.Instance.NotCurrentlyRecharging);
                 if (DurabilityMode == DurabilitySetting.Enabled)  // не проверять если износ отключен в настройках сложности
-                    chore.AddPrecondition(IsSuitHasEnoughDurability, smi.master);
-                chore.AddPrecondition(IsEnoughOxygen, smi.master);
-                chore.AddPrecondition(IsEnoughFuel, smi.master);
+                    chore.AddPrecondition(Preconditions.Instance.IsSuitHasEnoughDurability, smi.master);
+                chore.AddPrecondition(Preconditions.Instance.IsEnoughOxygen, smi.master);
+                chore.AddPrecondition(Preconditions.Instance.IsEnoughFuel, smi.master);
                 chore.AddPrecondition(ChorePreconditions.instance.IsExclusivelyAvailableWithOtherChores, smi.activeUseChores);
                 return chore;
             }
@@ -347,7 +186,7 @@ namespace SuitRecharger
 
         public enum DurabilitySetting { Unknown, Enabled, Disabled }
         public static DurabilitySetting DurabilityMode = DurabilitySetting.Unknown;
-
+        public static bool BionicMode = false;
 
         [Serialize]
         private bool enableRepair;
@@ -359,6 +198,12 @@ namespace SuitRecharger
         public float OxygenAvailable { get; private set; }
         public float FuelAvailable { get; private set; }
         public Dictionary<Tag, float> RepairMaterialsAvailable { get; private set; } = new Dictionary<Tag, float>();
+
+        [Serialize]
+        public bool fillBionicSuitTank = true;
+
+        [Serialize]
+        public bool fillBionicInternalTank = false;
 
         // для правильного учёта сложности оно должно быть считано из файло. так что дёргать это в OnPrefabInit слишком рано
         private static void CheckDifficultySetting()
@@ -374,6 +219,7 @@ namespace SuitRecharger
             };
             defaultDurabilityThreshold = Mathf.Abs(EQUIPMENT.SUITS.OXYGEN_MASK_DECAY * durabilityLossDifficultyMod * durabilityPerCycleGap);
             DurabilityMode = (defaultDurabilityThreshold > 0f) ? DurabilitySetting.Enabled : DurabilitySetting.Disabled;
+            BionicMode = Game.IsDlcActiveForCurrentSave(DlcManager.DLC3_ID);
         }
 
         internal static void ValidateRepairMaterials()
@@ -560,6 +406,8 @@ namespace SuitRecharger
             {
                 DurabilityThreshold = recharger.durabilityThreshold;
                 EnableRepair = recharger.enableRepair;
+                fillBionicSuitTank = recharger.fillBionicSuitTank;
+                fillBionicInternalTank = recharger.fillBionicInternalTank;
             }
         }
 

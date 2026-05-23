@@ -26,6 +26,7 @@ namespace SuitRecharger
         {
             base.OnAllModsLoaded(harmony, mods);
             ManualDeliveryKGPatch.Patch(harmony);
+            TeleportSuitCompat.Init();
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -54,12 +55,14 @@ namespace SuitRecharger
         private static void OnEndGame()
         {
             DurabilityMode = DurabilitySetting.Unknown;
+            Preconditions.DestroyInstance();
         }
 
         [PLibMethod(RunAt.OnDetailsScreenInit)]
         private static void OnDetailsScreenInit()
         {
             PUIUtils.AddSideScreenContent<SuitRechargerSideScreen>();
+            PUIUtils.AddSideScreenContent<SuitBionicSideScreen>();
         }
 
         // задача "подышать" не учитывает цену пути до дыхабельной клетки

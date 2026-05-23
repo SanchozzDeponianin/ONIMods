@@ -22,8 +22,9 @@ namespace SanchozzONIMods.Lib.UI
             GameObject cb_go = null;
             var cb = new PCheckBox(name)
             {
-                CheckColor = PUITuning.Colors.ComponentLightStyle,
-                CheckSize = new Vector2(24f, 24f),
+                CheckColor = UnityEngine.Object.Instantiate(PUITuning.Colors.ComponentLightStyle),
+                CheckSize = new Vector2(28f, 26f),
+                Margin = new RectOffset(1, 1, 1, 1),
                 ComponentBackColor = PUITuning.Colors.Transparent,
                 DynamicSize = dynamicSize,
                 Text = Strings.Get(prefix + ".NAME"),
@@ -40,6 +41,11 @@ namespace SanchozzONIMods.Lib.UI
                     KFMOD.PlayUISound(WidgetSoundPlayer.getSoundPath(ToggleSoundPlayer.default_values[state]));
                 },
             }.AddOnRealize(realized => cb_go = realized);
+
+            var color = new Color32(79, 84, 104, 255); // как Automatable
+            cb.CheckColor.activeColor = color;
+            cb.CheckColor.hoverColor = color;
+
             setChecked = @checked =>
             {
                 if (cb_go != null)
