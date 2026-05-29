@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
@@ -26,9 +27,32 @@ namespace CrabsFlippCompost
         }
 
         // добавить крабам новое поведение
-        [HarmonyPatch(typeof(BaseCrabConfig), nameof(BaseCrabConfig.BaseCrab))]
+        [HarmonyPatch]
         private static class BaseCrabConfig_BaseCrab
         {
+            private static IEnumerable<MethodBase> methods;
+            private static bool Prepare()
+            {
+                bool ok = TargetMethods().Count() > 0;
+                if (!ok)
+                    PUtil.LogWarning("Something went wrong when looking for a method 'BaseCrabConfig.BaseCrab'");
+                return ok;
+            }
+            private static IEnumerable<MethodBase> TargetMethods()
+            {
+                // выбираем метод реально дёргающий ChoreTable.Builder начиная с У59
+                if (methods == null)
+                {
+                    var builder = typeof(ChoreTable.Builder).GetConstructors()[0];
+                    methods = typeof(BaseCrabConfig).GetMethods()
+                        .Where(m => m.Name == nameof(BaseCrabConfig.BaseCrab))
+                        .Where(m => PatchProcessor.ReadMethodBody(m)
+                            .Where(code => code.Key == OpCodes.Newobj && code.Value is MethodBase method && method == builder).Any());
+                }
+                return methods;
+            }
+            private static void Cleanup() => methods = null;
+
             internal static void Postfix(GameObject __result, bool is_baby)
             {
                 if (!is_baby)

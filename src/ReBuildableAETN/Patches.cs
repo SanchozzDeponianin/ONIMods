@@ -179,9 +179,16 @@ namespace ReBuildableAETN
         }
 
         // косметический патч, отображаем в кодексе ядра в юнитах
-        [HarmonyPatch(typeof(CodexEntryGenerator), "GenerateBuildingDescriptionContainers")]
+        [HarmonyPatch]
         private static class CodexEntryGenerator_GenerateBuildingDescriptionContainers
         {
+            private static MethodBase TargetMethod()
+            {
+                return typeof(CodexEntryGenerator).GetMethodSafe("AddConstructionPropertyDescriptors", true, PPatchTools.AnyArguments)
+                    // todo: убрать когда У58 всё
+                    ?? typeof(CodexEntryGenerator).GetMethodSafe("GenerateBuildingDescriptionContainers", true, PPatchTools.AnyArguments);
+            }
+
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
                 return instructions.Transpile(original, IL, transpiler);
