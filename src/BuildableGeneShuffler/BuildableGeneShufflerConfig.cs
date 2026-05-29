@@ -25,7 +25,7 @@ namespace BuildableGeneShuffler
                 hitpoints: BUILDINGS.HITPOINTS.TIER2,
                 construction_time: ModOptions.Instance.constructionTime,
                 construction_mass: new float[] { metal_mass, glass_mass },
-                construction_materials: new string[] { MATERIALS.REFINED_METAL, MATERIALS.GLASS },
+                construction_materials: new string[] { MATERIALS.REFINED_METAL, MATERIALS.GLASSES[0] },
                 melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER2,
                 build_location_rule: BuildLocationRule.OnFloor,
                 decor: BUILDINGS.DECOR.BONUS.TIER0,
