@@ -24,13 +24,7 @@ namespace HEPBridgeInsulationTile
                 }
             }
         }
-        public class MISC
-        {
-            public class TAGS
-            {
-                public static LocString EXTRUDABLE_DESC = "";
-            }
-        }
+
         public class OPTIONS
         {
             public class RESEARCH_MOD
@@ -69,7 +63,6 @@ namespace HEPBridgeInsulationTile
             OPTIONS.NUCLEARSTORAGE.NAME.ReplaceText(UI.StripLinkFormatting(NUCLEARSTORAGE.NAME));
             OPTIONS.ADVANCEDNUCLEARRESEARCH.NAME.ReplaceText(UI.StripLinkFormatting(ADVANCEDNUCLEARRESEARCH.NAME));
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
-            LocString.CreateLocStringKeys(typeof(MISC));
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using TUNING;
-using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
@@ -11,7 +10,6 @@ namespace HEPBridgeInsulationTile
     public class HEPBridgeInsulationTileConfig : IBuildingConfig
     {
         public const string ID = "HighEnergyParticleWallBridgeRedirector"; // legacy
-        public static readonly Tag secodary_material = TagManager.Create(MATERIALS.EXTRUDABLE[0]);
 
         public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(DlcManager.EXPANSION1);
 
@@ -27,7 +25,7 @@ namespace HEPBridgeInsulationTile
                 hitpoints: BUILDINGS.HITPOINTS.TIER1,
                 construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER2,
                 construction_mass: new float[] { BUILDINGS.CONSTRUCTION_MASS_KG.TIER4[0], BUILDINGS.CONSTRUCTION_MASS_KG.TIER2[0] },
-                construction_materials: new string[] { MATERIALS.BUILDABLERAW, secodary_material.Name },
+                construction_materials: new string[] { MATERIALS.BUILDABLERAW, MATERIALS.PLASTICS[0] + "&" + MATERIALS.GLASSES[0] },
                 melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER1,
                 build_location_rule: BuildLocationRule.Tile,
                 decor: BUILDINGS.DECOR.PENALTY.TIER5,
@@ -114,18 +112,6 @@ namespace HEPBridgeInsulationTile
 
         public override void ConfigurePost(BuildingDef def)
         {
-            var hashes = new SimHashes[]
-            {
-                SimHashes.Glass,
-                SimHashes.Polypropylene,
-                SimHashes.HardPolypropylene,
-                SimHashes.SolidViscoGel,
-            };
-            foreach (var hash in hashes)
-            {
-                var element = ElementLoader.FindElementByHash(hash);
-                element.oreTags = element.oreTags.AddToArray(secodary_material);
-            }
             // чтобы работало копирование настроек между простым редиректором и нашим.
             Assets.GetBuildingDef(HighEnergyParticleRedirectorConfig.ID).BuildingComplete
                 .AddOrGet<CopyBuildingSettings>().copyGroupTag = HighEnergyParticleRedirectorConfig.ID;

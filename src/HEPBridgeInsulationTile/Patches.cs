@@ -2,7 +2,6 @@
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
-using PeterHan.PLib.UI;
 
 namespace HEPBridgeInsulationTile
 {
@@ -20,15 +19,6 @@ namespace HEPBridgeInsulationTile
         private static void Localize()
         {
             Utils.InitLocalization(typeof(STRINGS));
-            LoadSprite();
-        }
-
-        private static void LoadSprite()
-        {
-            const string name = "ui_extrudable";
-            var sprite = PUIUtils.LoadSprite($"sprites/{name}.png");
-            sprite.name = name;
-            Assets.Sprites.Add(name, sprite);
         }
 
         [PLibMethod(RunAt.AfterDbInit)]
