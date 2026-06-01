@@ -53,9 +53,11 @@ namespace DualDiningTable
         public override void DoPostConfigureComplete(GameObject go)
         {
             go.GetComponent<KAnimControllerBase>().initialAnim = "off";
+            SymbolOverrideControllerUtil.AddToPrefab(go);
             var storage = BuildingTemplates.CreateDefaultStorage(go, false);
             storage.showInUI = true;
             storage.capacityKg = TableSaltTuning.SALTSHAKERSTORAGEMASS * SeatCount;
+
             var mdkg = go.AddOrGet<ManualDeliveryKG>();
             mdkg.SetStorage(storage);
             mdkg.RequestedItemTag = TableSaltConfig.ID.ToTag();
@@ -63,6 +65,14 @@ namespace DualDiningTable
             mdkg.refillMass = TableSaltTuning.CONSUMABLE_RATE * SeatCount;
             mdkg.choreTypeIDHash = Db.Get().ChoreTypes.FoodFetch.IdHash;
             mdkg.ShowStatusItem = false;
+
+            var mdkg2 = go.AddComponent<ManualDeliveryKG>();
+            mdkg2.SetStorage(storage);
+            mdkg2.RequestedItemTag = CaviarConfig.TAG;
+            mdkg2.capacity = CaviarTuning.STORAGEMASS * SeatCount;
+            mdkg2.refillMass = CaviarTuning.CONSUMABLE_RATE * SeatCount;
+            mdkg2.choreTypeIDHash = Db.Get().ChoreTypes.FoodFetch.IdHash;
+            mdkg2.ShowStatusItem = false;
         }
     }
 }
