@@ -1,67 +1,74 @@
-﻿using System;
-using UnityEngine;
-using PeterHan.PLib.Detours;
-
-namespace AquaticFarm
+﻿namespace AquaticFarm
 {
     public class AquaticFarm : KMonoBehaviour
     {
 #pragma warning disable CS0649
         [MyCmpReq]
+        Building building;
+
+        [MyCmpReq]
         private PlantablePlot plantablePlot;
 #pragma warning restore CS0649
 
-        private static readonly Action<SimComponent> SimUnregister = typeof(SimComponent).Detour<Action<SimComponent>>("SimUnregister");
-        private static readonly Action<SimComponent> SimRegister = typeof(SimComponent).Detour<Action<SimComponent>>("SimRegister");
+        private PassiveElementConsumer[] consumers;
+        private HandleVector<int>.Handle partitionerEntry;
 
-        protected override void OnSpawn()
+        public override void OnSpawn()
         {
             base.OnSpawn();
-            Subscribe((int)GameHashes.OccupantChanged, OnOccupantChanged);
-            OnOccupantChanged(plantablePlot.Occupant);
+            consumers = GetComponents<PassiveElementConsumer>();
+            Subscribe((int)GameHashes.OccupantChanged, RefreshConsumption);
+            partitionerEntry = GameScenePartitioner.Instance.Add("AquaticFarm.OnSpawn", gameObject, building.GetValidPlacementExtents(),
+                GameScenePartitioner.Instance.liquidChangedLayer, RefreshConsumption);
+            RefreshConsumption(plantablePlot.Occupant);
         }
 
-        protected override void OnCleanUp()
+        public override void OnCleanUp()
         {
             base.OnCleanUp();
-            Unsubscribe((int)GameHashes.OccupantChanged, OnOccupantChanged);
+            Unsubscribe((int)GameHashes.OccupantChanged, RefreshConsumption);
+            GameScenePartitioner.Instance.Free(ref partitionerEntry);
         }
 
-        private void OnOccupantChanged(object data)
+        private void RefreshConsumption(object data)
         {
-            var elementConsumers = GetComponents<PassiveElementConsumer>();
-            foreach (PassiveElementConsumer elementConsumer in elementConsumers)
+            if (plantablePlot.Occupant != null
+                && plantablePlot.Occupant.GetSMI<IrrigationMonitor.Instance>()?.def.consumedElements is var consumed_infos
+                && consumed_infos != null && consumed_infos.Length > 0)
             {
-                elementConsumer.EnableConsumption(false);
-            }
-
-            if (data != null)
-            {
-                var consumed_infos = ((GameObject)data)?.GetSMI<IrrigationMonitor.Instance>()?.def.consumedElements;
-                if (consumed_infos != null)
+                foreach (var consumer in consumers)
                 {
-                    foreach (var consumeInfo in consumed_infos)
+                    int cell = consumer.GetSampleCell();
+                    if (Grid.IsValidCell(cell))
                     {
-                        foreach (var elementConsumer in elementConsumers)
+                        bool enable = false;
+                        var current = Grid.Element[cell];
+                        foreach (var info in consumed_infos)
                         {
-                            var element = ElementLoader.FindElementByHash(elementConsumer.elementToConsume);
-                            if (element != null)
+                            if (info.tag == current.tag)
                             {
-                                if (element.tag != consumeInfo.tag)
+                                if (consumer.elementToConsume != current.id)
                                 {
-                                    //var traverse = Traverse.Create(elementConsumer);
-                                    //traverse.Method("SimUnregister").GetValue();
-                                    SimUnregister.Invoke(elementConsumer);
-                                    elementConsumer.elementToConsume = ElementLoader.GetElementID(consumeInfo.tag);
-                                    //traverse.Method("SimRegister").GetValue();
-                                    SimRegister.Invoke(elementConsumer);
+                                    consumer.EnableConsumption(false);
+                                    consumer.SimUnregister();
+                                    consumer.elementToConsume = current.id;
+                                    consumer.SimRegister();
                                 }
-                                elementConsumer.consumptionRate = consumeInfo.massConsumptionRate * 1.5f;
-                                elementConsumer.EnableConsumption(true);
+                                consumer.consumptionRate = info.massConsumptionRate * 1.5f;
+                                consumer.EnableConsumption(true);
+                                enable = true;
+                                break;
                             }
                         }
+                        if (!enable)
+                            consumer.EnableConsumption(false);
                     }
                 }
+            }
+            else
+            {
+                foreach (var consumer in consumers)
+                    consumer.EnableConsumption(false);
             }
         }
     }

@@ -45,6 +45,9 @@ namespace AquaticFarm
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
+            var kPrefabID = go.GetComponent<KPrefabID>();
+            kPrefabID.AddTag(GameTags.CodexCategories.FarmBuilding, false);
+            kPrefabID.prefabInitFn += OnPrefabInit;
             GeneratedBuildings.MakeBuildingAlwaysOperational(go);
             BuildingConfigManager.Instance.IgnoreDefaultKComponent(typeof(RequiresFoundation), prefab_tag);
             var simCellOccupier = go.AddOrGet<SimCellOccupier>();
@@ -57,6 +60,7 @@ namespace AquaticFarm
             plantablePlot.occupyingObjectRelativePosition = new Vector3(0f, 1f);
             plantablePlot.AddDepositTag(GameTags.CropSeed);
             plantablePlot.AddDepositTag(GameTags.WaterSeed);
+            plantablePlot.AddAdditionalCriteria(FarmTileConfig.ForbiddenTags);
             plantablePlot.SetFertilizationFlags(true, true);
             var copyBuildingSettings = go.AddOrGet<CopyBuildingSettings>();
             copyBuildingSettings.copyGroupTag = GameTags.Farm;
@@ -71,8 +75,16 @@ namespace AquaticFarm
             AddPassiveElementConsumer(go, new Vector3(-1f, 0f));
         }
 
+        private void OnPrefabInit(GameObject instance)
+        {
+            if (instance.TryGetComponent(out PlantablePlot plantablePlot))
+                plantablePlot.AddAdditionalCriteria(FarmTileConfig.ForbiddenTags);
+        }
+
         public override void DoPostConfigureComplete(GameObject go)
         {
+            // todo: а нужно ли ? у гидропоники нету, у фармтиле и широкой поники есть
+            go.GetComponent<KBatchedAnimController>().initialBlendParameters = 4;
             GeneratedBuildings.RemoveLoopingSounds(go);
             go.GetComponent<KPrefabID>().AddTag(GameTags.FarmTiles, false);
             FarmTileConfig.SetUpFarmPlotTags(go);
