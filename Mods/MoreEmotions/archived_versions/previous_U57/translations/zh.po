@@ -1,0 +1,183 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Application: Oxygen Not IncludedPOT Version: 2.0\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#. MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.FULL_BLADDER_LAUGH.NAME
+msgctxt "MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.FULL_BLADDER_LAUGH.NAME"
+msgid "Disgraced itself"
+msgstr "自取其辱"
+
+#. MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.FULL_BLADDER_LAUGH.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.FULL_BLADDER_LAUGH.TOOLTIP"
+msgid ""
+"This Duplicant made a mess in front of everyone's eyes\n"
+"It's so embarrassing"
+msgstr ""
+"这个复制人在所有人面前把事情搞砸了\n"
+"太丢人了"
+
+#. MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.RESPECT_GRAVE.NAME
+msgctxt "MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.RESPECT_GRAVE.NAME"
+msgid "Respect"
+msgstr "入土为安"
+
+#. MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.RESPECT_GRAVE.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.RESPECT_GRAVE.TOOLTIP"
+msgid "We honor our dead"
+msgstr "我们永远缅怀他"
+
+#. MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.SAW_CORPSE.NAME
+msgctxt "MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.SAW_CORPSE.NAME"
+msgid "Saw Corpse"
+msgstr "胆战心惊"
+
+#. MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.SAW_CORPSE.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.SAW_CORPSE.TOOLTIP"
+msgid ""
+"This Duplicant recently saw the corpse of another Duplicant\n"
+"It was overcome by a feeling of anxiety and fear"
+msgstr ""
+"这个复制人最近看到了另一个复制人的尸体\n"
+"真是太可怕了"
+
+#. MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.STRESSED_CHEERING.NAME
+msgctxt "MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.STRESSED_CHEERING.NAME"
+msgid "Psychological Assistance"
+msgstr "一臂之力"
+
+#. MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.STRESSED_CHEERING.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.DUPLICANTS.MODIFIERS.STRESSED_CHEERING.TOOLTIP"
+msgid ""
+"Another Duplicant cheering up this Duplicant and provided psychological "
+"assistance"
+msgstr "另一个复制人给他加油打气，提供了一些心理上的帮助"
+
+#. MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_BINGE_EAT_EMOTE.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_BINGE_EAT_EMOTE.NAME"
+msgid "Alternative variant of Binge Eater emotion"
+msgstr "变种狂吃情绪"
+
+#. MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_BINGE_EAT_EMOTE.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_BINGE_EAT_EMOTE.TOOLTIP"
+msgid "A stressed Binge Eater will sometimes try to bite his hand"
+msgstr "压力山大的复制人有时候可能会想吃自己的手"
+
+#. MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_SLEEP_ANIMS.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.ALTERNATIVE_SLEEP_ANIMS.NAME"
+msgid "Alternative variants of sleeping on a Bed animation"
+msgstr "变种睡觉动画"
+
+#. MoreEmotions.STRINGS.OPTIONS.DOUBLE_GREETING.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.DOUBLE_GREETING.NAME"
+msgid "Two \"Dual\" greetings with fists and hands"
+msgstr "用拳头和手掌的两种“双倍”打招呼"
+
+#. MoreEmotions.STRINGS.OPTIONS.FULL_BLADDER_ADD_EFFECT.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.FULL_BLADDER_ADD_EFFECT.NAME"
+msgid "Enable debuff"
+msgstr "启用负面状态"
+
+#. MoreEmotions.STRINGS.OPTIONS.FULL_BLADDER_EMOTE.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.FULL_BLADDER_EMOTE.NAME"
+msgid "\"I'm going to burst!\""
+msgstr "”我想拉屎！”"
+
+#. MoreEmotions.STRINGS.OPTIONS.FULL_BLADDER_EMOTE.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.OPTIONS.FULL_BLADDER_EMOTE.TOOLTIP"
+msgid "The emotion when a Duplicant very much wants to go to the Toilet"
+msgstr "一个复制人非常想去上厕所时的情绪"
+
+#. MoreEmotions.STRINGS.OPTIONS.FULL_BLADDER_LAUGH.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.FULL_BLADDER_LAUGH.NAME"
+msgid "\"Haha, it's disgraced itself!\""
+msgstr "“哈哈，太丢人了！”"
+
+#. MoreEmotions.STRINGS.OPTIONS.FULL_BLADDER_LAUGH.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.OPTIONS.FULL_BLADDER_LAUGH.TOOLTIP"
+msgid "Duplicants laugh at the Duplicant who made a mess"
+msgstr "复制人嘲笑那个搞砸了的复制人"
+
+#. MoreEmotions.STRINGS.OPTIONS.MOONWALK_GREETING.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.MOONWALK_GREETING.NAME"
+msgid "\"Dancing\" greeting"
+msgstr "”跳舞”打招呼"
+
+#. MoreEmotions.STRINGS.OPTIONS.RESPECT_GRAVE_ADD_EFFECT.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.RESPECT_GRAVE_ADD_EFFECT.NAME"
+msgid "Enable buff"
+msgstr "启用正面状态"
+
+#. MoreEmotions.STRINGS.OPTIONS.RESPECT_GRAVE_EMOTE.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.RESPECT_GRAVE_EMOTE.NAME"
+msgid "The \"F to pay respects\" Emotion"
+msgstr "“入土为安”情绪"
+
+#. MoreEmotions.STRINGS.OPTIONS.RESPECT_GRAVE_EMOTE.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.OPTIONS.RESPECT_GRAVE_EMOTE.TOOLTIP"
+msgid "Duplicants occasionally mourn near the Grave"
+msgstr "复制人偶尔会在坟墓之前哀悼死去的复制人"
+
+#. MoreEmotions.STRINGS.OPTIONS.SAW_CORPSE_ADD_EFFECT.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.SAW_CORPSE_ADD_EFFECT.NAME"
+msgid "Enable debuff"
+msgstr "启用负面状态"
+
+#. MoreEmotions.STRINGS.OPTIONS.SAW_CORPSE_EMOTE.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.SAW_CORPSE_EMOTE.NAME"
+msgid "The \"Saw Corpse\" Emotion"
+msgstr "“胆战心惊”情绪"
+
+#. MoreEmotions.STRINGS.OPTIONS.STARVATION_EMOTE.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.STARVATION_EMOTE.NAME"
+msgid "Very hungry emotion"
+msgstr "非常饥饿情绪"
+
+#. MoreEmotions.STRINGS.OPTIONS.STARVATION_EMOTE.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.OPTIONS.STARVATION_EMOTE.TOOLTIP"
+msgid "A starving Duplicant will sometimes try to bite his hand"
+msgstr "饥饿的复制人有时候会试图吃自己的手"
+
+#. MoreEmotions.STRINGS.OPTIONS.STRESS_CHEERING.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.STRESS_CHEERING.NAME"
+msgid "Psychological Assistance"
+msgstr "一臂之力"
+
+#. MoreEmotions.STRINGS.OPTIONS.STRESS_CHEERING.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.OPTIONS.STRESS_CHEERING.TOOLTIP"
+msgid "Duplicants will provide psychological assistance to stressed Duplicants"
+msgstr "复制人会为压力很大的复制人提供心理帮助"
+
+#. MoreEmotions.STRINGS.OPTIONS.STRESS_CHEERING_EFFECT.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.STRESS_CHEERING_EFFECT.NAME"
+msgid "Adds buff"
+msgstr "添加正面状态"
+
+#. MoreEmotions.STRINGS.OPTIONS.WAKE_UP_LAZY_ASS.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.WAKE_UP_LAZY_ASS.NAME"
+msgid "\"Wake Up Lazy Ass!\""
+msgstr "“醒醒懒鬼！”"
+
+#. MoreEmotions.STRINGS.OPTIONS.WAKE_UP_LAZY_ASS.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.OPTIONS.WAKE_UP_LAZY_ASS.TOOLTIP"
+msgid "Duplicants will kick a narcoleptic sleeping on the floor"
+msgstr "复制人会给在地板上睡觉的睡病患者一脚"
+
+#. MoreEmotions.STRINGS.OPTIONS.WET_HANDS_EMOTE.NAME
+msgctxt "MoreEmotions.STRINGS.OPTIONS.WET_HANDS_EMOTE.NAME"
+msgid "The \"Wet Hands\" Emotion"
+msgstr "“手湿了”情绪"
+
+#. MoreEmotions.STRINGS.OPTIONS.WET_HANDS_EMOTE.TOOLTIP
+msgctxt "MoreEmotions.STRINGS.OPTIONS.WET_HANDS_EMOTE.TOOLTIP"
+msgid "Sometimes it happens after mopping or using the Washbasin"
+msgstr "擦地洗手后有时候会出现这种情绪"
