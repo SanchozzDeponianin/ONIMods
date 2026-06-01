@@ -7,19 +7,34 @@ namespace CrabsProfit
 {
     /*
         некоторые соображения:
-        краб живёт 100 циклов (95 взрослый)
-        размножается 60 циклов дикий, 6 циклов ручной довольный
-        итого, 1 краб родит до 15 при благоприятных условиях
-        электрослизняк жрет руду 60 кг в цикл и живет 100 циклов
+        крабло живёт 100 циклов (95 взрослый)
+        размножается 60 циклов дикий, 2.5 циклов ручной довольный при счастье 10 (почесать + бракен + домег)
+        итого, 1 крабло родит до 38 при благоприятных условиях
+
+        электросклизняк жрет руду 60 кг в цикл и живет 100 циклов
         итого ему нужно 6к руды
+        
+        жеготные дающие руду, дают:
+        крокодилло 60 кг в цикл
+        коровло   до 250 кг в 10 циклов (стрижка)
+        черепахло до 250 кг в 10 циклов (стрижка)
+
+        устрица	  50 кг пеарла в 8 циклов == 6.25 в цикл за 35 кг песка в цикл
+        
         чтобы 1 краб прокормил 1 слизня - оптимально 6к / 15 == 400 руды с краба
-        и пусть руда с крабёнков будет бонусом
+
+        чтобы 1 краб прокормил 1 склизьняка оптимально 6к / 38 == 150 руды с краба
+        уровнять с коровло и черепахло		 2.5к / 38 == 65 руды с краба
+        сделать как устриццу				 625 / 38 == 16,5 пеарла с краба
+
     */
     internal enum ShellMass
     {
-        [Option] mass0 = 0,
+        [Option] mass25 = 25,
         [Option] mass50 = 50,
+        [Option] mass75 = 75,
         [Option] mass100 = 100,
+        [Option] mass150 = 150,
         [Option] mass200 = 200,
         [Option] mass300 = 300,
         [Option] mass400 = 400,
@@ -51,33 +66,30 @@ namespace CrabsProfit
     {
         [JsonProperty]
         [Option]
-        [Limit(0, 3)]
-        public int Crab_Meat { get; set; } = 1;
-
-        [JsonProperty]
-        [Option]
-        [Limit(0, 3)]
-        public int CrabWood_Meat { get; set; } = 1;
-
-        [JsonProperty]
-        [Option]
-        public ShellMass CrabFreshWater_Shell_Mass { get; set; } = ShellMass.mass200;
+        public ShellMass CrabFreshWater_Shell_Mass { get; set; } = ShellMass.mass75;
 
         [JsonProperty]
         [Option]
         public BabyShellMassDivider BabyCrabFreshWater_Mass_Divider { get; set; } = BabyShellMassDivider.div4;
 
-        // если в настройках задать нулевую массу - то пусть масса шкорлупы останется минимально ненулевой
-        // просто не добавлять дроп
         [JsonIgnore]
-        public float AdultShellMass => Mathf.Max((float)CrabFreshWater_Shell_Mass, (float)ShellMass.mass50);
+        public float AdultShellMass => Mathf.Max((float)CrabFreshWater_Shell_Mass, (float)ShellMass.mass25);
 
         [JsonIgnore]
         public float BabyShellMass => AdultShellMass / Mathf.Max((float)BabyCrabFreshWater_Mass_Divider, 1f);
 
+        [JsonProperty]
+        [Option]
+        [Limit(0, (int)ShellMass.mass25)]
+        public int SecondaryMass { get; set; } = 15;
+
+        [JsonProperty]
+        [Option]
+        public bool DisableRandom { get; set; } = false;
+
         public class OreWeights
         {
-            private const int min_normal = 1, min_rare = 0, max = 10;
+            private const int max = 10;
 
             [JsonIgnore]
             [Option]
@@ -85,53 +97,58 @@ namespace CrabsProfit
 
             [JsonProperty]
             [Option]
-            [Limit(min_normal, max)]
+            [Limit(0, max)]
             public int AluminumOre { get; set; } = 5;
 
             [JsonProperty]
             [Option]
-            [Limit(min_normal, max)]
-            public int Cuprite { get; set; } = 7;
+            [Limit(0, max)]
+            public int Cuprite { get; set; } = 5;
 
             [JsonProperty]
             [Option]
-            [Limit(min_normal, max)]
+            [Limit(0, max)]
             public int GoldAmalgam { get; set; } = 5;
 
             [JsonProperty]
             [Option]
-            [Limit(min_normal, max)]
-            public int IronOre { get; set; } = 6;
+            [Limit(0, max)]
+            public int IronOre { get; set; } = 5;
 
             [JsonProperty]
             [Option]
-            [Limit(min_rare, max)]
-            public int Lead { get; set; } = 2;
+            [Limit(0, max)]
+            public int Galena { get; set; } = 5;
 
             [JsonProperty]
             [Option]
-            [Limit(min_normal, max)]
+            [Limit(0, max)]
             public int Rust { get; set; } = 5;
 
             [JsonProperty]
             [Option]
-            [Limit(min_normal, max)]
+            [Limit(0, max)]
             public int Wolframite { get; set; } = 5;
 
             [JsonProperty]
             [Option]
-            [Limit(min_normal, max)]
+            [Limit(0, max)]
             public int Cobaltite { get; set; } = 5;
 
             [JsonProperty]
             [Option]
-            [Limit(min_normal, max)]
+            [Limit(0, max)]
             public int Cinnabar { get; set; } = 5;
 
             [JsonProperty]
             [Option]
-            [Limit(min_normal, max)]
+            [Limit(0, max)]
             public int NickelOre { get; set; } = 5;
+
+            [JsonProperty]
+            [Option]
+            [Limit(0, max)]
+            public int ZincOre { get; set; } = 5;
 
             [JsonIgnore]
             [Option]
@@ -140,7 +157,7 @@ namespace CrabsProfit
 
             [JsonProperty]
             [Option]
-            [Limit(min_rare, max)]
+            [Limit(0, max)]
             [RequireDLC(DlcManager.EXPANSION1_ID)]
             public int UraniumOre { get; set; } = 1;
 
@@ -150,17 +167,17 @@ namespace CrabsProfit
 
             [JsonProperty]
             [Option]
-            [Limit(min_rare, max)]
+            [Limit(0, max)]
             public int Electrum { get; set; } = 0;
 
             [JsonProperty]
             [Option]
-            [Limit(min_rare, max)]
+            [Limit(0, max)]
             public int FoolsGold { get; set; } = 0;
 
             [JsonProperty]
             [Option]
-            [Limit(min_rare, max)]
+            [Limit(0, max)]
             public int Radium { get; set; } = 0;
 
             [JsonIgnore]
@@ -170,15 +187,9 @@ namespace CrabsProfit
 
             [JsonProperty]
             [Option]
-            [Limit(min_rare, max)]
+            [Limit(0, max)]
             [RequireMod("RonivansLegacy_ChemicalProcessing")]
             public int ArgentiteOre { get; set; } = 0;
-
-            [JsonProperty]
-            [Option]
-            [Limit(min_rare, max)]
-            [RequireMod("RonivansLegacy_ChemicalProcessing")]
-            public int AurichalciteOre { get; set; } = 0;
         }
 
         [JsonProperty]

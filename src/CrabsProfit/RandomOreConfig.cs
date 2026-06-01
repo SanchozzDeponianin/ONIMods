@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using SanchozzONIMods.Lib;
+using PeterHan.PLib.Core;
 
 namespace CrabsProfit
 {
@@ -70,15 +71,15 @@ namespace CrabsProfit
                 { SimHashes.FoolsGold,      opt.FoolsGold},
                 { SimHashes.GoldAmalgam,    opt.GoldAmalgam},
                 { SimHashes.IronOre,        opt.IronOre},
-                { SimHashes.Lead,           opt.Lead},
+                { SimHashes.Galena,         opt.Galena},
                 { SimHashes.NickelOre,      opt.NickelOre},
                 { SimHashes.Radium,         opt.Radium},
                 { SimHashes.Rust,           opt.Rust},
                 { SimHashes.UraniumOre,     opt.UraniumOre},
                 { SimHashes.Wolframite,     opt.Wolframite},
+                { SimHashes.ZincOre,        opt.ZincOre},
                 // из Chemical Processing:
                 { (SimHashes)Hash.SDBMLower(nameof(opt.ArgentiteOre)),     opt.ArgentiteOre},
-                { (SimHashes)Hash.SDBMLower(nameof(opt.AurichalciteOre)),  opt.AurichalciteOre},
             };
             weights.Keys.ToList().ForEach(hash =>
             {
@@ -86,7 +87,8 @@ namespace CrabsProfit
                     weights.Remove(hash);
             });
             weights.Keys.ToList().ForEach(hash => total_weight += weights[hash]);
-            Debug.Assert(weights.Count > 0, "Random Ore weights table is empty!");
+            if (weights.Count <= 0)
+                PUtil.LogWarning("Random Ore weights table is empty!");
         }
 
         private Tag GetRandomOreId()
@@ -98,8 +100,7 @@ namespace CrabsProfit
                 if (weight <= 0)
                     return hash.CreateTag();
             }
-            Debug.Log("theoretically, this piece of code should not be executed");
-            return SimHashes.Dirt.CreateTag();
+            return CrabFreshWaterShellConfig.NonRandomCrushedTo.CreateTag();
         }
     }
 }

@@ -10,33 +10,25 @@ namespace CrabsProfit
         public static LocString MOD_TITLE = "";
         public static LocString MOD_DESCRIPTION = "";
 
-        private const string CRAB = "{CRAB}";
-        private const string CRABWOOD = "{CRABWOOD}";
-        private const string BABYCRABFRESHWATER = "{BABYCRABFRESHWATER}";
+        private const string SECONDARY = "{SECONDARY}";
+        private const string NONRANDOM = "{NONRANDOM}";
 
         public class ITEMS
         {
             public class INDUSTRIAL_PRODUCTS
             {
-                public class BABY_CRAB_SHELL
-                {
-                    public class VARIANT_FRESH_WATER
-                    {
-                        public static LocString NAME = "Small Sanishell Molt";
-                        public static LocString DESC = $"Can be crushed to produce {UI.FormatAsKeyWord(RANDOMORE.NAME)}.";
-                    }
-                }
                 public class CRAB_SHELL
                 {
                     public class VARIANT_FRESH_WATER
                     {
                         public static LocString NAME = "Sanishell Molt";
-                        public static LocString DESC = BABY_CRAB_SHELL.VARIANT_FRESH_WATER.DESC;
+                        public static LocString DESC = "Can be crushed to produce {0}.";
+                        public static LocString DESC_TWO = "Can be crushed to produce {0} and {1}.";
                     }
                 }
                 public class RANDOMORE
                 {
-                    public static LocString NAME = "Random Ore";
+                    public static LocString NAME = $"{UI.FormatAsLink("Random Ore", TUNING.MATERIALS.METAL)}";
                     public static LocString DESC = "It magically turns into a randomly chosen Metallic Ore.";
                 }
             }
@@ -44,22 +36,21 @@ namespace CrabsProfit
 
         public class OPTIONS
         {
-            public class CRAB_MEAT
-            {
-                public static LocString NAME = $"{CRAB} meat amount, units";
-            }
-            public class CRABWOOD_MEAT
-            {
-                public static LocString NAME = $"{CRABWOOD} meat amount, units";
-            }
             public class CRABFRESHWATER_SHELL_MASS
             {
                 public static LocString NAME = $"{UI.FormatAsKeyWord(ITEMS.INDUSTRIAL_PRODUCTS.CRAB_SHELL.VARIANT_FRESH_WATER.NAME)} mass, kg";
-                public static LocString TOOLTIP = "If you set this to zero, the new molt will not drop,\nand the previously dropped molt will have a mass of 50 kg.";
             }
             public class BABYCRABFRESHWATER_MASS_DIVIDER
             {
-                public static LocString NAME = $"{UI.FormatAsKeyWord(ITEMS.INDUSTRIAL_PRODUCTS.BABY_CRAB_SHELL.VARIANT_FRESH_WATER.NAME)} is less X times";
+                public static LocString NAME = $"Baby {UI.FormatAsKeyWord(ITEMS.INDUSTRIAL_PRODUCTS.CRAB_SHELL.VARIANT_FRESH_WATER.NAME)} is less X times";
+            }
+            public class SECONDARYMASS
+            {
+                public static LocString NAME = $"Drops a {SECONDARY} when crushed, kg";
+            }
+            public class DISABLERANDOM
+            {
+                public static LocString NAME = $"Disable Random, drops a {NONRANDOM} instead of";
             }
             public class ORE_WEIGHTS
             {
@@ -86,19 +77,14 @@ namespace CrabsProfit
             {
                 public static LocString NAME = "Silver Ore";
             }
-            public class AURICHALCITEORE
-            {
-                public static LocString NAME = "Zinc Ore";
-            }
         }
 
         internal static void DoReplacement()
         {
             var dictionary = new Dictionary<string, string>()
             {
-                {CRAB, UI.FormatAsKeyWord(CREATURES.SPECIES.CRAB.NAME) },
-                {CRABWOOD, UI.FormatAsKeyWord(CREATURES.SPECIES.CRAB.VARIANT_WOOD.NAME) },
-                {BABYCRABFRESHWATER, UI.FormatAsKeyWord(CREATURES.SPECIES.CRAB.VARIANT_FRESH_WATER.BABY.NAME) },
+                {SECONDARY, UI.FormatAsKeyWord(CrabFreshWaterShellConfig.SecondaryCrushedTo.CreateTag().ProperNameStripLink()) },
+                {NONRANDOM, UI.FormatAsKeyWord(CrabFreshWaterShellConfig.NonRandomCrushedTo.CreateTag().ProperNameStripLink()) },
             };
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
             // добавляем строки для опций-чекбоксов

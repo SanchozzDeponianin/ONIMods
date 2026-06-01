@@ -12,14 +12,26 @@ namespace CrabsProfit
         public static readonly Tag TAG = TagManager.Create(ID, CRAB_SHELL.VARIANT_FRESH_WATER.NAME);
         public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
         public string[] GetForbiddenDlcIds() => null;
+        public const SimHashes NonRandomCrushedTo = SimHashes.Corallium;
+        public const SimHashes SecondaryCrushedTo = SimHashes.Pearl;
 
         public GameObject CreatePrefab()
         {
             var mass = ModOptions.Instance.AdultShellMass;
+            var second_mass = ModOptions.Instance.SecondaryMass;
+            var second = SecondaryCrushedTo.CreateTag();
+            var ore_mass = mass - second_mass;
+            var ore = ModOptions.Instance.DisableRandom ? NonRandomCrushedTo.CreateTag() : RandomOreConfig.ID;
+            AddRecipe(TAG, mass, ore, ore_mass, second, second_mass);
+
+            var desk = (ore_mass > 0f && second_mass > 0f) ?
+                string.Format(CRAB_SHELL.VARIANT_FRESH_WATER.DESC_TWO, ore.ProperName(), second.ProperName()) :
+                string.Format(CRAB_SHELL.VARIANT_FRESH_WATER.DESC, ore_mass > 0f ? ore.ProperName() : second.ProperName());
+
             var go = EntityTemplates.CreateLooseEntity(
                 id: ID,
                 name: CRAB_SHELL.VARIANT_FRESH_WATER.NAME,
-                desc: CRAB_SHELL.VARIANT_FRESH_WATER.DESC,
+                desc: desk,
                 mass: 1f,
                 unitMass: false,
                 anim: Assets.GetAnim("fresh_crabshell_kanim"),
@@ -60,7 +72,6 @@ namespace CrabsProfit
             };
             OreSizeVisualizerComponents.TierSets[id] = mass_tiers;
             EntityTemplates.CreateAndRegisterCompostableFromPrefab(go);
-            AddRecipe(ID, mass);
             return go;
         }
 
@@ -85,15 +96,25 @@ namespace CrabsProfit
 
         public void OnSpawn(GameObject inst) { }
 
-        internal static void AddRecipe(string shell_id, float shell_mass)
+        internal static void AddRecipe(Tag shell, float shell_mass, Tag ore, float ore_mass, Tag second, float second_mass)
         {
-            var ingredients = new ComplexRecipe.RecipeElement[] { new ComplexRecipe.RecipeElement(shell_id, shell_mass) };
-            var results = new ComplexRecipe.RecipeElement[] { new ComplexRecipe.RecipeElement(RandomOreConfig.ID, shell_mass) };
-            var id = ComplexRecipeManager.MakeRecipeID(RockCrusherConfig.ID, ingredients, results);
+            var ingredients = new ComplexRecipe.RecipeElement[] { new ComplexRecipe.RecipeElement(shell, shell_mass) };
+            var results = new ComplexRecipe.RecipeElement[0];
+            // чтобы id рецепта не менялся при изменении настроек
+            var results_for_id = new[] { new ComplexRecipe.RecipeElement(RandomOreConfig.ID, shell_mass) };
+            var id = ComplexRecipeManager.MakeRecipeID(RockCrusherConfig.ID, ingredients, results_for_id);
+            if (ore_mass > 0f)
+                results = results.Append(new ComplexRecipe.RecipeElement(ore, ore_mass));
+            if (second_mass > 0)
+                results = results.Append(new ComplexRecipe.RecipeElement(second, second_mass));
             new ComplexRecipe(id, ingredients, results)
             {
                 time = TUNING.BUILDINGS.FABRICATION_TIME_SECONDS.SHORT,
-                description = string.Format(BUILDINGS.PREFABS.ROCKCRUSHER.LIME_RECIPE_DESCRIPTION, RANDOMORE.NAME.text, shell_id.ToTag().ProperName()),
+                description = results.Length > 1 ?
+                    string.Format(BUILDINGS.PREFABS.ROCKCRUSHER.RECIPE_DESCRIPTION_TWO_OUTPUT,
+                        ingredients[0].material.ProperName(), results[0].material.ProperName(), results[1].material.ProperName()) :
+                    string.Format(BUILDINGS.PREFABS.ROCKCRUSHER.RECIPE_DESCRIPTION,
+                        ingredients[0].material.ProperName(), results[0].material.ProperName()),
                 nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
                 fabricators = new List<Tag> { TagManager.Create(RockCrusherConfig.ID) }
             };
