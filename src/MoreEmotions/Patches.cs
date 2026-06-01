@@ -57,6 +57,12 @@ namespace MoreEmotions
 #endif
         }
 
+        [PLibMethod(RunAt.OnEndGame)]
+        private static void OnEndGame()
+        {
+            MoreMinionEmotes.Instance.ResetProblematicReferences();
+        }
+
         internal static bool ReactorIsOnFloor(GameObject _, Navigator.ActiveTransition transition)
         {
             return transition.end == NavType.Floor;
@@ -788,67 +794,11 @@ namespace MoreEmotions
             }
         }
         #endregion
-        #region Effects
-        // исправляем эмоции в соотвествии с 
-        // https://forums.kleientertainment.com/klei-bug-tracker/oni/about-emotions-animations-when-dupe-receiving-an-effect-r51053
-        [HarmonyPatch(typeof(Emote), nameof(Emote.IsValidForController))]
-        internal static class Emote_IsValidForController
-        {
-            private static bool Prepare() => EffectInstance_RegisterEmote.Prepare() || RadiationMonitor_CheckRadiationLevel.Prepare();
-
-            private static bool Prefix(Emote __instance, KBatchedAnimController animController, ref bool __result)
-            {
-                bool kbac_has_anim = true;
-                for (int i = 0; i < __instance.StepCount; i++)
-                {
-                    if (!animController.HasAnimation(__instance[i].anim))
-                    {
-                        kbac_has_anim = false;
-                        break;
-                    }
-                }
-                if (kbac_has_anim)
-                {
-                    __result = true;
-                    return false;
-                }
-
-                var kanimFileData = (__instance.AnimSet == null) ? null : __instance.AnimSet.GetData();
-                if (kanimFileData == null)
-                {
-                    __result = false;
-                    return false;
-                }
-
-                bool file_has_anim = true;
-                for (int j = 0; j < __instance.StepCount; j++)
-                {
-                    bool found = false;
-                    for (int k = 0; k < kanimFileData.animCount; k++)
-                    {
-                        if (kanimFileData.GetAnim(k).hash == __instance[j].anim)
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found)
-                    {
-                        file_has_anim = false;
-                        break;
-                    }
-                }
-                __result = file_has_anim;
-                return false;
-            }
-        }
-
+        #region Effects fix
         // исправляем эмоции при получении эффектов
         [HarmonyPatch]
         internal static class EffectInstance_RegisterEmote
         {
-            internal static bool Prepare() => ModOptions.Instance.effect_added_emotes;
-
             private static IEnumerable<MethodBase> TargetMethods()
             {
                 return typeof(EffectInstance).GetMethods().Where(m => m.Name == nameof(EffectInstance.RegisterEmote));
@@ -869,24 +819,12 @@ namespace MoreEmotions
                             break;
                         }
                 }
-                return PPatchTools.ReplaceConstant(instructions, float.NegativeInfinity, 10f, true);
+                return instructions;
             }
 
             private static string GetAnimName(Effect effect)
             {
                 return effect.emoteAnim ?? effect.emote?.AnimSet?.name ?? effect.Name;
-            }
-        }
-
-        // исправляем эмоции при радиации
-        // todo: рассмотреть возможность настраивать тайминги
-        [HarmonyPatch(typeof(RadiationMonitor), nameof(RadiationMonitor.CheckRadiationLevel))]
-        internal static class RadiationMonitor_CheckRadiationLevel
-        {
-            internal static bool Prepare() => DlcManager.FeatureRadiationEnabled() && ModOptions.Instance.radiation_pain_emote;
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-            {
-                return PPatchTools.ReplaceConstant(instructions, float.NegativeInfinity, 20f, true);
             }
         }
         #endregion

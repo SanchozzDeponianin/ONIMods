@@ -152,15 +152,6 @@ namespace MoreEmotions
                 public static LocString NAME = "Yuck! Microbes!";
                 public static LocString TOOLTIP = "The emotion when a Duplicant eating contaminated Food";
             }
-            public class EFFECT_ADDED_EMOTES
-            {
-                public static LocString NAME = "Emotions of various Effects";
-                public static LocString TOOLTIP = "Sore Back, Soggy Feet, Sopping Wet, Popped Eardrums, ect";
-            }
-            public class RADIATION_PAIN_EMOTE
-            {
-                public static LocString NAME = "The \"Radiation Pain\" Emotion";
-            }
         }
 
         internal static void PostProcess()

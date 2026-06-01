@@ -98,16 +98,6 @@ msgctxt "MoreEmotions.STRINGS.OPTIONS.DOUBLE_GREETING.NAME"
 msgid "Two \"Dual\" greetings with fists and hands"
 msgstr "Два \"двойных\" приветствия кулаками и ладонями"
 
-#. MoreEmotions.STRINGS.OPTIONS.EFFECT_ADDED_EMOTES.NAME
-msgctxt "MoreEmotions.STRINGS.OPTIONS.EFFECT_ADDED_EMOTES.NAME"
-msgid "Emotions of various Effects"
-msgstr "Эмоции от различных Эффектов"
-
-#. MoreEmotions.STRINGS.OPTIONS.EFFECT_ADDED_EMOTES.TOOLTIP
-msgctxt "MoreEmotions.STRINGS.OPTIONS.EFFECT_ADDED_EMOTES.TOOLTIP"
-msgid "Sore Back, Soggy Feet, Sopping Wet, Popped Eardrums, ect"
-msgstr "Больная спина, Мокрые ноги, Полностью Промокший, Лопнули уши, итд"
-
 #. MoreEmotions.STRINGS.OPTIONS.FALL_CONTUSION_ADD_EFFECT.NAME
 msgctxt "MoreEmotions.STRINGS.OPTIONS.FALL_CONTUSION_ADD_EFFECT.NAME"
 msgid "Enable debuff"
@@ -167,11 +157,6 @@ msgstr "<style=\"KKeyword\">Новые особенности:</style>"
 msgctxt "MoreEmotions.STRINGS.OPTIONS.OLD_FEATURES.NAME"
 msgid "<style=\"KKeyword\">Resurrected features:</style>"
 msgstr "<style=\"KKeyword\">Восстановленные особенности:</style>"
-
-#. MoreEmotions.STRINGS.OPTIONS.RADIATION_PAIN_EMOTE.NAME
-msgctxt "MoreEmotions.STRINGS.OPTIONS.RADIATION_PAIN_EMOTE.NAME"
-msgid "The \"Radiation Pain\" Emotion"
-msgstr "Эмоция \"Радиационная боль\""
 
 #. MoreEmotions.STRINGS.OPTIONS.RESPECT_GRAVE_ADD_EFFECT.NAME
 msgctxt "MoreEmotions.STRINGS.OPTIONS.RESPECT_GRAVE_ADD_EFFECT.NAME"

@@ -116,5 +116,17 @@ namespace MoreEmotions
                 new EmoteStep{anim = "idle_pst"},
             }, "anim_rage_kanim");
         }
+
+        public void ResetProblematicReferences()
+        {
+            for (int i = 0; i < resources.Count; i++)
+            {
+                var emote = resources[i];
+                for (int j = 0; j < emote.StepCount; j++)
+                {
+                    emote[j].UnregisterAllCallbacks();
+                }
+            }
+        }
     }
 }
