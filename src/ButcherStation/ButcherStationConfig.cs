@@ -49,11 +49,11 @@ namespace ButcherStation
             var storage = go.AddOrGet<Storage>();
             storage.allowItemRemoval = false;
             storage.showDescriptor = false;
-            storage.storageFilters = new List<Tag> { ButcherStation.ButcherableCreature };
+            storage.storageFilters = new List<Tag> { Patches.ButcherableCreature };
             storage.allowSettingOnlyFetchMarkedItems = false;
             go.AddOrGet<TreeFilterable>().uiHeight = TreeFilterable.UISideScreenHeight.Short;
             var butcherStation = go.AddOrGet<ButcherStation>();
-            butcherStation.creatureEligibleTag = ButcherStation.ButcherableCreature;
+            butcherStation.creatureEligibleTag = Patches.ButcherableCreature;
             go.AddOrGet<LoopingSounds>();
             go.AddOrGet<BuildingComplete>().isManuallyOperated = true;
             var roomTracker = go.AddOrGet<RoomTracker>();
@@ -66,10 +66,19 @@ namespace ButcherStation
             var def = go.AddOrGetDef<RanchStation.Def>();
             def.IsCritterEligibleToBeRanchedCb = ButcherStation.IsCreatureEligibleToBeButchedCB;
             def.OnRanchCompleteCb = (creature_go, worker) => ButcherStation.ButchCreature(creature_go, worker);
+            def.GetTargetRanchCell = (smi) =>
+            {
+                if (!smi.IsNullOrStopped())
+                    return Grid.PosToCell(smi);
+                else
+                    return Grid.InvalidCell;
+            };
             def.RancherInteractAnim = "anim_interacts_shearingstation_kanim";
+            def.RancherWipesBrowAnim = false;
             def.RanchedPreAnim = "hit";
             def.RanchedLoopAnim = "hit";
             def.RanchedPstAnim = "idle_loop";
+            def.RequiresRoom = true;
             def.WorkTime = 3f;
             go.AddOrGet<SkillPerkMissingComplainer>().requiredSkillPerk = Db.Get().SkillPerks.CanWrangleCreatures.Id;
             Prioritizable.AddRef(go);

@@ -1,19 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Klei.AI;
 using KSerialization;
 using UnityEngine;
-using PeterHan.PLib.Detours;
 
 namespace ButcherStation
 {
     [SerializationConfig(MemberSerialization.OptIn)]
     public class ButcherStation : KMonoBehaviour, ISim4000ms
     {
-        public static readonly Tag ButcherableCreature = TagManager.Create("ButcherableCreature");
-        public static readonly Tag FisherableCreature = TagManager.Create("FisherableCreature");
-
-        public Tag creatureEligibleTag = ButcherableCreature;
+        public Tag creatureEligibleTag = Patches.ButcherableCreature;
 
         public static readonly Tag[] CreatureNotEligibleTags = new Tag[] { GameTags.Creatures.Bagged, GameTags.Trapped, GameTags.Creatures.Die, GameTags.Dead };
 
@@ -25,9 +20,6 @@ namespace ButcherStation
         private int storedCreatureCount;
         internal List<KPrefabID> CachedCreatures { get; private set; } = new List<KPrefabID>();
         private bool dirty = true;
-
-        [SerializeField]
-        public bool isExteriorTargetRanchCell = false;
 
         [Serialize]
         internal float ageButchThresold = 0.85f;
@@ -60,7 +52,7 @@ namespace ButcherStation
 
         private static StatusItem capacityStatusItem;
 
-        protected override void OnPrefabInit()
+        public override void OnPrefabInit()
         {
             base.OnPrefabInit();
             if (capacityStatusItem == null)
@@ -81,14 +73,14 @@ namespace ButcherStation
             GetComponent<KSelectable>().SetStatusItem(Db.Get().StatusItemCategories.Main, capacityStatusItem, this);
         }
 
-        protected override void OnSpawn()
+        public override void OnSpawn()
         {
             base.OnSpawn();
             Subscribe((int)GameHashes.CopySettings, OnCopySettings);
             treeFilterable.OnFilterChanged += OnFilterChanged;
         }
 
-        protected override void OnCleanUp()
+        public override void OnCleanUp()
         {
             Unsubscribe((int)GameHashes.CopySettings, OnCopySettings);
             treeFilterable.OnFilterChanged -= OnFilterChanged;
@@ -124,14 +116,12 @@ namespace ButcherStation
                 RefreshCreatures();
         }
 
-        private static readonly IDetouredField<RanchStation.Instance, Room> ranchRoom = PDetours.DetourField<RanchStation.Instance, Room>("ranch");
         private static readonly List<KPrefabID> emptyList = new();
 
         internal void RefreshCreatures()
         {
             // обновляем число жеготных в комнате
-            var cavity = (!isExteriorTargetRanchCell) ? ranchRoom.Get(ranchStation)?.cavity : null;
-            cavity ??= Game.Instance.roomProber.GetCavityForCell(ranchStation.GetTargetRanchCell());
+            var cavity = ranchStation.GetStationCavity();
             var creatures = cavity?.creatures ?? emptyList;
 
             int old = storedCreatureCount;
@@ -202,6 +192,8 @@ namespace ButcherStation
             TallowConfig.ID,
             DinosaurMeatConfig.ID,
             PrehistoricPacuFilletConfig.ID,
+            SquidMeatConfig.ID,
+            NoriConfig.ID,
         };
 
         public static void ButchCreature(GameObject creature_go, WorkerBase worker, bool moveCreatureToButcherStation = false)
@@ -213,6 +205,7 @@ namespace ButcherStation
                 if (moveCreatureToButcherStation)
                 {
                     int cell = Grid.PosToCell(targetRanchStation.transform.GetPosition());
+                    cell = Grid.CellAbove(cell);
                     creature_go.transform.SetPosition(Grid.CellToPosCCC(cell, Grid.SceneLayer.Creatures));
                 }
                 if (targetRanchStation.gameObject.TryGetComponent<ButcherStation>(out var butcherStation) && butcherStation.leaveAlive)

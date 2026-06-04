@@ -2,13 +2,13 @@
 using UnityEngine;
 using TUNING;
 using SanchozzONIMods.Lib;
-using SanchozzONIMods.Shared;
 
 namespace ButcherStation
 {
     public class FishingStationConfig : IBuildingConfig
     {
         public const string ID = "FishingStation";
+        public const string ANIM = "fishingstation_kanim";
 
         public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(base.GetRequiredDlcIds());
 
@@ -18,13 +18,13 @@ namespace ButcherStation
                 id: ID,
                 width: 3,
                 height: 2,
-                anim: "fishingstation_kanim",
+                anim: ANIM,
                 hitpoints: BUILDINGS.HITPOINTS.TIER2,
                 construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER1,
                 construction_mass: new float[] { BUILDINGS.CONSTRUCTION_MASS_KG.TIER4[0], BUILDINGS.CONSTRUCTION_MASS_KG.TIER1[0] },
                 construction_materials: new string[] { "Metal", "Algae" },
                 melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER1,
-                build_location_rule: BuildLocationRule.OnFloor,
+                build_location_rule: BuildLocationRule.OnBackWall,
                 decor: BUILDINGS.DECOR.NONE,
                 noise: NOISE_POLLUTION.NOISY.TIER1
                 );
@@ -32,13 +32,15 @@ namespace ButcherStation
             buildingDef.EnergyConsumptionWhenActive = BUILDINGS.ENERGY_CONSUMPTION_WHEN_ACTIVE.TIER2;
             buildingDef.ExhaustKilowattsWhenActive = BUILDINGS.EXHAUST_ENERGY_ACTIVE.TIER1;
             buildingDef.SelfHeatKilowattsWhenActive = BUILDINGS.SELF_HEAT_KILOWATTS.TIER1;
-            buildingDef.Floodable = true;
+            buildingDef.Floodable = false;
             buildingDef.Entombable = true;
             buildingDef.AudioCategory = "Metal";
             buildingDef.AudioSize = "large";
             buildingDef.UtilityInputOffset = new CellOffset(0, 0);
             buildingDef.UtilityOutputOffset = new CellOffset(0, 0);
             buildingDef.DefaultAnimState = "off";
+            buildingDef.SceneLayer = Grid.SceneLayer.BuildingBack;
+            buildingDef.ForegroundLayer = Grid.SceneLayer.Front;
             buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.CRITTER);
             buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.RANCHING);
             return buildingDef;
@@ -50,26 +52,17 @@ namespace ButcherStation
             var storage = go.AddOrGet<Storage>();
             storage.allowItemRemoval = false;
             storage.showDescriptor = false;
-            storage.storageFilters = new List<Tag> { ButcherStation.FisherableCreature };
+            storage.storageFilters = new List<Tag> { Patches.FisherableCreature };
             storage.allowSettingOnlyFetchMarkedItems = false;
             go.AddOrGet<TreeFilterable>().uiHeight = TreeFilterable.UISideScreenHeight.Short;
             var butcherStation = go.AddOrGet<ButcherStation>();
-            butcherStation.creatureEligibleTag = ButcherStation.FisherableCreature;
+            butcherStation.creatureEligibleTag = Patches.FisherableCreature;
             butcherStation.allowLeaveAlive = true;
-            butcherStation.isExteriorTargetRanchCell = true;
             go.AddOrGet<LoopingSounds>();
             go.AddOrGet<BuildingComplete>().isManuallyOperated = true;
-            var kbac = go.AddOrGet<KBatchedAnimController>();
-            kbac.sceneLayer = Grid.SceneLayer.BuildingBack;
-            kbac.fgLayer = Grid.SceneLayer.BuildingFront;
             var roomTracker = go.AddOrGet<RoomTracker>();
             roomTracker.requiredRoomType = Db.Get().RoomTypes.CreaturePen.Id;
-            roomTracker.requirement = RoomTracker.Requirement.Required;
-            if (Patches.RoomsExpandedFound)
-            {
-                go.AddOrGet<MultiRoomTracker>().possibleRoomTypes =
-                    new string[] { Db.Get().RoomTypes.CreaturePen.Id, Patches.AquariumRoom.Id };
-            }
+            roomTracker.requirement = RoomTracker.Requirement.TrackingOnly;
         }
 
         public override void DoPostConfigurePreview(BuildingDef def, GameObject go)
@@ -86,6 +79,7 @@ namespace ButcherStation
 
         public override void DoPostConfigureComplete(GameObject go)
         {
+            var work_time = Utils.GetAnimDuration(Assets.GetAnim(ANIM), "working_pre", "working_loop");
             var def = go.AddOrGetDef<RanchStation.Def>();
             def.IsCritterEligibleToBeRanchedCb = ButcherStation.IsCreatureEligibleToBeButchedCB;
             def.OnRanchCompleteCb = (creature_go, worker) => ButcherStation.ButchCreature(creature_go, worker, true);
@@ -96,13 +90,18 @@ namespace ButcherStation
                 return Grid.InvalidCell;
             };
             def.RancherInteractAnim = "anim_interacts_fishingstation_kanim";
+            def.RancherWipesBrowAnim = false;
             def.RanchedPreAnim = "bitehook";
             def.RanchedLoopAnim = "caught_loop";
-            def.RanchedPstAnim = "hook_loop";
-            def.WorkTime = 3f;
+            def.RanchedPstAnim = "flop_loop";
+            def.RequiresRoom = false;
+            def.WorkTime = work_time;
             go.AddOrGet<SkillPerkMissingComplainer>().requiredSkillPerk = Db.Get().SkillPerks.CanWrangleCreatures.Id;
             Prioritizable.AddRef(go);
             go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.Complete;
+            go.AddOrGet<FisherWorkable>().workOffset = CellOffset.up;
+            go.AddOrGet<MakeFakeBaseSolid>();
+            go.AddOrGet<HalfFloodable>();
             AddVisualizer(go);
             // Начиная с У52, BuildingDef.PostProcess() перезаписывает ProperName тэгов из MaterialCategory
             // вернём водоросли как было

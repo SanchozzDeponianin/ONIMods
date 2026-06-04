@@ -31,7 +31,7 @@ namespace ButcherStation
             return s;
         }
 
-        protected override void OnPrefabInit()
+        public override void OnPrefabInit()
         {
             if (gameObject.TryGetComponent(out BoxLayoutGroup baseLayout))
                 baseLayout.Params = new BoxLayoutParams()

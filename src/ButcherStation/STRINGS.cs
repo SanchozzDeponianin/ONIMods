@@ -139,8 +139,8 @@ Similar to the old {FormatAsKeyWord("Critter Drop-Off")} in the U50 version of t
             LocString.CreateLocStringKeys(typeof(BUILDING));
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
             LocString.CreateLocStringKeys(typeof(UI));
-            Strings.Add($"STRINGS.MISC.TAGS.{ButcherStation.ButcherableCreature.ToString().ToUpperInvariant()}", MISC.TAGS.BAGABLECREATURE);
-            Strings.Add($"STRINGS.MISC.TAGS.{ButcherStation.FisherableCreature.ToString().ToUpperInvariant()}", MISC.TAGS.SWIMMINGCREATURE);
+            Strings.Add($"STRINGS.MISC.TAGS.{Patches.ButcherableCreature.ToString().ToUpperInvariant()}", MISC.TAGS.BAGABLECREATURE);
+            Strings.Add($"STRINGS.MISC.TAGS.{Patches.FisherableCreature.ToString().ToUpperInvariant()}", MISC.TAGS.SWIMMINGCREATURE);
         }
     }
 }
