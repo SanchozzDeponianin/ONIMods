@@ -40,7 +40,7 @@ namespace ButcherStation
                 {
                     public static LocString NAME = FormatAsLink("Fishing Station", "FISHINGSTATION");
                     public static LocString DESC = "Fishing Stations allows to safely fishing " + FormatAsLink("Pacu", "PACU") + " and not soak your feet.";
-                    public static LocString EFFECT = $"Allows the assigned {FormatAsLink("Rancher", "RANCHER")} to control the population and fishing too old, surplus, or unwanted {FormatAsLink("Fishes", "PACU")}.\n\nAssigned Duplicants must possess the <link=\"RANCHING1\">Critter Ranching</link> skill.\n\nA {FormatAsLink("Liquid", "ELEMENTSLIQUID")} depth of 2 to 4 tiles is required to place a fishing hook.";
+                    public static LocString EFFECT = $"Allows the assigned {FormatAsLink("Rancher", "RANCHER")} to control the population and fishing too old, surplus, or unwanted {FormatAsLink("Fishes", "PACU")}.\n\nAssigned Duplicants must possess the <link=\"RANCHING1\">Critter Ranching</link> skill.\n\nA {FormatAsLink("Liquid", "ELEMENTSLIQUID")} depth of 2 to 5 tiles is required to place a fishing hook.";
                 }
             }
         }
@@ -110,6 +110,10 @@ namespace ButcherStation
 
         public class OPTIONS
         {
+            public class ALLOW_PACIFISTS
+            {
+                public static LocString NAME = "Allow Pacifist Duplicants to work";
+            }
             public class EXTRA_MEAT_PER_RANCHING_ATTRIBUTE
             {
                 public static LocString NAME = $"+X% {FormatAsKeyWord("Extra Meat")} from butchered Critters per each {FormatAsKeyWord("Husbandry")} attribute level";

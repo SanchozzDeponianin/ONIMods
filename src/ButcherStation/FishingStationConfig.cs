@@ -25,7 +25,7 @@ namespace ButcherStation
                 hitpoints: BUILDINGS.HITPOINTS.TIER2,
                 construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER1,
                 construction_mass: new float[] { BUILDINGS.CONSTRUCTION_MASS_KG.TIER4[0], BUILDINGS.CONSTRUCTION_MASS_KG.TIER1[0] },
-                construction_materials: new string[] { "Metal", "Algae" },
+                construction_materials: new string[] { "Metal", "Algae&" + MATERIALS.RUBBER_OR_PLASTIC },
                 melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER1,
                 build_location_rule: BuildLocationRule.OnBackWall,
                 decor: BUILDINGS.DECOR.NONE,

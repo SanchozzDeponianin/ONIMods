@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
-using Database;
 using Klei.AI;
 using UnityEngine;
 using SanchozzONIMods.Lib;
@@ -31,7 +30,7 @@ namespace ButcherStation
         private static void BeforeDbInit(Harmony harmony)
         {
             Utils.InitLocalization(typeof(STRINGS));
-            harmony.PatchAll();
+            harmony.PatchAllUncategorized();
         }
 
         [PLibMethod(RunAt.AfterDbInit)]
@@ -53,8 +52,9 @@ namespace ButcherStation
         }
 
         // добавляем тэги для убиваемых животных
-        public static readonly Tag ButcherableCreature = TagManager.Create("ButcherableCreature");
-        public static readonly Tag FisherableCreature = TagManager.Create("FisherableCreature");
+        public static readonly Tag ButcherableCreature = TagManager.Create(nameof(ButcherableCreature));
+        public static readonly Tag FisherableCreature = TagManager.Create(nameof(FisherableCreature));
+        public static readonly Tag DoNotRanchMe = TagManager.Create(nameof(DoNotRanchMe));
 
         private static void AddEligibleTag(GameObject inst)
         {
@@ -67,11 +67,13 @@ namespace ButcherStation
         }
 
         [PLibMethod(RunAt.BeforeDbPostProcess)]
-        private static void BeforeDbPostProcess()
+        private static void BeforeDbPostProcess(Harmony harmony)
         {
             foreach (var go in Assets.GetPrefabsWithTag(GameTags.Creature))
                 if (go.GetDef<RanchableMonitor.Def>() != null && go.TryGetComponent(out KPrefabID kpid))
                     kpid.prefabSpawnFn += AddEligibleTag;
+            if (Assets.GetBuildingDef(UnderwaterRanchStationConfig.ID) != null)
+                harmony.PatchCategory(SeaFairyConfig.ID);
         }
 
         [PLibMethod(RunAt.OnStartGame)]
@@ -86,31 +88,28 @@ namespace ButcherStation
             PUIUtils.AddSideScreenContent<ButcherStationSideScreen>();
         }
 
-        // todo: зделать это для водорослевой рыбы
-#if false
-        // сделать рыб приручаемыми - чтобы ловились на рыбалке
-        [HarmonyPatch(typeof(BasePacuConfig), nameof(BasePacuConfig.CreatePrefab))]
-        private static class BasePacuConfig_CreatePrefab
+        // сделать водорослевых рыб приручаемыми - чтобы ловились на рыбалке
+        [HarmonyPatch(typeof(BaseSeaFairyConfig), nameof(BaseSeaFairyConfig.BaseSeaFairy))]
+        private static class BaseSeaFairyConfig_BaseSeaFairy
         {
-            private static void Postfix(GameObject __result, bool is_baby)
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC5_ID);
+            private static void Postfix(GameObject __result)
             {
-                if (!is_baby)
-                {
-                    __result.AddOrGetDef<RanchableMonitor.Def>();
-                }
+                __result.AddOrGetDef<RanchableMonitor.Def>();
+                __result.AddTag(DoNotRanchMe);
             }
 
-            private static ChoreTable.Builder Inject(ChoreTable.Builder builder, bool is_baby)
+            private static ChoreTable.Builder Inject(ChoreTable.Builder builder)
             {
-                return builder.Add(new RanchedStates.Def() { WaitingAnim = "idle_loop" }, !is_baby);
+                return builder.Add(new RanchedStates.Def() { WaitingAnim = "idle_loop" });
             }
             /*
                 ChoreTable.Builder chore_table = new ChoreTable.Builder().Add
                 blablabla
                 .PushInterruptGroup()
                 .Add(new FixedCaptureStates.Def(), true)
-           +++  .Add(new RanchedStates.Def(), !is_baby)
-                .Add(new LayEggStates.Def(), !is_baby)
+           +++  .Add(new RanchedStates.Def(), true)
+                .Add(new MoveToLureStates.Def(), true)
                 blablabla
             */
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
@@ -119,26 +118,42 @@ namespace ButcherStation
             }
             private static bool transpiler(ref List<CodeInstruction> instructions)
             {
-                var LayEggDef = typeof(LayEggStates.Def).GetConstructor(Type.EmptyTypes);
-                var is_baby = typeof(BasePacuConfig).GetMethodSafe(nameof(BasePacuConfig.CreatePrefab), true, PPatchTools.AnyArguments)
-                    ?.GetParameters().First(arg => arg.Name == "is_baby");
-                var Inject = typeof(BasePacuConfig_CreatePrefab).GetMethodSafe(nameof(BasePacuConfig_CreatePrefab.Inject), true, PPatchTools.AnyArguments);
-                if (LayEggDef != null && Inject != null && is_baby != null)
-                {
-                    for (int i = 0; i < instructions.Count; i++)
-                    {
-                        if (instructions[i].Is(OpCodes.Newobj, LayEggDef))
-                        {
-                            instructions.Insert(i++, TranspilerUtils.GetLoadArgInstruction(is_baby.Position));
-                            instructions.Insert(i++, new CodeInstruction(OpCodes.Call, Inject));
-                            return true;
-                        }
-                    }
-                }
-                return false;
+                var capture_def = typeof(FixedCaptureStates.Def).GetConstructor(Type.EmptyTypes);
+                var add = typeof(ChoreTable.Builder).GetMethodSafe(nameof(ChoreTable.Builder.Add), false, PPatchTools.AnyArguments);
+                var inject = typeof(BaseSeaFairyConfig_BaseSeaFairy).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments);
+                if (capture_def == null || add == null || inject == null)
+                    return false;
+                int i = instructions.FindIndex(instr => instr.Is(OpCodes.Newobj, capture_def));
+                if (i == -1)
+                    return false;
+                i = instructions.FindIndex(i, instr => instr.Calls(add));
+                if (i == -1)
+                    return false;
+                instructions.Insert(++i, new CodeInstruction(OpCodes.Call, inject));
+                return true;
             }
         }
-#endif
+
+        // не надо чесать водорослевую рыбу
+        [HarmonyPatch]
+        [HarmonyPatchCategory(SeaFairyConfig.ID)]
+        private static class UnderwaterRanchStationConfig_DoNotRanch_SeaFairy
+        {
+            private static MethodBase TargetMethod()
+            {
+                return Assets.GetBuildingDef(UnderwaterRanchStationConfig.ID).BuildingComplete
+                    .GetDef<RanchStation.Def>().IsCritterEligibleToBeRanchedCb.Method;
+            }
+            private static bool Prefix(GameObject creature_go, ref bool __result)
+            {
+                if (creature_go.HasTag(DoNotRanchMe))
+                {
+                    __result = false;
+                    return false;
+                }
+                return true;
+            }
+        }
 
         // подменяем список жеготных, чтобы убивать в первую очередь совсем лишних, затем старых, затем просто лишних.
         [HarmonyPatch(typeof(RanchStation.Instance), nameof(RanchStation.Instance.FindRanchable))]
@@ -251,9 +266,22 @@ namespace ButcherStation
         }
 
         // в прекондиции CanMoveTo заменяем building на workable
+        // запрещаем пацыфистов
         [HarmonyPatch]
         private static class RancherChore_Constructor
         {
+            public static Chore.Precondition ConsumerNotPacifist = new()
+            {
+                id = nameof(ConsumerNotPacifist),
+                description = global::STRINGS.DUPLICANTS.TRAITS.SCAREDYCAT.DESC,
+                sortOrder = -1,
+                canExecuteOnAnyThread = true,
+                fn = delegate (ref Chore.Precondition.Context context, object data)
+                {
+                    return context.consumerState.consumer.IsPermittedByTraits(Db.Get().ChoreGroups.Combat);
+                }
+            };
+
             private static MethodBase TargetMethod() => typeof(RancherChore).GetConstructors()[0];
 
             private static void Postfix(RancherChore __instance, KPrefabID rancher_station)
@@ -271,6 +299,10 @@ namespace ButcherStation
                             break;
                         }
                     }
+                }
+                if (!ModOptions.Instance.allow_pacifists && rancher_station.TryGetComponent(out ButcherStation _))
+                {
+                    __instance.AddPrecondition(ConsumerNotPacifist);
                 }
             }
         }

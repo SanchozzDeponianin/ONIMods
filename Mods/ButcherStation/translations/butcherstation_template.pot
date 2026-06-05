@@ -45,7 +45,7 @@ msgstr ""
 
 #. ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.EFFECT
 msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.EFFECT"
-msgid "Allows the assigned <link=\"RANCHER\">Rancher</link> to control the population and fishing too old, surplus, or unwanted <link=\"PACU\">Fishes</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHING1\">Critter Ranching</link> skill.\n\nA <link=\"ELEMENTSLIQUID\">Liquid</link> depth of 2 to 4 tiles is required to place a fishing hook."
+msgid "Allows the assigned <link=\"RANCHER\">Rancher</link> to control the population and fishing too old, surplus, or unwanted <link=\"PACU\">Fishes</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHING1\">Critter Ranching</link> skill.\n\nA <link=\"ELEMENTSLIQUID\">Liquid</link> depth of 2 to 5 tiles is required to place a fishing hook."
 msgstr ""
 
 #. ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.NAME
@@ -66,6 +66,11 @@ msgstr ""
 #. ButcherStation.STRINGS.MOD_TITLE
 msgctxt "ButcherStation.STRINGS.MOD_TITLE"
 msgid "Butcher & Fishing Stations"
+msgstr ""
+
+#. ButcherStation.STRINGS.OPTIONS.ALLOW_PACIFISTS.NAME
+msgctxt "ButcherStation.STRINGS.OPTIONS.ALLOW_PACIFISTS.NAME"
+msgid "Allow Pacifist Duplicants to work"
 msgstr ""
 
 #. ButcherStation.STRINGS.OPTIONS.EXTRA_MEAT_PER_RANCHING_ATTRIBUTE.NAME

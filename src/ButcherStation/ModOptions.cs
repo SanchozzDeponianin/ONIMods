@@ -22,5 +22,9 @@ namespace ButcherStation
         [JsonProperty]
         [Option]
         public bool filtered_count { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
+        public bool allow_pacifists { get; set; } = false;
     }
 }
