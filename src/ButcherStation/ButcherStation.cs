@@ -196,18 +196,12 @@ namespace ButcherStation
             NoriConfig.ID,
         };
 
-        public static void ButchCreature(GameObject creature_go, WorkerBase worker, bool moveCreatureToButcherStation = false)
+        public static void ButchCreature(GameObject creature_go, WorkerBase worker)
         {
             bool kill = true;
             var targetRanchStation = creature_go.GetSMI<RanchableMonitor.Instance>()?.TargetRanchStation;
             if (targetRanchStation != null)
             {
-                if (moveCreatureToButcherStation)
-                {
-                    int cell = Grid.PosToCell(targetRanchStation.transform.GetPosition());
-                    cell = Grid.CellAbove(cell);
-                    creature_go.transform.SetPosition(Grid.CellToPosCCC(cell, Grid.SceneLayer.Creatures));
-                }
                 if (targetRanchStation.gameObject.TryGetComponent<ButcherStation>(out var butcherStation) && butcherStation.leaveAlive)
                 {
                     kill = false;

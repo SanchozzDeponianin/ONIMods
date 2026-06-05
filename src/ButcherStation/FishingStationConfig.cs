@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Reflection.Emit;
 using UnityEngine;
 using TUNING;
+using HarmonyLib;
 using SanchozzONIMods.Lib;
 
 namespace ButcherStation
 {
+    [HarmonyPatch]
     public class FishingStationConfig : IBuildingConfig
     {
         public const string ID = "FishingStation";
@@ -67,14 +70,12 @@ namespace ButcherStation
 
         public override void DoPostConfigurePreview(BuildingDef def, GameObject go)
         {
-            //go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.Preview;
-            AddVisualizer(go);
+            AddGuide(go, false);
         }
 
         public override void DoPostConfigureUnderConstruction(GameObject go)
         {
-            go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.UnderConstruction;
-            AddVisualizer(go);
+            AddGuide(go, false);
         }
 
         public override void DoPostConfigureComplete(GameObject go)
@@ -82,23 +83,23 @@ namespace ButcherStation
             var work_time = Utils.GetAnimDuration(Assets.GetAnim(ANIM), "working_pre", "working_loop");
             var def = go.AddOrGetDef<RanchStation.Def>();
             def.IsCritterEligibleToBeRanchedCb = ButcherStation.IsCreatureEligibleToBeButchedCB;
-            def.OnRanchCompleteCb = (creature_go, worker) => ButcherStation.ButchCreature(creature_go, worker, true);
+            def.OnRanchCompleteCb = ButcherStation.ButchCreature;
             def.GetTargetRanchCell = (smi) =>
             {
-                if (!smi.IsNullOrStopped() && smi.gameObject.TryGetComponent<FishingStationGuide>(out var fishingStation))
+                if (!smi.IsNullOrStopped() && smi.gameObject.TryGetComponent<FishingStation>(out var fishingStation))
                     return fishingStation.TargetRanchCell;
                 return Grid.InvalidCell;
             };
             def.RancherInteractAnim = "anim_interacts_fishingstation_kanim";
             def.RancherWipesBrowAnim = false;
-            def.RanchedPreAnim = "bitehook";
-            def.RanchedLoopAnim = "caught_loop";
+            def.RanchedPreAnim = "idle_loop";  //"bitehook";
+            def.RanchedLoopAnim = "idle_loop"; //"caught_loop";
             def.RanchedPstAnim = "flop_loop";
             def.RequiresRoom = false;
             def.WorkTime = work_time;
             go.AddOrGet<SkillPerkMissingComplainer>().requiredSkillPerk = Db.Get().SkillPerks.CanWrangleCreatures.Id;
             Prioritizable.AddRef(go);
-            go.AddOrGet<FishingStationGuide>().type = FishingStationGuide.GuideType.Complete;
+            go.AddOrGet<FishingStation>();
             go.AddOrGet<FisherWorkable>().workOffset = CellOffset.up;
             go.AddOrGet<MakeFakeBaseSolid>();
             go.AddOrGet<HalfFloodable>();
@@ -114,11 +115,30 @@ namespace ButcherStation
             var visualizer = go.AddOrGet<RangeVisualizer>();
             visualizer.OriginOffset = new Vector2I(0, -1);
             visualizer.RangeMin.x = 0;
-            visualizer.RangeMin.y = -FishingStationGuide.MaxDepth;
+            visualizer.RangeMin.y = 1 - FishingStation.MaxDepth;
             visualizer.RangeMax.x = 0;
-            visualizer.RangeMax.y = -FishingStationGuide.MinDepth;
+            visualizer.RangeMax.y = 1 - FishingStation.MinDepth;
             go.GetComponent<KPrefabID>().instantiateFn += gmo =>
-                gmo.GetComponent<RangeVisualizer>().BlockingCb = FishingStationGuide.IsCellBlockedCB;
+                gmo.GetComponent<RangeVisualizer>().BlockingCb = FishingStation.IsCellBlockedCB;
+        }
+
+        [HarmonyReversePatch(HarmonyReversePatchType.Original)]
+        [HarmonyPatch(typeof(WaterTrapConfig), nameof(WaterTrapConfig.AddGuide))]
+        private static void AddGuide(GameObject go, bool occupy_tiles)
+        {
+#pragma warning disable CS8321
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                foreach (var instr in instructions)
+                {
+                    if (instr.opcode == OpCodes.Ldstr && instr.operand is string s && s == "critter_trap_water_kanim")
+                        instr.operand = ANIM;
+                }
+                return instructions;
+            }
+#pragma warning restore CS8321
+
+            WaterTrapConfig.AddGuide(go, occupy_tiles);
         }
     }
 }

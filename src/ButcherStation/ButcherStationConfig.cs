@@ -65,7 +65,7 @@ namespace ButcherStation
         {
             var def = go.AddOrGetDef<RanchStation.Def>();
             def.IsCritterEligibleToBeRanchedCb = ButcherStation.IsCreatureEligibleToBeButchedCB;
-            def.OnRanchCompleteCb = (creature_go, worker) => ButcherStation.ButchCreature(creature_go, worker);
+            def.OnRanchCompleteCb = ButcherStation.ButchCreature;
             def.GetTargetRanchCell = (smi) =>
             {
                 if (!smi.IsNullOrStopped())
