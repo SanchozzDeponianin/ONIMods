@@ -3,9 +3,9 @@
     <folder id="0">
         <file id="0" name="ui_0.png" width="148" height="108" pivot_x="0.498731" pivot_y="0.065743"/>
         <file id="1" name="strutbase_0.png" width="90" height="78" pivot_x="0.499997" pivot_y="0.500003"/>
-        <file id="2" name="spool_fg_0.png" width="90" height="80" pivot_x="0.499997" pivot_y="0.500003"/>
-        <file id="3" name="spool_fg_1.png" width="90" height="82" pivot_x="0.499997" pivot_y="0.501527"/>
-        <file id="4" name="spool_fg_2.png" width="90" height="80" pivot_x="0.499997" pivot_y="0.498441"/>
+        <file id="2" name="spool_0.png" width="90" height="80" pivot_x="0.499997" pivot_y="0.500003"/>
+        <file id="3" name="spool_1.png" width="90" height="82" pivot_x="0.499997" pivot_y="0.501527"/>
+        <file id="4" name="spool_2.png" width="90" height="80" pivot_x="0.499997" pivot_y="0.498441"/>
         <file id="5" name="guidespool_0.png" width="116" height="64" pivot_x="0.499998" pivot_y="0.500004"/>
         <file id="6" name="guidespool_1.png" width="116" height="52" pivot_x="0.498489" pivot_y="0.181976"/>
         <file id="7" name="chain_0.png" width="28" height="42" pivot_x="0.500437" pivot_y="0.81994"/>
@@ -17,12 +17,12 @@
         <file id="13" name="hook_fg_0.png" width="38" height="74" pivot_x="0.618414" pivot_y="0.897128"/>
         <file id="14" name="hook_fg_1.png" width="40" height="72" pivot_x="0.456244" pivot_y="0.885594"/>
         <file id="15" name="hook_fg_2.png" width="50" height="72" pivot_x="0.564745" pivot_y="0.892885"/>
-        <file id="16" name="spoolstrut_fg_0.png" width="44" height="62" pivot_x="0.386074" pivot_y="0.136294"/>
-        <file id="17" name="spoolstrut_fg_1.png" width="44" height="62" pivot_x="0.653687" pivot_y="0.148391"/>
+        <file id="16" name="spoolstrut_0.png" width="44" height="62" pivot_x="0.386074" pivot_y="0.136294"/>
+        <file id="17" name="spoolstrut_1.png" width="44" height="62" pivot_x="0.653687" pivot_y="0.148391"/>
         <file id="18" name="strut_0.png" width="62" height="72" pivot_x="0.718343" pivot_y="0.124309"/>
         <file id="19" name="strut_1.png" width="62" height="72" pivot_x="0.296972" pivot_y="0.129865"/>
-        <file id="20" name="spoolcap_fg_0.png" width="62" height="104" pivot_x="0.119556" pivot_y="0.500002"/>
-        <file id="21" name="spoolcap_fg_1.png" width="60" height="104" pivot_x="0.863329" pivot_y="0.502406"/>
+        <file id="20" name="spoolcap_0.png" width="62" height="104" pivot_x="0.119556" pivot_y="0.500002"/>
+        <file id="21" name="spoolcap_1.png" width="60" height="104" pivot_x="0.863329" pivot_y="0.502406"/>
         <file id="22" name="snapto_pivot_0.png" width="32" height="32" pivot_x="0.3125" pivot_y="0.34375"/>
         <file id="23" name="creaturesymbol1_0.png" width="46" height="72" pivot_x="0.599335" pivot_y="0.164398"/>
         <file id="24" name="creaturesymbol2_0.png" width="46" height="72" pivot_x="0.599335" pivot_y="0.164398"/>
