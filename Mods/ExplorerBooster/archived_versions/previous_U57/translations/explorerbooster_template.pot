@@ -1,0 +1,65 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. ExplorerBooster.STRINGS.DUPLICANTS.STATUSITEMS.BIONICEXPLORERBOOSTER_FINISHED.NAME
+msgctxt "ExplorerBooster.STRINGS.DUPLICANTS.STATUSITEMS.BIONICEXPLORERBOOSTER_FINISHED.NAME"
+msgid "Dowsing Complete"
+msgstr ""
+
+#. ExplorerBooster.STRINGS.DUPLICANTS.STATUSITEMS.BIONICEXPLORERBOOSTER_FINISHED.TOOLTIP
+msgctxt "ExplorerBooster.STRINGS.DUPLICANTS.STATUSITEMS.BIONICEXPLORERBOOSTER_FINISHED.TOOLTIP"
+msgid "There are no more Geysers to discover here"
+msgstr ""
+
+#. ExplorerBooster.STRINGS.DUPLICANTS.TRAITS.STARTWITHBOOSTER_EXPLORER.SHORT_DESC
+msgctxt "ExplorerBooster.STRINGS.DUPLICANTS.TRAITS.STARTWITHBOOSTER_EXPLORER.SHORT_DESC"
+msgid "Starts with a preinstalled <b><link=\"BOOSTEREXPLORER\">Dowsing Booster</link></b>"
+msgstr ""
+
+#. ExplorerBooster.STRINGS.ITEMS.BIONIC_BOOSTERS.BOOSTER_EXPLORER.DESC
+msgctxt "ExplorerBooster.STRINGS.ITEMS.BIONIC_BOOSTERS.BOOSTER_EXPLORER.DESC"
+msgid "Grants a Bionic Duplicant the ability to regularly uncover hidden geysers."
+msgstr ""
+
+#. ExplorerBooster.STRINGS.ITEMS.BIONIC_BOOSTERS.BOOSTER_EXPLORER.EFFECT
+msgctxt "ExplorerBooster.STRINGS.ITEMS.BIONIC_BOOSTERS.BOOSTER_EXPLORER.EFFECT"
+msgid "Dowsing while Defragmenting"
+msgstr ""
+
+#. ExplorerBooster.STRINGS.ITEMS.BIONIC_BOOSTERS.BOOSTER_EXPLORER.NAME
+msgctxt "ExplorerBooster.STRINGS.ITEMS.BIONIC_BOOSTERS.BOOSTER_EXPLORER.NAME"
+msgid "<link=\"BOOSTEREXPLORER\">Dowsing Booster</link>"
+msgstr ""
+
+#. ExplorerBooster.STRINGS.MOD_DESCRIPTION
+msgctxt "ExplorerBooster.STRINGS.MOD_DESCRIPTION"
+msgid "Grants a Bionic Duplicant the ability to regularly uncover hidden geysers while Defragmenting."
+msgstr ""
+
+#. ExplorerBooster.STRINGS.MOD_TITLE
+msgctxt "ExplorerBooster.STRINGS.MOD_TITLE"
+msgid "Dowsing Booster"
+msgstr ""
+
+#. ExplorerBooster.STRINGS.OPTIONS.CARE_PACKAGE.NAME
+msgctxt "ExplorerBooster.STRINGS.OPTIONS.CARE_PACKAGE.NAME"
+msgid "Add to Care Packages"
+msgstr ""
+
+#. ExplorerBooster.STRINGS.OPTIONS.CRAFT_AT.NAME
+msgctxt "ExplorerBooster.STRINGS.OPTIONS.CRAFT_AT.NAME"
+msgid "Can be crafted at the"
+msgstr ""
+
+#. ExplorerBooster.STRINGS.OPTIONS.STARTING_BOOSTER.NAME
+msgctxt "ExplorerBooster.STRINGS.OPTIONS.STARTING_BOOSTER.NAME"
+msgid "Can be preinstalled on a new Bionic Duplicant"
+msgstr ""
+
+#. ExplorerBooster.STRINGS.OPTIONS.WATTAGE.NAME
+msgctxt "ExplorerBooster.STRINGS.OPTIONS.WATTAGE.NAME"
+msgid "Wattage cost for Dowsing while Defragmenting"
+msgstr ""
+

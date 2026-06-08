@@ -1,0 +1,65 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. ExplorerBooster.STRINGS.DUPLICANTS.STATUSITEMS.BIONICEXPLORERBOOSTER_FINISHED.NAME
+msgctxt "ExplorerBooster.STRINGS.DUPLICANTS.STATUSITEMS.BIONICEXPLORERBOOSTER_FINISHED.NAME"
+msgid "Dowsing Complete"
+msgstr "Геосканирование завершено"
+
+#. ExplorerBooster.STRINGS.DUPLICANTS.STATUSITEMS.BIONICEXPLORERBOOSTER_FINISHED.TOOLTIP
+msgctxt "ExplorerBooster.STRINGS.DUPLICANTS.STATUSITEMS.BIONICEXPLORERBOOSTER_FINISHED.TOOLTIP"
+msgid "There are no more Geysers to discover here"
+msgstr "Здесь больше нет гейзеров, которые можно было бы обнаружить"
+
+#. ExplorerBooster.STRINGS.DUPLICANTS.TRAITS.STARTWITHBOOSTER_EXPLORER.SHORT_DESC
+msgctxt "ExplorerBooster.STRINGS.DUPLICANTS.TRAITS.STARTWITHBOOSTER_EXPLORER.SHORT_DESC"
+msgid "Starts with a preinstalled <b><link=\"BOOSTEREXPLORER\">Dowsing Booster</link></b>"
+msgstr "Начинает с предустановленным <b><link=\"BOOSTEREXPLORER\">бустером геосканирования</link></b>"
+
+#. ExplorerBooster.STRINGS.ITEMS.BIONIC_BOOSTERS.BOOSTER_EXPLORER.DESC
+msgctxt "ExplorerBooster.STRINGS.ITEMS.BIONIC_BOOSTERS.BOOSTER_EXPLORER.DESC"
+msgid "Grants a Bionic Duplicant the ability to regularly uncover hidden geysers."
+msgstr "Дает бионическому дупликанту способность регулярно обнаруживать скрытые гейзеры."
+
+#. ExplorerBooster.STRINGS.ITEMS.BIONIC_BOOSTERS.BOOSTER_EXPLORER.EFFECT
+msgctxt "ExplorerBooster.STRINGS.ITEMS.BIONIC_BOOSTERS.BOOSTER_EXPLORER.EFFECT"
+msgid "Dowsing while Defragmenting"
+msgstr "Геосканирование во время Дефрагментации"
+
+#. ExplorerBooster.STRINGS.ITEMS.BIONIC_BOOSTERS.BOOSTER_EXPLORER.NAME
+msgctxt "ExplorerBooster.STRINGS.ITEMS.BIONIC_BOOSTERS.BOOSTER_EXPLORER.NAME"
+msgid "<link=\"BOOSTEREXPLORER\">Dowsing Booster</link>"
+msgstr "<link=\"BOOSTEREXPLORER\">Бустер Геосканирования</link>"
+
+#. ExplorerBooster.STRINGS.MOD_DESCRIPTION
+msgctxt "ExplorerBooster.STRINGS.MOD_DESCRIPTION"
+msgid "Grants a Bionic Duplicant the ability to regularly uncover hidden geysers while Defragmenting."
+msgstr "Дает бионическому дупликанту способность регулярно обнаруживать скрытые гейзеры во время Дефрагментации."
+
+#. ExplorerBooster.STRINGS.MOD_TITLE
+msgctxt "ExplorerBooster.STRINGS.MOD_TITLE"
+msgid "Dowsing Booster"
+msgstr "Бустер Геосканирования"
+
+#. ExplorerBooster.STRINGS.OPTIONS.CARE_PACKAGE.NAME
+msgctxt "ExplorerBooster.STRINGS.OPTIONS.CARE_PACKAGE.NAME"
+msgid "Add to Care Packages"
+msgstr "Добавить в Посылки"
+
+#. ExplorerBooster.STRINGS.OPTIONS.CRAFT_AT.NAME
+msgctxt "ExplorerBooster.STRINGS.OPTIONS.CRAFT_AT.NAME"
+msgid "Can be crafted at the"
+msgstr "Может быть создан на:"
+
+#. ExplorerBooster.STRINGS.OPTIONS.STARTING_BOOSTER.NAME
+msgctxt "ExplorerBooster.STRINGS.OPTIONS.STARTING_BOOSTER.NAME"
+msgid "Can be preinstalled on a new Bionic Duplicant"
+msgstr "Может быть предустановлен в нового Бионика"
+
+#. ExplorerBooster.STRINGS.OPTIONS.WATTAGE.NAME
+msgctxt "ExplorerBooster.STRINGS.OPTIONS.WATTAGE.NAME"
+msgid "Wattage cost for Dowsing while Defragmenting"
+msgstr "Затраты мощности на Геосканирование во время Дефрагментации"
+
