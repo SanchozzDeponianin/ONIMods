@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 using HarmonyLib;
 using Klei.AI;
 using UnityEngine;
@@ -225,42 +224,38 @@ namespace ButcherStation
 
         // поскольку рабочая точка станции рыбалки на одну клетку выше
         // уточняем куда идти ранчеру в .moveToRanch.MoveTo()
-        [HarmonyPatch]
+        [HarmonyPatch(typeof(RancherChore.RancherChoreStates), nameof(RancherChore.RancherChoreStates.InitializeStates))]
         private static class RancherChore_RancherChoreStates_InitializeStates
         {
-            private static IEnumerable<MethodBase> methods;
-            private static bool Prepare()
+            private static RancherChore.RancherChoreStates.State MoveTo(
+                RancherChore.RancherChoreStates.State @this,
+                Func<RancherChore.RancherChoreStates.Instance, int> cell_callback,
+                RancherChore.RancherChoreStates.State success_state,
+                RancherChore.RancherChoreStates.State fail_state, bool update_cell)
             {
-                bool ok = TargetMethods().Count() > 0;
-                if (!ok)
-                    PUtil.LogWarning("Something went wrong when looking for a method 'RancherChore.RancherChoreStates.InitializeStates'");
-                return ok;
+                return @this.MoveTo(cell_callback, CellOffsetsCallback, success_state, fail_state, update_cell);
             }
-            private static IEnumerable<MethodBase> TargetMethods()
-            {
-                // ищем метод дёргающий Grid.PosToCell
-                // .moveToRanch.MoveTo( (smi) => Grid.PosToCell(smi.transform.GetPosition()), blabla)
-                if (methods == null)
-                {
-                    methods = typeof(RancherChore.RancherChoreStates).GetNestedTypes(PPatchTools.BASE_FLAGS)
-                        .Where(t => t.IsDefined(typeof(CompilerGeneratedAttribute)))
-                        .SelectMany(t => t.GetMethods(PPatchTools.BASE_FLAGS | BindingFlags.Instance))
-                        .Where(m => m.Name.Contains(nameof(RancherChore.RancherChoreStates.InitializeStates)) && m.ReturnType == typeof(int))
-                        .Where(m => PatchProcessor.ReadMethodBody(m)
-                            .Where(code => code.Key == OpCodes.Call && code.Value is MethodBase method
-                                && method.DeclaringType == typeof(Grid) && method.Name == nameof(Grid.PosToCell)).Any());
-                }
-                return methods;
-            }
-            private static void Cleanup() => methods = null;
 
-            private static bool Prefix(RancherChore.RancherChoreStates.Instance smi, ref int __result)
+            private static CellOffset[] CellOffsetsCallback(RancherChore.RancherChoreStates.Instance smi)
             {
-                if (smi.gameObject.TryGetComponent(out FisherWorkable workable))
-                {
-                    __result = Grid.OffsetCell(Grid.PosToCell(smi), workable.workOffset);
+                if (smi.transform.TryGetComponent(out FisherWorkable workable))
+                    return workable.workOffsets;
+                return null;
+            }
+
+            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
+            {
+                return instructions.Transpile(original, transpiler);
+            }
+
+            private static bool transpiler(ref List<CodeInstruction> instructions)
+            {
+                var replace = typeof(RancherChore_RancherChoreStates_InitializeStates).GetMethodSafe(nameof(MoveTo), true, PPatchTools.AnyArguments);
+                var victim = instructions.Find(instr => instr.opcode == OpCodes.Callvirt && instr.operand is MethodInfo method
+                    && method.Name == nameof(MoveTo) && method.ReturnType == replace.ReturnType)?.operand as MethodInfo;
+                if (victim == null)
                     return false;
-                }
+                instructions = PPatchTools.ReplaceMethodCallSafe(instructions, victim, replace).ToList();
                 return true;
             }
         }

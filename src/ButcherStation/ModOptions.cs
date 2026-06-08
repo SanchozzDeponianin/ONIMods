@@ -26,5 +26,9 @@ namespace ButcherStation
         [JsonProperty]
         [Option]
         public bool allow_pacifists { get; set; } = false;
+
+        [JsonProperty]
+        [Option]
+        public bool make_center_solid { get; set; } = false;
     }
 }

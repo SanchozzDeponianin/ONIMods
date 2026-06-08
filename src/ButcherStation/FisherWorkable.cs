@@ -16,36 +16,33 @@ namespace ButcherStation
         private FishingStation fishing;
 #pragma warning restore CS0649
 
-
         [SerializeField]
-        public CellOffset workOffset;
+        public CellOffset[] workOffsets;
 
         public override void OnPrefabInit()
         {
             base.OnPrefabInit();
-            SetOffsets(new[] { workOffset });
+            SetOffsets(workOffsets);
             autoRegisterSimRender = false;
         }
 
         public const string CAPTURING_SYMBOL = "creatureSymbol";
         public const string LINE_SYMBOL = "pipe";
 
-        // pre: 36 кадров
-        // loop:  начало вытаскивания на 31 кадре, конец на 41
-        private const float CAUGHT_BEGIN = (36 + 31) / 30f;
-        private const float CAUGHT_END = (36 + 41) / 30f;
-
+        // для рыбовых
         private readonly static HashedString BITEHOOK_ANIM = "bitehook";
         private readonly static HashedString CAUGHT_ANIM = "caught_loop";
         private readonly static HashedString CAUGHT_PST_ANIM = "flop_loop";
 
+        // для скрытых кбаков
+        private readonly static HashedString[] LINE_ANIMS = { "line_pre", "line_loop", "line_pst" };
+        private readonly static HashedString SACK_ANIM = "fish_bag";
+
         private HashedString capturingSymbol;
         private Vector3 capturingAnimOffcet;
+        private HashedString sackSymbol;
+        private HashedString caughtPstAnim;
         private int lineLength;
-        private float elaspedTime;
-
-        public enum State { Idle, Start, Caught, Finish }
-        private State state;
 
         // рыбовые имеют тотальный разнобой в наличии анимаций "bitehook" и "caught_loop"
         // и позиционировании "caught_loop" относительно "приманки"
@@ -59,9 +56,10 @@ namespace ButcherStation
 
         public override void OnStartWork(WorkerBase worker)
         {
-            elaspedTime = 0f;
-            state = State.Start;
             capturingAnimOffcet = Vector3.zero;
+            kbac.Play(workAnims, workAnimPlayMode);
+            fishing.line.Play(LINE_ANIMS, workAnimPlayMode);
+            fishing.sack.Play(SACK_ANIM, KAnim.PlayMode.Paused);
             base.OnStartWork(worker);
 
             int ranch_cell;
@@ -92,72 +90,112 @@ namespace ButcherStation
             capturingSymbol = CAPTURING_SYMBOL + lineLength.ToString();
             for (int i = 1; i <= 4; i++)
             {
-                kbac.SetSymbolVisiblity(LINE_SYMBOL + i.ToString(), i <= lineLength);
-                kbac.SetSymbolVisiblity(CAPTURING_SYMBOL + i.ToString(), i == lineLength);
+                fishing.line.SetSymbolVisiblity(LINE_SYMBOL + i.ToString(), i <= lineLength);
+                fishing.line.SetSymbolVisiblity(CAPTURING_SYMBOL + i.ToString(), i == lineLength);
             }
+            sackSymbol = (worker.transform.GetPosition().x < transform.GetPosition().x) ? "fish_bag_left" : "fish_bag_right";
+            caughtPstAnim = butcher.leaveAlive ? Baggable.GetBaggedAnimName(critterAnimController.gameObject) : CAUGHT_PST_ANIM;
+            SimAndRenderScheduler.instance.Add(this);
         }
 
         public override bool OnWorkTick(WorkerBase worker, float dt)
         {
-            elaspedTime += dt;
-            if (state == State.Start && elaspedTime >= CAUGHT_BEGIN)
+            // для рыб у кого нет bitehook
+            if (fishing.line.currentAnim == LINE_ANIMS[1] && kbac.currentFrame <= 2)
             {
-                state = State.Caught;
-                if (critterAnimController != null && critterAnimController.currentAnim != CAUGHT_ANIM)
-                    critterAnimController.Play(CAUGHT_ANIM);
-                UpdateCritterCaughtPosition();
-                SimAndRenderScheduler.instance.Add(this);
-            }
-            else if (state == State.Caught && elaspedTime >= CAUGHT_END)
-            {
-                state = State.Finish;
-                SimAndRenderScheduler.instance.Remove(this);
-                if (critterAnimController != null)
+                if (critterAnimController != null
+                    && critterAnimController.currentAnim != BITEHOOK_ANIM
+                    && critterAnimController.currentAnim != CAUGHT_ANIM)
                 {
-                    var pst_anim = butcher.leaveAlive ? Baggable.GetBaggedAnimName(critterAnimController.gameObject) : CAUGHT_PST_ANIM;
-                    critterAnimController.Play(pst_anim, KAnim.PlayMode.Loop);
-                    var offset = GetCritterFinalPosition() - critterAnimController.transform.GetPosition();
-                    offset.z = 0f;
-                    critterAnimController.Offset = offset;
+                    critterAnimController.Play(CAUGHT_ANIM);
+                }
+            }
+            // для рыб у кого нет caught_loop
+            else if (fishing.line.currentAnim == LINE_ANIMS[2] && fishing.line.IsStopped())
+            {
+                if (critterAnimController != null
+                    && critterAnimController.currentAnim != caughtPstAnim)
+                {
+                    StartPlaySackAnim();
                 }
             }
             return base.OnWorkTick(worker, dt);
         }
 
-        public void RenderEveryTick(float dt) => UpdateCritterCaughtPosition();
+        public void RenderEveryTick(float dt) => UpdateCritterPosition();
 
-        private void UpdateCritterCaughtPosition()
+        private void UpdateCritterPosition()
         {
-            if (state == State.Caught && critterAnimController != null)
+            if (critterAnimController != null)
             {
-                var column = kbac.GetSymbolTransform(capturingSymbol, out _).GetColumn(3);
-                var offset = (Vector3)column - critterAnimController.transform.GetPosition() + capturingAnimOffcet;
-                offset.z = 0f;
-                critterAnimController.Offset = offset;
+                if (critterAnimController.currentAnim == CAUGHT_ANIM)
+                {
+                    var position = critterAnimController.transform.GetPosition();
+                    var column = fishing.line.GetSymbolTransform(capturingSymbol, out _).GetColumn(3);
+                    var offset = (Vector3)column - position + capturingAnimOffcet;
+                    offset.z = 0f;
+                    if ((position + offset).y <= transform.GetPosition().y)
+                    {
+                        if (critterAnimController.Offset != offset)
+                            critterAnimController.Offset = offset;
+                    }
+                    else
+                        StartPlaySackAnim();
+                }
+                if (critterAnimController.currentAnim == caughtPstAnim)
+                {
+                    var position = critterAnimController.transform.GetPosition();
+                    var column = fishing.sack.GetSymbolTransform(sackSymbol, out _).GetColumn(3);
+                    var offset = (Vector3)column - position;
+                    offset.z = 0f;
+                    if (critterAnimController.Offset != offset)
+                        critterAnimController.Offset = offset;
+                }
             }
         }
 
-        private Vector3 GetCritterFinalPosition() => Grid.CellToPosCCC(Grid.CellAbove(Grid.PosToCell(this)), Grid.SceneLayer.Creatures);
+        private void StartPlaySackAnim()
+        {
+            fishing.sack.Play(SACK_ANIM, KAnim.PlayMode.Once);
+            critterAnimController.Play(caughtPstAnim, KAnim.PlayMode.Loop);
+        }
+
+        private void MoveCritterToPosition()
+        {
+            if (critterAnimController != null)
+            {
+                var position = critterAnimController.transform.GetPosition() + critterAnimController.Offset;
+                position.z = Grid.GetLayerZ(Grid.SceneLayer.Creatures);
+                critterAnimController.transform.SetPosition(position);
+                critterAnimController.Offset = Vector3.zero;
+            }
+        }
 
         public override void OnPendingCompleteWork(WorkerBase work)
         {
-            state = State.Idle;
             SimAndRenderScheduler.instance.Remove(this);
-            if (critterAnimController != null)
-            {
-                critterAnimController.Offset = Vector3.zero;
-                critterAnimController.transform.SetPosition(GetCritterFinalPosition());
-            }
+            MoveCritterToPosition();
             base.OnPendingCompleteWork(work);
         }
 
         public override void OnAbortWork(WorkerBase worker)
         {
-            state = State.Idle;
             SimAndRenderScheduler.instance.Remove(this);
-            if (critterAnimController != null)
-                critterAnimController.Offset = Vector3.zero;
+            MoveCritterToPosition();
+            PlayAbortAnim();
             base.OnAbortWork(worker);
+        }
+
+        private void PlayAbortAnim()
+        {
+            if (kbac.animQueue.TryPeek(out var data) && data.anim == workAnims[1])
+                kbac.animQueue.TryDequeue(out _);
+            if (kbac.currentAnim == workAnims[1])
+                kbac.StartQueuedAnim();
+            if (fishing.line.animQueue.TryPeek(out data) && data.anim == LINE_ANIMS[1])
+                fishing.line.animQueue.TryDequeue(out _);
+            if (kbac.currentAnim == LINE_ANIMS[1])
+                kbac.StartQueuedAnim();
         }
     }
 }

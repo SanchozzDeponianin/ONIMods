@@ -12,6 +12,7 @@ namespace ButcherStation
     {
         public const string ID = "FishingStation";
         public const string ANIM = "fishingstation_kanim";
+        public const string INTERACT_ANIM = "anim_interacts_fishingstation_kanim";
 
         public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(base.GetRequiredDlcIds());
 
@@ -43,7 +44,7 @@ namespace ButcherStation
             buildingDef.UtilityOutputOffset = new CellOffset(0, 0);
             buildingDef.DefaultAnimState = "off";
             buildingDef.SceneLayer = Grid.SceneLayer.BuildingBack;
-            buildingDef.ForegroundLayer = Grid.SceneLayer.Front;
+            buildingDef.ForegroundLayer = Grid.SceneLayer.BuildingFront;
             buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.CRITTER);
             buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.RANCHING);
             return buildingDef;
@@ -80,7 +81,7 @@ namespace ButcherStation
 
         public override void DoPostConfigureComplete(GameObject go)
         {
-            var work_time = Utils.GetAnimDuration(Assets.GetAnim(ANIM), "working_pre", "working_loop");
+            var work_time = Utils.GetAnimDuration(Assets.GetAnim(INTERACT_ANIM), "working_pre", "working_loop", "working_pst");
             var def = go.AddOrGetDef<RanchStation.Def>();
             def.IsCritterEligibleToBeRanchedCb = ButcherStation.IsCreatureEligibleToBeButchedCB;
             def.OnRanchCompleteCb = ButcherStation.ButchCreature;
@@ -90,7 +91,7 @@ namespace ButcherStation
                     return fishingStation.TargetRanchCell;
                 return Grid.InvalidCell;
             };
-            def.RancherInteractAnim = "anim_interacts_fishingstation_kanim";
+            def.RancherInteractAnim = INTERACT_ANIM;
             def.RancherWipesBrowAnim = false;
             def.RanchedPreAnim = "idle_loop";  //"bitehook";
             def.RanchedLoopAnim = "idle_loop"; //"caught_loop";
@@ -100,8 +101,19 @@ namespace ButcherStation
             go.AddOrGet<SkillPerkMissingComplainer>().requiredSkillPerk = Db.Get().SkillPerks.CanWrangleCreatures.Id;
             Prioritizable.AddRef(go);
             go.AddOrGet<FishingStation>();
-            go.AddOrGet<FisherWorkable>().workOffset = CellOffset.up;
-            go.AddOrGet<MakeFakeBaseSolid>();
+            var workable = go.AddOrGet<FisherWorkable>();
+            workable.workOffsets = new[] { CellOffset.leftup, CellOffset.rightup };
+            workable.faceTargetWhenWorking = true;
+            workable.workLayer = Grid.SceneLayer.BuildingUse;
+            workable.workAnims = new HashedString[] { "working_pre", "working_loop", "working_pst" };
+            workable.workingPstComplete = new HashedString[0];
+            workable.workingPstFailed = new HashedString[0];
+            workable.workAnimPlayMode = KAnim.PlayMode.Once;
+            workable.synchronizeAnims = false;
+            workable.resetProgressOnStop = true;
+            go.AddOrGet<MakeFakeBaseSolid>().floorOffsets = ModOptions.Instance.make_center_solid
+                ? new[] { CellOffset.left, CellOffset.none, CellOffset.right }
+                : new[] { CellOffset.left, CellOffset.right };
             go.AddOrGet<HalfFloodable>();
             AddVisualizer(go);
             // Начиная с У52, BuildingDef.PostProcess() перезаписывает ProperName тэгов из MaterialCategory

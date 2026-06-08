@@ -30,7 +30,7 @@ msgstr ""
 
 #. ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.EFFECT
 msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.EFFECT"
-msgid "Allows the assigned <link=\"RANCHER\">Rancher</link> to control the population and butchering too old, surplus, or unwanted <link=\"CRITTERS\">Critters</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHING1\">Critter Ranching</link> skill."
+msgid "Allows the assigned <link=\"RANCHING1\">Rancher</link> to control the population and butchering too old, surplus, or unwanted <link=\"CREATURES\">Critters</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHING1\">Critter Ranching</link> skill."
 msgstr ""
 
 #. ButcherStation.STRINGS.BUILDINGS.PREFABS.BUTCHERSTATION.NAME
@@ -40,12 +40,12 @@ msgstr ""
 
 #. ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.DESC
 msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.DESC"
-msgid "Fishing Stations allows to safely fishing <link=\"PACU\">Pacu</link> and not soak your feet."
+msgid "Fishing Stations allows to safely fishing <link=\"PACU\">Fishes</link> and not soak your feet."
 msgstr ""
 
 #. ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.EFFECT
 msgctxt "ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.EFFECT"
-msgid "Allows the assigned <link=\"RANCHER\">Rancher</link> to control the population and fishing too old, surplus, or unwanted <link=\"PACU\">Fishes</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHING1\">Critter Ranching</link> skill.\n\nA <link=\"ELEMENTSLIQUID\">Liquid</link> depth of 2 to 5 tiles is required to place a fishing hook."
+msgid "Allows the assigned <link=\"RANCHING1\">Rancher</link> to control the population and fishing too old, surplus, or unwanted <link=\"PACU\">Fishes</link>.\n\nAssigned Duplicants must possess the <link=\"RANCHING1\">Critter Ranching</link> skill.\n\nA <link=\"ELEMENTSLIQUID\">Liquid</link> depth of {0} to {1} tiles is required to place a fishing hook."
 msgstr ""
 
 #. ButcherStation.STRINGS.BUILDINGS.PREFABS.FISHINGSTATION.NAME
@@ -93,6 +93,16 @@ msgctxt "ButcherStation.STRINGS.OPTIONS.FILTERED_COUNT.TOOLTIP"
 msgid "If checked, only the Critters selected in the filter will be counted\nSimilar to the new <style=\"KKeyword\">Critter Drop-Off</style> in the U51 version of the game and newer\n\nIf unchecked, all Critters in the Room will be counted\nSimilar to the old <style=\"KKeyword\">Critter Drop-Off</style> in the U50 version of the game and older"
 msgstr ""
 
+#. ButcherStation.STRINGS.OPTIONS.MAKE_CENTER_SOLID.NAME
+msgctxt "ButcherStation.STRINGS.OPTIONS.MAKE_CENTER_SOLID.NAME"
+msgid "Make the middle cell of <style=\"KKeyword\">Fishing Station</style> impenetrable"
+msgstr ""
+
+#. ButcherStation.STRINGS.OPTIONS.MAKE_CENTER_SOLID.TOOLTIP
+msgctxt "ButcherStation.STRINGS.OPTIONS.MAKE_CENTER_SOLID.TOOLTIP"
+msgid "This will separate Rooms and prevent Items from falling.\nHowever, it looks weird, and Duplicants won't be able to swim there"
+msgstr ""
+
 #. ButcherStation.STRINGS.OPTIONS.MAX_CREATURE_LIMIT.NAME
 msgctxt "ButcherStation.STRINGS.OPTIONS.MAX_CREATURE_LIMIT.NAME"
 msgid "<style=\"KKeyword\">Max Critters</style> limit"
@@ -100,7 +110,7 @@ msgstr ""
 
 #. ButcherStation.STRINGS.OPTIONS.MAX_CREATURE_LIMIT.TOOLTIP
 msgctxt "ButcherStation.STRINGS.OPTIONS.MAX_CREATURE_LIMIT.TOOLTIP"
-msgid "Affects both <style=\"KKeyword\">Butcher</style> and <style=\"KKeyword\">Fishing Stations</style> as well as <style=\"KKeyword\">Critter Drop-Off</style> and <style=\"KKeyword\">Fish Release</style>"
+msgid "Affects both <style=\"KKeyword\">Butcher</style> and <style=\"KKeyword\">Fishing Stations</style>\nas well as <style=\"KKeyword\">Critter Drop-Off</style> and <style=\"KKeyword\">Fish Release</style>"
 msgstr ""
 
 #. ButcherStation.STRINGS.UI.UISIDESCREENS.BUTCHERSTATIONSIDESCREEN.AGE_THRESHOLD.TOOLTIP

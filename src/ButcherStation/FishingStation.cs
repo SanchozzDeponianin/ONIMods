@@ -1,4 +1,7 @@
-﻿namespace ButcherStation
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+namespace ButcherStation
 {
     [SkipSaveFileSerialization]
     public class FishingStation : KMonoBehaviour, ISim4000ms
@@ -18,6 +21,9 @@
         [MyCmpReq]
         private KBatchedAnimController kbac;
 #pragma warning restore CS0649
+
+        public KBatchedAnimController line;
+        public KBatchedAnimController sack;
 
         private static StatusItem statusItemNoDepth;
         private static StatusItem statusItemNoWater;
@@ -51,6 +57,11 @@
                 GameScenePartitioner.Instance.liquidChangedLayer, RefreshDepth);
             buildingsEntry = GameScenePartitioner.Instance.Add("FishingStation.OnSpawn", gameObject, extents,
                 GameScenePartitioner.Instance.objectLayers[(int)ObjectLayer.Building], RefreshDepth);
+
+            line = AddChildrenKbac(nameof(line), kbac, "snapto_line", "line_pre");
+            sack = AddChildrenKbac(nameof(sack), kbac, "snapto_sack", "fish_bag");
+            sack.SetSymbolVisiblity("fish_bag_left", false);
+            sack.SetSymbolVisiblity("fish_bag_right", false);
             RefreshDepth();
         }
 
@@ -60,7 +71,37 @@
             GameScenePartitioner.Instance.Free(ref solidEntry);
             GameScenePartitioner.Instance.Free(ref liquidEntry);
             GameScenePartitioner.Instance.Free(ref buildingsEntry);
+            foreach (var link in links)
+                link.Unregister();
             base.OnCleanUp();
+        }
+
+        private List<KAnimLink> links = new();
+
+        private KBatchedAnimController AddChildrenKbac(string name, KBatchedAnimController parent, string target_symbol, string animation)
+        {
+            var go = new GameObject { name = parent.name + "." + name };
+            go.SetActive(false);
+            go.transform.parent = parent.transform;
+            var position = parent.transform.GetPosition();
+            position.z = parent.transform.GetPosition().z + 0.1f; // Meter.Offset.Behind
+            go.transform.SetPosition(position);
+            var kbak = go.AddOrGet<KBatchedAnimController>();
+            kbak.AnimFiles = parent.AnimFiles;
+            kbak.initialAnim = animation;
+            kbak.fgLayer = Grid.SceneLayer.NoLayer;
+            kbak.initialMode = KAnim.PlayMode.Paused;
+            kbak.isMovable = true;
+            kbak.visibilityType = KAnimControllerBase.VisibilityType.OffscreenUpdate;
+            parent.SetSymbolVisiblity(target_symbol, false);
+            var tracker = go.AddOrGet<KBatchedAnimTracker>();
+            tracker.controller = parent;
+            tracker.symbol = target_symbol;
+            tracker.matchParentOffset = true;
+            tracker.forceAlwaysVisible = true;
+            links.Add(new KAnimLink(parent, kbak));
+            go.SetActive(true);
+            return kbak;
         }
 
         private void OnOperationalChanged(object data)

@@ -1,30 +1,34 @@
-﻿namespace ButcherStation
+﻿using UnityEngine;
+
+namespace ButcherStation
 {
     [SkipSaveFileSerialization]
     public class MakeFakeBaseSolid : KMonoBehaviour
     {
         // фейковый как бы твёрдый пол, не пропускающий падающие предметы, но водогазопроницаемый
 
-#pragma warning disable CS0649
-        [MyCmpReq]
-        private Building building;
-#pragma warning restore CS0649
+        [SerializeField]
+        public CellOffset[] floorOffsets;
 
-        private HandleVector<int>.Handle solidEntry;
+        private HandleVector<int>.Handle[] solidEntries;
 
         public override void OnSpawn()
         {
             base.OnSpawn();
             SetFloor(true);
-            var extents = building.GetExtents();
-            extents.height = 1;
-            solidEntry = GameScenePartitioner.Instance.Add("MakeFakeBaseSolid.OnSpawn", gameObject, extents,
-                GameScenePartitioner.Instance.solidChangedLayer, RefreshFoundation);
+            solidEntries = new HandleVector<int>.Handle[floorOffsets.Length];
+            for (int i = 0; i < floorOffsets.Length; i++)
+            {
+                solidEntries[i] = GameScenePartitioner.Instance.Add("MakeFakeBaseSolid.OnSpawn", gameObject,
+                    Extents.OneCell(Grid.OffsetCell(Grid.PosToCell(this), floorOffsets[i])),
+                    GameScenePartitioner.Instance.solidChangedLayer, RefreshFoundation);
+            }
         }
 
         public override void OnCleanUp()
         {
-            GameScenePartitioner.Instance.Free(ref solidEntry);
+            for (int i = 0; i < floorOffsets.Length; i++)
+                GameScenePartitioner.Instance.Free(ref solidEntries[i]);
             SetFloor(false);
             base.OnCleanUp();
         }
@@ -38,10 +42,9 @@
 
         public void SetFloor(bool active)
         {
-            var extents = building.GetExtents();
-            for (int i = 0; i < extents.width; i++)
+            for (int i = 0; i < floorOffsets.Length; i++)
             {
-                int cell = Grid.XYToCell(extents.x + i, extents.y);
+                int cell = Grid.OffsetCell(Grid.PosToCell(this), floorOffsets[i]);
                 if (active)
                 {
                     Grid.FakeFloor.Add(cell);
@@ -72,10 +75,9 @@
         // иначе отменяем выкапывание если было и восстанавливаем Grid.Foundation и Grid.SetSolid
         private void RefreshFoundation(object data)
         {
-            var extents = building.GetExtents();
-            for (int i = 0; i < extents.width; i++)
+            for (int i = 0; i < floorOffsets.Length; i++)
             {
-                int cell = Grid.XYToCell(extents.x + i, extents.y);
+                int cell = Grid.OffsetCell(Grid.PosToCell(this), floorOffsets[i]);
                 if (Grid.Element[cell].IsSolid)
                     Grid.Foundation[cell] = false;
                 else
