@@ -26,6 +26,9 @@
 
         [MySmiGet]
         private VineMother.Instance vineMother;
+
+        [MySmiGet]
+        private SeaTreeRoot.Instance seaTree;
 #pragma warning restore CS0649
 
         private bool shouldAbsorb = true;
@@ -195,6 +198,27 @@
                         }
                         if (shouldAbsorb)
                             break;
+                    }
+                }
+                return;
+            }
+            if (!seaTree.IsNullOrStopped())
+            {
+                // корень морской водоросли не имеет Growing
+                // проверка всех веток
+                // поглощение включено если есть растущие ветки
+                shouldAbsorb = false;
+                if (seaTree.Branch != null)
+                {
+                    var seaBranch = seaTree.Branch.GetSMI<SeaTreeBranch.Instance>();
+                    while (!seaBranch.IsNullOrStopped())
+                    {
+                        if (!seaBranch.IsGrown || !seaBranch.IsReadyForHarvest)
+                        {
+                            shouldAbsorb = true;
+                            break;
+                        }
+                        seaBranch = seaBranch.BranchSMI;
                     }
                 }
                 return;

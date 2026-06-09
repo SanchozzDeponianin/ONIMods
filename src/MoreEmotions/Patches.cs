@@ -65,7 +65,7 @@ namespace MoreEmotions
 
         internal static bool ReactorIsOnFloor(GameObject _, Navigator.ActiveTransition transition)
         {
-            return transition.end == NavType.Floor;
+            return transition.start == NavType.Floor && transition.end == NavType.Floor;
         }
 
         internal static bool ReactorIsFacingMe(GameObject reactable, GameObject reactor)

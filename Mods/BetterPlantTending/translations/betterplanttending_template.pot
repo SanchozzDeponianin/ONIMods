@@ -220,6 +220,6 @@ msgstr ""
 
 #. BetterPlantTending.STRINGS.UI.UISIDESCREENS.PLANTERSIDESCREEN.TOOLTIPS.SQUIRREL_NEEDED
 msgctxt "BetterPlantTending.STRINGS.UI.UISIDESCREENS.PLANTERSIDESCREEN.TOOLTIPS.SQUIRREL_NEEDED"
-msgid "\n\nA {SQUIRREL} is required to extract the seeds"
+msgid "\n\nA {0} is required to extract the seeds"
 msgstr ""
 

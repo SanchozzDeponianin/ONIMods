@@ -71,6 +71,27 @@ namespace BetterPlantTending
                     }
                 }
             }
+            // вычисляем подводные растения
+            foreach (var plant in Assets.GetPrefabsWithComponent<ExtraSeedProducer>())
+            {
+                if (plant.TryGetComponent(out PressureVulnerable vulnerable)
+                    && plant.TryGetComponent(out ExtraSeedProducer producer))
+                {
+                    if (vulnerable.safe_atmospheres != null && vulnerable.safe_atmospheres.Count > 0)
+                    {
+                        bool is_aquatic = true;
+                        foreach (var element in vulnerable.safe_atmospheres)
+                        {
+                            if (!element.IsLiquid)
+                            {
+                                is_aquatic = false;
+                                break;
+                            }
+                        }
+                        producer.isAquatic = is_aquatic;
+                    }
+                }
+            }
         }
 
         // дополнительные семена безурожайных растений
@@ -223,52 +244,6 @@ namespace BetterPlantTending
         }
         #endregion
 
-        // исправление для отображения шанса доп семян в интерфейсе ферм и кодексе.
-        // заодно начал отображаться и декор.
-        // а то обычно для неурожайных растений "эффекты" вообще не отображаются.
-        // грязновато. но ладно.
-        [HarmonyPatch(typeof(GameUtil), nameof(GameUtil.GetPlantEffectDescriptors))]
-        private static class GameUtil_GetPlantEffectDescriptors
-        {
-            private static Component GetTwoComponents(GameObject go)
-            {
-                if (go != null)
-                {
-                    if (go.TryGetComponent<Growing>(out var growing))
-                        return growing;
-                    if (go.TryGetComponent<ExtraSeedProducer>(out var producer))
-                        return producer;
-                }
-                return null;
-            }
-            /*
-        --- Growing growing = go.GetComponent<Growing>();
-        +++ Growing growing = go.GetComponent<Growing>() ?? go.GetComponent<ExtraSeedProducer>();
-            bool flag = growing == null;
-            */
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
-            {
-                return instructions.Transpile(original, transpiler);
-            }
-            private static bool transpiler(ref List<CodeInstruction> instructions)
-            {
-                var getComponent = typeof(GameObject).GetMethod(nameof(GameObject.GetComponent), Type.EmptyTypes).MakeGenericMethod(typeof(Growing));
-                var getTwoComponents = typeof(GameUtil_GetPlantEffectDescriptors).GetMethodSafe(nameof(GetTwoComponents), true, PPatchTools.AnyArguments);
-                if (getComponent != null && getTwoComponents != null)
-                {
-                    for (int i = 0; i < instructions.Count; i++)
-                    {
-                        if (instructions[i].Calls(getComponent))
-                        {
-                            instructions[i] = new CodeInstruction(OpCodes.Call, getTwoComponents);
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            }
-        }
-
         #region Fertilization
         // останавливаем поглощения воды/удобрений при других причинах отсутствии роста помимо засыхания,
         // для ентого внедряем собственный компонент
@@ -401,6 +376,28 @@ namespace BetterPlantTending
                 ExtendedFertilizationIrrigationMonitor.QueueUpdateAbsorbing(smi.MotherSMI);
             }
             private static void Postfix(VineBranch __instance)
+            {
+                __instance.undevelopedBranch.growing
+                    .Enter(QueueUpdate)
+                    .Exit(QueueUpdate);
+                __instance.mature.healthy.growing
+                    .Enter(QueueUpdate)
+                    .Exit(QueueUpdate);
+            }
+        }
+
+        // когда меняется состояние ветки морской водоросли
+        [HarmonyPatch(typeof(SeaTreeBranch), nameof(SeaTreeBranch.InitializeStates))]
+        private static class SeaTreeBranch_InitializeStates
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC5_ID)
+                && ModOptions.Instance.prevent_fertilization_irrigation_not_growning;
+
+            private static void QueueUpdate(SeaTreeBranch.Instance smi)
+            {
+                ExtendedFertilizationIrrigationMonitor.QueueUpdateAbsorbing(smi.RootSMI);
+            }
+            private static void Postfix(SeaTreeBranch __instance)
             {
                 __instance.undevelopedBranch.growing
                     .Enter(QueueUpdate)

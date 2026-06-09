@@ -54,7 +54,7 @@ namespace BetterPlantTending
                     public class TOOLTIPS
                     {
                         public static LocString BONUS_SEEDS = "This plant has a {0} chance to produce new seeds when tended or pollinated\n\nAffected by: {1}{2}";
-                        public static LocString SQUIRREL_NEEDED = $"\n\nA {SQUIRREL} is required to extract the seeds";
+                        public static LocString SQUIRREL_NEEDED = "\n\nA {0} is required to extract the seeds";
                     }
                 }
             }

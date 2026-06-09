@@ -24,6 +24,10 @@ namespace BetterPlantTending
 
         [SerializeField]
         public bool isDecorative = true;
+
+        [SerializeField]
+        public bool isAquatic = false;
+
         public bool ExtraSeedAvailable
         {
             get => hasExtraSeedAvailable;
@@ -44,6 +48,7 @@ namespace BetterPlantTending
             }
 #endif
         }
+        public bool PipRequiredToExtract => !isAquatic && ModOptions.Instance.extra_seeds.pip_required_to_extract;
         public bool ShouldFarmTinkerTending => !isDecorative || !hasExtraSeedAvailable;
 
         private static readonly handler OnUprootedDelegate = new((component, data) => component.ExtractExtraSeed());
@@ -66,7 +71,7 @@ namespace BetterPlantTending
             Subscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Subscribe((int)GameHashes.Died, OnUprootedDelegate);
             Subscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
-            if (!ModOptions.Instance.extra_seeds.pip_required_to_extract)
+            if (!PipRequiredToExtract)
                 Subscribe((int)GameHashes.EffectRemoved, OnUprootedDelegate);
             this.AddTag(GameTags.GrowingPlant);
             if (hasExtraSeedAvailable && isDecorative)
@@ -78,7 +83,7 @@ namespace BetterPlantTending
             Unsubscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
             Unsubscribe((int)GameHashes.Died, OnUprootedDelegate);
             Unsubscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
-            if (!ModOptions.Instance.extra_seeds.pip_required_to_extract)
+            if (!PipRequiredToExtract)
                 Unsubscribe((int)GameHashes.EffectRemoved, OnUprootedDelegate);
             base.OnCleanUp();
         }
@@ -120,22 +125,36 @@ namespace BetterPlantTending
             float seedChance = this?.GetAttributes()?.Get(ExtraSeedChance)?.GetTotalValue() ??
                 (!isDecorative ? ExtraSeedChanceNotDecorativeBaseValue.Value : ExtraSeedChanceDecorativeBaseValue.Value);
             string percent = GameUtil.GetFormattedPercent(seedChance * 100, GameUtil.TimeSlice.None);
-            var affects = new List<string>() { DUPLICANTS.MODIFIERS.FARMTINKER.NAME };
-            if (Game.IsDlcActiveForCurrentSave(DlcManager.EXPANSION1_ID))
+
+            var list = ListPool<string, ExtraSeedProducer>.Allocate();
+            list.Add(DUPLICANTS.MODIFIERS.FARMTINKER.NAME);
+            if (!isAquatic && Game.IsDlcActiveForCurrentSave(DlcManager.EXPANSION1_ID))
             {
-                affects.Add(CREATURES.SPECIES.DIVERGENT.VARIANT_BEETLE.NAME);
-                affects.Add(CREATURES.SPECIES.DIVERGENT.VARIANT_WORM.NAME);
+                list.Add(CREATURES.SPECIES.DIVERGENT.VARIANT_BEETLE.NAME);
+                list.Add(CREATURES.SPECIES.DIVERGENT.VARIANT_WORM.NAME);
             }
-            if (Game.IsDlcActiveForCurrentSave(DlcManager.DLC4_ID))
-                affects.Add(CREATURES.SPECIES.BUTTERFLY.NAME);
-            for (int i = 0; i < affects.Count; i++)
-                affects[i] = UI.FormatAsKeyWord(UI.StripLinkFormatting(affects[i]));
-            string pip = ModOptions.Instance.extra_seeds.pip_required_to_extract ? TOOLTIPS.SQUIRREL_NEEDED : string.Empty;
+            if (!isAquatic && Game.IsDlcActiveForCurrentSave(DlcManager.DLC4_ID))
+                list.Add(CREATURES.SPECIES.BUTTERFLY.NAME);
+            string affects = string.Join(", ", list);
+            list.Clear();
+
+            string extracts;
+            if (PipRequiredToExtract)
+            {
+                list.Add(CREATURES.SPECIES.SQUIRREL.NAME);
+                if (Game.IsDlcActiveForCurrentSave(DlcManager.DLC4_ID))
+                    list.Add(CREATURES.SPECIES.STEGO.NAME);
+                extracts = string.Format(TOOLTIPS.SQUIRREL_NEEDED, string.Join(UI.GAMEOBJECTEFFECTS.REQUIREMETS_OR, list));
+            }
+            else
+                extracts = string.Empty;
+            list.Recycle();
+
             var descs = new List<Descriptor>
             {
                 new Descriptor(
                     txt: string.Format(BONUS_SEEDS, percent),
-                    tooltip: string.Format(TOOLTIPS.BONUS_SEEDS, percent, string.Join(", ", affects), pip),
+                    tooltip: string.Format(TOOLTIPS.BONUS_SEEDS, percent, affects, extracts),
                     descriptorType: Descriptor.DescriptorType.Effect,
                     only_for_simple_info_screen: false)
             };

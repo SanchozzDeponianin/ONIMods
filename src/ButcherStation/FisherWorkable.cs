@@ -98,6 +98,8 @@ namespace ButcherStation
             SimAndRenderScheduler.instance.Add(this);
         }
 
+        public override bool InstantlyFinish(WorkerBase worker) => false;
+
         public override bool OnWorkTick(WorkerBase worker, float dt)
         {
             // для рыб у кого нет bitehook
@@ -171,11 +173,25 @@ namespace ButcherStation
             }
         }
 
-        public override void OnPendingCompleteWork(WorkerBase work)
+        private void MoveCritterToPositionFast()
+        {
+            if (critterAnimController != null)
+            {
+                var offset = (worker.transform.GetPosition().x > transform.GetPosition().x) ? CellOffset.leftup : CellOffset.rightup;
+                var position = Grid.CellToPosCBC(Grid.OffsetCell(Grid.PosToCell(this), offset), Grid.SceneLayer.Creatures);
+                critterAnimController.transform.SetPosition(position);
+                critterAnimController.Offset = Vector3.zero;
+            }
+        }
+
+        public override void OnPendingCompleteWork(WorkerBase worker)
         {
             SimAndRenderScheduler.instance.Remove(this);
-            MoveCritterToPosition();
-            base.OnPendingCompleteWork(work);
+            if (Game.Instance.FastWorkersModeActive)
+                MoveCritterToPositionFast();
+            else
+                MoveCritterToPosition();
+            base.OnPendingCompleteWork(worker);
         }
 
         public override void OnAbortWork(WorkerBase worker)
