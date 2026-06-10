@@ -1,4 +1,6 @@
-﻿namespace BetterPlantTending
+﻿using System;
+
+namespace BetterPlantTending
 {
     using handler = EventSystem.IntraObjectHandler<TendedPlant>;
     public abstract class TendedPlant : KMonoBehaviour
@@ -11,6 +13,7 @@
         public override void OnPrefabInit()
         {
             base.OnPrefabInit();
+            ApplyModifierCallback = ApplyModifier;
             Subscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
             Subscribe((int)GameHashes.EffectRemoved, OnEffectChangedDelegate);
             Subscribe((int)GameHashes.Grow, OnGrowDelegate);
@@ -30,9 +33,8 @@
             base.OnCleanUp();
         }
 
-        public virtual void ApplyModifier() { }
-
-        private void ApplyModifierCallback(object _) => ApplyModifier();
+        public virtual void ApplyModifier(object _ = null) { }
+        private Action<object> ApplyModifierCallback;
 
         public void QueueApplyModifier()
         {

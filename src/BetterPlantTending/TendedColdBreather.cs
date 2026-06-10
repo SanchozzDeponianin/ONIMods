@@ -40,7 +40,7 @@ namespace BetterPlantTending
             ApplyModifier();
         }
 
-        public override void ApplyModifier()
+        public override void ApplyModifier(object _ = null)
         {
             // а тут нужно учесть дикость
             float grow_multiplier = growingRate.GetTotalValue() / CROPS.GROWTH_RATE;

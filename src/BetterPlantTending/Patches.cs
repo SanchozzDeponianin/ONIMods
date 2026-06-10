@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
-using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
@@ -19,11 +17,11 @@ namespace BetterPlantTending
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
-            base.OnLoad(harmony);
             RotPileSilentNotification.Patch(harmony);
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
             new POptions().RegisterOptions(this, typeof(ModOptions));
             ModOptions.Reload();
+            harmony.PatchAllUncategorized();
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -33,8 +31,9 @@ namespace BetterPlantTending
         }
 
         [PLibMethod(RunAt.AfterDbInit)]
-        private static void AfterDbInit()
+        private static void AfterDbInit(Harmony harmony)
         {
+            harmony.PatchCategory(nameof(RunAt.AfterDbInit));
             Init();
             if (DlcManager.IsContentSubscribed(DlcManager.DLC2_ID))
             {
@@ -118,7 +117,9 @@ namespace BetterPlantTending
                                 tinkerable.userMenuAllowed = ModOptions.Instance.allow_tinker_decorative;
                         };
                     }
-                    else if (plant.PrefabID() == OxyfernConfig.ID || plant.PrefabID() == ColdBreatherConfig.ID)
+                    else if (plant.PrefabID() == OxyfernConfig.ID
+                        || plant.PrefabID() == ColdBreatherConfig.ID
+                        || plant.PrefabID() == OxyCoralConfig.ID)
                     {
                         plant.AddOrGet<ExtraSeedProducer>().isDecorative = false;
                         Tinkerable.MakeFarmTinkerable(plant);

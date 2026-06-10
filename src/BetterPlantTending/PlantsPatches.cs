@@ -2,12 +2,14 @@
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using Klei.AI;
 using TUNING;
 using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
+using PeterHan.PLib.PatchManager;
 
 namespace BetterPlantTending
 {
@@ -278,6 +280,111 @@ namespace BetterPlantTending
                     }
                 }
                 return false;
+            }
+        }
+        #endregion
+
+        #region OxyCoral
+        // Оксикоралл
+        // производство газа пропорционально его скорости роста
+        [HarmonyPatch(typeof(OxyCoralConfig), nameof(OxyCoralConfig.CreatePrefab))]
+        private static class OxyCoralConfig_CreatePrefab
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC5_ID);
+            private static void Postfix(GameObject __result)
+            {
+                Tinkerable.MakeFarmTinkerable(__result);
+                __result.AddOrGet<KPrefabID>().prefabInitFn += OnPrefabInit;
+            }
+            private static void OnPrefabInit(GameObject inst)
+            {
+                var attributes = inst.GetAttributes();
+                attributes.Add(Db.Get().Amounts.Maturity.deltaAttribute);
+                attributes.Add(fakeGrowingRate);
+            }
+        }
+
+        [HarmonyPatch(typeof(OxyCoral.Instance), nameof(OxyCoral.Instance.ProduceOxygenUpdate))]
+        private static class OxyCoral_Instance_ProduceOxygenUpdate
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC5_ID);
+            private static void Prefix(OxyCoral.Instance __instance, ref float dt)
+            {
+                // дикость уже учитывается внутри OxyCoral.Instance.ProduceOxygenUpdate
+                dt *= OxyCoral_OxygenProductionRate(__instance);
+            }
+        }
+
+        private static float OxyCoral_OxygenProductionRate(OxyCoral.Instance smi)
+        {
+            return smi.gameObject.GetAttributes().Get(Db.Get().Amounts.Maturity.deltaAttribute.Id).GetTotalValue() / CROPS.GROWTH_RATE;
+        }
+
+        // статуситем прибит гвоздями к OxyCoral.Def, исправляем
+        [HarmonyPatch]
+        private static class OxyCoral_InitializeStates
+        {
+            private static MethodBase method;
+            private static bool Prepare()
+            {
+                if (!DlcManager.IsContentSubscribed(DlcManager.DLC5_ID))
+                    return false;
+                bool ok = TargetMethod() != null;
+                if (!ok)
+                    PUtil.LogWarning("Something went wrong when looking for a method 'OxyCoral.InitializeStates'");
+                return ok;
+            }
+            private static MethodBase TargetMethod()
+            {
+                if (method == null)
+                {
+                    method = typeof(OxyCoral).GetNestedTypes(PPatchTools.BASE_FLAGS)
+                        .Where(t => t.IsDefined(typeof(CompilerGeneratedAttribute)))
+                        .SelectMany(t => t.GetMethods(PPatchTools.BASE_FLAGS | BindingFlags.Instance))
+                        .Where(m => m.Name.Contains(nameof(OxyCoral.InitializeStates)) && m.ReturnType == typeof(object))
+                        .FirstOrDefault(m => PatchProcessor.ReadMethodBody(m)
+                            .Any(code => code.Key == OpCodes.Ldfld && code.Value is FieldInfo field
+                                && field.DeclaringType == typeof(OxyCoral.Def)
+                                && field.Name == nameof(OxyCoral.Def.OxygenProductionRate)));
+                }
+                return method;
+            }
+            private static void Cleanup() => method = null;
+
+            private static bool Prefix(OxyCoral.Instance smi, ref object __result)
+            {
+                if (!smi.IsNullOrStopped())
+                {
+                    __result = smi;
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        [HarmonyPatch]
+        [HarmonyPatchCategory(nameof(RunAt.AfterDbInit))]
+        private static class BubbleGasProduction_resolveStringCallback
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC5_ID);
+            private static MethodBase TargetMethod() => Db.Get().CreatureStatusItems.BubbleGasProduction.resolveStringCallback.Method;
+            private static bool Prefix(string str, object data, ref string __result)
+            {
+                if (data is OxyCoral.Instance smi)
+                {
+                    if (!smi.IsNullOrStopped() && smi.gameObject != null)
+                    {
+                        float rate = smi.def.OxygenProductionRate * OxyCoral_OxygenProductionRate(smi)
+                            * (smi.IsWild ? CROPS.WILD_GROWTH_RATE_MODIFIER : 1f);
+                        str = str.Replace("{ELEMENT}", ElementLoader.FindElementByHash(SimHashes.Oxygen).name);
+                        str = str.Replace("{RATE}", GameUtil.GetFormattedMass(rate, GameUtil.TimeSlice.PerSecond));
+                        __result = str;
+                    }
+                    else
+                        __result = string.Empty;
+                    return false;
+                }
+                return true;
             }
         }
         #endregion

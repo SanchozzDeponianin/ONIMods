@@ -24,7 +24,7 @@ namespace BetterPlantTending
             ApplyModifier();
         }
 
-        public override void ApplyModifier()
+        public override void ApplyModifier(object _ = null)
         {
             oxyfern.SetConsumptionRate();
         }

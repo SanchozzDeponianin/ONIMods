@@ -7,7 +7,7 @@
         private Dinofern dinofern;
 #pragma warning restore CS0649
 
-        public override void ApplyModifier()
+        public override void ApplyModifier(object _ = null)
         {
             dinofern.SetConsumptionRate();
         }

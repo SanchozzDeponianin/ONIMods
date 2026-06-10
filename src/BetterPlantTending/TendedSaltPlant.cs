@@ -14,7 +14,7 @@ namespace BetterPlantTending
         private ElementConsumer consumer;
 #pragma warning restore CS0649
 
-        public override void ApplyModifier()
+        public override void ApplyModifier(object _ = null)
         {
             // в этих растениях дикость уже учтена внутри Growing
             float multiplier = this.GetAttributes().Get(Db.Get().Amounts.Maturity.deltaAttribute).GetTotalValue() / CROPS.GROWTH_RATE;
