@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Klei.AI;
+﻿using Klei.AI;
 using STRINGS;
 using HarmonyLib;
 using UnityEngine;
@@ -26,6 +25,9 @@ namespace SuitRecharger
 
         [MyCmpReq]
         private EnergyConsumer energyConsumer;
+
+        [MyCmpReq]
+        private BuildingComplete building;
 #pragma warning restore CS0649
 
         private SuitTank suitTank;
@@ -36,6 +38,8 @@ namespace SuitRecharger
         private SuitRecharger.RepairSuitCost repairCost;
         private bool isBionic;
         private BionicOxygenTankMonitor.Instance bionicInternalTank;
+
+        public float WattsNeededWhenActive => building.Def.EnergyConsumptionWhenActive;
 
         protected override void OnPrefabInit()
         {
@@ -136,14 +140,14 @@ namespace SuitRecharger
                     }
                 }
             }
-            energyConsumer.BaseWattageRating = energyConsumer.WattsNeededWhenActive;
+            energyConsumer.BaseWattageRating = WattsNeededWhenActive;
             operational.SetActive(true, false);
             elapsedTime = 0;
         }
 
         protected override void OnStopWork(WorkerBase worker)
         {
-            energyConsumer.BaseWattageRating = energyConsumer.WattsNeededWhenActive;
+            energyConsumer.BaseWattageRating = WattsNeededWhenActive;
             operational.SetActive(false, false);
             if (worker != null)
             {
@@ -190,7 +194,7 @@ namespace SuitRecharger
             bool teleport_charged = FillTeleportBattery(dt);
             bool repaired = RepairSuit(dt);
 
-            var wattage = energyConsumer.WattsNeededWhenActive;
+            var wattage = WattsNeededWhenActive;
             if (!battery_charged)
                 wattage += LeadSuitChargeWattage;
             if (!teleport_charged)
