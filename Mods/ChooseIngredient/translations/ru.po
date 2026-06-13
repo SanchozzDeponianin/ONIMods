@@ -1,0 +1,30 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. ChooseIngredient.STRINGS.MOD_DESCRIPTION
+msgctxt "ChooseIngredient.STRINGS.MOD_DESCRIPTION"
+msgid "Allows you to choose which kind of Ingredient to be used in Water Sieve, Deodorizer, Ethanol Distiller, Wood Burner, Wood Heater, etc"
+msgstr "Позволяет вам выбрать, какой тип ингредиента использовать для Очистителя воды, Дезодоратора, Дистиллятора этанола, Сжигателя древесины, Дровяного обогревателя и т.д"
+
+#. ChooseIngredient.STRINGS.MOD_TITLE
+msgctxt "ChooseIngredient.STRINGS.MOD_TITLE"
+msgid "Choose an Ingredient"
+msgstr "Выбери ингредиент"
+
+#. ChooseIngredient.STRINGS.OPTIONS.ALLOW_ALL.NAME
+msgctxt "ChooseIngredient.STRINGS.OPTIONS.ALLOW_ALL.NAME"
+msgid "Allow all possible ingredients by default"
+msgstr "Разрешить все возможные ингредиенты по умолчанию"
+
+#. ChooseIngredient.STRINGS.OPTIONS.ALLOW_ALL.TOOLTIP
+msgctxt "ChooseIngredient.STRINGS.OPTIONS.ALLOW_ALL.TOOLTIP"
+msgid "It affect newly built Buildings"
+msgstr "Это влияет на только-что построенные постройки"
+
+#. ChooseIngredient.STRINGS.OPTIONS.SHOW_ALL.NAME
+msgctxt "ChooseIngredient.STRINGS.OPTIONS.SHOW_ALL.NAME"
+msgid "Show all possible ingredients, even not discovered"
+msgstr "Показать все возможные ингредиенты, даже не обнаруженные"
+

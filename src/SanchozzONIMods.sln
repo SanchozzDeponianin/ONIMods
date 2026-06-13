@@ -136,6 +136,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MorePlantMutations", "MoreP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelTubesFlydo", "TravelTubesFlydo\TravelTubesFlydo.csproj", "{65B4051B-C24E-4C4F-A734-3523E389D94C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChooseIngredient", "ChooseIngredient\ChooseIngredient.csproj", "{D87F039E-1B62-4AF4-A6D0-D6D78C3E09D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Backup = Debug|Backup
@@ -600,6 +602,14 @@ Global
 		{65B4051B-C24E-4C4F-A734-3523E389D94C}.Release|Backup.Build.0 = Release|Backup
 		{65B4051B-C24E-4C4F-A734-3523E389D94C}.Release|Steam.ActiveCfg = Release|Steam
 		{65B4051B-C24E-4C4F-A734-3523E389D94C}.Release|Steam.Build.0 = Release|Steam
+		{D87F039E-1B62-4AF4-A6D0-D6D78C3E09D2}.Debug|Backup.ActiveCfg = Debug|Backup
+		{D87F039E-1B62-4AF4-A6D0-D6D78C3E09D2}.Debug|Backup.Build.0 = Debug|Backup
+		{D87F039E-1B62-4AF4-A6D0-D6D78C3E09D2}.Debug|Steam.ActiveCfg = Debug|Steam
+		{D87F039E-1B62-4AF4-A6D0-D6D78C3E09D2}.Debug|Steam.Build.0 = Debug|Steam
+		{D87F039E-1B62-4AF4-A6D0-D6D78C3E09D2}.Release|Backup.ActiveCfg = Release|Backup
+		{D87F039E-1B62-4AF4-A6D0-D6D78C3E09D2}.Release|Backup.Build.0 = Release|Backup
+		{D87F039E-1B62-4AF4-A6D0-D6D78C3E09D2}.Release|Steam.ActiveCfg = Release|Steam
+		{D87F039E-1B62-4AF4-A6D0-D6D78C3E09D2}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
