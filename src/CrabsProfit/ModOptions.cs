@@ -21,8 +21,6 @@ namespace CrabsProfit
 
         устрица	  50 кг пеарла в 8 циклов == 6.25 в цикл за 35 кг песка в цикл
         
-        чтобы 1 краб прокормил 1 слизня - оптимально 6к / 15 == 400 руды с краба
-
         чтобы 1 краб прокормил 1 склизьняка оптимально 6к / 38 == 150 руды с краба
         уровнять с коровло и черепахло		 2.5к / 38 == 65 руды с краба
         сделать как устриццу				 625 / 38 == 16,5 пеарла с краба
@@ -59,6 +57,12 @@ namespace CrabsProfit
         [Option] div10 = 10,
     }
 
+    internal enum SecondaryResource
+    {
+        [Option] Pearl,
+        [Option] Coquina,
+    }
+
     [JsonObject(MemberSerialization.OptIn)]
     [ConfigFile(IndentOutput: true, SharedConfigLocation: true)]
     [RestartRequired]
@@ -79,6 +83,25 @@ namespace CrabsProfit
         public float BabyShellMass => AdultShellMass / Mathf.Max((float)BabyCrabFreshWater_Mass_Divider, 1f);
 
         [JsonProperty]
+        [Option]
+        public SecondaryResource SecondaryResource { get; set; } = SecondaryResource.Pearl;
+
+        [JsonIgnore]
+        public SimHashes SecondaryOre
+        {
+            get
+            {
+                switch (SecondaryResource)
+                {
+                    case SecondaryResource.Coquina:
+                        return SimHashes.Coquina;
+                    case SecondaryResource.Pearl:
+                    default:
+                        return SimHashes.Pearl;
+                }
+            }
+        }
+
         [Option]
         [Limit(0, (int)ShellMass.mass25)]
         public int SecondaryMass { get; set; } = 15;

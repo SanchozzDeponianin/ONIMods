@@ -13,13 +13,12 @@ namespace CrabsProfit
         public string[] GetRequiredDlcIds() => Utils.GetDlcIds();
         public string[] GetForbiddenDlcIds() => null;
         public const SimHashes NonRandomCrushedTo = SimHashes.Corallium;
-        public const SimHashes SecondaryCrushedTo = SimHashes.Pearl;
 
         public GameObject CreatePrefab()
         {
             var mass = ModOptions.Instance.AdultShellMass;
             var second_mass = ModOptions.Instance.SecondaryMass;
-            var second = SecondaryCrushedTo.CreateTag();
+            var second = ModOptions.Instance.SecondaryOre.CreateTag();
             var ore_mass = mass - second_mass;
             var ore = ModOptions.Instance.DisableRandom ? NonRandomCrushedTo.CreateTag() : RandomOreConfig.ID;
             AddRecipe(TAG, mass, ore, ore_mass, second, second_mass);

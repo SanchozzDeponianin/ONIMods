@@ -10,7 +10,6 @@ namespace CrabsProfit
         public static LocString MOD_TITLE = "";
         public static LocString MOD_DESCRIPTION = "";
 
-        private const string SECONDARY = "{SECONDARY}";
         private const string NONRANDOM = "{NONRANDOM}";
 
         public class ITEMS
@@ -44,9 +43,13 @@ namespace CrabsProfit
             {
                 public static LocString NAME = $"Baby {UI.FormatAsKeyWord(ITEMS.INDUSTRIAL_PRODUCTS.CRAB_SHELL.VARIANT_FRESH_WATER.NAME)} is less X times";
             }
+            public class SECONDARYRESOURCE
+            {
+                public static LocString NAME = "Drops a secondary resource when crushed";
+            }
             public class SECONDARYMASS
             {
-                public static LocString NAME = $"Drops a {SECONDARY} when crushed, kg";
+                public static LocString NAME = "Secondary resource mass, kg";
             }
             public class DISABLERANDOM
             {
@@ -83,7 +86,6 @@ namespace CrabsProfit
         {
             var dictionary = new Dictionary<string, string>()
             {
-                {SECONDARY, UI.FormatAsKeyWord(CrabFreshWaterShellConfig.SecondaryCrushedTo.CreateTag().ProperNameStripLink()) },
                 {NONRANDOM, UI.FormatAsKeyWord(CrabFreshWaterShellConfig.NonRandomCrushedTo.CreateTag().ProperNameStripLink()) },
             };
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
@@ -101,6 +103,12 @@ namespace CrabsProfit
                 AddStrings(@enum.ToString().ToUpperInvariant(), ((int)@enum).ToString());
             // добавляем строки для списка руды
             var element = "STRINGS.ELEMENTS.{0}.NAME";
+            foreach (var @enum in (SecondaryResource[])Enum.GetValues(typeof(SecondaryResource)))
+            {
+                var id = @enum.ToString().ToUpperInvariant();
+                if (Strings.TryGet(string.Format(element, id), out var ore_name))
+                    AddStrings(id, UI.StripLinkFormatting(ore_name));
+            }
             foreach (var info in typeof(ModOptions.OreWeights).GetProperties())
             {
                 var id = info.Name.ToUpperInvariant();

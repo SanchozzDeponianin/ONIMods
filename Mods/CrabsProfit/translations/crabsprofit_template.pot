@@ -90,6 +90,11 @@ msgstr ""
 
 #. CrabsProfit.STRINGS.OPTIONS.SECONDARYMASS.NAME
 msgctxt "CrabsProfit.STRINGS.OPTIONS.SECONDARYMASS.NAME"
-msgid "Drops a {SECONDARY} when crushed, kg"
+msgid "Secondary resource mass, kg"
+msgstr ""
+
+#. CrabsProfit.STRINGS.OPTIONS.SECONDARYRESOURCE.NAME
+msgctxt "CrabsProfit.STRINGS.OPTIONS.SECONDARYRESOURCE.NAME"
+msgid "Drops a secondary resource when crushed"
 msgstr ""
 
