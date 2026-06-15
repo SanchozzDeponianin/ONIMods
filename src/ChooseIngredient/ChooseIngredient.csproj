@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Choose an Ingredient</Title>
     <Description>Allows you to choose which kind of Ingredient to be used in Water Sieve, Deodorizer, Ethanol Distiller, Wood Burner, Wood Heater, etc</Description>
-    <ModVersion>1.0.0</ModVersion>
+    <ModVersion>1.0.1</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>

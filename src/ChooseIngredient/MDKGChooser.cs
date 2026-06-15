@@ -22,9 +22,9 @@ namespace ChooseIngredient
         private FlatTagFilterable flat;
 #pragma warning restore CS0649
 
-        protected override void OnSpawn()
+        protected override void OnPrefabInit()
         {
-            base.OnSpawn();
+            base.OnPrefabInit();
             filterable.OnFilterChanged += OnFilterChanged;
         }
 
