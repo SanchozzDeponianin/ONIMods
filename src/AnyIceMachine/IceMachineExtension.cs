@@ -23,7 +23,7 @@ namespace AnyIceMachine
 
         public static void SetChosenIce(this IceMachine machine, Tag new_ice)
         {
-            var ingredient = ELEMENT_OPTIONS[new_ice];
+            var ingredient = ELEMENT_OPTIONS[new_ice].ingrigient;
             float capacity = 0f;
             if (machine.TryGetComponent(out ManualDeliveryKG mdk))
             {
@@ -76,8 +76,12 @@ namespace AnyIceMachine
         {
             if (outputSolids == null)
             {
-                outputSolids = ELEMENT_OPTIONS.Keys.Where(tag => ElementLoader.GetElement(tag).IsSolid).ToArray();
-                outputLiquids = ELEMENT_OPTIONS.Keys.Where(tag => ElementLoader.GetElement(tag).IsLiquid)
+                outputSolids = ELEMENT_OPTIONS.Keys
+                    .Select(tag => ELEMENT_OPTIONS[tag].result.IsValid ? ELEMENT_OPTIONS[tag].result : tag)
+                    .Where(tag => ElementLoader.GetElement(tag).IsSolid).ToArray();
+                outputLiquids = ELEMENT_OPTIONS.Keys
+                    .Select(tag => ELEMENT_OPTIONS[tag].result.IsValid ? ELEMENT_OPTIONS[tag].result : tag)
+                    .Where(tag => ElementLoader.GetElement(tag).IsLiquid)
                     .Select(tag => ElementLoader.GetElement(tag).id).ToArray();
             }
             if (PipedEverythingDispenser != null)

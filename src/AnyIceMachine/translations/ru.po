@@ -13,3 +13,13 @@ msgctxt "AnyIceMachine.STRINGS.MOD_TITLE"
 msgid "Any Ice Maker"
 msgstr "Генератор любого льда"
 
+#. AnyIceMachine.STRINGS.OPTIONS.SHOW_ALL.NAME
+msgctxt "AnyIceMachine.STRINGS.OPTIONS.SHOW_ALL.NAME"
+msgid "Show all possible recipes, even ingredients not discovered"
+msgstr "Показать все возможные рецепты, даже если ингредиенты не обнаружены"
+
+#. AnyIceMachine.STRINGS.UI.GAMEOBJECTEFFECTS.REQUIREMETS_AND
+msgctxt "AnyIceMachine.STRINGS.UI.GAMEOBJECTEFFECTS.REQUIREMETS_AND"
+msgid " and "
+msgstr " и "
+
