@@ -8,27 +8,25 @@ namespace ButcherStation
         // фейковый как бы твёрдый пол, не пропускающий падающие предметы, но водогазопроницаемый
 
         [SerializeField]
-        public CellOffset[] floorOffsets;
+        public bool makeCenterSolid;
 
-        private HandleVector<int>.Handle[] solidEntries;
+        private Extents extents;
+
+        private HandleVector<int>.Handle solidEntry;
 
         public override void OnSpawn()
         {
             base.OnSpawn();
+            extents = GetComponent<Building>().GetExtents();
+            extents.height = 1;
             SetFloor(true);
-            solidEntries = new HandleVector<int>.Handle[floorOffsets.Length];
-            for (int i = 0; i < floorOffsets.Length; i++)
-            {
-                solidEntries[i] = GameScenePartitioner.Instance.Add("MakeFakeBaseSolid.OnSpawn", gameObject,
-                    Extents.OneCell(Grid.OffsetCell(Grid.PosToCell(this), floorOffsets[i])),
-                    GameScenePartitioner.Instance.solidChangedLayer, RefreshFoundation);
-            }
+            solidEntry = GameScenePartitioner.Instance.Add("MakeFakeBaseSolid.OnSpawn", gameObject, extents,
+                GameScenePartitioner.Instance.solidChangedLayer, RefreshFoundation);
         }
 
         public override void OnCleanUp()
         {
-            for (int i = 0; i < floorOffsets.Length; i++)
-                GameScenePartitioner.Instance.Free(ref solidEntries[i]);
+            GameScenePartitioner.Instance.Free(ref solidEntry);
             SetFloor(false);
             base.OnCleanUp();
         }
@@ -36,34 +34,37 @@ namespace ButcherStation
         // выставляем:
         // Grid.FakeFloor - чтобы точно ходить
         // Grid.SetSolid - делаем "твёрдым" поскольку именно сюда смотрит гравитация. флаг может перезаписаться например при замерзании / оттаивании
-        // Grid.Foundation - чтобы отключить команду выкапывание
+        // Grid.Foundation - чтобы отключить команду выкапывание и разделить комнаты
 
         private const Sim.Cell.Properties floorCellProperties = Sim.Cell.Properties.SolidImpermeable | Sim.Cell.Properties.Opaque;
 
         public void SetFloor(bool active)
         {
-            for (int i = 0; i < floorOffsets.Length; i++)
+            int center = Grid.PosToCell(this);
+            for (int i = 0; i < extents.width; i++)
             {
-                int cell = Grid.OffsetCell(Grid.PosToCell(this), floorOffsets[i]);
+                int cell = Grid.XYToCell(extents.x + i, extents.y);
                 if (active)
                 {
-                    Grid.FakeFloor.Add(cell);
-                    Grid.SetSolid(cell, true, CellEventLogger.Instance.SimCellOccupierForceSolid);
-                    SimMessages.SetCellProperties(cell, (byte)floorCellProperties);
-                    SimMessages.SetStrength(cell, 0, 1f);
-                    //Game.Instance.AddSolidChangedFilter(cell);
+                    if (makeCenterSolid || cell != center)
+                    {
+                        Grid.FakeFloor.Add(cell);
+                        Grid.SetSolid(cell, true, CellEventLogger.Instance.SimCellOccupierForceSolid);
+                        SimMessages.SetCellProperties(cell, (byte)floorCellProperties);
+                        SimMessages.SetStrength(cell, 0, 1f);
+                    }
                     Grid.Foundation[cell] = !Grid.Element[cell].IsSolid;
-                    //Grid.RenderedByWorld[cell] = false;
                 }
                 else
                 {
-                    Grid.FakeFloor.Remove(cell);
-                    Grid.SetSolid(cell, false, CellEventLogger.Instance.SimCellOccupierDestroy);
-                    SimMessages.ClearCellProperties(cell, (byte)floorCellProperties);
-                    SimMessages.SetStrength(cell, 1, 1f);
-                    //Game.Instance.RemoveSolidChangedFilter(cell);
+                    if (makeCenterSolid || cell != center)
+                    {
+                        Grid.FakeFloor.Remove(cell);
+                        Grid.SetSolid(cell, false, CellEventLogger.Instance.SimCellOccupierDestroy);
+                        SimMessages.ClearCellProperties(cell, (byte)floorCellProperties);
+                        SimMessages.SetStrength(cell, 1, 1f);
+                    }
                     Grid.Foundation[cell] = false;
-                    //Grid.RenderedByWorld[cell] = true;
                 }
                 World.Instance.OnSolidChanged(cell);
                 GameScenePartitioner.Instance.TriggerEvent(cell, GameScenePartitioner.Instance.solidChangedLayer, null);
@@ -75,9 +76,10 @@ namespace ButcherStation
         // иначе отменяем выкапывание если было и восстанавливаем Grid.Foundation и Grid.SetSolid
         private void RefreshFoundation(object data)
         {
-            for (int i = 0; i < floorOffsets.Length; i++)
+            int center = Grid.PosToCell(this);
+            for (int i = 0; i < extents.width; i++)
             {
-                int cell = Grid.OffsetCell(Grid.PosToCell(this), floorOffsets[i]);
+                int cell = Grid.XYToCell(extents.x + i, extents.y);
                 if (Grid.Element[cell].IsSolid)
                     Grid.Foundation[cell] = false;
                 else
@@ -86,7 +88,8 @@ namespace ButcherStation
                     var diggable = Diggable.GetDiggable(cell);
                     if (diggable != null)
                         diggable.Trigger((int)GameHashes.Cancel);
-                    Grid.SetSolid(cell, true, CellEventLogger.Instance.SimCellOccupierForceSolid);
+                    if (makeCenterSolid || cell != center)
+                        Grid.SetSolid(cell, true, CellEventLogger.Instance.SimCellOccupierForceSolid);
                 }
             }
         }

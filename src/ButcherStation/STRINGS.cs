@@ -125,7 +125,7 @@ namespace ButcherStation
             public class MAKE_CENTER_SOLID
             {
                 public static LocString NAME = $"Make the middle cell of {FormatAsKeyWord("Fishing Station")} impenetrable";
-                public static LocString TOOLTIP = "This will separate Rooms and prevent Items from falling.\nHowever, it looks weird, and Duplicants won't be able to swim there";
+                public static LocString TOOLTIP = "This will prevent Items from falling. However, it looks weird,\nand Duplicants won't be able to swim there";
             }
 
             public class MAX_CREATURE_LIMIT

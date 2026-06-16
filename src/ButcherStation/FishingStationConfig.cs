@@ -4,6 +4,7 @@ using UnityEngine;
 using TUNING;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
+using static STRINGS.UI;
 
 namespace ButcherStation
 {
@@ -52,6 +53,9 @@ namespace ButcherStation
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
+            var kPrefabID = go.GetComponent<KPrefabID>();
+            kPrefabID.AddTag(RoomConstraints.ConstraintTags.RanchStationType, false);
+            kPrefabID.prefabInitFn += inst => inst.RemoveTag(RoomConstraints.ConstraintTags.RanchStationType);
             var storage = go.AddOrGet<Storage>();
             storage.allowItemRemoval = false;
             storage.showDescriptor = false;
@@ -66,6 +70,8 @@ namespace ButcherStation
             var roomTracker = go.AddOrGet<RoomTracker>();
             roomTracker.requiredRoomType = Db.Get().RoomTypes.CreaturePen.Id;
             roomTracker.requirement = RoomTracker.Requirement.TrackingOnly;
+            var algae = ElementLoader.GetElement(GameTags.Algae);
+            Strings.Add("STRINGS.MISC.TAGS." + StripLinkFormatting(algae.nameUpperCase), algae.name);
         }
 
         public override void DoPostConfigurePreview(BuildingDef def, GameObject go)
@@ -80,6 +86,7 @@ namespace ButcherStation
 
         public override void DoPostConfigureComplete(GameObject go)
         {
+            go.AddOrGet<Building>().Def.Floodable = true;
             var work_time = Utils.GetAnimDuration(Assets.GetAnim(INTERACT_ANIM), "working_pre", "working_loop", "working_pst");
             var def = go.AddOrGetDef<RanchStation.Def>();
             def.IsCritterEligibleToBeRanchedCb = ButcherStation.IsCreatureEligibleToBeButchedCB;
@@ -110,15 +117,9 @@ namespace ButcherStation
             workable.workAnimPlayMode = KAnim.PlayMode.Once;
             workable.synchronizeAnims = false;
             workable.resetProgressOnStop = true;
-            go.AddOrGet<MakeFakeBaseSolid>().floorOffsets = ModOptions.Instance.make_center_solid
-                ? new[] { CellOffset.left, CellOffset.none, CellOffset.right }
-                : new[] { CellOffset.left, CellOffset.right };
+            go.AddOrGet<MakeFakeBaseSolid>().makeCenterSolid = ModOptions.Instance.make_center_solid;
             go.AddOrGet<HalfFloodable>();
             AddVisualizer(go);
-            // Начиная с У52, BuildingDef.PostProcess() перезаписывает ProperName тэгов из MaterialCategory
-            // вернём водоросли как было
-            var algae = ElementLoader.GetElement(GameTags.Algae);
-            TagManager.Create(algae.tag.ToString(), algae.name);
         }
 
         private static void AddVisualizer(GameObject go)
