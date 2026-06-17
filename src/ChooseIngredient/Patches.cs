@@ -48,7 +48,7 @@ namespace ChooseIngredient
                 var go = Assets.GetBuildingDef(id).BuildingComplete;
                 go.AddOrGet<Storage>().storageFullMargin = STORAGE.STORAGE_LOCKER_FILLED_MARGIN;
                 var filterable = go.AddOrGet<TreeFilterable>();
-                filterable.dropIncorrectOnFilterChange = true;
+                filterable.dropIncorrectOnFilterChange = false;
                 filterable.preventAutoAddOnDiscovery = true;
                 filterable.filterByStorageCategoriesOnSpawn = false;
                 filterable.autoSelectStoredOnLoad = false;

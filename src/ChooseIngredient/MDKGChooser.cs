@@ -44,6 +44,12 @@ namespace ChooseIngredient
                     forbidden_tags.Add(tag);
             }
             mdkg.ForbiddenTags = forbidden_tags.ToArray();
+            for (int i = mdkg.DebugStorage.items.Count - 1; i >= 0; i--)
+            {
+                var go = mdkg.DebugStorage.items[i];
+                if (go != null && go.TryGetComponent(out KPrefabID item) && item.HasAnyTags(forbidden_tags))
+                    mdkg.DebugStorage.Drop(go, true);
+            }
             forbidden_tags.Recycle();
             SetPipedEverythingConsumer();
         }
