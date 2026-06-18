@@ -1,12 +1,13 @@
 ﻿using TUNING;
 using UnityEngine;
 using SanchozzONIMods.Lib;
+using PeterHan.PLib.Core;
 
 namespace TravelTubesExpanded
 {
-    public class TravelTubeFirePoleBridgeConfig : TravelTubeWallBridgeConfig
+    public class TravelTubeRibbedFirePoleBridgeConfig : TravelTubeWallBridgeConfig
     {
-        public new const string ID = "TravelTubeFirePoleBridge";
+        public new const string ID = "TravelTubeRibbedFirePoleBridge";
 
         public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(base.GetRequiredDlcIds());
 
@@ -16,11 +17,12 @@ namespace TravelTubesExpanded
                 id: ID,
                 width: 1,
                 height: 1,
-                anim: "tube_tile_firepole_kanim",
+                anim: "tube_tile_ribbed_firepole_kanim",
                 hitpoints: BUILDINGS.HITPOINTS.TIER2,
                 construction_time: BUILDINGS.CONSTRUCTION_TIME_SECONDS.TIER1,
-                construction_mass: new float[] { BUILDINGS.CONSTRUCTION_MASS_KG.TIER2[0], BUILDINGS.CONSTRUCTION_MASS_KG.TIER1[0] },
-                construction_materials: new string[] { MATERIALS.ALL_METALS[0], MATERIALS.PLASTICS[0] },
+                construction_mass: new float[] { BUILDINGS.CONSTRUCTION_MASS_KG.TIER2[0] + BUILDINGS.CONSTRUCTION_MASS_KG.TIER0[0],
+                    BUILDINGS.CONSTRUCTION_MASS_KG.TIER0[0] },
+                construction_materials: new string[] { MATERIALS.PLASTICS[0], "Steel" },
                 melting_point: BUILDINGS.MELTING_POINT_KELVIN.TIER1,
                 build_location_rule: BuildLocationRule.Anywhere,
                 decor: BUILDINGS.DECOR.PENALTY.TIER0,
@@ -38,6 +40,7 @@ namespace TravelTubesExpanded
             def.SceneLayer = Grid.SceneLayer.BuildingFront;
             def.ForegroundLayer = Grid.SceneLayer.BuildingFront;
             def.AddSearchTerms(global::STRINGS.SEARCH_TERMS.TRANSPORT);
+            def.Deprecated = PPatchTools.GetTypeSafe("RibbedFirePole.RibbedFirePoleConfig", "RibbedFirePole") == null;
             return def;
         }
 
@@ -56,12 +59,13 @@ namespace TravelTubesExpanded
 
         public override void ConfigurePost(BuildingDef def)
         {
-            var tags = new Tag[] { FirePoleConfig.ID, ID, TravelTubeRibbedFirePoleBridgeConfig.ID, "RibbedFirePole" };
-            foreach (var tag in tags)
+            var ribbed = Assets.GetBuildingDef("RibbedFirePole");
+            if (ribbed != null)
             {
-                var bdef = Assets.GetBuildingDef(tag.Name);
-                if (bdef != null)
-                    bdef.BuildingComplete.AddOrGet<AnimTileable>().tags = tags;
+                var ladder = def.BuildingComplete.AddOrGet<Ladder>();
+                var ribbed_ladder = ribbed.BuildingComplete.AddOrGet<Ladder>();
+                ladder.upwardsMovementSpeedMultiplier = ribbed_ladder.upwardsMovementSpeedMultiplier;
+                ladder.downwardsMovementSpeedMultiplier = ribbed_ladder.downwardsMovementSpeedMultiplier;
             }
         }
     }

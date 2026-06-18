@@ -34,7 +34,7 @@ namespace TravelTubesExpanded
         private static void AfterDbInit()
         {
             var ids = new string[] { TravelTubeInsulatedWallBridgeConfig.ID, TravelTubeBunkerWallBridgeConfig.ID,
-                TravelTubeLadderBridgeConfig.ID, TravelTubeFirePoleBridgeConfig.ID,
+                TravelTubeLadderBridgeConfig.ID, TravelTubeFirePoleBridgeConfig.ID, TravelTubeRibbedFirePoleBridgeConfig.ID,
                 TravelTubeCrossBridgeConfig.ID, TravelTubeDoorConfig.ID };
             for (int i = ids.Length - 1; i >= 0; i--)
                 Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Base, ids[i], BUILD_SUBCATEGORY.transport, TravelTubeWallBridgeConfig.ID);

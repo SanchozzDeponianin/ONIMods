@@ -36,6 +36,12 @@ namespace TravelTubesExpanded
                     public static LocString DESC = "Tube crossings can run transit tubes through ladders and fire poles.";
                     public static LocString EFFECT = $"Allows {UI.FormatAsLink("Transit Tubes", "TRAVELTUBE")} to be run through ladders and fire poles.\n\nFunctions as {UI.FormatAsLink("Fire Pole", "FIREPOLE")}.";
                 }
+                public class TRAVELTUBERIBBEDFIREPOLEBRIDGE
+                {
+                    public static LocString NAME = UI.FormatAsLink("Transit Tube Ribbed Fire Pole Crossing", "TRAVELTUBERIBBEDFIREPOLEBRIDGE");
+                    public static LocString DESC = "";
+                    public static LocString EFFECT = "";
+                }
                 public class TRAVELTUBECROSSBRIDGE
                 {
                     public static LocString NAME = UI.FormatAsLink("Transit Tube Bridge", "TRAVELTUBECROSSBRIDGE");
@@ -61,6 +67,8 @@ namespace TravelTubesExpanded
         internal static void DoReplacement()
         {
             BUILDINGS.PREFABS.TRAVELTUBEDOOR.DESC.ReplaceText(global::STRINGS.BUILDINGS.PREFABS.DOOR.DESC.text);
+            BUILDINGS.PREFABS.TRAVELTUBERIBBEDFIREPOLEBRIDGE.DESC.ReplaceText(BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.DESC.text);
+            BUILDINGS.PREFABS.TRAVELTUBERIBBEDFIREPOLEBRIDGE.EFFECT.ReplaceText(BUILDINGS.PREFABS.TRAVELTUBEFIREPOLEBRIDGE.EFFECT.text);
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
         }
     }
