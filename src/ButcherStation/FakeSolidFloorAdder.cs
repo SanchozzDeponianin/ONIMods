@@ -36,7 +36,9 @@ namespace ButcherStation
         // Grid.SetSolid - делаем "твёрдым" поскольку именно сюда смотрит гравитация. флаг может перезаписаться например при замерзании / оттаивании
         // Grid.Foundation - чтобы отключить команду выкапывание и разделить комнаты
 
-        private const Sim.Cell.Properties floorCellProperties = Sim.Cell.Properties.SolidImpermeable | Sim.Cell.Properties.Opaque;
+        private const Sim.Cell.Properties floorCellProperties
+            = Sim.Cell.Properties.SolidImpermeable | Sim.Cell.Properties.Opaque | Sim.Cell.Properties.Transparent;
+        private bool runSimCallback;
 
         public void SetFloor(bool active)
         {
@@ -50,7 +52,9 @@ namespace ButcherStation
                     {
                         Grid.FakeFloor.Add(cell);
                         Grid.SetSolid(cell, true, CellEventLogger.Instance.SimCellOccupierForceSolid);
-                        SimMessages.SetCellProperties(cell, (byte)floorCellProperties);
+                        runSimCallback = true;
+                        var handle = Game.Instance.callbackManager.Add(new(OnCellPropertiesChanged, false));
+                        SimMessages.SetCellProperties(cell, (byte)floorCellProperties, handle.index);
                         SimMessages.SetStrength(cell, 0, 1f);
                     }
                     Grid.Foundation[cell] = !Grid.Element[cell].IsSolid;
@@ -65,9 +69,9 @@ namespace ButcherStation
                         SimMessages.SetStrength(cell, 1, 1f);
                     }
                     Grid.Foundation[cell] = false;
+                    GameScenePartitioner.Instance.TriggerEvent(cell, GameScenePartitioner.Instance.solidChangedLayer, null);
                 }
                 World.Instance.OnSolidChanged(cell);
-                GameScenePartitioner.Instance.TriggerEvent(cell, GameScenePartitioner.Instance.solidChangedLayer, null);
                 Pathfinding.Instance.AddDirtyNavGridCell(cell);
             }
         }
@@ -92,6 +96,19 @@ namespace ButcherStation
                         Grid.SetSolid(cell, true, CellEventLogger.Instance.SimCellOccupierForceSolid);
                 }
             }
+        }
+
+        // по аналогии с SimCellOccupier, для починки прозрачности
+        private void OnCellPropertiesChanged()
+        {
+            if (this == null || gameObject == null || !runSimCallback)
+                return;
+            for (int i = 0; i < extents.width; i++)
+            {
+                int cell = Grid.XYToCell(extents.x + i, extents.y);
+                GameScenePartitioner.Instance.TriggerEvent(cell, GameScenePartitioner.Instance.solidChangedLayer, null);
+            }
+            runSimCallback = false;
         }
     }
 }
