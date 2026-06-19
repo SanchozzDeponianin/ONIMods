@@ -73,6 +73,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Hydrocactus](https://steamcommunity.com/sharedfiles/filedetails/?id=2794198686) | Allows you to obtain a half-forgotten plant Hydrocactus in an normal fair game. | Spaced Out | - |
 | [No Manual Delivery](https://steamcommunity.com/sharedfiles/filedetails/?id=2047308624) | Adds a "Allow Manual Use" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings. | - | - |
 | [[Visual] Old Liquid Reservoir](https://steamcommunity.com/sharedfiles/filedetails/?id=1904543022) | Returns the old visual art of the Liquid Reservoir from older "early access" versions of the game. | - | - |
+| [Orehull harvests Plants](https://steamcommunity.com/sharedfiles/filedetails/?id=3747871003) | Now the Orehull can harvest Plants, like the Lumb, just underwater. | Aquatic Planet Pack | - |
 | [Pick up Flopping Aquatic Critters](https://steamcommunity.com/sharedfiles/filedetails/?id=2996740374) | Allows Duplicants to pick up flopping Aquatic Critters. | - | - |
 | [Plants have died - Where ?](https://steamcommunity.com/sharedfiles/filedetails/?id=3577468014) | Jumps camera and show you where "Plants have died" when you clicking this message. | - | - |
 | [Rebuildable AETN](https://steamcommunity.com/sharedfiles/filedetails/?id=2539984678) | Allows to disassemble and build AETN in another place. | - | - |

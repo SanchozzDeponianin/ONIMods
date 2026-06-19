@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Orehull harvests Plants</Title>
+    <Description>Now the Orehull can harvest Plants, like the Lumb, just underwater.</Description>
+    <ModVersion>1.0.0</ModVersion>
+    <RequiredDlcIds>DLC5_ID</RequiredDlcIds>
+    <UsesPLib>true</UsesPLib>
+    <UsesPublicise>true</UsesPublicise>
+  </PropertyGroup>
+  <ItemGroup>
+    <SharedCS Include="KAnimGroupManager;StateMachinesExtensions;TranspilerUtils" />
+  </ItemGroup>
+</Project>

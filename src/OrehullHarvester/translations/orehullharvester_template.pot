@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. OrehullHarvester.STRINGS.MOD_DESCRIPTION
+msgctxt "OrehullHarvester.STRINGS.MOD_DESCRIPTION"
+msgid "Now the Orehull can harvest Plants, like the Lumb, just underwater."
+msgstr ""
+
+#. OrehullHarvester.STRINGS.MOD_TITLE
+msgctxt "OrehullHarvester.STRINGS.MOD_TITLE"
+msgid "Orehull harvests Plants"
+msgstr ""
+

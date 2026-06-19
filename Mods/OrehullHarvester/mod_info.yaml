@@ -1,0 +1,5 @@
+requiredDlcIds:
+- DLC5_ID
+minimumSupportedBuild: 737790
+version: 1.0.0
+APIVersion: 2
