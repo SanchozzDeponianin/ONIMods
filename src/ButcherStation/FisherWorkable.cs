@@ -210,8 +210,8 @@ namespace ButcherStation
                 kbac.StartQueuedAnim();
             if (fishing.line.animQueue.TryPeek(out data) && data.anim == LINE_ANIMS[1])
                 fishing.line.animQueue.TryDequeue(out _);
-            if (kbac.currentAnim == LINE_ANIMS[1])
-                kbac.StartQueuedAnim();
+            if (fishing.line.currentAnim == LINE_ANIMS[1])
+                fishing.line.StartQueuedAnim();
         }
     }
 }

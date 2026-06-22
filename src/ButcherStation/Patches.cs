@@ -222,6 +222,23 @@ namespace ButcherStation
             }
         }
 
+        // ой ля, в патче 737790 они захардкодили что рыба плывёт на клетку правее чем надо
+        [HarmonyPatch(typeof(RanchedStates), nameof(RanchedStates.GetRanchNavTarget))]
+        private static class RanchedStates_GetRanchNavTarget
+        {
+            private static bool Prefix(RanchedStates.Instance smi, ref int __result)
+            {
+                var ranch = smi.GetRanchStation();
+                if (!ranch.IsNullOrStopped() && ranch.station.Def.PrefabID == FishingStationConfig.ID
+                    && smi.HasTag(GameTags.Creatures.Swimmer) && !smi.HasTag(GameTags.LargeCreature))
+                {
+                    __result = ranch.GetRanchNavTarget();
+                    return false;
+                }
+                return true;
+            }
+        }
+
         // поскольку рабочая точка станции рыбалки на одну клетку выше
         // уточняем куда идти ранчеру в .moveToRanch.MoveTo()
         [HarmonyPatch(typeof(RancherChore.RancherChoreStates), nameof(RancherChore.RancherChoreStates.InitializeStates))]

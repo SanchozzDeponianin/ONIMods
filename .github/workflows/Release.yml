@@ -11,7 +11,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
-   
+      with:
+        fetch-depth: 0
+
+    - name: Fix timestamps
+      uses: chetan/git-restore-mtime-action@v2
+
     - name: Create Zip
       id: create-zip
       run: |
