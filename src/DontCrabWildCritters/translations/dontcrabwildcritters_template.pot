@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. DontCrabWildCritters.STRINGS.MOD_DESCRIPTION
+msgctxt "DontCrabWildCritters.STRINGS.MOD_DESCRIPTION"
+msgid "Crabs and Squids will not attack wild Critters."
+msgstr ""
+
+#. DontCrabWildCritters.STRINGS.MOD_TITLE
+msgctxt "DontCrabWildCritters.STRINGS.MOD_TITLE"
+msgid "Don't Crab my Wild Ecosystem"
+msgstr ""
+

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Title>Don't Crab my Wild Ecosystem</Title>
+    <Description>Crabs and Squids will not attack wild Critters.</Description>
+    <ModVersion>1.0.0</ModVersion>
+    <UsesPLib>true</UsesPLib>
+  </PropertyGroup>
+</Project>

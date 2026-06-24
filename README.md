@@ -63,6 +63,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Control your Robots](https://steamcommunity.com/sharedfiles/filedetails/?id=3086964745) | Adds a couple of features to better control your Robots: "Move To" and "Turn Off/On" buttons, Door Access Control, etc. | - | - |
 | [Corpses on Pedestals](https://steamcommunity.com/sharedfiles/filedetails/?id=3240895274) | Now you can "decorate" your base with the corpses of dead Duplicants and discharged Robots, placing them on Pedestals. | - | - |
 | [Crabs flip Compost](https://steamcommunity.com/sharedfiles/filedetails/?id=3609497880) | Now your Crabs can flip Compost. | - | - |
+| [Don't Crab my Wild Ecosystem](https://steamcommunity.com/sharedfiles/filedetails/?id=3750737880) | Crabs and Squids will not attack wild Critters. | - | - |
 | [Eat every day](https://steamcommunity.com/sharedfiles/filedetails/?id=2573532147) | It forces duplicants to eat every day, even at the "no sweat" difficulty level, which guarantees a stable morale bonus. | - | - |
 | [Enclosed Telescope Tune-Up](https://steamcommunity.com/sharedfiles/filedetails/?id=2630438094) | Tuning of a Enclosed Telescope: increased the radius and scanning speed, adjusted requirements, some improvements. | - | - |
 | [Endless Telescope](https://steamcommunity.com/sharedfiles/filedetails/?id=3079759380) |  Allows you to explore the entire space map, but the further away, the slower. | Spaced Out | - |
