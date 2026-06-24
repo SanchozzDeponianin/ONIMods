@@ -21,7 +21,10 @@ namespace CrabsProfit
             var second = ModOptions.Instance.SecondaryOre.CreateTag();
             var ore_mass = mass - second_mass;
             var ore = ModOptions.Instance.DisableRandom ? NonRandomCrushedTo.CreateTag() : RandomOreConfig.ID;
-            AddRecipe(TAG, mass, ore, ore_mass, second, second_mass);
+            AddRecipe(TAG, mass, ore, ore_mass, second, second_mass, TUNING.BUILDINGS.FABRICATION_TIME_SECONDS.SHORT, RockCrusherConfig.ID);
+            const string mill = "Chemical_SmallCrusherMill";
+            if (Assets.GetBuildingDef(mill) != null)
+                AddRecipe(TAG, mass, ore, ore_mass, second, second_mass, 45f, mill);
 
             var desk = (ore_mass > 0f && second_mass > 0f) ?
                 string.Format(CRAB_SHELL.VARIANT_FRESH_WATER.DESC_TWO, ore.ProperName(), second.ProperName()) :
@@ -95,7 +98,7 @@ namespace CrabsProfit
 
         public void OnSpawn(GameObject inst) { }
 
-        internal static void AddRecipe(Tag shell, float shell_mass, Tag ore, float ore_mass, Tag second, float second_mass)
+        internal static void AddRecipe(Tag shell, float shell_mass, Tag ore, float ore_mass, Tag second, float second_mass, float time, string fabricator)
         {
             var ingredients = new ComplexRecipe.RecipeElement[] { new ComplexRecipe.RecipeElement(shell, shell_mass) };
             var results = new ComplexRecipe.RecipeElement[0];
@@ -108,14 +111,14 @@ namespace CrabsProfit
                 results = results.Append(new ComplexRecipe.RecipeElement(second, second_mass));
             new ComplexRecipe(id, ingredients, results)
             {
-                time = TUNING.BUILDINGS.FABRICATION_TIME_SECONDS.SHORT,
+                time = time,
                 description = results.Length > 1 ?
                     string.Format(BUILDINGS.PREFABS.ROCKCRUSHER.RECIPE_DESCRIPTION_TWO_OUTPUT,
                         ingredients[0].material.ProperName(), results[0].material.ProperName(), results[1].material.ProperName()) :
                     string.Format(BUILDINGS.PREFABS.ROCKCRUSHER.RECIPE_DESCRIPTION,
                         ingredients[0].material.ProperName(), results[0].material.ProperName()),
                 nameDisplay = ComplexRecipe.RecipeNameDisplay.IngredientToResult,
-                fabricators = new List<Tag> { TagManager.Create(RockCrusherConfig.ID) }
+                fabricators = new List<Tag> { TagManager.Create(fabricator) }
             };
         }
     }
