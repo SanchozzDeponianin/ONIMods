@@ -57,6 +57,7 @@ namespace ControlYourRobots
         }
 
         // при включении проверим а есть ли у него батарейка
+        // если выключен - не может утонуть
         [HarmonyPatch(typeof(RobotElectroBankDeadStates), nameof(RobotElectroBankDeadStates.InitializeStates))]
         private static class RobotElectroBankDeadStates_InitializeStates
         {
@@ -75,7 +76,9 @@ namespace ControlYourRobots
 
             private static void Postfix(RobotElectroBankDeadStates __instance)
             {
-                __instance.powerdown.EventHandlerTransition(GameHashes.TagsChanged, __instance.powerup.grounded, OnWakeUp);
+                __instance.powerdown.EventHandlerTransition(GameHashes.TagsChanged, __instance.powerup.grounded, OnWakeUp)
+                    .Enter(smi => { if (smi.gameObject.TryGetComponent(out DrowningMonitor monitor)) monitor.canDrownToDeath = false; })
+                    .Exit(smi => { if (smi.gameObject.TryGetComponent(out DrowningMonitor monitor)) monitor.canDrownToDeath = true; });
             }
         }
 
@@ -88,6 +91,19 @@ namespace ControlYourRobots
             private static void Postfix(RobotElectroBankDeadStates.Instance smi, ref bool __result)
             {
                 __result = __result && !smi.HasTag(RobotSuspend);
+            }
+        }
+
+        // если выключен - не тикать таймер утопления
+        [HarmonyPatch(typeof(DrowningMonitor), nameof(DrowningMonitor.SlicedSim1000ms))]
+        private static class DrowningMonitor_SlicedSim1000ms
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID);
+
+            private static void Postfix(DrowningMonitor __instance, float dt, bool ___drowning, bool ___drowned, ref float ___timeToDrown)
+            {
+                if (!__instance.canDrownToDeath && ___drowning && !___drowned)
+                    ___timeToDrown += dt;
             }
         }
 
