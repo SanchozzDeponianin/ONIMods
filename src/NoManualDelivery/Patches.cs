@@ -56,10 +56,8 @@ namespace NoManualDelivery
             RationBoxConfig.ID,
             RefrigeratorConfig.ID,
             DiningTableConfig.ID,
+            MultiMinionDiningTableConfig.ID,
             OuthouseConfig.ID,
-            FarmTileConfig.ID,
-            HydroponicFarmConfig.ID,
-            PlanterBoxConfig.ID,
             CreatureFeederConfig.ID,
             FishFeederConfig.ID,
             EggIncubatorConfig.ID,
@@ -82,8 +80,8 @@ namespace NoManualDelivery
             SmallElectrobankDischargerConfig.ID,
 
             // из модов:
-            // Aquatic Farm https://steamcommunity.com/sharedfiles/filedetails/?id=1910961538
-            "AquaticFarm",
+            // Rendezvous Table https://steamcommunity.com/sharedfiles/filedetails/?id=3609497409
+            "DualMinionDiningTable",
             // Advanced Refrigeration https://steamcommunity.com/sharedfiles/filedetails/?id=2021324045
             // Ronivan's Legacy https://steamcommunity.com/sharedfiles/filedetails/?id=3557584850
             "SimpleFridge", "FridgeRed", "FridgeYellow", "FridgeBlue", "FridgeAdvanced",
@@ -95,8 +93,6 @@ namespace NoManualDelivery
             "BigBeautifulStorage",
             // Trashcans    https://steamcommunity.com/sharedfiles/filedetails/?id=2037089892
             "SolidTrashcan",
-            // Insulated Farm Tiles https://steamcommunity.com/sharedfiles/filedetails/?id=1850356486
-            "InsulatedFarmTile", "InsulatedHydroponicFarm",
             // Freezer https://steamcommunity.com/sharedfiles/filedetails/?id=2618339179
             "Freezer",
             // Modified Storage https://steamcommunity.com/sharedfiles/filedetails/?id=1900617368
@@ -145,6 +141,7 @@ namespace NoManualDelivery
                     if (
                         BuildingToMakeAutomatable.Contains(def.PrefabID)
                         || (go.TryGetComponent<ManualDeliveryKG>(out _) && (go.TryGetComponent<ElementConverter>(out _) || go.TryGetComponent<EnergyGenerator>(out _)) && !go.TryGetComponent<ResearchCenter>(out _))
+                        || (go.TryGetComponent<PlantablePlot>(out var plot) && plot.AcceptsFertilizer)
                         || go.TryGetComponent<ComplexFabricator>(out _)
                         || go.TryGetComponent<TinkerStation>(out _)
                         )
