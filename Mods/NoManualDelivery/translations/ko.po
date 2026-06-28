@@ -1,0 +1,88 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+"Last-Translator: Nubula"
+"Language: ko"
+"Last-Update: 2026-06-28"
+
+#. NoManualDelivery.STRINGS.AUTOMATABLE_TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.AUTOMATABLE_TOOLTIP"
+msgid "Allow only if the {SOLIDTRANSFERARM} can't do it in a certain time"
+msgstr ": {SOLIDTRANSFERARM}가 특정 시간 내에 작업을 수행하지 못한 경우에만 복제체의 운반을 허용합니다."
+
+#. NoManualDelivery.STRINGS.MOD_DESCRIPTION
+msgctxt "NoManualDelivery.STRINGS.MOD_DESCRIPTION"
+msgid "Adds a \"Allow Manual Use\" checkbox for very many buildings to efficiently use the conveyor system and prevent duplicantes from manually delivering resources to those buildings."
+msgstr "대부분의 건물에 \"수동 사용 허용\" 체크박스를 추가하여 컨베이어 시스템을 더 효율적으로 사용하고 복제체가 자원을 수동으로 운반하는 행위를 방지합니다."
+
+#. NoManualDelivery.STRINGS.MOD_TITLE
+msgctxt "NoManualDelivery.STRINGS.MOD_TITLE"
+msgid "No Manual Delivery"
+msgstr "No Manual Delivery"
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.NAME"
+msgid "Duplicants can always pick up Food and Medicine."
+msgstr "복제체가 음식과 약품을 사용할 수 있도록 허용"
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPEDIBLE.TOOLTIP"
+msgid "Duplicants will ignore the {ALLOWMANUALBUTTON} checkbox when picking up food and medicine to eat it."
+msgstr "복제체가 음식과 약품을 사용할 때 {ALLOWMANUALBUTTON} 설정 값을 무시합니다."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.NAME"
+msgid "Duplicants can always pick up Water from {ICEKETTLE}."
+msgstr "복제체가 {ICEKETTLE}에서 물을 꺼낼 수 있도록 허용"
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWALWAYSPICKUPKETTLE.TOOLTIP"
+msgid "Duplicants will ignore the {ALLOWMANUALBUTTON} checkbox when picking up Water from {ICEKETTLE}."
+msgstr "복제체가 {ICEKETTLE}에서 물을 꺼낼 때 {ALLOWMANUALBUTTON} 설정 값을 무시합니다."
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.NAME"
+msgid "{SOLIDTRANSFERARM} can pick up and deliver liquid/gas Bottles and Canisters."
+msgstr "{SOLIDTRANSFERARM}가 액체/가스 용기를 수거하여 운송 허용"
+
+#. NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ALLOWTRANSFERARMPICKUPGASLIQUID.TOOLTIP"
+msgid "Also adds the {ALLOWMANUALBUTTON} checkbox to the Pitcher Pump, Canister Filler, Bottle Emptier and Canister Emptier."
+msgstr "또한 수동 펌프, 흡입기, 비우개, 주입기에 {ALLOWMANUALBUTTON} 설정을 추가합니다."
+
+#. NoManualDelivery.STRINGS.OPTIONS.BYDEFAULT.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.BYDEFAULT.NAME"
+msgid "Turn it on for newly built Buildings"
+msgstr "새로 건설한 시설물에 자동 활성화"
+
+#. NoManualDelivery.STRINGS.OPTIONS.CHORES.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.CHORES.NAME"
+msgid "Enable for Buildings"
+msgstr "건물 활성화"
+
+#. NoManualDelivery.STRINGS.OPTIONS.CHORES.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.CHORES.TOOLTIP"
+msgid "Additional the {ALLOWMANUALBUTTON} checkbox mode with ★.\nDuplicants will deliver items only if the {SOLIDTRANSFERARM} can't do it in a certain time."
+msgstr "{ALLOWMANUALBUTTON} 체크박스의 값을 ★로 설정합니다.\n{SOLIDTRANSFERARM}가 정해진 시간 내에 작업을 수행하지 못했을 경우에만 물품을 전달합니다."
+
+#. NoManualDelivery.STRINGS.OPTIONS.HOLDMODE.CATEGORY
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.HOLDMODE.CATEGORY"
+msgid "★ Intellectual mode"
+msgstr "★ 지적 모드"
+
+#. NoManualDelivery.STRINGS.OPTIONS.ITEMS.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ITEMS.NAME"
+msgid "Enable for Items on the floor"
+msgstr "잔해 활성화"
+
+#. NoManualDelivery.STRINGS.OPTIONS.ITEMS.TOOLTIP
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.ITEMS.TOOLTIP"
+msgid "Duplicants will pick up Items on the floor only if the {SOLIDTRANSFERARM} can't do it in a certain time."
+msgstr "{SOLIDTRANSFERARM}가 정해진 시간 내에 작업을 수행하지 못했을 경우에만 잔해를 정리합니다."
+
+#. NoManualDelivery.STRINGS.OPTIONS.TIMEOUT.NAME
+msgctxt "NoManualDelivery.STRINGS.OPTIONS.TIMEOUT.NAME"
+msgid "Timeout"
+msgstr "제한 시간"
+
