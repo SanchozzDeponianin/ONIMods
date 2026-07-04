@@ -55,6 +55,7 @@ namespace NoManualDelivery
             StorageTileConfig.ID,
             RationBoxConfig.ID,
             RefrigeratorConfig.ID,
+            "MiniFridge",
             DiningTableConfig.ID,
             MultiMinionDiningTableConfig.ID,
             OuthouseConfig.ID,
