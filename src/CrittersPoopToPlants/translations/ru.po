@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. CrittersPoopToPlants.STRINGS.MOD_DESCRIPTION
+msgctxt "CrittersPoopToPlants.STRINGS.MOD_DESCRIPTION"
+msgid "Critters will poop on Plants to fertilize its."
+msgstr "Животные будут \"удобрять\" растения."
+
+#. CrittersPoopToPlants.STRINGS.MOD_TITLE
+msgctxt "CrittersPoopToPlants.STRINGS.MOD_TITLE"
+msgid "Fertilizing Symbiosis"
+msgstr "Удобрительный Симбиоз"
+
