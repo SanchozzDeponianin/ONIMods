@@ -16,6 +16,17 @@
                 }
             }
         }
+        public class UI
+        {
+            public class USERMENUACTIONS
+            {
+                public class DEFAULTFILTERABLE
+                {
+                    public static LocString NAME = "Set as Default";
+                    public static LocString TOOLTIP = "Apply this filter to newly built {0}s";
+                }
+            }
+        }
         public class OPTIONS
         {
             public class ZZZ_ICON_ENABLE

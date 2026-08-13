@@ -23,6 +23,7 @@ namespace ControlYourRobots
             private static void Postfix(GameObject __result)
             {
                 __result.AddOrGet<RobotTurnOffOn>();
+                __result.AddOrGet<DefaultFilterable>();
                 if (ModOptions.Instance.low_power_mode_flydo_landed)
                     __result.AddOrGetDef<RobotLandedIdleMonitor.Def>().timeout = ModOptions.Instance.low_power_mode_flydo_timeout;
                 // для правильного отображения величины заряда при сне
@@ -248,6 +249,16 @@ namespace ControlYourRobots
                         flyer.transitions[i] = transition;
                     }
                 }
+            }
+        }
+
+        [HarmonyPatch(typeof(SaveGame), "OnPrefabInit")]
+        private static class SaveGame_OnPrefabInit
+        {
+            private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID);
+            private static void Postfix(SaveGame __instance)
+            {
+                __instance.gameObject.AddOrGet<DefaultFilterableManager>();
             }
         }
     }

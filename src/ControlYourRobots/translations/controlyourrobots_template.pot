@@ -88,3 +88,13 @@ msgctxt "ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.TOOLTIP"
 msgid "This Robot went into sleep mode to save its battery.\n\nDo robots dream of electric Dreckos?"
 msgstr ""
 
+#. ControlYourRobots.STRINGS.UI.USERMENUACTIONS.DEFAULTFILTERABLE.NAME
+msgctxt "ControlYourRobots.STRINGS.UI.USERMENUACTIONS.DEFAULTFILTERABLE.NAME"
+msgid "Set as Default"
+msgstr ""
+
+#. ControlYourRobots.STRINGS.UI.USERMENUACTIONS.DEFAULTFILTERABLE.TOOLTIP
+msgctxt "ControlYourRobots.STRINGS.UI.USERMENUACTIONS.DEFAULTFILTERABLE.TOOLTIP"
+msgid "Apply this filter to newly built {0}s"
+msgstr ""
+
