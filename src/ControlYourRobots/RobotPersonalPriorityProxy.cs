@@ -15,7 +15,7 @@ namespace ControlYourRobots
 
         public Tag PrefabID { get; private set; }
 
-        protected override void OnSpawn()
+        public override void OnSpawn()
         {
             base.OnSpawn();
             PrefabID = this.PrefabID();
@@ -48,7 +48,7 @@ namespace ControlYourRobots
             }
         }
 
-        protected override void OnCleanUp()
+        public override void OnCleanUp()
         {
             Cmps.Remove(this);
             base.OnCleanUp();

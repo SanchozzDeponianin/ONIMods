@@ -9,7 +9,7 @@ namespace ControlYourRobots
         TreeFilterable filterable;
 #pragma warning restore CS0649
 
-        protected override void OnPrefabInit()
+        public override void OnPrefabInit()
         {
             base.OnPrefabInit();
             if (DefaultFilterableManager.Instance != null && DefaultFilterableManager.Instance.TryGet(this.PrefabID(), out var tags))

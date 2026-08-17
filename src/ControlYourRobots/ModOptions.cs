@@ -15,6 +15,14 @@ namespace ControlYourRobots
 
         [JsonProperty]
         [Option]
+        [RequireDLC(DlcManager.EXPANSION1_ID)]
+        public bool railgun_launch { get; set; } = true;
+
+        [JsonIgnore]
+        public bool allow_railgun_launch => DlcManager.IsExpansion1Active() && railgun_launch;
+
+        [JsonProperty]
+        [Option]
         public bool low_power_mode_enable { get; set; } = true;
 
         [JsonProperty]

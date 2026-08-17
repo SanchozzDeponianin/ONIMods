@@ -73,6 +73,11 @@ msgctxt "ControlYourRobots.STRINGS.OPTIONS.LOW_POWER_MODE_VALUE.NAME"
 msgid "Battery consumption rate in energy saving mode, % of nominal value"
 msgstr ""
 
+#. ControlYourRobots.STRINGS.OPTIONS.RAILGUN_LAUNCH.NAME
+msgctxt "ControlYourRobots.STRINGS.OPTIONS.RAILGUN_LAUNCH.NAME"
+msgid "Allow launch Robots via Interplanetary Launcher"
+msgstr ""
+
 #. ControlYourRobots.STRINGS.OPTIONS.ZZZ_ICON_ENABLE.NAME
 msgctxt "ControlYourRobots.STRINGS.OPTIONS.ZZZ_ICON_ENABLE.NAME"
 msgid "Enable ZZZ status icon when sleeping"
@@ -86,6 +91,21 @@ msgstr ""
 #. ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.TOOLTIP
 msgctxt "ControlYourRobots.STRINGS.ROBOTS.STATUSITEMS.SLEEP_MODE.TOOLTIP"
 msgid "This Robot went into sleep mode to save its battery.\n\nDo robots dream of electric Dreckos?"
+msgstr ""
+
+#. ControlYourRobots.STRINGS.UI.UISIDESCREENS.RAILGUN_SIDESCREEN.RECIPE_DESC
+msgctxt "ControlYourRobots.STRINGS.UI.UISIDESCREENS.RAILGUN_SIDESCREEN.RECIPE_DESC"
+msgid "To launch the Robot must first be turned to Sleep mode."
+msgstr ""
+
+#. ControlYourRobots.STRINGS.UI.UISIDESCREENS.RAILGUN_SIDESCREEN.RECIPE_DETAILS
+msgctxt "ControlYourRobots.STRINGS.UI.UISIDESCREENS.RAILGUN_SIDESCREEN.RECIPE_DETAILS"
+msgid "Launch Robot Details"
+msgstr ""
+
+#. ControlYourRobots.STRINGS.UI.UISIDESCREENS.RAILGUN_SIDESCREEN.SUBTITLE
+msgctxt "ControlYourRobots.STRINGS.UI.UISIDESCREENS.RAILGUN_SIDESCREEN.SUBTITLE"
+msgid "Launch Robots"
 msgstr ""
 
 #. ControlYourRobots.STRINGS.UI.USERMENUACTIONS.DEFAULTFILTERABLE.NAME

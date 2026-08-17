@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{477BAC88-9C7
 		lib\ModdedSpicesSerializationManager.cs = lib\ModdedSpicesSerializationManager.cs
 		lib\MultiRoomTracker.cs = lib\MultiRoomTracker.cs
 		lib\RotPileSilentNotification.cs = lib\RotPileSilentNotification.cs
+		lib\RoverChargingFixPatch.cs = lib\RoverChargingFixPatch.cs
 		lib\StateMachinesExtensions.cs = lib\StateMachinesExtensions.cs
 		lib\StorageDropper.cs = lib\StorageDropper.cs
 		lib\TranspilerUtils.cs = lib\TranspilerUtils.cs

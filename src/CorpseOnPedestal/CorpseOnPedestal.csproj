@@ -7,6 +7,6 @@
     <UsesPLib>false</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <SharedCS Include="StateMachinesExtensions;TranspilerUtils" />
+    <SharedCS Include="StateMachinesExtensions;RoverChargingFixPatch;TranspilerUtils" />
   </ItemGroup>
 </Project>

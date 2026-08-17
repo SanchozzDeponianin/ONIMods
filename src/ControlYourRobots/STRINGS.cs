@@ -18,6 +18,16 @@
         }
         public class UI
         {
+            public class UISIDESCREENS
+            {
+                public class RAILGUN_SIDESCREEN
+                {
+                    public static LocString SUBTITLE = "Launch Robots";
+                    public static LocString RECIPE_DETAILS = "Launch Robot Details";
+                    public static LocString RECIPE_DESC = "To launch the Robot must first be turned to Sleep mode.";
+                }
+            }
+
             public class USERMENUACTIONS
             {
                 public class DEFAULTFILTERABLE
@@ -32,6 +42,10 @@
             public class ZZZ_ICON_ENABLE
             {
                 public static LocString NAME = "Enable ZZZ status icon when sleeping";
+            }
+            public class RAILGUN_LAUNCH
+            {
+                public static LocString NAME = "Allow launch Robots via Interplanetary Launcher";
             }
             public class LOW_POWER_MODE_ENABLE
             {

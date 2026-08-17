@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
 using KMod;
@@ -88,62 +87,6 @@ namespace CorpseOnPedestal
                 else
                     anim = "idle_dead";
                 smi.GetComponent<KAnimControllerBase>().Play(anim, KAnim.PlayMode.Loop);
-            }
-        }
-
-        // ровер не должен заряжаться кроме как унутре ракеты
-        [HarmonyPatch]
-        private static class ScoutRoverConfig_OnSpawn
-        {
-            private static bool Prepare() => DlcManager.IsExpansion1Active();
-
-            private static IEnumerable<MethodBase> TargetMethods()
-            {
-                var list = new List<MethodBase>();
-                list.Add(typeof(ScoutRoverConfig).GetMethod(nameof(ScoutRoverConfig.OnSpawn)));
-                foreach (var nested in typeof(ScoutRoverConfig).GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic))
-                {
-                    foreach (var method in nested.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
-                    {
-                        if (method.Name.Contains(nameof(ScoutRoverConfig.OnSpawn)))
-                            list.Add(method);
-                    }
-                }
-                return list;
-            }
-
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
-            {
-                return instructions.Transpile(original, transpiler);
-            }
-
-            private static Transform IsInsideCargoModule(Transform transform)
-            {
-                if (transform != null)
-                {
-                    var id = transform.PrefabID();
-                    if (id == ScoutModuleConfig.ID || id == ScoutLanderConfig.ID)
-                        return transform;
-                }
-                return null;
-            }
-
-            private static bool transpiler(ref List<CodeInstruction> instructions)
-            {
-                var parent = typeof(Transform).GetProperty(nameof(Transform.parent))?.GetGetMethod();
-                var test = typeof(ScoutRoverConfig_OnSpawn).GetMethod(nameof(IsInsideCargoModule),
-                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-
-                if (parent != null && test != null)
-                {
-                    int i = instructions.FindIndex(inst => inst.Calls(parent));
-                    if (i != -1)
-                    {
-                        instructions.Insert(++i, new CodeInstruction(OpCodes.Call, test));
-                        return true;
-                    }
-                }
-                return false;
             }
         }
 

@@ -7,7 +7,6 @@ using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
-using PeterHan.PLib.Detours;
 
 namespace ControlYourRobots
 {
@@ -59,20 +58,16 @@ namespace ControlYourRobots
 
         // при включении проверим а есть ли у него батарейка
         // если выключен - не может утонуть
+        // если в хронилищще - не падать
         [HarmonyPatch(typeof(RobotElectroBankDeadStates), nameof(RobotElectroBankDeadStates.InitializeStates))]
         private static class RobotElectroBankDeadStates_InitializeStates
         {
             private static bool Prepare() => DlcManager.IsContentSubscribed(DlcManager.DLC3_ID);
 
-            private delegate bool ElectrobankDelivered(RobotElectroBankDeadStates.Instance smi);
-
-            private static DetouredMethod<ElectrobankDelivered> IsElectrobankDelivered
-                = typeof(RobotElectroBankDeadStates).DetourLazy<ElectrobankDelivered>(nameof(ElectrobankDelivered));
-
             private static bool OnWakeUp(RobotElectroBankDeadStates.Instance smi, object data)
             {
                 var @event = ((Boxed<TagChangedEventData>)data).value;
-                return @event.tag == RobotSuspend && !@event.added && IsElectrobankDelivered.Invoke(smi);
+                return @event.tag == RobotSuspend && !@event.added && RobotElectroBankDeadStates.ElectrobankDelivered(smi);
             }
 
             private static void Postfix(RobotElectroBankDeadStates __instance)
@@ -80,6 +75,8 @@ namespace ControlYourRobots
                 __instance.powerdown.EventHandlerTransition(GameHashes.TagsChanged, __instance.powerup.grounded, OnWakeUp)
                     .Enter(smi => { if (smi.gameObject.TryGetComponent(out DrowningMonitor monitor)) monitor.canDrownToDeath = false; })
                     .Exit(smi => { if (smi.gameObject.TryGetComponent(out DrowningMonitor monitor)) monitor.canDrownToDeath = true; });
+
+                __instance.powerdown.pre.TagTransition(GameTags.Stored, __instance.powerdown.dead, false);
             }
         }
 

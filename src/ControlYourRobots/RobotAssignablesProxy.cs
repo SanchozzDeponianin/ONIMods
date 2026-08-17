@@ -9,7 +9,7 @@ namespace ControlYourRobots
     using handler = EventSystem.IntraObjectHandler<RobotAssignablesProxy>;
     public class RobotAssignablesProxy : MinionAssignablesProxy, IPersonalPriorityManager
     {
-        private static readonly handler OnQueueDestroyObjectDelegate = new((cmp, data) => cmp.OnQueueDestroyObject(data));
+        private static readonly handler OnQueueueDestroyObjectDelegate = new((cmp, data) => cmp.OnQueueueDestroyObject(data));
         public static Components.Cmps<RobotAssignablesProxy> Cmps = new();
         private static object @lock = new();
         private SchedulerHandle handle;
@@ -25,12 +25,12 @@ namespace ControlYourRobots
             }
         }
 
-        protected override void OnPrefabInit()
+        public override void OnPrefabInit()
         {
-            Subscribe((int)GameHashes.QueueDestroyObject, OnQueueDestroyObjectDelegate);
+            Subscribe((int)GameHashes.QueueDestroyObject, OnQueueueDestroyObjectDelegate);
         }
 
-        protected override void OnSpawn()
+        public override void OnSpawn()
         {
             RestoreTargetFromInstanceID();
             TryAdd(this);
@@ -50,9 +50,9 @@ namespace ControlYourRobots
             Util.KDestroyGameObject(gameObject);
         }
 
-        protected override void OnCleanUp() { }
+        public override void OnCleanUp() { }
 
-        private void OnQueueDestroyObject(object data)
+        private void OnQueueueDestroyObject(object data)
         {
             Cmps.Remove(this);
         }

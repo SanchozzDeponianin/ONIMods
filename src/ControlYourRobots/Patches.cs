@@ -9,7 +9,6 @@ using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
-using PeterHan.PLib.Detours;
 using PeterHan.PLib.PatchManager;
 using PeterHan.PLib.Options;
 
@@ -42,6 +41,19 @@ namespace ControlYourRobots
             if (PPatchTools.GetTypeSafe("MassMoveTo.ModAssets") != null)
                 harmony.Patch(typeof(Movable).GetMethodSafe(nameof(Movable.MoveToLocation), false, typeof(int)),
                     prefix: new HarmonyMethod(typeof(Movable_MoveToLocation_Kompot), nameof(Movable_MoveToLocation_Kompot.Prefix)));
+        }
+
+        [PLibMethod(RunAt.BeforeDbPostProcess)]
+        private static void BeforeDbPostProcess()
+        {
+            if (ModOptions.Instance.allow_railgun_launch)
+            {
+                RailGunPatches.SetupRailGun();
+                RailGunPatches.ConfigureRecipes();
+                // для учёта в инвентаре
+                GameTags.IgnoredMaterialCategories.Add(GameTags.Robot);
+                WorldInventory.NonCritterEntitiesTags = new[] { GameTags.BaseMinion }; // грубовато
+            }
         }
 
         [HarmonyPatch(typeof(BaseRoverConfig), nameof(BaseRoverConfig.BaseRover))]
@@ -115,14 +127,6 @@ namespace ControlYourRobots
         [HarmonyPatch(typeof(BaseRoverConfig), nameof(BaseRoverConfig.OnSpawn))]
         private static class BaseRoverConfig_OnSpawn
         {
-            // ровер не должен заряжаться при переносе
-            private static void FixEffect(GameObject go)
-            {
-                const string effect = "ScoutBotCharging";
-                if (go.TryGetComponent(out Effects effects) && effects.HasEffect(effect))
-                    effects.Remove(effect);
-            }
-
             // анимация до/после переноса
             private static void PlayAnim(GameObject go)
             {
@@ -134,7 +138,6 @@ namespace ControlYourRobots
             {
                 var movable = inst.AddOrGet<Movable>();
                 movable.tagRequiredForMove = GameTags.Creatures.Deliverable;
-                movable.onPickupComplete += FixEffect;
                 movable.onPickupComplete += PlayAnim;
                 movable.onDeliveryComplete += PlayAnim;
             }
@@ -198,6 +201,9 @@ namespace ControlYourRobots
                 __instance.alive.normal
                     .TagTransition(RobotSuspend, suspended, false);
 
+                __instance.alive.stored
+                    .TagTransition(RobotSuspend, suspended, false);
+
                 suspended
                     .TagTransition(RobotSuspend, __instance.alive.normal, true)
                     .ToggleStatusItem(RobotSleeping)
@@ -245,15 +251,12 @@ namespace ControlYourRobots
         //[HarmonyPatch(typeof(Movable), nameof(Movable.MoveToLocation))]
         private static class Movable_MoveToLocation_Kompot
         {
-            private static readonly Action<Movable> ClearStorageProxy = typeof(Movable).Detour<Action<Movable>>("ClearStorageProxy");
-            private static readonly Func<Movable, bool> HasTagRequiredToMove = typeof(Movable).Detour<Func<Movable, bool>>("HasTagRequiredToMove");
-
             internal static bool Prefix(Movable __instance)
             {
-                if (__instance != null && !HasTagRequiredToMove(__instance))
+                if (__instance != null && !__instance.HasTagRequiredToMove())
                 {
                     if (!__instance.IsMarkedForMove && __instance.StorageProxy != null)
-                        ClearStorageProxy(__instance);
+                        __instance.ClearStorageProxy();
                     return false;
                 }
                 return true;
@@ -289,9 +292,6 @@ namespace ControlYourRobots
         [HarmonyPatch(typeof(AccessControl), "UpgradeSavesToPostRobotDoorPermissions")]
         private static class UpgradeSavesToPostRobotDoorPermissions
         {
-            private static readonly DetouredMethod<Action<AccessControl, KPrefabID>> ClearGridRestrictions
-                = typeof(AccessControl).DetourLazy<Action<AccessControl, KPrefabID>>("ClearGridRestrictions");
-
             private static void Prefix(AccessControl __instance, AccessControl.Permission ____defaultPermission,
             List<KeyValuePair<Ref<KPrefabID>, AccessControl.Permission>> ___savedPermissions)
             {
@@ -306,7 +306,7 @@ namespace ControlYourRobots
                         {
                             list.Add(new(proxy, ___savedPermissions[i].Value));
                             ___savedPermissions.RemoveAt(i);
-                            ClearGridRestrictions.Invoke(__instance, kprefabID);
+                            __instance.ClearGridRestrictions(kprefabID);
                         }
                     }
                 }
@@ -328,6 +328,8 @@ namespace ControlYourRobots
                     __instance.SetDefaultPermission(GameTags.Robot, ____defaultPermission);
             }
         }
+
+        #region Priority Screen
 
         // внедряем портреты роботов в эээ.. все портреты
         [HarmonyPatch(typeof(CrewPortrait), "Rebuild")]
@@ -405,8 +407,6 @@ namespace ControlYourRobots
         [HarmonyPatch(typeof(TableScreen), "RefreshRows")]
         private static class TableScreen_RefreshRows
         {
-            private static Action<TableScreen, IAssignableIdentity> AddRow = typeof(TableScreen).Detour<Action<TableScreen, IAssignableIdentity>>("AddRow");
-
             private static void Inject(TableScreen screen)
             {
                 if (screen is JobsTableScreen)
@@ -420,7 +420,7 @@ namespace ControlYourRobots
                             {
                                 if (rppp != null && rppp.PrefabID == proxy.PrefabID)
                                 {
-                                    AddRow(screen, proxy);
+                                    screen.AddRow(proxy);
                                     break;
                                 }
                             }
@@ -457,33 +457,18 @@ namespace ControlYourRobots
         [HarmonyPatch(typeof(JobsTableScreen), "HoverPersonalPriority")]
         private static class JobsTableScreen_HoverPersonalPriority
         {
-            private static Func<TableScreen, GameObject, TableRow> GetWidgetRow
-                = typeof(TableScreen).Detour<Func<TableScreen, GameObject, TableRow>>("GetWidgetRow");
-
-            private static Func<TableScreen, GameObject, TableColumn> GetWidgetColumn
-                = typeof(TableScreen).Detour<Func<TableScreen, GameObject, TableColumn>>("GetWidgetColumn");
-
-            private static Func<JobsTableScreen, int, LocString> GetPriorityStr
-                = typeof(JobsTableScreen).Detour<Func<JobsTableScreen, int, LocString>>("GetPriorityStr");
-
-            private static Func<JobsTableScreen, int, string> GetPriorityValue
-                = typeof(JobsTableScreen).Detour<Func<JobsTableScreen, int, string>>("GetPriorityValue");
-
-            private static Func<JobsTableScreen, string> GetUsageString
-                = typeof(JobsTableScreen).Detour<Func<JobsTableScreen, string>>("GetUsageString");
-
             private static void Postfix(object widget_go_obj, JobsTableScreen __instance, ref string __result)
             {
                 if (!string.IsNullOrEmpty(__result))
                     return;
                 var go = widget_go_obj as GameObject;
-                var row = GetWidgetRow(__instance, go);
+                var row = __instance.GetWidgetRow(go);
                 if (row.rowType != TableRow.RowType.Minion)
                     return;
                 var proxy = row.GetIdentity() as RobotAssignablesProxy;
                 if (proxy == null)
                     return;
-                var group = (GetWidgetColumn(__instance, go) as PrioritizationGroupTableColumn).userData as ChoreGroup;
+                var group = (__instance.GetWidgetColumn(go) as PrioritizationGroupTableColumn).userData as ChoreGroup;
                 var toolTip = go.GetComponentInChildren<ToolTip>();
                 string text;
                 if (proxy.IsChoreGroupDisabled(group, out var trait))
@@ -501,8 +486,8 @@ namespace ControlYourRobots
                     text = UI.JOBSSCREEN.ITEM_TOOLTIP.ToString()
                         .Replace("{Name}", row.name)
                         .Replace("{Job}", group.Name)
-                        .Replace("{Priority}", GetPriorityStr(__instance, priority))
-                        .Replace("{PriorityValue}", GetPriorityValue(__instance, priority));
+                        .Replace("{Priority}", __instance.GetPriorityStr(priority))
+                        .Replace("{PriorityValue}", __instance.GetPriorityValue(priority));
                     toolTip.ClearMultiStringTooltip();
                     toolTip.AddMultiStringTooltip(text, null);
                     text = "\n" + UI.JOBSSCREEN.MINION_SKILL_TOOLTIP.ToString()
@@ -510,7 +495,7 @@ namespace ControlYourRobots
                         .Replace("{Attribute}", group.attribute.Name);
                     text += GameUtil.ColourizeString(__instance.TooltipTextStyle_Ability.textColor, proxy.GetAssociatedSkillLevel(group).ToString());
                     toolTip.AddMultiStringTooltip(text, null);
-                    toolTip.AddMultiStringTooltip(UI.HORIZONTAL_RULE + "\n" + GetUsageString(__instance), null);
+                    toolTip.AddMultiStringTooltip(UI.HORIZONTAL_RULE + "\n" + __instance.GetUsageString(), null);
                 }
             }
         }
@@ -581,5 +566,6 @@ namespace ControlYourRobots
                 return true;
             }
         }
+        #endregion
     }
 }

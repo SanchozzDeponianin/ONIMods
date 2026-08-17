@@ -3,10 +3,11 @@
   <PropertyGroup>
     <Title>Control your Robots</Title>
     <Description>Adds a couple of features to better control your Robots: "Move To" and "Turn Off/On" buttons, Energy saving mode when idling, etc.</Description>
-    <ModVersion>1.7.5</ModVersion>
+    <ModVersion>1.8.0</ModVersion>
     <UsesPLib>true</UsesPLib>
+    <UsesPublicise>true</UsesPublicise>
   </PropertyGroup>
   <ItemGroup>
-    <SharedCS Include="BaseOptions;StateMachinesExtensions;TranspilerUtils" />
+    <SharedCS Include="BaseOptions;RoverChargingFixPatch;StateMachinesExtensions;TranspilerUtils" />
   </ItemGroup>
 </Project>
