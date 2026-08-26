@@ -37,6 +37,8 @@ namespace ChooseIngredient
 
         private void OnFilterChanged(HashSet<Tag> allowed_tags)
         {
+            if (!flat.isSpawned)
+                return;
             var forbidden_tags = ListPool<Tag, MDKGChooser>.Allocate();
             foreach (var tag in flat.tagOptions)
             {
