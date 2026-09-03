@@ -67,6 +67,7 @@ Note, the `Local` folder name is case-sensitive on Mac OS and Linux.
 | [Eat every day](https://steamcommunity.com/sharedfiles/filedetails/?id=2573532147) | It forces duplicants to eat every day, even at the "no sweat" difficulty level, which guarantees a stable morale bonus. | - | - |
 | [Enclosed Telescope Tune-Up](https://steamcommunity.com/sharedfiles/filedetails/?id=2630438094) | Tuning of a Enclosed Telescope: increased the radius and scanning speed, adjusted requirements, some improvements. | - | - |
 | [Endless Telescope](https://steamcommunity.com/sharedfiles/filedetails/?id=3079759380) |  Allows you to explore the entire space map, but the further away, the slower. | Spaced Out | - |
+| [Fabricate it Now!](https://steamcommunity.com/sharedfiles/filedetails/?id=3794979035) | Allows Duplicants to immediately start recipe fabrication after the ingredients are delivered. | - | - |
 | [Fertilizing Symbiosis](https://steamcommunity.com/sharedfiles/filedetails/?id=3760466471) | Critters will "fertilize" on Plants. | - | - |
 | [Filterable Auto-Compost](https://steamcommunity.com/sharedfiles/filedetails/?id=3612606893) | Adds to the Compost a filter menu and auto-composting capability. | - | - |
 | [Flydo uses Transit Tubes](https://steamcommunity.com/sharedfiles/filedetails/?id=3709304542) | Now Flydo can use Transit Tubes. | Bionic Booster Pack | - |

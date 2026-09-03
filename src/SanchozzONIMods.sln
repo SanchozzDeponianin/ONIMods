@@ -145,6 +145,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DontCrabWildCritters", "Don
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrittersPoopToPlants", "CrittersPoopToPlants\CrittersPoopToPlants.csproj", "{5D44675F-9E12-4BBE-86B0-63542AC54A11}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FabricateItNow", "FabricateItNow\FabricateItNow.csproj", "{3A710879-150A-46BD-B933-CC4EE6BF4766}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Backup = Debug|Backup
@@ -641,6 +643,14 @@ Global
 		{5D44675F-9E12-4BBE-86B0-63542AC54A11}.Release|Backup.Build.0 = Release|Backup
 		{5D44675F-9E12-4BBE-86B0-63542AC54A11}.Release|Steam.ActiveCfg = Release|Steam
 		{5D44675F-9E12-4BBE-86B0-63542AC54A11}.Release|Steam.Build.0 = Release|Steam
+		{3A710879-150A-46BD-B933-CC4EE6BF4766}.Debug|Backup.ActiveCfg = Debug|Backup
+		{3A710879-150A-46BD-B933-CC4EE6BF4766}.Debug|Backup.Build.0 = Debug|Backup
+		{3A710879-150A-46BD-B933-CC4EE6BF4766}.Debug|Steam.ActiveCfg = Debug|Steam
+		{3A710879-150A-46BD-B933-CC4EE6BF4766}.Debug|Steam.Build.0 = Debug|Steam
+		{3A710879-150A-46BD-B933-CC4EE6BF4766}.Release|Backup.ActiveCfg = Release|Backup
+		{3A710879-150A-46BD-B933-CC4EE6BF4766}.Release|Backup.Build.0 = Release|Backup
+		{3A710879-150A-46BD-B933-CC4EE6BF4766}.Release|Steam.ActiveCfg = Release|Steam
+		{3A710879-150A-46BD-B933-CC4EE6BF4766}.Release|Steam.Build.0 = Release|Steam
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

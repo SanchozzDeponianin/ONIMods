@@ -1,0 +1,15 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. FabricateItNow.STRINGS.MOD_DESCRIPTION
+msgctxt "FabricateItNow.STRINGS.MOD_DESCRIPTION"
+msgid "Eliminates the delay and allows Duplicants to immediately start recipe fabrication immediately after the ingredients are delivered."
+msgstr ""
+
+#. FabricateItNow.STRINGS.MOD_TITLE
+msgctxt "FabricateItNow.STRINGS.MOD_TITLE"
+msgid "Fabricate it Now!"
+msgstr ""
+
