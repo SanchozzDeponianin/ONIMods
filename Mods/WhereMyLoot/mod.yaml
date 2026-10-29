@@ -1,3 +1,9 @@
-title: Where's My Loot?
-description: Allows you to get the expected loot from objects that have not been inspected but have been demolished.
+title: >-
+  Where's My Loot?
+
+  Prevent unwanted Demolish
+description: >-
+  Allows you to get the expected loot from objects that have not been inspected but have been demolished.
+
+  Hide Demolish button on some objects.
 staticID: Sanchozz.ONIMods.WhereMyLoot
