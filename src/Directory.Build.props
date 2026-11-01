@@ -42,6 +42,7 @@
     <DistributeMod Condition=" '$(DistributeMod)' != 'false' ">true</DistributeMod>
     <UsesPLib Condition=" '$(UsesPLib)' != 'true' ">false</UsesPLib>
     <UsesPublicise Condition=" '$(UsesPublicise)' != 'true' ">false</UsesPublicise>
+    <UsesMono Condition=" '$(UsesMono)' != 'true' ">false</UsesMono>
     <MSBuildTasksHelperDLL>$(MSBuildProjectDirectory)/../../bin/MSBuildTasksHelper.dll</MSBuildTasksHelperDLL>
     <PublicisedFolder>$(MSBuildProjectDirectory)/../../bin/Publicised/$(Platform)</PublicisedFolder>
   </PropertyGroup>
@@ -76,6 +77,20 @@
   </ItemGroup>
 
   <!-- DLL игры -->
+  <!-- Mono от Unity -->
+  <ItemGroup Condition=" '$(DistributeMod)' == 'true' And '$(UsesMono)' == 'true' ">
+    <Reference Include="mscorlib" HintPath="$(GameFolder)/mscorlib.dll" />
+    <Reference Include="netstandard" HintPath="$(GameFolder)/netstandard.dll" />
+    <Reference Include="System" HintPath="$(GameFolder)/System.dll" />
+    <Reference Include="System.Core" HintPath="$(GameFolder)/System.Core.dll" />
+    <Reference Include="System.IO.Compression" HintPath="$(GameFolder)/System.IO.Compression.dll" />
+    <Reference Include="0Harmony" HintPath="$(GameFolder)/0Harmony.dll" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(DistributeMod)' == 'true' And '$(UsesMono)' != 'true' ">
+    <PackageReference Include="Lib.Harmony" Version="2.4.2" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
+  </ItemGroup>
+
   <!-- нормальные -->
   <ItemGroup Condition=" '$(DistributeMod)' == 'true' And '$(UsesPublicise)' != 'true' ">
     <Reference Include="Assembly-CSharp" HintPath="$(GameFolder)/Assembly-CSharp.dll" />
@@ -90,10 +105,6 @@
 
   <!-- и остальные -->
   <ItemGroup Condition=" '$(DistributeMod)' == 'true' ">
-    <!-- чтобы была документация
-    <Reference Include="0Harmony" HintPath="$(GameFolder)/0Harmony.dll" /> -->
-    <PackageReference Include="Lib.Harmony" Version="2.4.2" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
     <Reference Include="Newtonsoft.Json" HintPath="$(GameFolder)/Newtonsoft.Json.dll" />
     <Reference Include="UnityEngine" HintPath="$(GameFolder)/UnityEngine.dll" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(GameFolder)/UnityEngine.CoreModule.dll" />

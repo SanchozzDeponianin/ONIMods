@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
 
+  <PropertyGroup Condition=" '$(DistributeMod)' == 'true' And '$(UsesMono)' == 'true' ">
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
+
   <!-- общие файлы из lib -->
   <ItemGroup Condition=" '$(DistributeMod)' == 'true' ">
     <SharedCS Include="Utils" />
