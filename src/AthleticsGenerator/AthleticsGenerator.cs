@@ -39,31 +39,33 @@ namespace AthleticsGenerator
                 UpdateMeter();
             }
             manualGenerator.OnWorkableEventCB += OnWorkableEvent;
-            Subscribe((int)GameHashes.WorkableStopWork, OnWorkableStopWork);
+            hOnWorkableStopWork = Subscribe((int)GameHashes.WorkableStopWork, OnWorkableStopWorkDelegate, this);
         }
 
         protected override void OnCleanUp()
         {
             if (manualGenerator != null)
                 manualGenerator.OnWorkableEventCB -= OnWorkableEvent;
-            Unsubscribe((int)GameHashes.WorkableStopWork, OnWorkableStopWork);
+            Unsubscribe(ref hOnWorkableStopWork);
             base.OnCleanUp();
         }
 
+        private static readonly GameHashes[] ModifiersHashes
+            = { GameHashes.LevelUp, GameHashes.EffectAdded, GameHashes.EffectRemoved, GameHashes.SicknessAdded, GameHashes.SicknessCured };
+
+        private readonly int[] hOnModifierUpdate = new int[ModifiersHashes.Length];
+        private static readonly Action<object, object> OnModifierUpdateDelegate = (cmp, data) => ((AthleticsGenerator)cmp).UpdateModifier();
+
         private void OnWorkableEvent(Workable workable, Workable.WorkableEvent ev)
         {
-            Action<object> handler = _ => UpdateModifier();
             if (ev == Workable.WorkableEvent.WorkStarted)
             {
                 if (workable != null && workable.worker != null)
                 {
                     converter = workable.worker.GetAttributeConverter(Patches.ManualGeneratorPower.Id);
                     var real_worker = converter.gameObject;
-                    real_worker.Subscribe((int)GameHashes.LevelUp, handler);
-                    real_worker.Subscribe((int)GameHashes.EffectAdded, handler);
-                    real_worker.Subscribe((int)GameHashes.EffectRemoved, handler);
-                    real_worker.Subscribe((int)GameHashes.SicknessAdded, handler);
-                    real_worker.Subscribe((int)GameHashes.SicknessCured, handler);
+                    for (int i = 0; i < ModifiersHashes.Length; i++)
+                        hOnModifierUpdate[i] = real_worker.Subscribe((int)ModifiersHashes[i], OnModifierUpdateDelegate, this);
                 }
                 UpdateModifier();
             }
@@ -72,11 +74,8 @@ namespace AthleticsGenerator
                 if (converter != null && !converter.isNull)
                 {
                     var real_worker = converter.gameObject;
-                    real_worker.Unsubscribe((int)GameHashes.LevelUp, handler);
-                    real_worker.Unsubscribe((int)GameHashes.EffectAdded, handler);
-                    real_worker.Unsubscribe((int)GameHashes.EffectRemoved, handler);
-                    real_worker.Unsubscribe((int)GameHashes.SicknessAdded, handler);
-                    real_worker.Unsubscribe((int)GameHashes.SicknessCured, handler);
+                    for (int i = 0; i < ModifiersHashes.Length; i++)
+                        real_worker.Unsubscribe(hOnModifierUpdate[i]);
                     converter = null;
                 }
                 UpdateModifier();
@@ -92,8 +91,8 @@ namespace AthleticsGenerator
             UpdateMeter();
         }
 
-        private void OnWorkableStopWork(object _) => UpdateMeter();
-
+        private int hOnWorkableStopWork;
+        private static readonly Action<object, object> OnWorkableStopWorkDelegate = (cmp, data) => ((AthleticsGenerator)cmp).UpdateMeter();
         private void UpdateMeter()
         {
             if (meter != null)

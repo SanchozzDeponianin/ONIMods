@@ -1,13 +1,12 @@
-﻿namespace BetterPlantTending
+﻿using System;
+using SanchozzONIMods.Lib;
+
+namespace BetterPlantTending
 {
-    using handler = EventSystem.IntraObjectHandler<ExtendedFertilizationIrrigationMonitor>;
     public class ExtendedFertilizationIrrigationMonitor : KMonoBehaviour
     {
         // компонент для ряда дополнительных проверок что надо остановить поглощение удобрений и жидкостей
         // если растение не растёт по иным причинам чем засыхание
-
-        private static readonly handler OnDelegate = new((component, data) => component.QueueUpdateAbsorbing());
-
 #pragma warning disable CS0649
         [MySmiGet]
         private FertilizationMonitor.Instance fertilization;
@@ -80,11 +79,11 @@
         {
             if (subscribeCount++ == 0)
             {
-                Subscribe((int)GameHashes.Grow, OnDelegate);
-                Subscribe((int)GameHashes.Wilt, OnDelegate);
-                Subscribe((int)GameHashes.CropWakeUp, OnDelegate);
-                Subscribe((int)GameHashes.CropSleep, OnDelegate);
-                Subscribe((int)GameHashes.TreeBranchCountChanged, OnDelegate);
+                this.SubscribeX(GameHashes.Grow, QueueUpdateDelegate);
+                this.SubscribeX(GameHashes.Wilt, QueueUpdateDelegate);
+                this.SubscribeX(GameHashes.CropWakeUp, QueueUpdateDelegate);
+                this.SubscribeX(GameHashes.CropSleep, QueueUpdateDelegate);
+                this.SubscribeX(GameHashes.TreeBranchCountChanged, QueueUpdateDelegate);
             }
         }
 
@@ -100,11 +99,7 @@
 
         private void ForceUnsubscribe()
         {
-            Unsubscribe((int)GameHashes.Grow, OnDelegate, true);
-            Unsubscribe((int)GameHashes.Wilt, OnDelegate, true);
-            Unsubscribe((int)GameHashes.CropWakeUp, OnDelegate, true);
-            Unsubscribe((int)GameHashes.CropSleep, OnDelegate, true);
-            Unsubscribe((int)GameHashes.TreeBranchCountChanged, OnDelegate, true);
+            this.UnsubscribeAll();
         }
 
         public override void OnCleanUp()
@@ -115,7 +110,8 @@
             base.OnCleanUp();
         }
 
-        private void UpdateAbsorbing(object _)
+        private static readonly Action<object> UpdateAbsorbingDelegate = cmp => ((ExtendedFertilizationIrrigationMonitor)cmp).UpdateAbsorbing();
+        private void UpdateAbsorbing()
         {
             dirty = true;
             // тут стартуем поглощение, так как проверка должна быть встроена в патчи
@@ -125,12 +121,14 @@
                 irrigation.UpdateAbsorbing(true);
         }
 
+        private static readonly Action<object, object> QueueUpdateDelegate
+            = (cmp, data) => ((ExtendedFertilizationIrrigationMonitor)cmp).QueueUpdateAbsorbing();
         private void QueueUpdateAbsorbing()
         {
             dirty = true;
             if (updateHandle.IsValid)
                 updateHandle.ClearScheduler();
-            updateHandle = GameScheduler.Instance.Schedule("QueueUpdateAbsorbing", 2 * UpdateManager.SecondsPerSimTick, UpdateAbsorbing);
+            updateHandle = GameScheduler.Instance.Schedule("QueueUpdateAbsorbing", 2 * UpdateManager.SecondsPerSimTick, UpdateAbsorbingDelegate, this);
         }
 
         private void UpdateShouldAbsorb()
@@ -152,8 +150,10 @@
                     // проверка всех веток дерева
                     // поглощение включено если есть растущие ветки
                     int growing_branches = 0;
-                    if (grower.CurrentBranchCount > 0)
-                        grower.ActionPerBranch(branch =>
+                    for (int i = 0; i < grower.BranchPositionCount; i++)
+                    {
+                        var branch = grower.GetBranch(i);
+                        if (branch != null)
                         {
                             if (branch.TryGetComponent<Growing>(out var branch_growing))    // деревянные ветки
                             {
@@ -168,7 +168,8 @@
                                 if (!stbi.IsNullOrStopped() && !stbi.IsBranchFullyGrown && stbi.maturity.GetDelta() > 0)
                                     growing_branches++;
                             }
-                        });
+                        }
+                    }
                     shouldAbsorb = growing_branches > 0;
                 }
                 // в иных случаях поглощение включено если растение может расти и не выросло полностью

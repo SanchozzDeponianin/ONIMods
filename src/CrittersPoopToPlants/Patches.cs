@@ -153,7 +153,7 @@ namespace CrittersPoopToPlants
                 return @this.MoveTo(cell_callback, CellOffsetsCallback, success_state, fail_state, update_cell);
             }
 
-            private static CellOffset[] CellOffsetsCallback(PoopStates.Instance smi)
+            private static IReadOnlyList<CellOffset> CellOffsetsCallback(PoopStates.Instance smi)
             {
                 var approachable = smi.PoopStation as IApproachable;
                 if (!approachable.IsNullOrDestroyed())

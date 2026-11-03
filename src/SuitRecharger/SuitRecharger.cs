@@ -6,17 +6,13 @@ using KSerialization;
 using TUNING;
 using UnityEngine;
 using HarmonyLib;
+using SanchozzONIMods.Lib;
 using static STRINGS.DUPLICANTS.CHORES;
 
 namespace SuitRecharger
 {
-    using handler = EventSystem.IntraObjectHandler<SuitRecharger>;
     public class SuitRecharger : StateMachineComponent<SuitRecharger.StatesInstance>, ISaveLoadable, ISecondaryInput, ISecondaryOutput
     {
-        private static readonly handler CheckPipesDelegate = new((component, data) => component.CheckPipes(data));
-        private static readonly handler OnStorageChangeDelegate = new((component, data) => component.OnStorageChange(data));
-        private static readonly handler OnCopySettingsDelegate = new((component, data) => component.OnCopySettings(data));
-
         // цена полной починки
         public struct RepairSuitCost
         {
@@ -307,9 +303,9 @@ namespace SuitRecharger
                 fuelMeter = new MeterController(kbac, "meter_target_fuel", "meter_fuel", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, new string[] { "meter_target_fuel" });
             }
 
-            Subscribe((int)GameHashes.ConduitConnectionChanged, CheckPipesDelegate);
-            Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
-            Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+            this.SubscribeX(GameHashes.ConduitConnectionChanged, CheckPipesDelegate);
+            this.SubscribeX(GameHashes.OnStorageChange, OnStorageChangeDelegate);
+            this.SubscribeX(GameHashes.CopySettings, OnCopySettingsDelegate);
             Game.Instance.liquidConduitFlow.AddConduitUpdater(OnLiquidConduitUpdate, ConduitFlowPriority.Default);
             Game.Instance.gasConduitFlow.AddConduitUpdater(OnGasConduitUpdate, ConduitFlowPriority.Default);
 
@@ -336,9 +332,7 @@ namespace SuitRecharger
             smi.StopSM("OnCleanUp");
             Game.Instance.liquidConduitFlow.RemoveConduitUpdater(OnLiquidConduitUpdate);
             Game.Instance.gasConduitFlow.RemoveConduitUpdater(OnGasConduitUpdate);
-            Unsubscribe((int)GameHashes.ConduitConnectionChanged, CheckPipesDelegate);
-            Unsubscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
-            Unsubscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+            this.UnsubscribeAll();
             Conduit.GetNetworkManager(fuelPortInfo.conduitType).RemoveFromNetworks(fuelInputCell, fuelNetworkItem, true);
             Conduit.GetNetworkManager(liquidWastePortInfo.conduitType).RemoveFromNetworks(liquidWasteOutputCell, liquidWasteNetworkItem, true);
             Conduit.GetNetworkManager(gasWastePortInfo.conduitType).RemoveFromNetworks(gasWasteOutputCell, gasWasteNetworkItem, true);
@@ -393,6 +387,7 @@ namespace SuitRecharger
             gasWastePipeBlockedStatusItemGuid = selectable.ToggleStatusItem(gasWastePipeBlockedStatusItem, gasWastePipeBlockedStatusItemGuid, gasWastePipeBlocked);
         }
 
+        private static readonly Action<object, object> CheckPipesDelegate = (cmp, data) => ((SuitRecharger)cmp).CheckPipes(data);
         private void CheckPipes(object data)
         {
             selectable.ToggleStatusItem(fuelNoPipeConnectedStatusItem, !fuelConsumer.IsConnected, fuelTag.ProperName());
@@ -400,6 +395,7 @@ namespace SuitRecharger
             selectable.ToggleStatusItem(gasWasteNoPipeConnectedStatusItem, !gasWasteDispenser.IsConnected);
         }
 
+        private static readonly Action<object, object> OnCopySettingsDelegate = (cmp, data) => ((SuitRecharger)cmp).OnCopySettings(data);
         private void OnCopySettings(object data)
         {
             if (data is GameObject go && go != null && go.TryGetComponent<SuitRecharger>(out var recharger))
@@ -411,6 +407,7 @@ namespace SuitRecharger
             }
         }
 
+        private static readonly Action<object, object> OnStorageChangeDelegate = (cmp, data) => ((SuitRecharger)cmp).OnStorageChange(data);
         private void OnStorageChange(object data = null)
         {
             OxygenAvailable = o2Storage.GetMassAvailable(GameTags.Oxygen);

@@ -1,4 +1,6 @@
-﻿namespace ButcherStation
+﻿using System;
+
+namespace ButcherStation
 {
     public class HalfFloodable : Floodable
     {
@@ -10,15 +12,17 @@
             extents.y += 1;
             extents.height -= 1;
             partitionerEntry = GameScenePartitioner.Instance.Add("Floodable.OnSpawn", gameObject, extents,
-                GameScenePartitioner.Instance.liquidChangedLayer, OnElementChanged);
+                GameScenePartitioner.Instance.liquidChangedLayer, OnElementChangedDelegate, this);
             OnElementChanged(null);
         }
 
         public override void OnCleanUp()
         {
+            GameScenePartitioner.Instance.Free(ref partitionerEntry);
             base.OnCleanUp();
         }
 
+        private static readonly Action<object, object> OnElementChangedDelegate = (cmp, data) => ((HalfFloodable)cmp).OnElementChanged(data);
         private new void OnElementChanged(object data)
         {
             bool flooded = false;

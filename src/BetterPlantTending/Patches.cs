@@ -144,7 +144,6 @@ namespace BetterPlantTending
         // если растение засохло или полностью выросло
         // или декоротивное доп семя заспавнилось
         // при изменении состояния растения нужно перепроверить задачу
-        // заодно чиним что качается механика заместо фермерства
         [HarmonyPatch(typeof(Tinkerable), nameof(Tinkerable.OnPrefabInit))]
         private static class Tinkerable_OnPrefabInit
         {
@@ -152,29 +151,36 @@ namespace BetterPlantTending
             {
                 if (__instance.tinkerMaterialTag == FarmStationConfig.TINKER_TOOLS)
                 {
-                    __instance.attributeConverter = Db.Get().AttributeConverters.PlantTendSpeed;
-                    __instance.skillExperienceSkillGroup = Db.Get().SkillGroups.Farming.Id;
                     // чтобы обновить чору после того как белка извлекла семя
-                    __instance.Subscribe((int)GameHashes.SeedProduced, Tinkerable.OnEffectRemovedDelegate);
+                    __instance.SubscribeX(GameHashes.SeedProduced, Tinkerable.OnEffectRemovedDelegate);
                     // чтобы обновить чору когда растение засыхает/растёт/выросло
                     if (ModOptions.Instance.prevent_tending_grown_or_wilting)
                     {
-                        __instance.Subscribe((int)GameHashes.Wilt, Tinkerable.OnEffectRemovedDelegate);
-                        __instance.Subscribe((int)GameHashes.WiltRecover, Tinkerable.OnEffectRemovedDelegate);
-                        __instance.Subscribe((int)GameHashes.Grow, Tinkerable.OnEffectRemovedDelegate);
-                        __instance.Subscribe((int)GameHashes.CropSleep, Tinkerable.OnEffectRemovedDelegate);
-                        __instance.Subscribe((int)GameHashes.CropWakeUp, Tinkerable.OnEffectRemovedDelegate);
+                        __instance.SubscribeX(GameHashes.Wilt, Tinkerable.OnEffectRemovedDelegate);
+                        __instance.SubscribeX(GameHashes.WiltRecover, Tinkerable.OnEffectRemovedDelegate);
+                        __instance.SubscribeX(GameHashes.Grow, Tinkerable.OnEffectRemovedDelegate);
+                        __instance.SubscribeX(GameHashes.CropSleep, Tinkerable.OnEffectRemovedDelegate);
+                        __instance.SubscribeX(GameHashes.CropWakeUp, Tinkerable.OnEffectRemovedDelegate);
                         if (ModOptions.Instance.space_tree_adjust_productivity)
-                            __instance.Subscribe((int)GameHashes.TagsChanged, OnTagsChanged);
+                            __instance.SubscribeX(GameHashes.TagsChanged, OnTagsChanged);
                     }
                 }
             }
 
-            private static readonly EventSystem.IntraObjectHandler<Tinkerable> OnTagsChanged = new((tinkerable, data) =>
+            private static readonly System.Action<object, object> OnTagsChanged = (cmp, data) =>
             {
                 if (((Boxed<TagChangedEventData>)data).value.tag == SpaceTreePlant.SpaceTreeReadyForHarvest)
-                    tinkerable.QueueUpdateChore();
-            });
+                    ((Tinkerable)cmp).QueueUpdateChore();
+            };
+        }
+
+        [HarmonyPatch(typeof(Tinkerable), nameof(Tinkerable.OnCleanUp))]
+        private static class Tinkerable_OnCleanUp
+        {
+            private static void Prefix(Tinkerable __instance)
+            {
+                __instance.UnsubscribeAll();
+            }
         }
 
         // если убобрение не нужно - эмулируем как будто оно уже есть

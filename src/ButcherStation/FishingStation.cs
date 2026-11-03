@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ButcherStation
@@ -6,9 +7,6 @@ namespace ButcherStation
     [SkipSaveFileSerialization]
     public class FishingStation : KMonoBehaviour, ISim4000ms
     {
-        private static readonly EventSystem.IntraObjectHandler<FishingStation> OnOperationalChangedDelegate =
-            new((component, data) => component.OnOperationalChanged(data));
-
         public const int MinDepth = 1;
         public const int MaxDepth = 5;
 
@@ -48,15 +46,15 @@ namespace ButcherStation
         {
             base.OnSpawn();
             kbac.SetSymbolVisiblity("snapto_pivot", false);
-            Subscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate);
+            Subscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate, this);
             var extents = Extents.OneCell(Grid.OffsetCell(Grid.PosToCell(this), 0, MaxDepth));
             extents.height = MaxDepth;
             solidEntry = GameScenePartitioner.Instance.Add("FishingStation.OnSpawn", gameObject, extents,
-                GameScenePartitioner.Instance.solidChangedLayer, RefreshDepth);
+                GameScenePartitioner.Instance.solidChangedLayer, RefreshDepthDelegate, this);
             liquidEntry = GameScenePartitioner.Instance.Add("FishingStation.OnSpawn", gameObject, extents,
-                GameScenePartitioner.Instance.liquidChangedLayer, RefreshDepth);
+                GameScenePartitioner.Instance.liquidChangedLayer, RefreshDepthDelegate, this);
             buildingsEntry = GameScenePartitioner.Instance.Add("FishingStation.OnSpawn", gameObject, extents,
-                GameScenePartitioner.Instance.objectLayers[(int)ObjectLayer.Building], RefreshDepth);
+                GameScenePartitioner.Instance.objectLayers[(int)ObjectLayer.Building], RefreshDepthDelegate, this);
 
             line = AddChildrenKbac(nameof(line), kbac, "snapto_line", "line_pre");
             sack = AddChildrenKbac(nameof(sack), kbac, "snapto_sack", "fish_bag");
@@ -67,7 +65,6 @@ namespace ButcherStation
 
         public override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.OperationalChanged, OnOperationalChangedDelegate, true);
             GameScenePartitioner.Instance.Free(ref solidEntry);
             GameScenePartitioner.Instance.Free(ref liquidEntry);
             GameScenePartitioner.Instance.Free(ref buildingsEntry);
@@ -104,6 +101,7 @@ namespace ButcherStation
             return kbak;
         }
 
+        private static readonly Action<object, object> OnOperationalChangedDelegate = (cmp, data) => ((FishingStation)cmp).OnOperationalChanged(data);
         private void OnOperationalChanged(object data)
         {
             if (((Boxed<bool>)data).value)
@@ -123,6 +121,7 @@ namespace ButcherStation
         private int previousDepth = -1;
         private int previousWaterDepth = -1;
 
+        private static readonly Action<object, object> RefreshDepthDelegate = (cmp, data) => ((FishingStation)cmp).RefreshDepth(data);
         private void RefreshDepth(object data = null)
         {
             int depth = GetDepthAvailable(Grid.PosToCell(this), out int water_depth);

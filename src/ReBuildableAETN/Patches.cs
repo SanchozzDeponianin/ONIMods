@@ -182,6 +182,9 @@ namespace ReBuildableAETN
         [HarmonyPatch]
         private static class CodexEntryGenerator_GenerateBuildingDescriptionContainers
         {
+            // todo: на У60 исправили, больше не нужно, убрать когда станет совсем не нужно.
+            private static bool Prepare() => Utils.GameVersion < 761015u;
+
             private static MethodBase TargetMethod()
             {
                 return typeof(CodexEntryGenerator).GetMethodSafe("AddConstructionPropertyDescriptors", true, PPatchTools.AnyArguments)
@@ -341,9 +344,6 @@ namespace ReBuildableAETN
         }
 
         // добавляем ядра в космос в длц:
-        // нужно избежать записи id ядра в сейф, иначе при отключении мода будет плохо
-
-        // TODO: пока не вижу адекватного способа на У57 обойти записи id ядра в сейф
         // выборы следующего для сбора артифакта в космических пои.
         [HarmonyPatch(typeof(ArtifactPOIStates.Instance), nameof(ArtifactPOIStates.Instance.PickNewArtifactToHarvest))]
         private static class ArtifactPOIStates_Instance_PickNewArtifactToHarvest
@@ -380,7 +380,7 @@ namespace ReBuildableAETN
             }
         }
 
-        // подчищаем предыдущее условное значение "" означает ядро
+        // подчищаем предыдущее (из прошлых версий мода) условное значение "" означает ядро
         [HarmonyPatch(typeof(ArtifactPOIStates.Instance), nameof(ArtifactPOIStates.Instance.SpawnArtifactOnHexCell))]
         private static class ArtifactPOIStates_Instance_SpawnArtifactOnHexCell
         {
@@ -396,7 +396,7 @@ namespace ReBuildableAETN
         private static bool IsNotGameArtifactID(string id) => string.IsNullOrEmpty(id) || id == ID;
 
         // запись о проанализированном артифакте на станции анализа
-        // тут тоже нужно избежать записи id в сейф
+        // тут тоже нужно избежать записи id ядра в сейф, иначе при отключении мода будет плохо
         [HarmonyPatch(typeof(ArtifactSelector), nameof(ArtifactSelector.RecordArtifactAnalyzed))]
         private static class ArtifactSelector_RecordArtifactAnalyzed
         {

@@ -21,4 +21,6 @@ KnownVersions:
   MinimumBuildNumber: 716056
 - GameVersion: U59
   MinimumBuildNumber: 731233
+- GameVersion: U60
+  MinimumBuildNumber: 761015
 PreserveVersion: U57

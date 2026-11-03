@@ -16,6 +16,8 @@ namespace CarouselCentrifuge
         {
             if (this.LogModVersion()) return;
             base.OnLoad(harmony);
+            if (CarouselCentrifugeConfig.IsDeprecated)
+                return;
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
             new POptions().RegisterOptions(this, typeof(ModOptions));
         }

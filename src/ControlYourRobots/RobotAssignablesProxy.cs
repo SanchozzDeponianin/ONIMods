@@ -1,15 +1,13 @@
-﻿using Klei.AI;
+﻿using System;
+using Klei.AI;
 
 namespace ControlYourRobots
 {
     // мимикриацция под MinionAssignablesProxy для внедрения в экран приоритетов
     // один прокси-объект для всех роботов одного типа
     // методы OnЧетотам переопределены для избежания создания и верчения ненужными нам сущностями
-
-    using handler = EventSystem.IntraObjectHandler<RobotAssignablesProxy>;
     public class RobotAssignablesProxy : MinionAssignablesProxy, IPersonalPriorityManager
     {
-        private static readonly handler OnQueueueDestroyObjectDelegate = new((cmp, data) => cmp.OnQueueueDestroyObject(data));
         public static Components.Cmps<RobotAssignablesProxy> Cmps = new();
         private static object @lock = new();
         private SchedulerHandle handle;
@@ -27,7 +25,7 @@ namespace ControlYourRobots
 
         public override void OnPrefabInit()
         {
-            Subscribe((int)GameHashes.QueueDestroyObject, OnQueueueDestroyObjectDelegate);
+            Subscribe((int)GameHashes.QueueDestroyObject, OnQueueueDestroyObjectDelegate, this);
         }
 
         public override void OnSpawn()
@@ -52,6 +50,8 @@ namespace ControlYourRobots
 
         public override void OnCleanUp() { }
 
+        private static readonly Action<object, object> OnQueueueDestroyObjectDelegate 
+            = (cmp, data) => ((RobotAssignablesProxy)cmp).OnQueueueDestroyObject(data);
         private void OnQueueueDestroyObject(object data)
         {
             Cmps.Remove(this);

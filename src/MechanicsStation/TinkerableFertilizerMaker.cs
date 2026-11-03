@@ -18,24 +18,26 @@ namespace MechanicsStation
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            Subscribe((int)GameHashes.EffectAdded, OnEffectChanged);
-            Subscribe((int)GameHashes.EffectRemoved, OnEffectChanged);
+            hEffectAdded = Subscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate, this);
+            hEffectRemoved = Subscribe((int)GameHashes.EffectRemoved, OnEffectChangedDelegate, this);
             OnEffectChanged(null);
         }
 
         protected override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.EffectAdded, OnEffectChanged);
-            Unsubscribe((int)GameHashes.EffectRemoved, OnEffectChanged);
+            Unsubscribe(hEffectAdded);
+            Unsubscribe(hEffectRemoved);
             base.OnCleanUp();
         }
 
+        private int hEffectAdded;
+        private int hEffectRemoved;
+        private static readonly System.Action<object, object> OnEffectChangedDelegate = (cmp, data) => ((TinkerableFertilizerMaker)cmp).OnEffectChanged(data);
         private void OnEffectChanged(object data)
         {
             if (buildingElementEmitter != null)
             {
                 buildingElementEmitter.emitRate = base_methane_production_rate * gameObject.GetAttributes().GetValue(ModAssets.MACHINERY_SPEED_MODIFIER_NAME);
-                //Traverse.Create(buildingElementEmitter).Field<bool>("dirty").Value = true;
                 DIRTY.Set(buildingElementEmitter, true);
             }
         }

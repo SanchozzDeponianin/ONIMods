@@ -26,6 +26,7 @@ namespace SuitRecharger
         {
             base.OnAllModsLoaded(harmony, mods);
             ManualDeliveryKGPatch.Patch(harmony);
+            StorageOnDestroyPatch.Patch(harmony);
             TeleportSuitCompat.Init();
         }
 

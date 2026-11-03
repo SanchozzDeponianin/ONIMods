@@ -5,8 +5,6 @@ namespace MechanicsStation
     public class MechanicsStation : KMonoBehaviour
     {
         private static readonly KAnimHashedString oreSymbolHash = new("rock");
-        private static readonly EventSystem.IntraObjectHandler<MechanicsStation> OnStorageChangeDelegate =
-            new((component, data) => component.OnStorageChange(data));
 
 #pragma warning disable CS0649
         [MyCmpReq]
@@ -22,16 +20,18 @@ namespace MechanicsStation
         protected override void OnSpawn()
         {
             base.OnSpawn();
-            Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
+            hOnStorageChange = Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate, this);
             OnStorageChange(null);
         }
 
         protected override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
+            Unsubscribe(ref hOnStorageChange);
             base.OnCleanUp();
         }
 
+        private int hOnStorageChange;
+        private static readonly System.Action<object, object> OnStorageChangeDelegate = (cmp, data) => ((MechanicsStation)cmp).OnStorageChange(data);
         private void OnStorageChange(object data)
         {
             var ore = storage.FindFirst(MATERIAL_FOR_TINKER);

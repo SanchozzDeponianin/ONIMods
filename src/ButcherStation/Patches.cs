@@ -35,8 +35,8 @@ namespace ButcherStation
         [PLibMethod(RunAt.AfterDbInit)]
         private static void AddBuildingsAndModifier(Harmony harmony)
         {
-            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, FishingStationConfig.ID, BUILD_SUBCATEGORY.ranching, MilkingStationConfig.ID);
-            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Equipment, ButcherStationConfig.ID, BUILD_SUBCATEGORY.ranching, MilkingStationConfig.ID);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Farm, FishingStationConfig.ID, BUILD_SUBCATEGORY.ranching, MilkingStationConfig.ID);
+            Utils.AddBuildingToPlanScreen(BUILD_CATEGORY.Farm, ButcherStationConfig.ID, BUILD_SUBCATEGORY.ranching, MilkingStationConfig.ID);
             Utils.AddBuildingToTechnology("AnimalControl", ButcherStationConfig.ID, FishingStationConfig.ID);
 
             var formatter = new ToPercentAttributeFormatter(1f, GameUtil.TimeSlice.None);

@@ -3,6 +3,6 @@
   <PropertyGroup>
     <Title>Fabricate it Now!</Title>
     <Description>Eliminates the delay and allows Duplicants to immediately start recipe fabrication immediately after the ingredients are delivered.</Description>
-    <ModVersion>1.0.0</ModVersion>
+    <ModVersion>1.0.1</ModVersion>
   </PropertyGroup>
 </Project>

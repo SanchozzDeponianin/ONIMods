@@ -1,12 +1,12 @@
 ﻿using System;
+using SanchozzONIMods.Lib;
 
 namespace BetterPlantTending
 {
-    using handler = EventSystem.IntraObjectHandler<TendedPlant>;
     public abstract class TendedPlant : KMonoBehaviour
     {
-        private static readonly handler OnEffectChangedDelegate = new((component, data) => component.ApplyModifier());
-        private static readonly handler OnGrowDelegate = new((component, data) => component.QueueApplyModifier());
+        private static readonly Action<object, object> OnEffectChangedDelegate = (cmp, data) => ((TendedPlant)cmp).ApplyModifier();
+        private static readonly Action<object, object> OnGrowDelegate = (cmp, data) => ((TendedPlant)cmp).QueueApplyModifier();
 
         private SchedulerHandle updateHandle;
 
@@ -14,20 +14,16 @@ namespace BetterPlantTending
         {
             base.OnPrefabInit();
             ApplyModifierCallback = ApplyModifier;
-            Subscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
-            Subscribe((int)GameHashes.EffectRemoved, OnEffectChangedDelegate);
-            Subscribe((int)GameHashes.Grow, OnGrowDelegate);
-            Subscribe((int)GameHashes.Wilt, OnGrowDelegate);
-            Subscribe((int)GameHashes.WiltRecover, OnGrowDelegate);
+            this.SubscribeX(GameHashes.EffectAdded, OnEffectChangedDelegate);
+            this.SubscribeX(GameHashes.EffectRemoved, OnEffectChangedDelegate);
+            this.SubscribeX(GameHashes.Grow, OnGrowDelegate);
+            this.SubscribeX(GameHashes.Wilt, OnGrowDelegate);
+            this.SubscribeX(GameHashes.WiltRecover, OnGrowDelegate);
         }
 
         public override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.Grow, OnGrowDelegate);
-            Unsubscribe((int)GameHashes.Wilt, OnGrowDelegate);
-            Unsubscribe((int)GameHashes.WiltRecover, OnGrowDelegate);
-            Unsubscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate);
-            Unsubscribe((int)GameHashes.EffectRemoved, OnEffectChangedDelegate);
+            this.UnsubscribeAll();
             if (updateHandle.IsValid)
                 updateHandle.ClearScheduler();
             base.OnCleanUp();

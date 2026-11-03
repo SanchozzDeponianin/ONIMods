@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using KSerialization;
 using UnityEngine;
@@ -76,17 +77,17 @@ namespace ButcherStation
         public override void OnSpawn()
         {
             base.OnSpawn();
-            Subscribe((int)GameHashes.CopySettings, OnCopySettings);
+            Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate, this);
             treeFilterable.OnFilterChanged += OnFilterChanged;
         }
 
         public override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.CopySettings, OnCopySettings);
             treeFilterable.OnFilterChanged -= OnFilterChanged;
             base.OnCleanUp();
         }
 
+        private static readonly Action<object, object> OnCopySettingsDelegate = (cmp, data) => ((ButcherStation)cmp).OnCopySettings(data);
         private void OnCopySettings(object data)
         {
             var go = (GameObject)data;

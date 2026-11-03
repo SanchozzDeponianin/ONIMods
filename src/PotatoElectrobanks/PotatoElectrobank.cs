@@ -19,15 +19,17 @@ namespace PotatoElectrobanks
         {
             base.OnPrefabInit();
             charge = maxCapacity;
-            Subscribe((int)GameHashes.OnStore, OnStore);
+            hOnStore = Subscribe((int)GameHashes.OnStore, OnStoreDelegate, this);
         }
 
         public override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.OnStore, OnStore);
+            Unsubscribe(ref hOnStore);
             base.OnCleanUp();
         }
 
+        private int hOnStore;
+        private static readonly System.Action<object, object> OnStoreDelegate = (cmp, data) => ((PotatoElectrobank)cmp).OnStore(data);
         private void OnStore(object _)
         {
             if (charge <= 0f && pickupable.storage == null)

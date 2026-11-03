@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Title>Worn Suit doesn't drop Canister &amp; Suit Docks Tune-Up</Title>
     <Description>Discharges Worn Suits don't drops the Canisters when unequipping. Oxygen and Petroleum are returned to the Suit Dock for later reuse. Also a few tweaks of Suit Dock.</Description>
-    <ModVersion>1.1.7</ModVersion>
+    <ModVersion>1.1.8</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <SharedCS Include="DurabilityExtensions;ManualDeliveryKGPatch;StorageDropper;TranspilerUtils" />
+    <SharedCS Include="DurabilityExtensions;ManualDeliveryKGPatch;StorageOnDestroyPatch;TranspilerUtils" />
   </ItemGroup>
 </Project>

@@ -182,16 +182,15 @@ namespace BetterPlantTending
             private static void Postfix(GameObject __result)
             {
                 var modifiers = __result.GetComponent<Modifiers>();
-                modifiers.initialAttributes.Add(Db.Get().PlantAttributes.YieldAmount.Id);
+                modifiers.initialAttributes.Add(Db.Get().PlantAttributes.YieldFactor.Id);
                 var trait = Db.Get().traits.Get(modifiers.initialTraits[0]);
-                trait.Add(new AttributeModifier(Db.Get().PlantAttributes.YieldAmount.Id, SpaceTreeConfig.SUGAR_WATER_CAPACITY,
-                    trait.description, false, false, true));
+                trait.Add(new AttributeModifier(Db.Get().PlantAttributes.YieldFactor.Id, 1f, trait.description, false, false, true));
             }
         }
 
         // чтобы не дёргать GetComponent каждый тик
         private static AttributeInstanceParameter max_maturity;
-        private static AttributeInstanceParameter yield_amount;
+        private static AttributeInstanceParameter yield_factor;
 
         [HarmonyPatch(typeof(SpaceTreePlant), nameof(SpaceTreePlant.InitializeStates))]
         private static class SpaceTreePlant_InitializeStates_Mutant
@@ -202,14 +201,14 @@ namespace BetterPlantTending
             private static void Postfix(SpaceTreePlant __instance)
             {
                 max_maturity = __instance.AddParameter(nameof(max_maturity), new AttributeInstanceParameter());
-                yield_amount = __instance.AddParameter(nameof(yield_amount), new AttributeInstanceParameter());
+                yield_factor = __instance.AddParameter(nameof(yield_factor), new AttributeInstanceParameter());
                 __instance.root.Enter(InitAttributes);
             }
 
             private static void InitAttributes(SpaceTreePlant.Instance smi)
             {
                 max_maturity.Set(Db.Get().Amounts.Maturity.maxAttribute.Lookup(smi.gameObject), smi);
-                yield_amount.Set(Db.Get().PlantAttributes.YieldAmount.Lookup(smi.gameObject), smi);
+                yield_factor.Set(Db.Get().PlantAttributes.YieldFactor.Lookup(smi.gameObject), smi);
             }
         }
 
@@ -221,7 +220,7 @@ namespace BetterPlantTending
 
             private static void Postfix(SpaceTreePlant.Instance __instance, ref float __result)
             {
-                ModifyValueByAttributeMultiplierModifiers(yield_amount.Get(__instance), ref __result);
+                ModifyValueByAttributeMultiplierModifiers(yield_factor.Get(__instance), ref __result);
             }
         }
 
@@ -353,7 +352,7 @@ namespace BetterPlantTending
                 {
                     var tooltip = originCB_tree(str, data);
                     var smi = (SpaceTreePlant.Instance)data;
-                    string text = GetTooltipForAttributeMultiplierModifiers(yield_amount.Get(smi));
+                    string text = GetTooltipForAttributeMultiplierModifiers(yield_factor.Get(smi));
                     if (!string.IsNullOrEmpty(text))
                         tooltip = tooltip + "\n" + text;
                     text = GetTooltipForAttributeMultiplierModifiers(max_maturity.Get(smi), true);

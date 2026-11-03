@@ -7,9 +7,6 @@ namespace SandboxMutantPlant
 
     internal sealed class Patches : KMod.UserMod2
     {
-        private static readonly EventSystem.IntraObjectHandler<MutantPlant> OnRefreshUserMenuDelegate =
-            new((component, data) => OnRefreshUserMenu(component));
-
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
@@ -36,10 +33,10 @@ namespace SandboxMutantPlant
         {
             public static void Postfix(MutantPlant __instance)
             {
-                __instance.Subscribe((int)GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate);
+                __instance.Subscribe((int)GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate, __instance);
             }
         }
-
+        /*
         [HarmonyPatch(typeof(MutantPlant), "OnCleanUp")]
         public static class MutantPlant_OnCleanUp
         {
@@ -47,11 +44,12 @@ namespace SandboxMutantPlant
             {
                 __instance.Unsubscribe((int)GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate);
             }
-        }
+        }*/
 
         // добавляем кнопки
         // мутатор - для оригинального раснения или любых семян
         // исследование - для неизвестных мутаций
+        private static readonly System.Action<object, object> OnRefreshUserMenuDelegate = (cmp, data) => OnRefreshUserMenu((MutantPlant)cmp);
         private static void OnRefreshUserMenu(MutantPlant mutant)
         {
             if (Game.Instance.SandboxModeActive && mutant != null && mutant.TryGetComponent(out KPrefabID prefabID))

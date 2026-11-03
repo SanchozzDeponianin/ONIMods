@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -14,15 +15,9 @@ namespace SanchozzONIMods.Shared
     // пачти для ManualDeliveryKG
     // копирование настроек - вкл/выкл ручную доставку
     // исправление тоолтипа для этой кнопки, ушоб было видно доставку чего отключаем.
-    // исправление последствий косяка в системе событий клеев
-    // - что обработчики вызыватся многократно если есть несколько подписаных однотипных компонентов 
-    // - просто отписываемся если этот компонент не первый.
     public static class ManualDeliveryKGPatch
     {
-        private static readonly EventSystem.IntraObjectHandler<ManualDeliveryKG> OnCopySettingsDelegate =
-            new((component, data) => component.OnCopySettings(data));
-
-        private static EventSystem.IntraObjectHandler<ManualDeliveryKG> OnRefreshUserMenuDelegate;
+        private static readonly Action<object, object> OnCopySettingsDelegate = (cmp, data) => ((ManualDeliveryKG)cmp).OnCopySettings(data);
 
         private const string PATCH_KEY = "Patch.ManualDeliveryKG.OnCopySettings";
 
@@ -33,12 +28,8 @@ namespace SanchozzONIMods.Shared
         {
             if (!PRegistry.GetData<bool>(PATCH_KEY))
             {
-                OnRefreshUserMenuDelegate = Traverse.Create<ManualDeliveryKG>()
-                    .Field<EventSystem.IntraObjectHandler<ManualDeliveryKG>>(nameof(OnRefreshUserMenuDelegate)).Value;
                 harmony.Patch(typeof(ManualDeliveryKG), nameof(OnSpawn),
                     postfix: new HarmonyMethod(typeof(ManualDeliveryKGPatch), nameof(OnSpawn)));
-                harmony.Patch(typeof(ManualDeliveryKG), nameof(OnCleanUp),
-                    prefix: new HarmonyMethod(typeof(ManualDeliveryKGPatch), nameof(OnCleanUp)));
                 harmony.PatchTranspile(typeof(ManualDeliveryKG), "OnRefreshUserMenu",
                     transpiler: new HarmonyMethod(typeof(ManualDeliveryKGPatch), nameof(Transpiler)));
                 PRegistry.PutData(PATCH_KEY, true);
@@ -48,18 +39,7 @@ namespace SanchozzONIMods.Shared
         private static void OnSpawn(ManualDeliveryKG __instance)
         {
             if (__instance.allowPause)
-            {
-                if (__instance.GetComponents<ManualDeliveryKG>().ToList().IndexOf(__instance) > 0)
-                    __instance.Unsubscribe((int)GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate, true);
-                else
-                    __instance.Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
-            }
-        }
-
-        private static void OnCleanUp(ManualDeliveryKG __instance)
-        {
-            if (__instance.allowPause)
-                __instance.Unsubscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate, true);
+                __instance.Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate, __instance);
         }
 
         private static void OnCopySettings(this ManualDeliveryKG @this, object data)
@@ -67,7 +47,7 @@ namespace SanchozzONIMods.Shared
             if (@this.allowPause)
             {
                 // правильное копирование, если компонентов несколько
-                int index = @this.GetComponents<ManualDeliveryKG>().ToList().IndexOf(@this);
+                int index = Array.IndexOf(@this.GetComponents<ManualDeliveryKG>(), @this);
                 var others = ((GameObject)data).GetComponents<ManualDeliveryKG>();
                 if (others != null && index >= 0 && index < others.Length && others[index] != null)
                 {

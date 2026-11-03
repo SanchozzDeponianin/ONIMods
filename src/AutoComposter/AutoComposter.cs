@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using KSerialization;
 using STRINGS;
 using UnityEngine;
@@ -41,6 +42,7 @@ namespace AutoComposter
         private Tag OutputTag = GameTags.Dirt;
 
         public bool IsOperational => operational.IsOperational;
+        private static readonly Action<object, object> OnOperationalChangedDelegate = (cmp, data) => ((FilteredStorage)cmp).OnFunctionalChanged(data);
 
         public override void OnPrefabInit()
         {
@@ -65,10 +67,10 @@ namespace AutoComposter
             var chore_type = Db.Get().ChoreTypes.Get(delivery.choreTypeIDHash);
             filtered = new(this, null, this, false, chore_type);
             filtered.storage = garbage;
-            Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
-            Subscribe((int)GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate);
-            Subscribe((int)GameHashes.OnStorageInteracted, OnStorageInteractedDelegate);
-            Subscribe((int)GameHashes.OperationalChanged, filtered.OnFunctionalChanged);
+            this.SubscribeX(GameHashes.CopySettings, OnCopySettingsDelegate);
+            this.SubscribeX(GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate);
+            this.SubscribeX(GameHashes.OnStorageInteracted, OnStorageInteractedDelegate);
+            this.SubscribeX(GameHashes.OperationalChanged, OnOperationalChangedDelegate, filtered);
         }
 
         public override void OnSpawn()
@@ -83,10 +85,7 @@ namespace AutoComposter
 
         public override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
-            Unsubscribe((int)GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate);
-            Unsubscribe((int)GameHashes.OnStorageInteracted, OnStorageInteractedDelegate);
-            Unsubscribe((int)GameHashes.OperationalChanged, filtered.OnFunctionalChanged);
+            this.UnsubscribeAll();
             if (storage != null)
                 storage.OnStorageChange -= OnStorageChange;
             if (garbage != null)
@@ -126,9 +125,7 @@ namespace AutoComposter
             }
         }
 
-        private static readonly EventSystem.IntraObjectHandler<AutoComposter> OnStorageInteractedDelegate =
-            new((component, data) => component.OnStorageInteracted(data));
-
+        private static readonly Action<object, object> OnStorageInteractedDelegate = (cmp, data) => ((AutoComposter)cmp).OnStorageInteracted(data);
         private void OnStorageInteracted(object data)
         {
             if (data is Storage storage && storage != null && storage.storageID == GameTags.Compostable)
@@ -180,9 +177,7 @@ namespace AutoComposter
             isBeingProcessedItems = false;
         }
 
-        private static readonly EventSystem.IntraObjectHandler<AutoComposter> OnCopySettingsDelegate =
-            new((component, data) => component.OnCopySettings(data));
-
+        private static readonly Action<object, object> OnCopySettingsDelegate = (cmp, data) => ((AutoComposter)cmp).OnCopySettings(data);
         private void OnCopySettings(object data)
         {
             var go = data as GameObject;
@@ -193,9 +188,7 @@ namespace AutoComposter
             }
         }
 
-        private static readonly EventSystem.IntraObjectHandler<AutoComposter> OnRefreshUserMenuDelegate
-            = new((component, data) => component.OnRefreshUserMenu());
-
+        private static readonly Action<object, object> OnRefreshUserMenuDelegate = (cmp, data) => ((AutoComposter)cmp).OnRefreshUserMenu();
         private void OnRefreshUserMenu()
         {
             if (Game.IsDlcActiveForCurrentSave(DlcManager.EXPANSION1_ID))

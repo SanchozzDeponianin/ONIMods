@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace ButcherStation
 {
@@ -21,7 +22,7 @@ namespace ButcherStation
             extents.height = 1;
             SetFloor(true);
             solidEntry = GameScenePartitioner.Instance.Add("MakeFakeBaseSolid.OnSpawn", gameObject, extents,
-                GameScenePartitioner.Instance.solidChangedLayer, RefreshFoundation);
+                GameScenePartitioner.Instance.solidChangedLayer, RefreshFoundationDelegate, this);
         }
 
         public override void OnCleanUp()
@@ -78,6 +79,7 @@ namespace ButcherStation
 
         // если оказалось реально твёрдым - отменяем Grid.Foundation чтобы можно было выкопать
         // иначе отменяем выкапывание если было и восстанавливаем Grid.Foundation и Grid.SetSolid
+        private static readonly Action<object, object> RefreshFoundationDelegate = (cmp, data) => ((MakeFakeBaseSolid)cmp).RefreshFoundation(data);
         private void RefreshFoundation(object data)
         {
             int center = Grid.PosToCell(this);

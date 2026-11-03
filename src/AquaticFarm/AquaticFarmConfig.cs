@@ -83,7 +83,6 @@ namespace AquaticFarm
 
         public override void DoPostConfigureComplete(GameObject go)
         {
-            // todo: а нужно ли ? у гидропоники нету, у фармтиле и широкой поники есть
             go.GetComponent<KBatchedAnimController>().initialBlendParameters = 4;
             GeneratedBuildings.RemoveLoopingSounds(go);
             go.GetComponent<KPrefabID>().AddTag(GameTags.FarmTiles, false);

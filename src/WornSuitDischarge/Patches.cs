@@ -25,6 +25,7 @@ namespace WornSuitDischarge
         {
             base.OnAllModsLoaded(harmony, mods);
             ManualDeliveryKGPatch.Patch(harmony);
+            StorageOnDestroyPatch.Patch(harmony);
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -252,8 +253,7 @@ namespace WornSuitDischarge
                     foreach (ManualDeliveryKG mg in mdkgs)
                         ManualDeliveryKGPatch.userPaused.Set(mg, true);
                 };
-                go.AddOrGet<CopyBuildingSettings>();
-                go.AddOrGet<StorageDropper>();
+                go.AddTag(StorageOnDestroyPatch.DoNotDumpGas);
             }
 
             private static ManualDeliveryKG AddManualDeliveryKG(GameObject go, Tag requestedTag, float capacity)
@@ -267,30 +267,6 @@ namespace WornSuitDischarge
                 md.operationalRequirement = Operational.State.Functional;
                 md.allowPause = true;
                 return md;
-            }
-        }
-
-        // копирование настроек самого дока
-        // копируется только с настроеного дока на ненастроеный
-        // ожидает доставки или имеет костюм -> запросить доставку
-        // просто пустой -> оставить пустым
-        [HarmonyPatch(typeof(SuitLocker.States), nameof(SuitLocker.States.InitializeStates))]
-        private static class SuitLocker_States_InitializeStates
-        {
-            private static void Postfix(SuitLocker.States __instance)
-            {
-                __instance.empty.notconfigured
-                    .EventHandler(GameHashes.CopySettings, (smi, data) =>
-                    {
-                        var locker = ((GameObject)data)?.GetComponent<SuitLocker>();
-                        if (locker != null && locker.smi.sm.isConfigured.Get(locker.smi))
-                        {
-                            if (locker.smi.sm.isWaitingForSuit.Get(locker.smi) || locker.GetStoredOutfit() != null)
-                                smi.master.ConfigRequestSuit();
-                            else
-                                smi.master.ConfigNoSuit();
-                        }
-                    });
             }
         }
     }

@@ -11,12 +11,10 @@ namespace AnyIceKettle
 {
     using static Patches;
     using option = FewOptionSideScreen.IFewOptionSideScreen.Option;
-    using handler = EventSystem.IntraObjectHandler<AnyIceKettle>;
 
     [SerializationConfig(MemberSerialization.OptIn)]
     public class AnyIceKettle : KMonoBehaviour, FewOptionSideScreen.IFewOptionSideScreen
     {
-        private static readonly handler OnCopySettingsDelegate = new((cmp, data) => cmp.OnCopySettings(data));
         private static Element[] IceOres;
         private static SimHashes[] outputLiquids;
 
@@ -57,7 +55,7 @@ namespace AnyIceKettle
             }
             base.OnPrefabInit();
             chosenIce = IceKettleConfig.TARGET_ELEMENT_TAG;
-            Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+            Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate, this);
         }
 
         public override void OnSpawn()
@@ -86,6 +84,7 @@ namespace AnyIceKettle
                 SetChosenIce(IceKettleConfig.TARGET_ELEMENT_TAG);
         }
 
+        private static readonly Action<object, object> OnCopySettingsDelegate = (cmp, data) => ((AnyIceKettle)cmp).OnCopySettings(data);
         private void OnCopySettings(object data)
         {
             var go = data as GameObject;

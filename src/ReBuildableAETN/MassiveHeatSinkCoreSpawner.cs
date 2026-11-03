@@ -21,15 +21,18 @@ namespace ReBuildableAETN
             base.OnSpawn();
             if (random < 0)
                 random = Random.Range(0f, 1f);
-            Subscribe((int)GameHashes.LockerDroppedContents, OnLockerLooted);
+            hOnLockerLooted = Subscribe((int)GameHashes.LockerDroppedContents, OnLockerLootedDelegate, this);
         }
 
         protected override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.LockerDroppedContents, OnLockerLooted);
+            Unsubscribe(ref hOnLockerLooted);
             base.OnCleanUp();
         }
 
+        private int hOnLockerLooted;
+        private static readonly System.Action<object, object> OnLockerLootedDelegate
+            = (cmp, data) => ((MassiveHeatSinkCoreSpawner)cmp).OnLockerLooted(data);
         private void OnLockerLooted(object data)
         {
             if (random < chance)

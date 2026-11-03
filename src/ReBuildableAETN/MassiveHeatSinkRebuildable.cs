@@ -12,9 +12,6 @@ namespace ReBuildableAETN
     {
         private const float STUDY_WORK_TIME = 3600f;
 
-        private static readonly EventSystem.IntraObjectHandler<MassiveHeatSinkRebuildable> OnDeconstructCompleteDelegate =
-            new((component, data) => component.OnDeconstructComplete(data));
-
         private bool isConstructed = false;
 
         [Serialize]
@@ -72,18 +69,21 @@ namespace ReBuildableAETN
                 studied = true;
                 markedForStudy = false;
             }
-            Subscribe((int)GameHashes.DeconstructComplete, OnDeconstructCompleteDelegate);
+            hOnDeconstructComplete = Subscribe((int)GameHashes.DeconstructComplete, OnDeconstructCompleteDelegate, this);
             Refresh();
         }
 
         protected override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.DeconstructComplete, OnDeconstructCompleteDelegate);
+            Unsubscribe(ref hOnDeconstructComplete);
             base.OnCleanUp();
         }
 
         // спавним едро
         private static readonly Vector2 INITIAL_VELOCITY_RANGE = new(0.5f, 4f);
+        private int hOnDeconstructComplete;
+        private static readonly Action<object, object> OnDeconstructCompleteDelegate
+            = (cmp, data) => ((MassiveHeatSinkRebuildable)cmp).OnDeconstructComplete(data);
         private void OnDeconstructComplete(object data)
         {
             var extents = building.GetExtents();

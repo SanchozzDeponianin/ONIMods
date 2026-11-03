@@ -4,15 +4,10 @@ using UnityEngine;
 
 namespace SanchozzONIMods.Shared
 {
-    using handler = EventSystem.IntraObjectHandler<FreezeEffectDurationBase>;
-    using handler2 = EventSystem.IntraObjectHandler<OperationalNotActiveFreezeEffectDuration>;
-
     // основа для замораживания таймера истечения эффектов в зависимости от условий
     [SkipSaveFileSerialization]
     public abstract class FreezeEffectDurationBase : KMonoBehaviour
     {
-        private static readonly handler OnEffectAddedDelegate = new((cmp, data) => cmp.OnEffectAdded(data));
-
         [SerializeField]
         public List<HashedString> effectsToFreeze = new();
 
@@ -27,15 +22,17 @@ namespace SanchozzONIMods.Shared
         {
             Debug.Assert(effectsToFreeze != null, $"{nameof(effectsToFreeze)} is not set");
             base.OnPrefabInit();
-            Subscribe((int)GameHashes.EffectAdded, OnEffectAddedDelegate);
+            hOnEffectAdded = Subscribe((int)GameHashes.EffectAdded, OnEffectAddedDelegate, this);
         }
 
         protected override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.EffectAdded, OnEffectAddedDelegate);
+            Unsubscribe(hOnEffectAdded);
             base.OnCleanUp();
         }
 
+        private int hOnEffectAdded;
+        private static readonly System.Action<object, object> OnEffectAddedDelegate = (cmp, data) => ((FreezeEffectDurationBase)cmp).OnEffectAdded(data);
         private void OnEffectAdded(object data)
         {
             if (ShouldFreeze && data is Effect effect && effectsToFreeze.Contains(effect.IdHash))
@@ -98,8 +95,6 @@ namespace SanchozzONIMods.Shared
     [SkipSaveFileSerialization]
     public class OperationalNotActiveFreezeEffectDuration : FreezeEffectDurationBase
     {
-        private static readonly handler2 OnActiveChangedDelegate = new((cmp, data) => cmp.OnActiveChanged(data));
-
 #pragma warning disable CS0649
         [MyCmpReq]
         private Operational operational;
@@ -110,15 +105,18 @@ namespace SanchozzONIMods.Shared
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
-            Subscribe((int)GameHashes.ActiveChanged, OnActiveChangedDelegate);
+            hOnActiveChanged = Subscribe((int)GameHashes.ActiveChanged, OnActiveChangedDelegate, this);
         }
 
         protected override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.ActiveChanged, OnActiveChangedDelegate);
+            Unsubscribe(ref hOnActiveChanged);
             base.OnCleanUp();
         }
 
+        private int hOnActiveChanged;
+        private static readonly System.Action<object, object> OnActiveChangedDelegate
+            = (cmp, data) => ((OperationalNotActiveFreezeEffectDuration)cmp).OnActiveChanged(data);
         private void OnActiveChanged(object data)
         {
             if (ShouldFreeze)

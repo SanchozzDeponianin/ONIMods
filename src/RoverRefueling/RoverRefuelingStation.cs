@@ -1,12 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using SanchozzONIMods.Lib;
 
 namespace RoverRefueling
 {
-    using handler = EventSystem.IntraObjectHandler<RoverRefuelingStation>;
     public class RoverRefuelingStation : StateMachineComponent<RoverRefuelingStation.StatesInstance>
     {
-        private static readonly handler CheckPipeDelegate = new((component, data) => component.CheckPipe());
-        private static readonly handler OnStorageChangeDelegate = new((component, data) => component.RefreshMeter());
 
         private static readonly Chore.Precondition IsRover = new()
         {
@@ -159,22 +158,23 @@ namespace RoverRefueling
             progress_meter = new MeterController(kbac, "meter_resources_target", "meter_resources", Meter.Offset.Behind, Grid.SceneLayer.BuildingBack, new string[] { "meter_resources_target" });
             RefreshMeter();
             CheckPipe();
-            Subscribe((int)GameHashes.ConduitConnectionChanged, CheckPipeDelegate);
-            Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
+            this.SubscribeX(GameHashes.ConduitConnectionChanged, CheckPipeDelegate);
+            this.SubscribeX(GameHashes.OnStorageChange, OnStorageChangeDelegate);
         }
 
         protected override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.ConduitConnectionChanged, CheckPipeDelegate);
-            Unsubscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
+            this.UnsubscribeAll();
             base.OnCleanUp();
         }
 
+        private static readonly Action<object, object> CheckPipeDelegate = (cmp, data) => ((RoverRefuelingStation)cmp).CheckPipe();
         private void CheckPipe()
         {
             manualDelivery.Pause(consumer.IsConnected, "pipe connected");
         }
 
+        private static readonly Action<object, object> OnStorageChangeDelegate = (cmp, data) => ((RoverRefuelingStation)cmp).RefreshMeter();
         private void RefreshMeter()
         {
             fuel_meter.SetPositionPercent(Mathf.Clamp01(storage.GetMassAvailable(RoverRefuelingStationConfig.fuelTag) / storage.capacityKg));

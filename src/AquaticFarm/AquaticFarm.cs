@@ -12,24 +12,26 @@
 
         private PassiveElementConsumer[] consumers;
         private HandleVector<int>.Handle partitionerEntry;
+        private int hOccupantChanged;
 
         public override void OnSpawn()
         {
             base.OnSpawn();
             consumers = GetComponents<PassiveElementConsumer>();
-            Subscribe((int)GameHashes.OccupantChanged, RefreshConsumption);
+            hOccupantChanged = Subscribe((int)GameHashes.OccupantChanged, RefreshConsumptionDelegate, this);
             partitionerEntry = GameScenePartitioner.Instance.Add("AquaticFarm.OnSpawn", gameObject, building.GetValidPlacementExtents(),
-                GameScenePartitioner.Instance.liquidChangedLayer, RefreshConsumption);
+                GameScenePartitioner.Instance.liquidChangedLayer, RefreshConsumptionDelegate);
             RefreshConsumption(plantablePlot.Occupant);
         }
 
         public override void OnCleanUp()
         {
             base.OnCleanUp();
-            Unsubscribe((int)GameHashes.OccupantChanged, RefreshConsumption);
+            Unsubscribe(ref hOccupantChanged);
             GameScenePartitioner.Instance.Free(ref partitionerEntry);
         }
 
+        private static readonly System.Action<object, object> RefreshConsumptionDelegate = (cmp, data) => ((AquaticFarm)cmp).RefreshConsumption(data);
         private void RefreshConsumption(object data)
         {
             if (plantablePlot.Occupant != null

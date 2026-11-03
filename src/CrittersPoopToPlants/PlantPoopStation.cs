@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace CrittersPoopToPlants
 {
@@ -26,7 +27,7 @@ namespace CrittersPoopToPlants
 
         private CellOffset[] offsets;
 
-        public CellOffset[] GetOffsets()
+        public IReadOnlyList<CellOffset> GetOffsets()
         {
             if (offsets == null)
             {

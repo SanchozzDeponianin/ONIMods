@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Title>Rover's Recharger</Title>
     <Description>Allows you to charge the Rover's battery with chemical fuel.</Description>
-    <ModVersion>1.1.5</ModVersion>
+    <ModVersion>1.1.6</ModVersion>
     <RequiredDlcIds>EXPANSION1_ID</RequiredDlcIds>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <SharedCS Include="BaseOptions" />
+    <SharedCS Include="BaseOptions;EventExtensions" />
   </ItemGroup>
 </Project>

@@ -7,9 +7,6 @@ namespace AttributeRestrictions
     [SerializationConfig(MemberSerialization.OptIn)]
     public class AttributeRestriction : KMonoBehaviour
     {
-        private static readonly EventSystem.IntraObjectHandler<AttributeRestriction> OnCopySettingsDelegate =
-            new((component, data) => component.OnCopySettings(data));
-
         [SerializeField]
         public bool showInUI = true;
 
@@ -52,19 +49,21 @@ namespace AttributeRestrictions
         protected override void OnPrefabInit()
         {
             base.OnPrefabInit();
-            Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+            hOnCopySettings = Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate, this);
         }
 
         protected override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+            Unsubscribe(ref hOnCopySettings);
             base.OnCleanUp();
         }
 
+        private int hOnCopySettings;
+        private static readonly System.Action<object, object> OnCopySettingsDelegate = (cmp, data) => ((AttributeRestriction)cmp).OnCopySettings(data);
         private void OnCopySettings(object data)
         {
-            var restriction = ((GameObject)data).GetComponent<AttributeRestriction>();
-            if (restriction != null)
+            var go = data as GameObject;
+            if (go != null && go.TryGetComponent(out AttributeRestriction restriction))
             {
                 isEnabled = restriction.isEnabled;
                 isBelow = restriction.isBelow;

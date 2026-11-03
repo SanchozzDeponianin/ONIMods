@@ -28,17 +28,18 @@
                 else
                     PlantSubSpeciesCatalog.Instance.DiscoverSubSpecies(mutant.GetSubSpeciesInfo(), mutant);
                 var grower = mutant.GetSMI<PlantBranchGrower.Instance>();
-                if (!grower.IsNullOrStopped())
+                if (!grower.IsNullOrStopped() && grower.branches != null)
                 {
-                    grower.ActionPerBranch(go =>
+                    for (int i = 0; i < grower.branches.Length; i++)
                     {
-                        if (go.TryGetComponent(out MutantPlant mutant_branch))
+                        var branch = grower.GetBranch(i);
+                        if (branch != null && branch.TryGetComponent(out MutantPlant mutant_branch))
                         {
                             mutant.CopyMutationsTo(mutant_branch);
                             mutant_branch.ApplyMutations();
                             DiscoverSilentlyAndIdentifySubSpecies(mutant_branch.GetSubSpeciesInfo());
                         }
-                    });
+                    };
                 }
                 DetailsScreen.Instance.Trigger((int)GameHashes.UIRefreshData, null);
             }

@@ -28,6 +28,7 @@ namespace AnyIceKettle
 #pragma warning restore CS0649
 
         private FilteredStorage filtered;
+        private int hOnFunctionalChanged;
 
         [Serialize]
         private bool paused = false;
@@ -45,7 +46,7 @@ namespace AnyIceKettle
             var chore_type = Db.Get().ChoreTypes.Get(fuel_mdkg.choreTypeIDHash);
             filtered = new(this, null, this, false, chore_type);
             filtered.storage = fuelStorage;
-            Subscribe((int)GameHashes.OperationalChanged, filtered.OnFunctionalChanged);
+            hOnFunctionalChanged = Subscribe((int)GameHashes.OperationalChanged, filtered.OnFunctionalChanged);
         }
 
         public override void OnSpawn()
@@ -66,7 +67,7 @@ namespace AnyIceKettle
 
         public override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.OperationalChanged, filtered.OnFunctionalChanged);
+            Unsubscribe(ref hOnFunctionalChanged);
             if (fuelStorage != null)
                 fuelStorage.OnStorageChange -= OnStorageChange;
             if (filterable != null)

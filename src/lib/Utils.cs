@@ -533,6 +533,7 @@ namespace SanchozzONIMods.Lib
         public const string Oxygen = nameof(Oxygen);
         public const string Power = nameof(Power);
         public const string Food = nameof(Food);
+        public const string Farm = nameof(Farm);
         public const string Plumbing = nameof(Plumbing);
         public const string HVAC = nameof(HVAC);
         public const string Refining = nameof(Refining);

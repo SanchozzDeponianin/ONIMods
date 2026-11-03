@@ -63,11 +63,13 @@ namespace SuitRecharger
             o2_storage.capacityKg = O2_CAPACITY + FUEL_CAPACITY;
             o2_storage.SetDefaultStoredItemModifiers(Storage.StandardSealedStorage);
             o2_storage.storageID = GameTags.Oxygen;
-            go.AddOrGet<StorageDropper>();
 
             AddManualDeliveryKG(go, GameTags.Oxygen, O2_CAPACITY).SetStorage(o2_storage);
             AddManualDeliveryKG(go, GameTags.CombustibleLiquid, FUEL_CAPACITY).SetStorage(o2_storage);
-            go.GetComponent<KPrefabID>().prefabInitFn += delegate (GameObject inst)
+
+            var kPrefabID = go.GetComponent<KPrefabID>();
+            kPrefabID.AddTag(StorageOnDestroyPatch.DoNotDumpGas);
+            kPrefabID.prefabInitFn += delegate (GameObject inst)
             {
                 var mdkgs = inst.GetComponents<ManualDeliveryKG>();
                 foreach (var mg in mdkgs)

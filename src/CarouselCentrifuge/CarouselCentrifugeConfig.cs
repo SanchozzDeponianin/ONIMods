@@ -10,6 +10,8 @@ namespace CarouselCentrifuge
 
         public override string[] GetRequiredDlcIds() => Utils.GetDlcIds(base.GetRequiredDlcIds());
 
+        public static bool IsDeprecated => Utils.GameVersion >= 761015u;
+
         public override BuildingDef CreateBuildingDef()
         {
             BuildingDef buildingDef = BuildingTemplates.CreateBuildingDef(
@@ -38,16 +40,33 @@ namespace CarouselCentrifuge
             buildingDef.AudioSize = "large";
             buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.MORALE);
             buildingDef.AddSearchTerms(global::STRINGS.SEARCH_TERMS.ROCKET);
+            buildingDef.Deprecated = IsDeprecated;
             return buildingDef;
         }
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
             go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.RecBuilding, false);
-            go.AddOrGet<CarouselCentrifugeWorkable>();
             RoomTracker roomTracker = go.AddOrGet<RoomTracker>();
             roomTracker.requiredRoomType = Db.Get().RoomTypes.RecRoom.Id;
             roomTracker.requirement = RoomTracker.Requirement.Recommended;
+            if (!IsDeprecated)
+                go.AddOrGet<CarouselCentrifugeWorkable>();
+            else
+                go.GetComponent<KPrefabID>().prefabSpawnFn += inst =>
+                {
+                    var pos = inst.transform.GetPosition();
+                    var my_pe = inst.GetComponent<PrimaryElement>();
+                    var element = my_pe.ElementID;
+                    var temp = my_pe.Temperature;
+                    inst.DeleteObject();
+                    var def = Assets.GetBuildingDef(AstronautTrainingCenterConfig.ID);
+                    var vanilla = GameUtil.KInstantiate(def.BuildingComplete, pos, def.SceneLayer);
+                    var pe = vanilla.GetComponent<PrimaryElement>();
+                    pe.SetElement(element);
+                    pe.Temperature = temp;
+                    vanilla.SetActive(true);
+                };
         }
 
         public override void DoPostConfigureComplete(GameObject go)

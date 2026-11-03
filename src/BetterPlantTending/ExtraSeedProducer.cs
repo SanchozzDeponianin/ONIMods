@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Klei.AI;
 using KSerialization;
 using STRINGS;
 using UnityEngine;
+using SanchozzONIMods.Lib;
 
 namespace BetterPlantTending
 {
     using static ModAssets;
     using static STRINGS.UI.UISIDESCREENS.PLANTERSIDESCREEN;
-    using handler = EventSystem.IntraObjectHandler<ExtraSeedProducer>;
 
     public class ExtraSeedProducer : KMonoBehaviour, IGameObjectEffectDescriptor
     {
@@ -48,11 +49,12 @@ namespace BetterPlantTending
             }
 #endif
         }
+        // todo: пересмотреть извлекаемость пипом-русалкой
         public bool PipRequiredToExtract => !isAquatic && ModOptions.Instance.extra_seeds.pip_required_to_extract;
         public bool ShouldFarmTinkerTending => !isDecorative || !hasExtraSeedAvailable;
 
-        private static readonly handler OnUprootedDelegate = new((component, data) => component.ExtractExtraSeed());
-        private static readonly handler OnCropTendedDelegate = new((component, data) => component.CreateExtraSeed());
+        private static readonly Action<object, object> OnCropTendedDelegate = (cmp, data) => ((ExtraSeedProducer)cmp).CreateExtraSeed();
+        private static readonly Action<object, object> OnUprootedDelegate = (cmp, data) => ((ExtraSeedProducer)cmp).ExtractExtraSeed();
 
         public override void OnPrefabInit()
         {
@@ -68,11 +70,11 @@ namespace BetterPlantTending
         public override void OnSpawn()
         {
             base.OnSpawn();
-            Subscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
-            Subscribe((int)GameHashes.Died, OnUprootedDelegate);
-            Subscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
+            this.SubscribeX(GameHashes.Uprooted, OnUprootedDelegate);
+            this.SubscribeX(GameHashes.Died, OnUprootedDelegate);
+            this.SubscribeX(GameHashes.CropTended, OnCropTendedDelegate);
             if (!PipRequiredToExtract)
-                Subscribe((int)GameHashes.EffectRemoved, OnUprootedDelegate);
+                this.SubscribeX(GameHashes.EffectRemoved, OnUprootedDelegate);
             this.AddTag(GameTags.GrowingPlant);
             if (hasExtraSeedAvailable && isDecorative)
                 this.AddTag(GameTags.FullyGrown);
@@ -80,11 +82,7 @@ namespace BetterPlantTending
 
         public override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.Uprooted, OnUprootedDelegate);
-            Unsubscribe((int)GameHashes.Died, OnUprootedDelegate);
-            Unsubscribe((int)GameHashes.CropTended, OnCropTendedDelegate);
-            if (!PipRequiredToExtract)
-                Unsubscribe((int)GameHashes.EffectRemoved, OnUprootedDelegate);
+            this.UnsubscribeAll();
             base.OnCleanUp();
         }
 
@@ -100,7 +98,7 @@ namespace BetterPlantTending
                     seedChance += worker.GetComponent<AttributeConverters>().Get(
                         Db.Get().AttributeConverters.SeedHarvestChance).Evaluate();
                 }
-                if (Random.Range(0f, 1f) <= seedChance)
+                if (UnityEngine.Random.Range(0f, 1f) <= seedChance)
                 {
                     hasExtraSeedAvailable = true;
                     if (isDecorative)
@@ -120,6 +118,7 @@ namespace BetterPlantTending
         }
 
         // описатель шансов доп семян.
+        // todo: кандидат на стрингбуилдер
         public List<Descriptor> GetDescriptors(GameObject go)
         {
             float seedChance = this?.GetAttributes()?.Get(ExtraSeedChance)?.GetTotalValue() ??

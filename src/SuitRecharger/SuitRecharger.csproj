@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Title>Suit Recharger</Title>
     <Description>Allows Duplicants to recharge their Suits and Oxygen Masks without taking them off.</Description>
-    <ModVersion>1.4.1</ModVersion>
+    <ModVersion>1.4.2</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <SharedCS Include="BaseOptions;DurabilityExtensions;ManualDeliveryKGPatch;StorageDropper;TranspilerUtils;UI" />
+    <SharedCS Include="BaseOptions;DurabilityExtensions;EventExtensions;ManualDeliveryKGPatch;StorageOnDestroyPatch;TranspilerUtils;UI" />
   </ItemGroup>
 </Project>

@@ -104,7 +104,7 @@ namespace SanchozzONIMods.Lib
         }
 
 #if USESPLIB
-        private static IDetouredField<StateMachine, StateMachine.Parameter[]> Parameters
+        private static readonly IDetouredField<StateMachine, StateMachine.Parameter[]> Parameters
                     = PDetours.DetourFieldLazy<StateMachine, StateMachine.Parameter[]>("parameters");
 
         private static void AddParameter(StateMachine sm, StateMachine.Parameter parameter, string name)
@@ -160,7 +160,7 @@ namespace SanchozzONIMods.Lib
                 throw new ArgumentNullException(nameof(@this));
             var state_target = @this.GetStateTarget();
             var mode = loop ? KAnim.PlayMode.Loop : KAnim.PlayMode.Once;
-            @this.Exit($"QueueAnimOnExit({anim}, {mode.ToString()})", (I smi) =>
+            @this.Exit($"QueueAnimOnExit({anim}, {mode})", (I smi) =>
             {
                 string suffix = (suffix_callback != null) ? suffix_callback(smi) : string.Empty;
                 var kbac = state_target.Get<KAnimControllerBase>(smi);

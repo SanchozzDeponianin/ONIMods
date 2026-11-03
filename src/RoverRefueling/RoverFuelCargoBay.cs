@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using STRINGS;
 using KSerialization;
 using UnityEngine;
@@ -6,14 +7,8 @@ using SanchozzONIMods.Lib;
 
 namespace RoverRefueling
 {
-    using handler = EventSystem.IntraObjectHandler<RoverFuelCargoBay>;
     public class RoverFuelCargoBay : KMonoBehaviour, IUserControlledCapacity, ISidescreenButtonControl
     {
-        private static readonly handler OnRefreshUserMenuDelegate = new((cmp, data) => cmp.OnRefreshUserMenu(data));
-        private static readonly handler OnStorageChangeDelegate = new((cmp, data) => cmp.OnStorageChange(data));
-        private static readonly handler OnCopySettingsDelegate = new((cmp, data) => cmp.OnCopySettings(data));
-        private static readonly handler OnRocketLandedDelegate = new((cmp, data) => cmp.filteredStorage.FilterChanged());
-
         [SerializeField]
         public Tag fuelTag;
 
@@ -85,10 +80,16 @@ namespace RoverRefueling
             tracker.forceAlwaysAlive = true;
             OnStorageChange(null);
             UpdateFilteredStorageEnabled();
-            Subscribe((int)GameHashes.OnStorageChange, OnStorageChangeDelegate);
-            Subscribe((int)GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate);
-            Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
-            Subscribe((int)GameHashes.RocketLanded, OnRocketLandedDelegate);
+            this.SubscribeX(GameHashes.OnStorageChange, OnStorageChangeDelegate);
+            this.SubscribeX(GameHashes.RefreshUserMenu, OnRefreshUserMenuDelegate);
+            this.SubscribeX(GameHashes.CopySettings, OnCopySettingsDelegate);
+            this.SubscribeX(GameHashes.RocketLanded, OnRocketLandedDelegate);
+        }
+
+        protected override void OnCleanUp()
+        {
+            this.UnsubscribeAll();
+            base.OnCleanUp();
         }
 
         public void DropExcess()
@@ -103,6 +104,8 @@ namespace RoverRefueling
             storage.Drop(fuelTag);
         }
 
+        private static readonly Action<object, object> OnRocketLandedDelegate = (cmp, data) => ((RoverFuelCargoBay)cmp).filteredStorage.FilterChanged();
+        private static readonly Action<object, object> OnRefreshUserMenuDelegate = (cmp, data) => ((RoverFuelCargoBay)cmp).OnRefreshUserMenu(data);
         private void OnRefreshUserMenu(object data)
         {
             var button = new KIconButtonMenu.ButtonInfo(
@@ -114,12 +117,14 @@ namespace RoverRefueling
             Game.Instance.userMenu.AddButton(gameObject, button, 1f);
         }
 
+        private static readonly Action<object, object> OnCopySettingsDelegate = (cmp, data) => ((RoverFuelCargoBay)cmp).OnCopySettings(data);
         private void OnCopySettings(object data)
         {
             if (((GameObject)data).TryGetComponent<RoverFuelCargoBay>(out var other))
                 UserMaxCapacity = other.UserMaxCapacity;
         }
 
+        private static readonly Action<object, object> OnStorageChangeDelegate = (cmp, data) => ((RoverFuelCargoBay)cmp).OnStorageChange(data);
         private void OnStorageChange(object data)
         {
             meter.SetPositionPercent(AmountStored / MaxCapacity);

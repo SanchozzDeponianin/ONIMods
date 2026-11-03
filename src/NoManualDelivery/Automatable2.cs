@@ -19,7 +19,7 @@ namespace NoManualDelivery
         public override void OnPrefabInit()
         {
             SetAutomationOnly(false);
-            Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+            hOnCopySettings = Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate, this);
         }
 
         public override void OnSpawn()
@@ -30,13 +30,12 @@ namespace NoManualDelivery
 
         public override void OnCleanUp()
         {
-            Unsubscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate);
+            Unsubscribe(ref hOnCopySettings);
             base.OnCleanUp();
         }
 
-        private static new readonly EventSystem.IntraObjectHandler<Automatable2> OnCopySettingsDelegate
-            = new((cmp, data) => cmp.OnCopySettings(data));
-
+        private int hOnCopySettings;
+        private static new readonly System.Action<object, object> OnCopySettingsDelegate = (cmp, data) => ((Automatable2)cmp).OnCopySettings(data);
         private new void OnCopySettings(object data)
         {
             if (((GameObject)data).TryGetComponent(out Automatable automatable))

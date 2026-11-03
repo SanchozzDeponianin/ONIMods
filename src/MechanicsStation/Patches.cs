@@ -294,17 +294,20 @@ namespace MechanicsStation
         // она не является обычной постройкой, она в другом слое присоединяемых построек, поэтому не участвует в подсистеме комнат
         // добавъяляем тэг нефтяной дырке, чтобы она получала сообщения о комнатах
         // и перенаправляем сообщения в скважину
+
+        // todo: начиная с У59 присоедиянемые постройки должны получать события, этот кусок можно выкинуть
         [HarmonyPatch(typeof(OilWellConfig), nameof(OilWellConfig.CreatePrefab))]
         private static class OilWellConfig_CreatePrefab
         {
+            private static bool Prepare() => Utils.GameVersion < 731233u;
             private static void Postfix(GameObject __result)
             {
                 __result.AddTag(GameTags.RoomProberBuilding);
             }
         }
 
-        private static readonly EventSystem.IntraObjectHandler<BuildingAttachPoint> OnUpdateRoomDelegate =
-            new((component, data) => RetriggerOnUpdateRoom(component, data));
+        private static readonly System.Action<object, object> OnUpdateRoomDelegate
+            = (cmp, data) => RetriggerOnUpdateRoom((BuildingAttachPoint)cmp, data);
 
         private static void RetriggerOnUpdateRoom(BuildingAttachPoint buildingAttachPoint, object data)
         {
@@ -317,20 +320,22 @@ namespace MechanicsStation
         [HarmonyPatch(typeof(BuildingAttachPoint), "OnPrefabInit")]
         private static class BuildingAttachPoint_OnPrefabInit
         {
+            private static bool Prepare() => Utils.GameVersion < 731233u;
             private static void Postfix(BuildingAttachPoint __instance)
             {
-                __instance.Subscribe((int)GameHashes.UpdateRoom, OnUpdateRoomDelegate);
+                __instance.Subscribe((int)GameHashes.UpdateRoom, OnUpdateRoomDelegate, __instance);
             }
         }
-
+        /*
         [HarmonyPatch(typeof(BuildingAttachPoint), "OnCleanUp")]
         private static class BuildingAttachPoint_OnCleanUp
         {
+            private static bool Prepare() => Utils.GameVersion < 731233u;
             private static void Prefix(BuildingAttachPoint __instance)
             {
                 __instance.Unsubscribe((int)GameHashes.UpdateRoom, OnUpdateRoomDelegate);
             }
-        }
+        }*/
 
         // исправляем подсчёт еды в специях, чтобы не считать несъедобные шестерёнки
         // для предотвращения краша если шестерёнку принесли раньше еды

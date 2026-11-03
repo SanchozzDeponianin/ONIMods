@@ -26,11 +26,11 @@ namespace FabricateItNow
         [HarmonyPatch(typeof(ResearchCenter), "OnSpawn")]
         private static class ResearchCenter_OnSpawn
         {
-            private static EventSystem.IntraObjectHandler<ResearchCenter> OnStorageInteracted = new((component, data) => component.Sim200ms(0f));
+            private static readonly System.Action<object, object> OnStorageInteracted = (cmp, data) => ((ResearchCenter)cmp).Sim200ms(0f);
 
             private static void Postfix(ResearchCenter __instance)
             {
-                __instance.Subscribe((int)GameHashes.OnStorageInteracted, OnStorageInteracted);
+                __instance.Subscribe((int)GameHashes.OnStorageInteracted, OnStorageInteracted, __instance);
             }
         }
     }
