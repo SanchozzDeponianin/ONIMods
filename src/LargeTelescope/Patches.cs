@@ -50,7 +50,7 @@ namespace LargeTelescope
             private static bool Prepare() => DlcManager.IsPureVanilla();
             private static void Postfix(BuildingDef __result)
             {
-                if (ModOptions.Instance.add_glass)
+                if (ModOptions.Instance.vanilla_add_glass)
                 {
                     __result.MaterialCategory = __result.MaterialCategory.Append(MATERIALS.GLASSES[0]);
                     __result.Mass = __result.Mass.Append(BUILDINGS.CONSTRUCTION_MASS_KG.TIER3[0]);
