@@ -38,6 +38,7 @@ namespace SanchozzONIMods
             try
             {
                 Log.LogMessage(MessageImportance.High, $"Reading assembly '{AssemblyCSharp}'");
+                AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += Resolver;
                 var assembly = Assembly.ReflectionOnlyLoadFrom(AssemblyCSharp);
                 var flag = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
                 var KleiVersion = assembly.GetType("KleiVersion", true);
@@ -45,13 +46,6 @@ namespace SanchozzONIMods
                 KleiBuildBranch = (string)KleiVersion.GetField("BuildBranch", flag).GetRawConstantValue();
                 try
                 {
-                    // лядь, ReflectionOnlyLoad не подтягивает зависимости, будем вручную дёргать
-                    foreach (var dll in new string[] { "UnityEngine.CoreModule.dll", "netstandard.dll" })
-                    {
-                        var file = Path.Combine(LibraryPath, dll);
-                        if (File.Exists(file))
-                            Assembly.ReflectionOnlyLoadFrom(file);
-                    }
                     var LaunchInitializer = assembly.GetType("LaunchInitializer", true);
                     KleiGameVersion = (string)LaunchInitializer.GetField("PREFIX", flag).GetRawConstantValue() +
                         ((int)LaunchInitializer.GetField("UPDATE_NUMBER", flag).GetRawConstantValue()).ToString();
@@ -69,7 +63,21 @@ namespace SanchozzONIMods
                 Log.LogMessage(MessageImportance.High, $"An error occurred while executing '{nameof(GetKleiAssemblyInfo)}'");
                 Log.LogErrorFromException(e, true);
             }
+            finally
+            {
+                AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve -= Resolver;
+            }
             return result;
+        }
+
+        Assembly Resolver(object sender, ResolveEventArgs args)
+        {
+            var dll = args.Name.Split(',')[0] + ".dll";
+            var file = Path.Combine(LibraryPath, dll);
+            if (File.Exists(file))
+                return Assembly.ReflectionOnlyLoadFrom(file);
+            else
+                return null;
         }
     }
 }

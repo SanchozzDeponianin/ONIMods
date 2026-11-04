@@ -9,6 +9,8 @@ namespace FabricateItNow
         public override void OnLoad(Harmony harmony)
         {
             if (this.LogModVersion()) return;
+            if (Utils.GameVersion >= 761015u)
+                return;
             base.OnLoad(harmony);
             Utils.RegisterLocalization(typeof(STRINGS));
         }
