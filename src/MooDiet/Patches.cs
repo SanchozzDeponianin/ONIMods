@@ -65,8 +65,7 @@ namespace MooDiet
                 var producer = Assets.GetPrefab(GasGrassConfig.ID).GetComponent<PlantFiberProducer>();
                 if (producer != null && producer.amount > 0f)
                 {
-                    var fiber = CROPS.CROP_TYPES.Find(crop => crop.cropId == PlantFiberConfig.ID);
-                    float grass_per_day = producer.amount / fiber.cropDuration * Constants.SECONDS_PER_CYCLE
+                    float grass_per_day = producer.amount / GasGrassConfig.HARVEST.cropDuration * Constants.SECONDS_PER_CYCLE
                         * MooTuning.DAYS_PLANT_GROWTH_EATEN_PER_CYCLE / CROPS.WILD_GROWTH_RATE_MODIFIER;
                     diet = ExpandDiet(diet, prefab, GasGrassHarvestedConfig.ID, producedTag, grass_per_day, poop_size, Diet.Info.FoodType.EatSolid);
                 }
@@ -79,26 +78,32 @@ namespace MooDiet
                 }
                 if (ModOptions.Instance.flower_diet.eat_flower)
                 {
-                    var flover = CROPS.CROP_TYPES.Find(crop => crop.cropId == SwampLilyFlowerConfig.ID);
-                    float flover_per_day = flover.numProduced / flover.cropDuration * Constants.SECONDS_PER_CYCLE
+                    var flover = SwampLilyConfig.HARVEST.products.Find(crop => crop.cropId == SwampLilyFlowerConfig.ID);
+                    float flover_per_day = flover.quantity / SwampLilyConfig.HARVEST.cropDuration * Constants.SECONDS_PER_CYCLE
                         * ModOptions.Instance.flower_diet.lily_per_cow;
                     diet = ExpandDiet(diet, prefab, SwampLilyFlowerConfig.ID, SimHashes.ChlorineGas.CreateTag(), flover_per_day, poop_size, Diet.Info.FoodType.EatSolid);
                 }
 
                 // Palmera Tree
-                if (ModOptions.Instance.palmera_diet.eat_palmera && Assets.TryGetPrefab(PalmeraTreePlant) != null)
+                // она мертва но вдруг починят ...
+                var palmera = Assets.TryGetPrefab(PalmeraTreePlant);
+                if (ModOptions.Instance.palmera_diet.eat_palmera && palmera != null)
                 {
                     float palmera_per_day = ModOptions.Instance.palmera_diet.palmera_per_cow;
                     diet = ExpandDiet(diet, prefab, PalmeraTreePlant, SimHashes.Hydrogen.CreateTag(), palmera_per_day, poop_size, Diet.Info.FoodType.EatPlantDirectly);
                 }
                 if (ModOptions.Instance.palmera_diet.eat_berry && Assets.TryGetPrefab(PalmeraBerry) != null
-                    && CROPS.CROP_TYPES.FindIndex(m => m.cropId == PalmeraBerry) != -1)
+                    && palmera != null && palmera.TryGetComponent(out Crop crop))
                 {
-                    var berry = CROPS.CROP_TYPES.Find(crop => crop.cropId == PalmeraBerry);
-                    float berry_per_day = berry.numProduced / berry.cropDuration * Constants.SECONDS_PER_CYCLE
-                        * ModOptions.Instance.palmera_diet.palmera_per_cow;
-                    diet = ExpandDiet(diet, prefab, PalmeraBerry, SimHashes.Hydrogen.CreateTag(), berry_per_day, poop_size, Diet.Info.FoodType.EatSolid);
+                    var berry = crop.cropVal.products.Find(crop => crop.cropId == PalmeraBerry);
+                    if (!string.IsNullOrEmpty(berry.cropId))
+                    {
+                        float berry_per_day = berry.quantity / crop.cropVal.cropDuration * Constants.SECONDS_PER_CYCLE
+                            * ModOptions.Instance.palmera_diet.palmera_per_cow;
+                        diet = ExpandDiet(diet, prefab, PalmeraBerry, SimHashes.Hydrogen.CreateTag(), berry_per_day, poop_size, Diet.Info.FoodType.EatSolid);
+                    }
                 }
+
                 ccm_def.diet = diet;
                 var scm_def = prefab.GetDef<SolidConsumerMonitor.Def>();
                 if (scm_def != null)
@@ -114,7 +119,7 @@ namespace MooDiet
             if (dupe != null)
             {
                 PUtil.LogWarning("{0} ({1}) has duplicate diet entry: {2} ({3}), removing.".F(
-                    prefab.PrefabID().ProperNameStripLink(), prefab.PrefabID().ToString(), 
+                    prefab.PrefabID().ProperNameStripLink(), prefab.PrefabID().ToString(),
                     consumed_tag.ProperNameStripLink(), consumed_tag.ToString()));
                 var infos = diet.infos.ToList();
                 dupe.consumedTags.Remove(consumed_tag);

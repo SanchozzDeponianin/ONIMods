@@ -41,7 +41,7 @@ namespace RoverRefueling
         protected override void OnStartWork(WorkerBase worker)
         {
             battery = Db.Get().Amounts.InternalChemicalBattery.Lookup(worker);
-            worker.TryGetComponent<PrimaryElement>(out primaryElement);
+            worker.TryGetComponent(out primaryElement);
             if (worker.TryGetComponent<Effects>(out var effects) && !effects.HasEffect(Patches.RefuelingEffect))
                 effects.Add(Patches.RefuelingEffect, false);
         }
@@ -64,16 +64,12 @@ namespace RoverRefueling
             return consumed < need;
         }
 
-        public override List<Descriptor> GetDescriptors(GameObject go)
+        public override void CollectDescriptors(GameObject go, List<Descriptor> descriptors)
         {
-            var list = base.GetDescriptors(go);
-            var item = default(Descriptor);
-            item.SetupDescriptor(RoverRefuelingStationConfig.fuelTag.ProperName(),
+            descriptors.Add(new Descriptor(RoverRefuelingStationConfig.fuelTag.ProperName(),
                 string.Format(STRINGS.BUILDINGS.PREFABS.ROVERREFUELINGSTATION.REQUIREMENT_TOOLTIP,
                 ModOptions.Instance.fuel_mass_per_charge, RoverRefuelingStationConfig.fuelTag.ProperName()),
-                Descriptor.DescriptorType.Requirement);
-            list.Add(item);
-            return list;
+                Descriptor.DescriptorType.Requirement));
         }
 
         public override Vector3 GetTargetPoint() => storage.GetTargetPoint();

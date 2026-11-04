@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -108,7 +109,7 @@ namespace ExoticSpices
                 if (!__result)
                 {
                     var chance = JoyReactionExtraChance.Lookup(__instance.gameObject)?.GetTotalValue() ?? 0;
-                    if (chance >= Random.value)
+                    if (chance >= UnityEngine.Random.value)
                         __result = true;
                 }
             }
@@ -228,22 +229,35 @@ namespace ExoticSpices
             {
                 return instructions.Transpile(original, IL, transpiler);
             }
-
-            private static bool transpiler(ref List<CodeInstruction> instructions, ILGenerator IL)
+            /*
+                Strings.TryGet("STRINGS.DUPLICANTS.MODIFIERS.effect.Id.ToUpper().ADDITIONAL_EFFECTS", out stringEntry);
+                ... блаблабла ...
+                kleiStringBuilder.Append(linePrefix);
+		        kleiStringBuilder.Append(stringEntry);
+                kleiStringBuilder.ReplaceAndAppend(stringEntry, "\n", linePrefix);
+            */
+            private static bool transpiler(ref List<CodeInstruction> instructions, MethodBase original, ILGenerator IL)
             {
-                var op_Implicit = typeof(StringEntry).GetMethodSafe("op_Implicit", true, typeof(StringEntry));
-                var replace = typeof(string).GetMethodSafe(nameof(string.Replace), false, typeof(string), typeof(string));
-                var linePrefix = typeof(Effect).GetMethodSafe(nameof(Effect.CreateTooltip), true, PPatchTools.AnyArguments)
-                    ?.GetParameters()?.First(p => p.ParameterType == typeof(string) && p.Name == "linePrefix");
+                var @static = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+                var strentry_to_span = typeof(StringEntry).GetMethods(@static)
+                    .FirstOrDefault(m => m.Name == "op_Implicit" && m.ReturnType == typeof(ReadOnlySpan<char>));
+                var str_to_span = typeof(string).GetMethods(@static)
+                    .FirstOrDefault(m => m.Name == "op_Implicit" && m.ReturnType == typeof(ReadOnlySpan<char>));
+                var append = typeof(KleiStringBuilder).GetMethodSafe(nameof(KleiStringBuilder.Append), false, typeof(ReadOnlySpan<char>));
+                var replace = typeof(KleiStringBuilder).GetMethodSafe(nameof(KleiStringBuilder.ReplaceAndAppend), false,
+                    typeof(ReadOnlySpan<char>), typeof(ReadOnlySpan<char>), typeof(ReadOnlySpan<char>));
+                var linePrefix = original.GetParameters().FirstOrDefault(p => p.ParameterType == typeof(string) && p.Name == "linePrefix");
 
-                if (op_Implicit != null && replace != null && linePrefix != null)
+                if (strentry_to_span != null && str_to_span != null && append != null && replace != null && linePrefix != null)
                 {
-                    int i = instructions.FindIndex(instr => instr.Calls(op_Implicit));
-                    if (i != -1)
+                    int i = instructions.FindIndex(instr => instr.Calls(strentry_to_span));
+                    if (i != -1 && instructions[i + 1].operand is MethodBase method && method == append)
                     {
+                        instructions[i + 1].operand = replace;
                         instructions.Insert(++i, new CodeInstruction(OpCodes.Ldstr, "\n"));
+                        instructions.Insert(++i, new CodeInstruction(OpCodes.Call, str_to_span));
                         instructions.Insert(++i, TranspilerUtils.GetLoadArgInstruction(linePrefix.Position));
-                        instructions.Insert(++i, new CodeInstruction(OpCodes.Call, replace));
+                        instructions.Insert(++i, new CodeInstruction(OpCodes.Call, str_to_span));
                         return true;
                     }
                 }

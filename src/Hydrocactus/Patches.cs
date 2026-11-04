@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ProcGen;
-using TUNING;
 using UnityEngine;
 using HarmonyLib;
 using SanchozzONIMods.Lib;
@@ -33,13 +32,14 @@ namespace Hydrocactus
             private static void Prefix()
             {
                 var cropId = SimHashes.Water.ToString();
-                for (int i = CROPS.CROP_TYPES.Count - 1; i >= 0; i--)
+                var products = FilterPlantConfig.HARVEST.products;
+                for (int i = 0; i < products.Count; i++)
                 {
-                    var crop = CROPS.CROP_TYPES[i];
+                    var crop = products[i];
                     if (crop.cropId == cropId)
                     {
-                        crop.numProduced = ModOptions.Instance.yield_amount;
-                        CROPS.CROP_TYPES[i] = crop;
+                        crop.quantity = ModOptions.Instance.yield_amount;
+                        products[i] = crop;
                         break;
                     }
                 }
