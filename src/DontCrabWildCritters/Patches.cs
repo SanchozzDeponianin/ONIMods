@@ -25,7 +25,10 @@ namespace DontCrabWildCritters
         {
             var UnTameable = new[] { GameTags.Creatures.Species.GlomSpecies,
                 GameTags.Creatures.Species.BeetaSpecies,
-                GameTags.Creatures.Species.MosquitoSpecies };
+                GameTags.Creatures.Species.MosquitoSpecies,
+                GameTags.Creatures.Species.ButterflySpecies,
+                "SeaFairySpecies", //GameTags.Creatures.Species.SeaFairySpecies,
+            };
             foreach (var brain in Assets.GetPrefabsWithComponentAsListOfComponents<CreatureBrain>())
             {
                 var egg = brain.GetDef<EggProtectionMonitor.Def>();
