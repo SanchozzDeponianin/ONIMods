@@ -128,7 +128,10 @@ namespace MechanicsStation
             {
                 if (__instance.tinkerMaterialTag == MechanicsStationConfig.TINKER_TOOLS)
                 {
-                    __result = true;
+                    if (__instance.TryGetComponent<TinkerableAttributes>(out var ta))
+                        __result = !ta.disabled;
+                    else
+                        __result = true;
                     return false;
                 }
                 return true;
@@ -195,6 +198,14 @@ namespace MechanicsStation
         [HarmonyPatch(typeof(Assets), nameof(Assets.AddBuildingDef))]
         private static class Assets_AddBuildingDef
         {
+            private static void AddAttribute(GameObject go, string attribute_id)
+            {
+                if (go.TryGetComponent(out Klei.AI.Modifiers modifiers))
+                {
+                    if (!modifiers.initialAttributes.Contains(attribute_id))
+                        modifiers.initialAttributes.Add(attribute_id);
+                }
+            }
             private static void Prefix(BuildingDef def)
             {
                 var go = def.BuildingComplete;
@@ -204,6 +215,7 @@ namespace MechanicsStation
                     if (def.RequiresPowerInput && go.TryGetComponent<ElementConverter>(out _) && !BuildingWithElementConverterStopList.Contains(def.PrefabID))
                     {
                         MakeMachineTinkerableSave(go);
+                        AddAttribute(go, Db.Get().Attributes.MachinerySpeed.Id);
                         // увеличить всасывание (впервую очередь для скруббера)
                         float multiplier = BASE_SPEED_VALUE + (ModOptions.Instance.machinery_speed_modifier / 100);
                         var kPrefabID = go.GetComponent<KPrefabID>();
@@ -236,7 +248,8 @@ namespace MechanicsStation
                         // скважина
                         if (def.PrefabID == OilWellCapConfig.ID)
                         {
-                            go.AddOrGet<TinkerableWorkable>();
+                            go.AddOrGet<TinkerableAttributes>();
+                            AddAttribute(go, CraftingSpeed.Id);
                         }
                         // удобрятор
                         if (def.PrefabID == FertilizerMakerConfig.ID)
@@ -249,16 +262,18 @@ namespace MechanicsStation
                         }
                     }
                     // фабрикаторы
-                    else if (go.TryGetComponent<ComplexFabricatorWorkable>(out _) && !BuildingWithComplexFabricatorWorkableStopList.Contains(def.PrefabID))
+                    if (go.TryGetComponent<ComplexFabricatorWorkable>(out _) && !BuildingWithComplexFabricatorWorkableStopList.Contains(def.PrefabID))
                     {
                         MakeMachineTinkerableSave(go);
-                        go.AddOrGet<TinkerableWorkable>();
+                        AddAttribute(go, CraftingSpeed.Id);
+                        go.AddOrGet<TinkerableAttributes>();
                     }
                     // специи
-                    else if (def.PrefabID == SpiceGrinderConfig.ID)
+                    if (def.PrefabID == SpiceGrinderConfig.ID)
                     {
                         MakeMachineTinkerableSave(go);
-                        go.AddOrGet<TinkerableWorkable>();
+                        AddAttribute(go, CraftingSpeed.Id);
+                        go.AddOrGet<TinkerableAttributes>();
                     }
                 }
             }
@@ -270,9 +285,9 @@ namespace MechanicsStation
         {
             private static void Postfix(Workable __instance, ref float __result)
             {
-                if (__instance.TryGetComponent<TinkerableWorkable>(out var tinkerableWorkable))
+                if (__instance.TryGetComponent<TinkerableAttributes>(out var ta))
                 {
-                    __result *= tinkerableWorkable.GetCraftingSpeedMultiplier();
+                    __result *= ta.CraftingSpeedMultiplier;
                 }
             }
         }
@@ -283,9 +298,9 @@ namespace MechanicsStation
         {
             private static void Prefix(OilWellCap __instance, ref float dt)
             {
-                if (__instance.TryGetComponent<TinkerableWorkable>(out var tinkerableWorkable))
+                if (__instance.TryGetComponent<TinkerableAttributes>(out var ta))
                 {
-                    dt *= tinkerableWorkable.GetMachinerySpeedMultiplier();
+                    dt *= ta.MachinerySpeedMultiplier;
                 }
             }
         }
@@ -359,24 +374,10 @@ namespace MechanicsStation
         {
             private static void Postfix(FossilMine __instance, bool active)
             {
-                if (__instance.TryGetComponent<TinkerableWorkable>(out var tw))
+                if (__instance.TryGetComponent<TinkerableAttributes>(out var ta))
                 {
-                    tw.disabled = !active;
-                    tw.Trigger((int)GameHashes.EffectRemoved);
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(Tinkerable), "HasEffect")]
-        private static class Tinkerable_HasEffect
-        {
-            private static void Postfix(Tinkerable __instance, ref bool __result)
-            {
-                if (__result) return;
-                if (__instance.tinkerMaterialTag == MechanicsStationConfig.TINKER_TOOLS
-                    && __instance.TryGetComponent<TinkerableWorkable>(out var tw))
-                {
-                    __result = tw.disabled;
+                    ta.disabled = !active;
+                    ta.Trigger((int)GameHashes.EffectRemoved);
                 }
             }
         }

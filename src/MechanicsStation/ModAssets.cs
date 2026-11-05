@@ -187,7 +187,8 @@ namespace MechanicsStation
         // сделать постройку улучшаемой и восстановить оригинальные параметры RoomTracker если они были
         internal static Tinkerable MakeMachineTinkerableSave(GameObject go)
         {
-            Tinkerable tinkerable;
+            if (go.TryGetComponent(out Tinkerable tinkerable))
+                return tinkerable;
             // проверяем был ли до нас
             var originRoomTracker = go.GetComponent<RoomTracker>();
             if (originRoomTracker != null)

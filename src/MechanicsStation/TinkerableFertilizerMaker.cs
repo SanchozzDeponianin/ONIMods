@@ -3,6 +3,7 @@ using PeterHan.PLib.Detours;
 
 namespace MechanicsStation
 {
+    [SkipSaveFileSerialization]
     public class TinkerableFertilizerMaker : KMonoBehaviour
     {
         private const float METHANE_PRODUCTION_RATE = 0.01f;
@@ -15,9 +16,12 @@ namespace MechanicsStation
 
         private static readonly IDetouredField<BuildingElementEmitter, bool> DIRTY = PDetours.DetourField<BuildingElementEmitter, bool>("dirty");
 
+        private AttributeInstance machinerySpeed;
+
         protected override void OnSpawn()
         {
             base.OnSpawn();
+            machinerySpeed = gameObject.GetAttributes().Get(Db.Get().Attributes.MachinerySpeed);
             hEffectAdded = Subscribe((int)GameHashes.EffectAdded, OnEffectChangedDelegate, this);
             hEffectRemoved = Subscribe((int)GameHashes.EffectRemoved, OnEffectChangedDelegate, this);
             OnEffectChanged(null);
@@ -37,7 +41,7 @@ namespace MechanicsStation
         {
             if (buildingElementEmitter != null)
             {
-                buildingElementEmitter.emitRate = base_methane_production_rate * gameObject.GetAttributes().GetValue(ModAssets.MACHINERY_SPEED_MODIFIER_NAME);
+                buildingElementEmitter.emitRate = base_methane_production_rate * machinerySpeed.GetTotalValue();
                 DIRTY.Set(buildingElementEmitter, true);
             }
         }
