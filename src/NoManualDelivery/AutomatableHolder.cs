@@ -2,7 +2,6 @@
 
 namespace NoManualDelivery
 {
-    // todo: это можно оптимизировать для избегания лишней аллокации
     public class AutomatableHolder
     {
         private const float ShortTimeout = 2f;

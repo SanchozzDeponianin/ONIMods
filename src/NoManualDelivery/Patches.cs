@@ -47,7 +47,7 @@ namespace NoManualDelivery
         }
 
         // ручной список добавленных построек
-        private static List<string> BuildingToMakeAutomatable = new()
+        private static readonly List<string> BuildingToMakeAutomatable = new()
         {
             StorageLockerConfig.ID,
             StorageLockerSmartConfig.ID,
@@ -104,7 +104,7 @@ namespace NoManualDelivery
             "BigStorageLocker", "BigBeautifulStorageLocker", "BigSmartStorageLocker", "BigStorageTile",
         };
 
-        private static List<string> BuildingToMakeAutomatableWithTransferArmPickupGasLiquid = new()
+        private static readonly List<string> BuildingToMakeAutomatableWithTransferArmPickupGasLiquid = new()
         {
             AdvancedResearchCenterConfig.ID,
             LiquidPumpingStationConfig.ID,
@@ -122,7 +122,7 @@ namespace NoManualDelivery
             "asquared31415.PipedLiquidBottler",
         };
 
-        private static List<string> BuildingWithoutHoldMode = new()
+        private static readonly List<string> BuildingWithoutHoldMode = new()
         {
             SweepBotStationConfig.ID,
             LiquidPumpingStationConfig.ID,
@@ -155,6 +155,26 @@ namespace NoManualDelivery
                     }
                 }
             }
+            // не показывать УИ для псевдосюжетных штук до их завершения
+            static void AddShowInUICondition(string ID, Func<Automatable2, bool> condition, bool hide_copy = false)
+            {
+                var go = Assets.GetBuildingDef(ID)?.BuildingComplete;
+                if (go != null && go.TryGetComponent(out KPrefabID kPrefabID))
+                {
+                    go.AddOrGet<Automatable2>().showInUIcb = condition;
+                    kPrefabID.prefabInitFn += (inst) =>
+                    {
+                        if (inst.TryGetComponent(out Automatable2 automatable))
+                            automatable.showInUIcb = condition;
+                    };
+                    if (hide_copy)
+                        go.AddOrGet<CopyBuildingSettings>().enabled = false;
+                }
+            }
+            AddShowInUICondition(LonelyMinionHouseConfig.ID, (a) => StoryManager.Instance.IsStoryComplete(Db.Get().Stories.LonelyMinion));
+            AddShowInUICondition(FossilDigSiteConfig.ID, (a) => StoryManager.Instance.IsStoryComplete(Db.Get().Stories.FossilHunt));
+            AddShowInUICondition(MegaBrainTankConfig.ID, (a) => a.TryGetComponent(out Activatable activatable) && activatable.IsActivated, true);
+            Assets.GetBuildingDef(LonelyMinionHouseConfig.ID).BuildingComplete.AddOrGet<CopyBuildingSettings>().copyGroupTag = GameTags.StorageLocker;
             AutomatableHolder.LongTimeout = ModOptions.Instance.HoldMode.Timeout;
         }
 
@@ -310,59 +330,16 @@ namespace NoManualDelivery
             }
         }
 
-        // домег бомжега. галку нужно не показывать до поры. кнопку копировать настройки тоже.
+        // скрывать кнопку копировать настройки
         [HarmonyPatch(typeof(CopyBuildingSettings), nameof(CopyBuildingSettings.OnRefreshUserMenu))]
         private static class CopyBuildingSettings_OnRefreshUserMenu
         {
             private static bool Prefix(CopyBuildingSettings __instance)
             {
-                return __instance.enabled;
-            }
-        }
-
-        [HarmonyPatch(typeof(LonelyMinionHouse.Instance), nameof(LonelyMinionHouse.Instance.StartSM))]
-        private static class LonelyMinionHouse_Instance_StartSM
-        {
-            private static void Postfix(LonelyMinionHouse.Instance __instance)
-            {
-                bool StoryComplete = StoryManager.Instance.IsStoryComplete(Db.Get().Stories.LonelyMinion);
-                if (__instance.gameObject.TryGetComponent<Automatable2>(out var automatable))
-                    automatable.showInUI = StoryComplete;
-                if (__instance.gameObject.TryGetComponent<CopyBuildingSettings>(out var settings))
-                    settings.enabled = StoryComplete;
-            }
-        }
-
-        [HarmonyPatch(typeof(LonelyMinionHouse.Instance), nameof(LonelyMinionHouse.Instance.OnCompleteStorySequence))]
-        private static class LonelyMinionHouse_Instance_OnCompleteStorySequence
-        {
-            private static void Postfix(LonelyMinionHouse.Instance __instance)
-            {
-                if (__instance.gameObject.TryGetComponent<CopyBuildingSettings>(out var settings))
-                    settings.enabled = true;
-                if (__instance.gameObject.TryGetComponent<Automatable2>(out var automatable))
-                    automatable.showInUI = true;
-            }
-        }
-
-        [HarmonyPatch(typeof(LonelyMinionHouseConfig), nameof(LonelyMinionHouseConfig.ConfigureBuildingTemplate))]
-        private static class LonelyMinionHouseConfig_ConfigureBuildingTemplate
-        {
-            private static void Postfix(GameObject go)
-            {
-                go.AddOrGet<Automatable2>().showInUI = false;
-                go.AddOrGet<CopyBuildingSettings>().copyGroupTag = GameTags.StorageLocker;
-            }
-        }
-
-        // древний окаменелостъ. галку нужно не показывать до окончания раскопок
-        [HarmonyPatch(typeof(FossilMine), nameof(FossilMine.SetActiveState))]
-        private static class FossilMine_SetActiveState
-        {
-            private static void Postfix(FossilMine __instance, bool active)
-            {
-                if (__instance.TryGetComponent<Automatable2>(out var automatable))
-                    automatable.showInUI = active;
+                if (__instance.TryGetComponent(out Automatable2 automatable))
+                    return __instance.enabled && automatable.ShowInUI;
+                else
+                    return true;
             }
         }
 
@@ -394,7 +371,6 @@ namespace NoManualDelivery
         #region smartmode
         // "умный режим" - разрешить доставку дупликам только если рука не может это сделать за некоторый таймаут
         // "резервируем" чоры доставки в зоне досягаемости руки
-        // todo: гипотетически это можно переписать через пачти к существующим прекондициям. нужно ли ?
         [HarmonyPatch]
         private static class FetchChore_Constructor
         {
@@ -480,14 +456,15 @@ namespace NoManualDelivery
             {
                 if (__state && __instance.choreDriver.HasChore())
                 {
-                    // todo: цыклы можно оптимизировать
                     var contexts = __instance.choreConsumer.GetSuceededPreconditionContexts();
-                    for (int i = 0; i < contexts.Count; i++)
+                    int n = contexts.Count;
+                    for (int i = 0; i < n; i++)
                     {
                         var chore = contexts[i].chore as FetchChore;
                         if (chore != null && chore.destination != null)
                         {
-                            for (int j = 0; j < __instance.pickupables.Count; j++)
+                            int m = __instance.pickupables.Count;
+                            for (int j = 0; j < m; j++)
                             {
                                 var pickupable = __instance.pickupables[j];
                                 if (pickupable != null && pickupable.storage == null

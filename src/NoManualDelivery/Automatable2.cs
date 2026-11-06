@@ -10,8 +10,9 @@ namespace NoManualDelivery
         [SerializeField]
         private bool automationHold = true; // "умный" режим
 
-        [SerializeField]
-        public bool showInUI = true;        // показывать УИ
+        public System.Func<Automatable2, bool> showInUIcb;// показывать УИ
+
+        public bool ShowInUI => showInUIcb == null || showInUIcb(this);
 
         [SerializeField]
         public bool allowHold = true;       // разрешить "умный" режим в УИ

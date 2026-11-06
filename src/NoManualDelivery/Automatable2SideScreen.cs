@@ -86,7 +86,7 @@ namespace NoManualDelivery
 
         public override bool IsValidForTarget(GameObject target)
         {
-            return target.TryGetComponent(out Automatable2 automatable) && automatable.showInUI;
+            return target.TryGetComponent(out Automatable2 automatable) && automatable.ShowInUI;
         }
 
         public override void SetTarget(GameObject target)
