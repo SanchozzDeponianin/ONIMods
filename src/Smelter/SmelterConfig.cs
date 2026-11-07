@@ -70,6 +70,8 @@ namespace Smelter
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
             go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.IndustrialMachinery);
+            go.AddOrGet<SupportBuildingReceptor>();
+            Db.Get().SupportBuildingBoosts.ForgeSpeedBoost.AddCompatibleReceptorTag(ID);
             go.AddOrGet<DropAllWorkable>();
             go.AddOrGet<BuildingComplete>().isManuallyOperated = true;
             go.AddOrGet<FabricatorIngredientStatusManager>();
@@ -147,6 +149,11 @@ namespace Smelter
                     workable.SkillExperienceMultiplier = SKILLS.PART_DAY_EXPERIENCE;
                 }
             };
+        }
+
+        public override void DoPostConfigurePreview(BuildingDef def, GameObject go)
+        {
+            go.AddOrGet<SupportBuildingReceptor>();
         }
 
         public override void ConfigurePost(BuildingDef def)
