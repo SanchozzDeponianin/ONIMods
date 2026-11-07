@@ -84,11 +84,11 @@ namespace Smelter
         // газообразные продукты нужно выпускать в атмосферу
         // ограничимся только теми постройкаи куда мы добавили такие рецепты
         private static readonly List<string> fabricators = new() { SmelterConfig.ID, MetalRefineryConfig.ID };
-
-        [HarmonyPatch(typeof(ComplexFabricator), "SpawnOrderProduct")]
-        private static class ComplexFabricator_SpawnOrderProduct
+        // сброс перегретого хладагента
+        [HarmonyPatch(typeof(LiquidCooledRefinery), "SpawnOrderProduct")]
+        private static class LiquidCooledRefinery_SpawnOrderProduct
         {
-            private static void Postfix(ComplexFabricator __instance, List<GameObject> __result)
+            private static void Postfix(LiquidCooledRefinery __instance, List<GameObject> __result)
             {
                 if (fabricators.Contains(__instance.PrefabID().Name))
                 {
@@ -99,15 +99,6 @@ namespace Smelter
                             dumpable.Dump();
                     }
                 }
-            }
-        }
-
-        // сброс перегретого хладагента
-        [HarmonyPatch(typeof(LiquidCooledRefinery), "SpawnOrderProduct")]
-        private static class LiquidCooledRefinery_SpawnOrderProduct
-        {
-            private static void Postfix(LiquidCooledRefinery __instance)
-            {
                 if (__instance is LiquidCooledFueledRefinery || ModOptions.Instance.features.MetalRefinery_Drop_Overheated_Coolant)
                 {
                     __instance.DropOverheatedCoolant();

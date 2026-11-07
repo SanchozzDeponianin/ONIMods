@@ -97,7 +97,7 @@ namespace Smelter
                         resolveStringCallback = delegate (string str, object obj)
                         {
                             var lcfr = (LiquidCooledFueledRefinery)obj;
-                            return string.Format(str, lcfr.coolantTag.ProperName(), GameUtil.GetFormattedMass(lcfr.minCoolantMass, GameUtil.TimeSlice.None, GameUtil.MetricMassFormat.UseThreshold, true, "{0:0.#}"));
+                            return string.Format(str, lcfr.coolantTag.ProperName(), GameUtil.GetFormattedMass(lcfr.minCoolantMass, GameUtil.TimeSlice.None, GameUtil.MetricMassFormat.UseThreshold, true));
                         }
                     };
                 }
@@ -108,7 +108,7 @@ namespace Smelter
                         resolveStringCallback = delegate (string str, object obj)
                         {
                             var lcfr = (LiquidCooledFueledRefinery)obj;
-                            return string.Format(str, lcfr.fuelTag.ProperName(), GameUtil.GetFormattedMass(SmelterConfig.START_FUEL_MASS, GameUtil.TimeSlice.None, GameUtil.MetricMassFormat.UseThreshold, true, "{0:0.#}"));
+                            return string.Format(str, lcfr.fuelTag.ProperName(), GameUtil.GetFormattedMass(SmelterConfig.START_FUEL_MASS, GameUtil.TimeSlice.None, GameUtil.MetricMassFormat.UseThreshold, true));
                         }
                     };
                 }

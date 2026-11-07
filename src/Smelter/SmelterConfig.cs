@@ -69,6 +69,7 @@ namespace Smelter
 
         public override void ConfigureBuildingTemplate(GameObject go, Tag prefab_tag)
         {
+            go.GetComponent<KPrefabID>().AddTag(RoomConstraints.ConstraintTags.IndustrialMachinery);
             go.AddOrGet<DropAllWorkable>();
             go.AddOrGet<BuildingComplete>().isManuallyOperated = true;
             go.AddOrGet<FabricatorIngredientStatusManager>();
@@ -93,9 +94,7 @@ namespace Smelter
             lcfr.heatedTemperature = OUTPUT_TEMPERATURE;
             // выставляем выходную температуру. ради одного рецепта
             if (DlcManager.IsExpansion1Active())
-            {
-                lcfr.heatedTemperature = ElementLoader.FindElementByHash(SimHashes.Resin).highTemp;
-            }
+                lcfr.heatedTemperature = ElementLoader.FindElementByHash(SimHashes.Resin).highTempTransition.lowTemp - 0.1f;
 
             var manualDeliveryKG = go.AddOrGet<ManualDeliveryKG>();
             manualDeliveryKG.SetStorage(lcfr.outStorage);
