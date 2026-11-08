@@ -8,7 +8,7 @@ namespace GraveyardKeeper
         private static Vector3 offset = new(0.5f, 0.2f, 0.1f);
         private GameObject fx;
 
-        protected override void OnSpawn()
+        public override void OnSpawn()
         {
             base.OnSpawn();
             fx = Util.KInstantiate(EffectPrefabs.Instance.SparkleStreakFX, transform.GetPosition() + offset);
@@ -16,7 +16,7 @@ namespace GraveyardKeeper
             GameScheduler.Instance.Schedule(nameof(DestroySelf), duration, DestroySelf);
         }
 
-        protected override void OnCleanUp()
+        public override void OnCleanUp()
         {
             Util.KDestroyGameObject(fx);
             base.OnCleanUp();

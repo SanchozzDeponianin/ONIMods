@@ -5,7 +5,6 @@ using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
-using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
 using PeterHan.PLib.PatchManager;
 
@@ -28,70 +27,104 @@ namespace GraveyardKeeper
         }
 
         // составляем списки всех растений
-        private static List<Tag> RegularPlants = new();
-        private static List<Tag> SingleHarvestPlants = new();
-        private static List<Tag> NonYieldingPlants = new();
-        private static List<Tag> PlantsToSpawn = new();
+        private static readonly HashSet<Tag> RegularPlants = new();
+        private static readonly HashSet<Tag> SingleHarvestPlants = new();
+        private static readonly HashSet<Tag> NonYieldingPlants = new();
+        private static readonly HashSet<Tag> AquaticPlants = new();
+        private static readonly HashSet<Tag> TerrestrePlants = new();
+        private static readonly List<Tag> PlantsToSpawnAquatic = new();
+        private static readonly List<Tag> PlantsToSpawnTerrestre = new();
 
-        [HarmonyPatch(typeof(Db), nameof(Db.PostProcess))]
-        private static class Db_PostProcess
+        [PLibMethod(RunAt.BeforeDbPostProcess)]
+        private static void BeforeDbPostProcess()
         {
-            private static void Postfix()
+            foreach (var go in Assets.GetPrefabsWithComponent<UprootedMonitor>())
             {
-                foreach (var go in Assets.GetPrefabsWithComponent<UprootedMonitor>())
+                var kpid = go.GetComponent<KPrefabID>();
+                if (kpid.HasTag(GameTags.DeprecatedContent) || kpid.HasTag(GameTags.PlantBranch))
+                    continue;
+                if (go.TryGetComponent(out BasicForagePlantPlanted _))
                 {
-                    if (go.GetComponent<BasicForagePlantPlanted>() != null)
+                    SingleHarvestPlants.Add(kpid.PrefabTag);
+                }
+                else if (go.TryGetComponent(out Crop _) || kpid.PrefabTag == VineMotherConfig.ID || kpid.PrefabTag == SeaTreeRootConfig.ID)
+                {
+                    RegularPlants.Add(kpid.PrefabTag);
+                }
+                else if (go.TryGetComponent(out SeedProducer _))
+                {
+                    NonYieldingPlants.Add(kpid.PrefabTag);
+                }
+                if (kpid.HasTag(GameTags.PlantIsAquatic))
+                {
+                    AquaticPlants.Add(kpid.PrefabTag);
+                    // водное, но может быть частично погруженным
+                    if (go.TryGetComponent(out PressureVulnerable vulnerable) && !vulnerable.allCellsMustBeSafe
+                        && go.TryGetComponent(out OccupyArea occupy) && (occupy.GetWidthInCells() > 1 || occupy.GetHeightInCells() > 1))
                     {
-                        SingleHarvestPlants.Add(go.PrefabID());
+                        TerrestrePlants.Add(kpid.PrefabTag);
                     }
-                    else if (go.GetComponent<Crop>() != null)
+                    // водное, но не из ДЛЦ 5, разрешим посадку как наземное
+                    if (kpid.requiredDlcIds == null || !kpid.requiredDlcIds.Contains(DlcManager.DLC5_ID))
                     {
-                        RegularPlants.Add(go.PrefabID());
+                        TerrestrePlants.Add(kpid.PrefabTag);
                     }
-                    else if (go.GetComponent<SeedProducer>() != null)
+                }
+                else
+                {
+                    TerrestrePlants.Add(kpid.PrefabTag);
+                    // наземное, но не может утонуть
+                    if (!go.TryGetComponent(out DrowningMonitor drowning) || drowning.livesUnderWater)
                     {
-                        NonYieldingPlants.Add(go.PrefabID());
+                        AquaticPlants.Add(kpid.PrefabTag);
                     }
                 }
             }
+#if DEBUG
+            Debug.LogFormat("SingleHarvestPlants:\n{0}", SingleHarvestPlants.Join("\n"));
+            Debug.LogFormat("RegularPlants:\n{0}", RegularPlants.Join("\n"));
+            Debug.LogFormat("NonYieldingPlants:\n{0}", NonYieldingPlants.Join("\n"));
+            Debug.LogFormat("AquaticPlants:\n{0}", AquaticPlants.Join("\n"));
+            Debug.LogFormat("TerrestrePlants:\n{0}", TerrestrePlants.Join("\n"));
+#endif
         }
 
-        // ухх.. есть аж три места для проверки допустимости посадки семечка белкой.
-        // и все разные. и два приватные. и все нужны чтобы всё правильно работало
-        // первое: в запросе патхфиндера
-        private static PlantableCellQuery modifiedPlantableCellQuery; // модифицированый запрос. будем использовать только для проверки
-
-        private static readonly IDetouredField<PlantableCellQuery, int> PlantableCellQuery_plantDetectionRadius =
-            PDetours.DetourField<PlantableCellQuery, int>("plantDetectionRadius");
-        private static readonly IDetouredField<PlantableCellQuery, int> PlantableCellQuery_maxPlantsInRadius =
-            PDetours.DetourField<PlantableCellQuery, int>("maxPlantsInRadius");
-
-        delegate bool PlantableCellQuery_CheckValidPlotCell(PlantableCellQuery query, PlantableSeed seed, int plant_cell);
-        private static readonly PlantableCellQuery_CheckValidPlotCell plantableCellQuery_CheckValidPlotCell =
-            PDetours.Detour<PlantableCellQuery_CheckValidPlotCell>(typeof(PlantableCellQuery), "CheckValidPlotCell");
-
-        // второе: у самой белки в задаче посадки
-        delegate bool SeedPlantingStates_CheckValidPlotCell(SeedPlantingStates.Instance smi, PlantableSeed seed, int cell, out PlantablePlot plot);
-        private static readonly SeedPlantingStates_CheckValidPlotCell seedPlantingStates_CheckValidPlotCell =
-            PDetours.Detour<SeedPlantingStates_CheckValidPlotCell>(typeof(SeedPlantingStates), "CheckValidPlotCell");
+        // модифицированый запрос патхфиндера. будем использовать только для проверки
+        private static PlantableCellQuery modifiedPlantableCellQuery;
 
         [PLibMethod(RunAt.OnStartGame)]
         private static void OnStartGame()
         {
             ModOptions.Reload();
-            PlantsToSpawn.Clear();
+            PlantsToSpawnAquatic.Clear();
+            PlantsToSpawnTerrestre.Clear();
+
             if (ModOptions.Instance.non_yielding_plants)
-                PlantsToSpawn.AddRange(NonYieldingPlants);
+                PlantsToSpawnTerrestre.AddRange(NonYieldingPlants);
             if (ModOptions.Instance.single_harvest_plants)
-                PlantsToSpawn.AddRange(SingleHarvestPlants);
+                PlantsToSpawnTerrestre.AddRange(SingleHarvestPlants);
             if (ModOptions.Instance.regular_plants)
-                PlantsToSpawn.AddRange(RegularPlants);
-            PlantsToSpawn.RemoveAll(tag => !Game.IsCorrectDlcActiveForCurrentSave(Assets.GetPrefab(tag).GetComponent<KPrefabID>()));
-            if (PlantsToSpawn.Count == 0)
-                PlantsToSpawn.Add(EvilFlowerConfig.ID);
-            modifiedPlantableCellQuery = new PlantableCellQuery();
-            PlantableCellQuery_plantDetectionRadius.Set(modifiedPlantableCellQuery, 1);
-            PlantableCellQuery_maxPlantsInRadius.Set(modifiedPlantableCellQuery, 5);
+                PlantsToSpawnTerrestre.AddRange(RegularPlants);
+
+            PlantsToSpawnTerrestre.RemoveAll(tag => !Game.IsCorrectDlcActiveForCurrentSave(Assets.GetPrefab(tag).GetComponent<KPrefabID>()));
+            PlantsToSpawnAquatic.AddRange(PlantsToSpawnTerrestre);
+
+            PlantsToSpawnTerrestre.RemoveAll(tag => !TerrestrePlants.Contains(tag));
+            if (PlantsToSpawnTerrestre.Count == 0)
+                PlantsToSpawnTerrestre.Add(EvilFlowerConfig.ID);
+
+            PlantsToSpawnAquatic.RemoveAll(tag => !AquaticPlants.Contains(tag));
+            if (PlantsToSpawnAquatic.Count == 0)
+                PlantsToSpawnAquatic.Add(BasicFabricMaterialPlantConfig.ID);
+#if DEBUG
+            Debug.LogFormat("PlantsToSpawnTerrestre:\n{0}", PlantsToSpawnTerrestre.Join("\n"));
+            Debug.LogFormat("PlantsToSpawnAquatic:\n{0}", PlantsToSpawnAquatic.Join("\n"));
+#endif
+            modifiedPlantableCellQuery = new PlantableCellQuery()
+            {
+                plantDetectionRadius = 1,
+                maxPlantsInRadius = 5
+            };
         }
 
         // грязноватый хак. делаем труп семечкой
@@ -108,13 +141,14 @@ namespace GraveyardKeeper
                     var plantableSeed = smi.gameObject.AddOrGet<PlantableSeed>();
                     plantableSeed.PlantID = EvilFlowerConfig.ID;
                     plantableSeed.direction = SingleEntityReceptacle.ReceptacleDirection.Top;
+                    plantableSeed.requireBackWallPlantable = false;
                 });
             }
         }
 
         // оказалось что белки пытаются резервировать даже семена лежащие на складах и переносимые дупликами
         // запретим это
-        [HarmonyPatch(typeof(SeedPlantingStates), "FindSeed")]
+        [HarmonyPatch(typeof(SeedPlantingStates), nameof(SeedPlantingStates.FindSeed))]
         private static class SeedPlantingStates_FindSeed
         {
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
@@ -125,33 +159,32 @@ namespace GraveyardKeeper
             --- if (блабла && !seed.HasTag(GameTags.Creatures.ReservedByCreature) && блабла)
             +++ if (блабла && !seed.HasTag(GameTags.Creatures.ReservedByCreature) && !seed.HasTag(GameTags.Stored) &&  блабла)
             */
+            private static bool HasStoredTag(Component cmp, Tag tag)
+            {
+                return cmp.HasTag(tag) || cmp.HasTag(GameTags.Stored);
+            }
             private static bool transpiler(ref List<CodeInstruction> instructions)
             {
                 var reserved = typeof(GameTags.Creatures).GetFieldSafe(nameof(GameTags.Creatures.ReservedByCreature), true);
-                var stored = typeof(GameTags).GetFieldSafe(nameof(GameTags.Stored), true);
-                if (reserved == null || stored == null)
-                    return false;
-                int i = instructions.FindIndex(inst => inst.LoadsField(reserved));
-                if (i == -1 || !instructions[i - 1].IsLdloc()) return false;
-                int j = instructions.FindIndex(i, inst => inst.Branches(out _));
-                if (j == -1) return false;
-                var subrange = instructions.GetRange(i - 1, j - i + 2);
-                for (int k = 0; k < subrange.Count; k++)
+                var hastag = typeof(KPrefabIDExtensions).GetMethodSafe(nameof(KPrefabIDExtensions.HasTag), true, typeof(Component), typeof(Tag));
+                var hasstored = typeof(SeedPlantingStates_FindSeed).GetMethodSafe(nameof(HasStoredTag), true, typeof(Component), typeof(Tag));
+                if (reserved != null && hastag != null && hasstored != null)
                 {
-                    subrange[k] = new CodeInstruction(subrange[k]);
-                    subrange[k].ExtractLabels();
-                    if (subrange[k].LoadsField(reserved))
-                        subrange[k].operand = stored;
+                    int i = instructions.FindIndex(inst => inst.LoadsField(reserved));
+                    if (i != -1 && instructions[i + 1].Calls(hastag))
+                    {
+                        instructions[i + 1].operand = hasstored;
+                        return true;
+                    }
                 }
-                instructions.InsertRange(j + 1, subrange);
-                return true;
+                return false;
             }
         }
 
         // ранее игре очень не нравилось когда тело дупликанта пытается перенести кто-то кто сам не дупликант
         // теперь больше не крашится. но нужно быть начеку. и если что, то опять вернуть трюк
         // (уничтожаем труп и заменяем его семечкой когда белка пытается всять)
-        [HarmonyPatch(typeof(SeedPlantingStates), "PickupComplete")]
+        [HarmonyPatch(typeof(SeedPlantingStates), nameof(SeedPlantingStates.PickupComplete))]
         private static class SeedPlantingStates_PickupComplete
         {
             private static Pickupable SplitCorpse(Pickupable pickupable, float amount, GameObject prefab)
@@ -188,8 +221,58 @@ namespace GraveyardKeeper
             }
         }
 
+        private static bool ConfigureFakeSeed(PlantableSeed fake_seed, Tag as_plant, out Tag real_seed_prefab)
+        {
+            real_seed_prefab = EvilFlowerConfig.SEED_ID;
+            fake_seed.direction = SingleEntityReceptacle.ReceptacleDirection.Top;
+            fake_seed.requireBackWallPlantable = false;
+            var plant_prefab = Assets.GetPrefab(as_plant);
+            if (plant_prefab != null)
+            {
+                fake_seed.PlantID = as_plant;
+                if (plant_prefab.TryGetComponent<SeedProducer>(out var seed_producer))
+                {
+                    var seed_prefab = Assets.GetPrefab(seed_producer.seedInfo.seedId);
+                    if (seed_prefab != null && seed_prefab.TryGetComponent<PlantableSeed>(out var plantableSeed))
+                    {
+                        real_seed_prefab = seed_prefab.PrefabID();
+                        fake_seed.direction = plantableSeed.direction;
+                        fake_seed.requireBackWallPlantable = plantableSeed.requireBackWallPlantable;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        // перед поиском белкой места для посадки, подменяем характеристики "трупной семечки" на случайновыбранное растение
+        [HarmonyPatch(typeof(SeedPlantingStates), nameof(SeedPlantingStates.FindDirtPlot))]
+        private static class SeedPlantingStates_FindDirtPlot
+        {
+            private static void Prefix(SeedPlantingStates.Instance smi)
+            {
+                if (!smi.IsNullOrStopped() && smi.targetSeed != null && smi.targetSeed.HasTag(GameTags.Corpse)
+                    && smi.targetSeed.TryGetComponent<PlantableSeed>(out var target_seed))
+                {
+                    List<Tag> plants_to_spawn;
+                    if (smi.HasTag(GameTags.SwimmingCreature))
+                    {
+                        target_seed.PlantID = BasicFabricMaterialPlantConfig.ID;
+                        plants_to_spawn = PlantsToSpawnAquatic;
+                    }
+                    else
+                    {
+                        target_seed.PlantID = EvilFlowerConfig.ID;
+                        plants_to_spawn = PlantsToSpawnTerrestre;
+                    }
+                    plants_to_spawn.Shuffle();
+                    ConfigureFakeSeed(target_seed, plants_to_spawn[0], out _);
+                }
+            }
+        }
+
         // выращиваем несколько случайных растений поблизости от места выбранного белкой
-        [HarmonyPatch(typeof(SeedPlantingStates), "PlantComplete")]
+        [HarmonyPatch(typeof(SeedPlantingStates), nameof(SeedPlantingStates.PlantComplete))]
         private static class SeedPlantingStates_PlantComplete
         {
             private static readonly CellOffset[] cellOffsets;
@@ -204,43 +287,28 @@ namespace GraveyardKeeper
 
             private static bool Prefix(SeedPlantingStates.Instance smi)
             {
-                if (!smi.IsNullOrStopped() && smi.targetSeed != null && smi.targetSeed.HasTag(GameTags.Corpse) && smi.targetSeed.TryGetComponent<PlantableSeed>(out var target_seed))
+                if (!smi.IsNullOrStopped() && smi.targetSeed != null && smi.targetSeed.HasTag(GameTags.Corpse)
+                    && smi.targetSeed.TryGetComponent<PlantableSeed>(out var target_seed))
                 {
                     var planted_cells = ListPool<int, SeedPlantingStates>.Allocate();
-                    PlantsToSpawn.Shuffle();
                     int squirrel_cell = Grid.PosToCell(smi);
+                    modifiedPlantableCellQuery.canUseBackwall = smi.def.canPlantBackWall;
+                    var plants_to_spawn = smi.HasTag(GameTags.SwimmingCreature) ? PlantsToSpawnAquatic : PlantsToSpawnTerrestre;
                     // сначала проверяем возможность посадить растение, используя семечку что принесла белка
                     // подменяя у неё ид растения и направление роста
-                    for (int i = 0; i < PlantsToSpawn.Count; i++)
+                    for (int i = 0; i < plants_to_spawn.Count; i++)
                     {
-                        var plant_prefab = Assets.GetPrefab(PlantsToSpawn[i]);
-                        if (plant_prefab != null)
+                        if (ConfigureFakeSeed(target_seed, plants_to_spawn[i], out Tag seed_prefab_tag))
                         {
-                            target_seed.PlantID = PlantsToSpawn[i];
-                            target_seed.direction = SingleEntityReceptacle.ReceptacleDirection.Top;
-                            Tag seed_prefab_tag = EvilFlowerConfig.SEED_ID;
-
-                            if (plant_prefab.TryGetComponent<SeedProducer>(out var seed_producer))
-                            {
-                                var seed_prefab = Assets.GetPrefab(seed_producer.seedInfo.seedId);
-                                if (seed_prefab != null)
-                                {
-                                    seed_prefab_tag = seed_prefab.PrefabID();
-                                    if (seed_prefab.TryGetComponent<PlantableSeed>(out var plantableSeed))
-                                    {
-                                        target_seed.direction = plantableSeed.direction;
-                                    }
-                                }
-                            }
-
                             for (int j = 0; j < cellOffsets.Length; j++)
                             {
                                 int target_cell = Grid.OffsetCell(squirrel_cell, cellOffsets[j]);
                                 if (planted_cells.Contains(target_cell))
                                     continue;
 
-                                if (plantableCellQuery_CheckValidPlotCell(modifiedPlantableCellQuery, target_seed, target_cell)
-                                    && seedPlantingStates_CheckValidPlotCell(smi, target_seed, target_cell, out var plot))
+                                if ((modifiedPlantableCellQuery.CheckValidPlotCell(target_seed, target_cell)
+                                    || modifiedPlantableCellQuery.CheckValidBackWallPlotCell(target_seed, target_cell))
+                                    && SeedPlantingStates.CheckValidPlotCell(smi, target_seed, target_cell, out var plot))
                                 {
                                     // потом садим, с новой семечкой
                                     var new_seed_go = GameUtil.KInstantiate(Assets.GetPrefab(seed_prefab_tag), Grid.CellToPos(target_cell), Grid.SceneLayer.Ore);
@@ -263,7 +331,6 @@ namespace GraveyardKeeper
                                 break;
                         }
                     }
-
                     smi.GetComponent<Storage>().Drop(target_seed.gameObject);
                     if (planted_cells.Count > 0)
                     {
@@ -281,6 +348,7 @@ namespace GraveyardKeeper
                         // либо возвращаем как было
                         target_seed.PlantID = EvilFlowerConfig.ID;
                         target_seed.direction = SingleEntityReceptacle.ReceptacleDirection.Top;
+                        target_seed.requireBackWallPlantable = false;
                         // и роняем труп
                         if (!GameComps.Fallers.Has(target_seed.gameObject))
                             GameComps.Fallers.Add(target_seed.gameObject, Vector2.zero);
@@ -301,7 +369,8 @@ namespace GraveyardKeeper
         {
             private static void Postfix(FetchChore ___chore)
             {
-                ___chore.forbiddenTags = ___chore.forbiddenTags.Append(GameTags.Creatures.ReservedByCreature);
+                var forbiddenTags = ___chore.forbiddenTags.Append(GameTags.Creatures.ReservedByCreature);
+                Traverse.Create(___chore).Field<Tag[]>(nameof(FetchChore.forbiddenTags)).Value = forbiddenTags;
                 ___chore.forbidHash = FetchChore.ComputeHashCodeForTags(___chore.forbiddenTags);
             }
         }
