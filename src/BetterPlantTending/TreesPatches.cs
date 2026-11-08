@@ -329,6 +329,7 @@ namespace BetterPlantTending
         }
 
         // добавляем больше сведений в тоолтипы
+        // todo: кандидат на стрингбуилдер
         internal static void SpaceTree_ResolveTooltipCallback_Patch()
         {
             if (ModOptions.Instance.space_tree_adjust_productivity)

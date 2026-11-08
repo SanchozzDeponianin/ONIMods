@@ -123,6 +123,16 @@ msgctxt "BetterPlantTending.STRINGS.OPTIONS.HYDROCACTUS_ADJUST_GAS_CONSUMPTION.N
 msgid "Adjust the gas absorption rate of {FILTERPLANT} in proportion to the growth rate"
 msgstr ""
 
+#. BetterPlantTending.STRINGS.OPTIONS.MERMAID_REQUIRED_TO_EXTRACT.NAME
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.MERMAID_REQUIRED_TO_EXTRACT.NAME"
+msgid "A {MERMAID} is required to extract the seeds"
+msgstr ""
+
+#. BetterPlantTending.STRINGS.OPTIONS.MERMAID_REQUIRED_TO_EXTRACT.TOOLTIP
+msgctxt "BetterPlantTending.STRINGS.OPTIONS.MERMAID_REQUIRED_TO_EXTRACT.TOOLTIP"
+msgid "If you turn it off, the seeds themselves will drop after a while"
+msgstr ""
+
 #. BetterPlantTending.STRINGS.OPTIONS.MODIFIER_BUTTERFLY.NAME
 msgctxt "BetterPlantTending.STRINGS.OPTIONS.MODIFIER_BUTTERFLY.NAME"
 msgid "Additional chance from the {BUTTERFLYCROPTENDED} effect"

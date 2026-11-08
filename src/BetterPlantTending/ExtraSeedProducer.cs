@@ -49,18 +49,20 @@ namespace BetterPlantTending
             }
 #endif
         }
-        // todo: пересмотреть извлекаемость пипом-русалкой
-        public bool PipRequiredToExtract => !isAquatic && ModOptions.Instance.extra_seeds.pip_required_to_extract;
+        public bool PipRequiredToExtract => !isAquatic ? ModOptions.Instance.extra_seeds.pip_required_to_extract
+            : ModOptions.Instance.extra_seeds.mermaid_required_to_extract && Game.IsDlcActiveForCurrentSave(DlcManager.DLC5_ID);
         public bool ShouldFarmTinkerTending => !isDecorative || !hasExtraSeedAvailable;
 
         private static readonly Action<object, object> OnCropTendedDelegate = (cmp, data) => ((ExtraSeedProducer)cmp).CreateExtraSeed();
         private static readonly Action<object, object> OnUprootedDelegate = (cmp, data) => ((ExtraSeedProducer)cmp).ExtractExtraSeed();
 
+        private AttributeInstance SeedChance;
+
         public override void OnPrefabInit()
         {
             base.OnPrefabInit();
             var attributes = this.GetAttributes();
-            attributes.Add(ExtraSeedChance);
+            SeedChance = attributes.Add(ExtraSeedChance);
             if (isDecorative)
                 attributes.Add(ExtraSeedChanceDecorativeBaseValue);
             else
@@ -119,9 +121,9 @@ namespace BetterPlantTending
 
         // описатель шансов доп семян.
         // todo: кандидат на стрингбуилдер
-        public List<Descriptor> GetDescriptors(GameObject go)
+        public void CollectDescriptors(GameObject go, List<Descriptor> descriptors)
         {
-            float seedChance = this?.GetAttributes()?.Get(ExtraSeedChance)?.GetTotalValue() ??
+            float seedChance = SeedChance?.GetTotalValue() ??
                 (!isDecorative ? ExtraSeedChanceNotDecorativeBaseValue.Value : ExtraSeedChanceDecorativeBaseValue.Value);
             string percent = GameUtil.GetFormattedPercent(seedChance * 100, GameUtil.TimeSlice.None);
 
@@ -140,24 +142,25 @@ namespace BetterPlantTending
             string extracts;
             if (PipRequiredToExtract)
             {
-                list.Add(CREATURES.SPECIES.SQUIRREL.NAME);
-                if (Game.IsDlcActiveForCurrentSave(DlcManager.DLC4_ID))
-                    list.Add(CREATURES.SPECIES.STEGO.NAME);
+                if (!isAquatic)
+                {
+                    list.Add(CREATURES.SPECIES.SQUIRREL.NAME);
+                    if (Game.IsDlcActiveForCurrentSave(DlcManager.DLC4_ID))
+                        list.Add(CREATURES.SPECIES.STEGO.NAME);
+                }
+                else
+                    list.Add(CREATURES.SPECIES.SQUIRREL.VARIANT_AQUATIC.NAME);
                 extracts = string.Format(TOOLTIPS.SQUIRREL_NEEDED, string.Join(UI.GAMEOBJECTEFFECTS.REQUIREMETS_OR, list));
             }
             else
                 extracts = string.Empty;
             list.Recycle();
 
-            var descs = new List<Descriptor>
-            {
-                new Descriptor(
+            descriptors.Add(new Descriptor(
                     txt: string.Format(BONUS_SEEDS, percent),
                     tooltip: string.Format(TOOLTIPS.BONUS_SEEDS, percent, affects, extracts),
                     descriptorType: Descriptor.DescriptorType.Effect,
-                    only_for_simple_info_screen: false)
-            };
-            return descs;
+                    only_for_simple_info_screen: false));
         }
     }
 }

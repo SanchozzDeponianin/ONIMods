@@ -25,6 +25,7 @@ namespace BetterPlantTending
         private const string CRITTERTRAPPLANT = "{CRITTERTRAPPLANT}";
         private const string SAPTREE = "{SAPTREE}";
         private const string SQUIRREL = "{SQUIRREL}";
+        private const string MERMAID = "{MERMAID}";
         private const string FARMTINKER = "{FARMTINKER}";
         private const string DIVERGENTCROPTENDED = "{DIVERGENTCROPTENDED}";
         private const string WORMCROPTENDED = "{WORMCROPTENDED}";
@@ -186,6 +187,11 @@ namespace BetterPlantTending
                 public static LocString NAME = $"A {SQUIRREL} is required to extract the seeds";
                 public static LocString TOOLTIP = "If you turn it off, the seeds themselves will drop after a while";
             }
+            public class MERMAID_REQUIRED_TO_EXTRACT
+            {
+                public static LocString NAME = $"A {MERMAID} is required to extract the seeds";
+                public static LocString TOOLTIP = PIP_REQUIRED_TO_EXTRACT.TOOLTIP.text;
+            }
         }
 
         internal static void DoReplacement()
@@ -206,6 +212,7 @@ namespace BetterPlantTending
                 { CRITTERTRAPPLANT, CREATURES.SPECIES.CRITTERTRAPPLANT.NAME },
                 { SAPTREE, CREATURES.SPECIES.SAPTREE.NAME },
                 { SQUIRREL, CREATURES.SPECIES.SQUIRREL.NAME },
+                { MERMAID, CREATURES.SPECIES.SQUIRREL.VARIANT_AQUATIC.NAME },
                 { FARMTINKER, global::STRINGS.DUPLICANTS.MODIFIERS.FARMTINKER.NAME },
                 { DIVERGENTCROPTENDED, CREATURES.MODIFIERS.DIVERGENTPLANTTENDED.NAME},
                 { WORMCROPTENDED, CREATURES.MODIFIERS.DIVERGENTPLANTTENDEDWORM.NAME},

@@ -148,6 +148,11 @@ namespace BetterPlantTending
             [JsonProperty]
             [Option]
             public bool pip_required_to_extract { get; set; } = true;
+
+            [JsonProperty]
+            [Option]
+            [RequireDLC(DlcManager.DLC5_ID)]
+            public bool mermaid_required_to_extract { get; set; } = false;
         }
         [JsonProperty]
         [Option]

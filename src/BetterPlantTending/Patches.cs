@@ -70,27 +70,6 @@ namespace BetterPlantTending
                     }
                 }
             }
-            // вычисляем подводные растения
-            foreach (var plant in Assets.GetPrefabsWithComponent<ExtraSeedProducer>())
-            {
-                if (plant.TryGetComponent(out PressureVulnerable vulnerable)
-                    && plant.TryGetComponent(out ExtraSeedProducer producer))
-                {
-                    if (vulnerable.safe_atmospheres != null && vulnerable.safe_atmospheres.Count > 0)
-                    {
-                        bool is_aquatic = true;
-                        foreach (var element in vulnerable.safe_atmospheres)
-                        {
-                            if (!element.IsLiquid)
-                            {
-                                is_aquatic = false;
-                                break;
-                            }
-                        }
-                        producer.isAquatic = is_aquatic;
-                    }
-                }
-            }
         }
 
         // дополнительные семена безурожайных растений
@@ -109,7 +88,9 @@ namespace BetterPlantTending
                 {
                     if (additionalTags != null && additionalTags.Contains(GameTags.DecorSeed))
                     {
-                        plant.AddOrGet<ExtraSeedProducer>().isDecorative = true;
+                        var producer = plant.AddOrGet<ExtraSeedProducer>();
+                        producer.isDecorative = true;
+                        producer.isAquatic = plant.HasTag(GameTags.PlantIsAquatic);
                         Tinkerable.MakeFarmTinkerable(plant);
                         plant.GetComponent<KPrefabID>().prefabInitFn += go =>
                         {
@@ -121,7 +102,9 @@ namespace BetterPlantTending
                         || plant.PrefabID() == ColdBreatherConfig.ID
                         || plant.PrefabID() == OxyCoralConfig.ID)
                     {
-                        plant.AddOrGet<ExtraSeedProducer>().isDecorative = false;
+                        var producer = plant.AddOrGet<ExtraSeedProducer>();
+                        producer.isDecorative = false;
+                        producer.isAquatic = plant.HasTag(GameTags.PlantIsAquatic);
                         Tinkerable.MakeFarmTinkerable(plant);
                     }
                 }
