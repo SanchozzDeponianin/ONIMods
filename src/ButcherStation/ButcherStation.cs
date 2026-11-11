@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using KSerialization;
 using UnityEngine;
+using static STRINGS.BUILDING.STATUSITEMS.CRITTERCAPACITY;
 
 namespace ButcherStation
 {
@@ -59,19 +61,19 @@ namespace ButcherStation
             if (capacityStatusItem == null)
             {
                 capacityStatusItem = new StatusItem("CritterCapacity", "BUILDING", string.Empty, StatusItem.IconType.Info, NotificationType.Neutral, false, OverlayModes.None.ID);
-                string unit1 = Strings.Get("STRINGS.BUILDING.STATUSITEMS.CRITTERCAPACITY.UNIT");
-                string unit2 = Strings.Get("STRINGS.BUILDING.STATUSITEMS.CRITTERCAPACITY.UNITS");
                 capacityStatusItem.resolveStringCallback = (string str, object data) =>
                 {
-                    var butcherStation = (ButcherStation)data;
-                    string stored = Util.FormatWholeNumber(butcherStation.storedCreatureCount);
-                    string capacity = Util.FormatWholeNumber(butcherStation.creatureLimit);
-                    return str.Replace("{Stored}", stored).Replace("{Capacity}", capacity)
-                        .Replace("{StoredUnits}", (butcherStation.storedCreatureCount == 1) ? unit1 : unit2)
-                        .Replace("{CapacityUnits}", (butcherStation.creatureLimit == 1) ? unit1 : unit2);
+                    var station = (ButcherStation)data;
+                    var builder = KleiStringBuilder.BorrowFromPool();
+                    builder.ReplaceAndAppend(str, "{Stored}", station.storedCreatureCount);
+                    builder.Replace("{Capacity}", station.creatureLimit);
+                    builder.Replace("{StoredUnits}", (station.storedCreatureCount == 1) ? UNIT : UNITS);
+                    builder.Replace("{CapacityUnits}", (station.creatureLimit == 1) ? UNIT : UNITS);
+                    return builder.TakeContent();
                 };
             }
             GetComponent<KSelectable>().SetStatusItem(Db.Get().StatusItemCategories.Main, capacityStatusItem, this);
+            CompareAgeDelegate = CompareAge;
         }
 
         public override void OnSpawn()
@@ -118,13 +120,24 @@ namespace ButcherStation
         }
 
         private static readonly List<KPrefabID> emptyList = new();
+        private readonly ConditionalWeakTable<KPrefabID, Klei.AI.AmountInstance> CachedCreatureAges = new();
+        private Comparison<KPrefabID> CompareAgeDelegate;
+        private int CompareAge(KPrefabID a, KPrefabID b) => Age(b).CompareTo(Age(a));
+        private float Age(KPrefabID creature)
+        {
+            if (!treeFilterable.ContainsTag(creature.PrefabTag))
+                return 1f;
+            var age = CachedCreatureAges.GetValue(creature, (creature) => Db.Get().Amounts.Age.Lookup(creature));
+            if (age == null)
+                return 0;
+            return age.value / age.GetMax();
+        }
 
         internal void RefreshCreatures()
         {
             // обновляем число жеготных в комнате
             var cavity = ranchStation.GetStationCavity();
             var creatures = cavity?.creatures ?? emptyList;
-
             int old = storedCreatureCount;
             storedCreatureCount = 0;
             bool filteredCount = ModOptions.Instance.filtered_count;
@@ -142,18 +155,9 @@ namespace ButcherStation
                 // для оптимизации очереди убиения упорядочиваем список жеготных.
                 // вначале идут не выбранные в фильтре, затем по возрасту.
                 CachedCreatures.Clear();
-                var Age = Db.Get().Amounts.Age;
-                CachedCreatures.AddRange(creatures
-                    .Where(creature => creature != null && creature.gameObject != null)
-                    .OrderByDescending(delegate (KPrefabID creature)
-                    {
-                        if (!treeFilterable.ContainsTag(creature.PrefabTag))
-                            return 1f;
-                        var age = Age.Lookup(creature);
-                        if (age == null)
-                            return 0;
-                        return age.value / age.GetMax();
-                    }));
+                CachedCreatures.AddRange(creatures);
+                CachedCreatures.RemoveAll(creature => creature == null || creature.gameObject == null);
+                CachedCreatures.Sort(CompareAgeDelegate);
                 dirty = false;
                 ranchStation.ValidateTargetRanchables();
             }
