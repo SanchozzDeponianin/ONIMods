@@ -57,6 +57,7 @@ namespace TravelTubesExpanded
             go.AddOrGet<TileTemperature>();
             go.AddOrGet<TravelTubeBridge>();
             go.AddOrGet<OccupyArea>().objectLayers = new ObjectLayer[] { ObjectLayer.TravelTubeConnection };
+            go.GetComponent<KPrefabID>().prefabInitFn += OnPrefabInit;
         }
 
         public override void ConfigurePost(BuildingDef def)

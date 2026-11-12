@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace TravelTubesExpanded
 {
@@ -36,7 +37,7 @@ namespace TravelTubesExpanded
             int y = (int)transform.GetPosition().y;
             var extents = new Extents(x, y + 2, 1, 1);
             bridgeChangedEntry = GameScenePartitioner.Instance.Add("TravelTubeEntrance.TubeListener", gameObject, extents,
-                GameScenePartitioner.Instance.objectLayers[(int)ObjectLayer.TravelTubeConnection], TubeChanged);
+                GameScenePartitioner.Instance.objectLayers[(int)ObjectLayer.TravelTubeConnection], TubeChangedDelegate, this);
         }
 
         public override void OnCleanUp()
@@ -53,6 +54,7 @@ namespace TravelTubesExpanded
             base.OnCleanUp();
         }
 
+        private static readonly Action<object, object> TubeChangedDelegate = (cmp, data) => ((EntranceFakeTubes)cmp).TubeChanged(data);
         private void TubeChanged(object data)
         {
             if (entrance.travelTube == null)

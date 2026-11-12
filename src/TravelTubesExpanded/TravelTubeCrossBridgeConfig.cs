@@ -38,7 +38,7 @@ namespace TravelTubesExpanded
             def.UtilityInputOffset = new CellOffset(0, 0);
             def.UtilityOutputOffset = new CellOffset(0, 2);
             def.SceneLayer = Grid.SceneLayer.BuildingFront;
-            def.ForegroundLayer = Grid.SceneLayer.TileMain;
+            def.ForegroundLayer = Grid.SceneLayer.BuildingBack;
             def.AddSearchTerms(global::STRINGS.SEARCH_TERMS.TRANSPORT);
             def.AddSearchTerms(global::STRINGS.SEARCH_TERMS.TILE);
             return def;
@@ -55,6 +55,7 @@ namespace TravelTubesExpanded
             go.AddOrGet<TileTemperature>();
             go.AddOrGet<TravelTubeBridge>();
             go.AddOrGet<OccupyArea>().objectLayers = new ObjectLayer[] { ObjectLayer.TravelTubeConnection };
+            go.GetComponent<KPrefabID>().prefabInitFn += OnPrefabInit;
         }
 
         public override void DoPostConfigureComplete(GameObject go)
@@ -75,6 +76,18 @@ namespace TravelTubesExpanded
             second.link2 = new CellOffset(1, 0);
             second.visualizeOnly = true;
             return first;
+        }
+
+        private static new void OnPrefabInit(GameObject inst)
+        {
+            foreach (var kbac in inst.GetComponentsInChildrenOnly<KBatchedAnimController>())
+            {
+                if (kbac.name.Contains("_fg"))
+                {
+                    TravelTubeDoorConfig.AddSecondaryFGKbac(kbac, Grid.SceneLayer.TileMain, "backwall_fg");
+                    break;
+                }
+            }
         }
     }
 }

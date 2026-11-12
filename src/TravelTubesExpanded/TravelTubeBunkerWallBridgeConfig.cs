@@ -56,7 +56,9 @@ namespace TravelTubesExpanded
             go.AddOrGet<TileTemperature>();
             go.AddOrGet<TravelTubeBridge>();
             go.AddOrGet<OccupyArea>().objectLayers = new ObjectLayer[] { ObjectLayer.TravelTubeConnection };
-            go.AddOrGet<KPrefabID>().AddTag(GameTags.Bunker);
+            var kPrefabID = go.GetComponent<KPrefabID>();
+            kPrefabID.AddTag(GameTags.Bunker);
+            kPrefabID.prefabInitFn += OnPrefabInit;
         }
     }
 }

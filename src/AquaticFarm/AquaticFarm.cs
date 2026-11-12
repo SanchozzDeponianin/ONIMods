@@ -20,7 +20,7 @@
             consumers = GetComponents<PassiveElementConsumer>();
             hOccupantChanged = Subscribe((int)GameHashes.OccupantChanged, RefreshConsumptionDelegate, this);
             partitionerEntry = GameScenePartitioner.Instance.Add("AquaticFarm.OnSpawn", gameObject, building.GetValidPlacementExtents(),
-                GameScenePartitioner.Instance.liquidChangedLayer, RefreshConsumptionDelegate);
+                GameScenePartitioner.Instance.liquidChangedLayer, RefreshConsumptionDelegate, this);
             RefreshConsumption(plantablePlot.Occupant);
         }
 

@@ -39,7 +39,7 @@ namespace TravelTubesExpanded
             def.PermittedRotations = PermittedRotations.R90;
             def.UtilityInputOffset = new CellOffset(0, 0);
             def.UtilityOutputOffset = new CellOffset(0, 2);
-            def.SceneLayer = Grid.SceneLayer.TileMain;
+            def.SceneLayer = Grid.SceneLayer.BuildingFront;
             def.ForegroundLayer = Grid.SceneLayer.BuildingBack;
             def.LogicInputPorts = DoorConfig.CreateSingleInputPortList(new CellOffset(0, 0));
             PGameUtils.CopySoundsToAnim(anim, "door_external_kanim");
@@ -59,6 +59,7 @@ namespace TravelTubesExpanded
             go.AddOrGet<TileTemperature>();
             go.AddOrGet<TravelTubeBridge>();
             go.AddOrGet<OccupyArea>().objectLayers = new ObjectLayer[] { ObjectLayer.TravelTubeConnection };
+            go.GetComponent<KPrefabID>().prefabInitFn += OnPrefabInit;
         }
 
         public override void DoPostConfigureComplete(GameObject go)
@@ -77,6 +78,44 @@ namespace TravelTubesExpanded
             go.AddOrGet<KBoxCollider2D>();
             Prioritizable.AddRef(go);
             Object.DestroyImmediate(go.GetComponent<BuildingEnabledButton>());
+        }
+
+        private static new void OnPrefabInit(GameObject inst)
+        {
+            foreach (var kbac in inst.GetComponentsInChildrenOnly<KBatchedAnimController>())
+            {
+                if (kbac.name.Contains("_fg"))
+                {
+                    AddSecondaryFGKbac(kbac, Grid.SceneLayer.TileMain, "wall_piece_fg");
+                    break;
+                }
+            }
+        }
+
+        // извращение изза особенностей рендеринга жыдкостей начиная с У59
+        // придётся делить постройку на три слоя (основа с боковинами - в жыже, передник и задник - без жыжы)
+        // для этого добавим третий кбак, как дочерний к уже существующему фг кбаку
+        // путём трюка с лауеринг. при этом все символы в старом кбаке станут скрытыми
+        // нужно скрыть и показать нужные символы
+        internal static void AddSecondaryFGKbac(KBatchedAnimController parent, Grid.SceneLayer layer, params HashedString[] symbols)
+        {
+            parent.SetBlendValue(KBatchedAnimInstanceData.BlendActiveOptions.LiquidVisibilityLayer, false);
+            parent.SetBlendValue(KBatchedAnimInstanceData.BlendActiveOptions.WaterProof, true);
+            parent.SetFGLayer(layer);
+            var layering = parent.GetLayering();
+            layering.SetIsLayer(false);
+            layering.HideSymbols();
+            layering.SetIsLayer(true);
+            foreach (var symbol in symbols)
+                parent.SetSymbolVisiblity(symbol, true);
+            if (layering.layerControllers.TryGetValue(KAnim.SymbolFlags.FG, out var kbas) && kbas is KBatchedAnimController kbac)
+            {
+                foreach (var symbol in symbols)
+                    kbac.SetSymbolVisiblity(symbol, false);
+                kbac.SetSceneLayer(layer);
+                kbac.SetBlendValue(KBatchedAnimInstanceData.BlendActiveOptions.LiquidVisibilityLayer, false);
+                kbac.SetBlendValue(KBatchedAnimInstanceData.BlendActiveOptions.WaterProof, true);
+            }
         }
     }
 }
