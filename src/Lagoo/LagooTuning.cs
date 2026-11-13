@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SanchozzONIMods.Lib;
 
 namespace Lagoo
 {
@@ -18,7 +19,15 @@ namespace Lagoo
         {
             new FertilityMonitor.BreedingChance { egg = SquirrelConfig.EGG_ID,      weight = 0.25f },
             new FertilityMonitor.BreedingChance { egg = SquirrelHugConfig.EGG_ID,   weight = 0.05f },
-            new FertilityMonitor.BreedingChance { egg = LagooConfig.EGG_ID, weight = 0.70f },
+            new FertilityMonitor.BreedingChance { egg = LagooConfig.EGG_ID,         weight = 0.70f },
         };
+
+        static LagooTuning()
+        {
+            // todo: потом упростить
+            // У60+
+            if (Utils.GameVersion >= 761015u)
+                EGG_CHANCES_LAGOO.Add(new FertilityMonitor.BreedingChance { egg = "SquirrelAquaticEgg", weight = 0f });
+        }
     }
 }

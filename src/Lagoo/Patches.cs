@@ -211,6 +211,10 @@ namespace Lagoo
         [PLibMethod(RunAt.BeforeDbPostProcess)]
         public static void AddCreatureFeederDiet()
         {
+            // todo: потом упростить
+            // на У60+ само подхватит
+            if (Utils.GameVersion >= 761015u)
+                return;
             var storageFilters = Assets.GetBuildingDef(CreatureFeederConfig.ID).BuildingComplete.GetComponent<Storage>().storageFilters;
             foreach (var diet in DietManager.CollectDiets(new Tag[] { GameTags.Creatures.Species.SquirrelSpecies }))
             {
