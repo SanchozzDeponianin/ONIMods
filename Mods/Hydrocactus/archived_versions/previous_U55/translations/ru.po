@@ -1,0 +1,25 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. Hydrocactus.STRINGS.MOD_DESCRIPTION
+msgctxt "Hydrocactus.STRINGS.MOD_DESCRIPTION"
+msgid "Allows you to obtain a half-forgotten plant Hydrocactus in an ordinary fair game."
+msgstr "Позволяет получить полузабытое растение Гидрокактус в обычной честной игре."
+
+#. Hydrocactus.STRINGS.MOD_TITLE
+msgctxt "Hydrocactus.STRINGS.MOD_TITLE"
+msgid "Hydrocactus"
+msgstr "Гидрокактус"
+
+#. Hydrocactus.STRINGS.OPTIONS.CAREPACKAGE_SEEDS_AMOUNT.NAME
+msgctxt "Hydrocactus.STRINGS.OPTIONS.CAREPACKAGE_SEEDS_AMOUNT.NAME"
+msgid "The number of <style=\"KKeyword\">Hydrocactus</style> seeds in the Care Package"
+msgstr "Количество семян <style=\"KKeyword\">Гидрокактуса</style> в посылке"
+
+#. Hydrocactus.STRINGS.OPTIONS.YIELD_AMOUNT.NAME
+msgctxt "Hydrocactus.STRINGS.OPTIONS.YIELD_AMOUNT.NAME"
+msgid "<style=\"KKeyword\">Hydrocactus</style> yield amount, kg of <style=\"KKeyword\">Water</style>"
+msgstr "Величина урожайности <style=\"KKeyword\">Гидрокактуса</style>, кг <style=\"KKeyword\">Воды</style>"
+

@@ -1,0 +1,70 @@
+msgid ""
+msgstr ""
+"Application: Oxygen Not Included"
+"POT Version: 2.0"
+
+#. MooDiet.STRINGS.MOD_DESCRIPTION
+msgctxt "MooDiet.STRINGS.MOD_DESCRIPTION"
+msgid "Now Gassy Moo can eat Balm Lily Flowers."
+msgstr "Теперь Муу может есть цветы Бальзамной Лилии."
+
+#. MooDiet.STRINGS.MOD_TITLE
+msgctxt "MooDiet.STRINGS.MOD_TITLE"
+msgid "Gassy Moo Eat Flowers"
+msgstr "Муу ест цветы"
+
+#. MooDiet.STRINGS.OPTIONS.EAT_BERRY.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.EAT_BERRY.NAME"
+msgid "<style=\"KKeyword\">Gassy Moo</style> can eat <style=\"KKeyword\">Palmera Berries</style>"
+msgstr "<style=\"KKeyword\">Муу</style> может есть <style=\"KKeyword\">ягоды пальмеры</style>"
+
+#. MooDiet.STRINGS.OPTIONS.EAT_FLOWER.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.EAT_FLOWER.NAME"
+msgid "<style=\"KKeyword\">Gassy Moo</style> can eat <style=\"KKeyword\">Balm Lily Flowers</style>"
+msgstr "<style=\"KKeyword\">Муу</style> может есть <style=\"KKeyword\">Цветы бальзамной лилии</style>"
+
+#. MooDiet.STRINGS.OPTIONS.EAT_LILY.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.EAT_LILY.NAME"
+msgid "<style=\"KKeyword\">Gassy Moo</style> can eat <style=\"KKeyword\">Balm Lily</style> live plants"
+msgstr "<style=\"KKeyword\">Муу</style> может есть живое растение <style=\"KKeyword\">Бальзамная лилия</style>"
+
+#. MooDiet.STRINGS.OPTIONS.EAT_PALMERA.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.EAT_PALMERA.NAME"
+msgid "<style=\"KKeyword\">Gassy Moo</style> can eat <style=\"KKeyword\">Palmera Tree</style> live plants"
+msgstr "<style=\"KKeyword\">Муу</style> может есть живое растение <style=\"KKeyword\">дерево Пальмера</style>"
+
+#. MooDiet.STRINGS.OPTIONS.FLOWER_DIET.CATEGORY
+msgctxt "MooDiet.STRINGS.OPTIONS.FLOWER_DIET.CATEGORY"
+msgid "Balm Lily Flower Diet"
+msgstr "Диета из цветов лилии"
+
+#. MooDiet.STRINGS.OPTIONS.LILY_PER_COW.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.LILY_PER_COW.NAME"
+msgid "<style=\"KKeyword\">Balm Lily</style> plants per one <style=\"KKeyword\">Gassy Moo</style>"
+msgstr "Растений <style=\"KKeyword\">Лилии</style> на одну <style=\"KKeyword\">Муу</style>"
+
+#. MooDiet.STRINGS.OPTIONS.LILY_PER_COW.TOOLTIP
+msgctxt "MooDiet.STRINGS.OPTIONS.LILY_PER_COW.TOOLTIP"
+msgid "How many plants do you need to plant to feed one tamed happy Cow\nThe consumed mass per cycle is calculated automatically depending on the yield of the plant"
+msgstr "Сколько растений вам нужно посадить, чтобы накормить одну прирученную счастливую корову\nПотребляемая масса в цикл рассчитывается автоматически в зависимости от урожайности растения"
+
+#. MooDiet.STRINGS.OPTIONS.PALMERA_BUTTON.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.PALMERA_BUTTON.NAME"
+msgid "Browse Steam Workshop"
+msgstr "Посмотреть мастерскую Steam"
+
+#. MooDiet.STRINGS.OPTIONS.PALMERA_DIET.CATEGORY
+msgctxt "MooDiet.STRINGS.OPTIONS.PALMERA_DIET.CATEGORY"
+msgid "Palmera Tree Diet"
+msgstr "Диета из дерева Пальмера"
+
+#. MooDiet.STRINGS.OPTIONS.PALMERA_LABEL.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.PALMERA_LABEL.NAME"
+msgid "Only if the <style=\"KKeyword\">Palmera Tree</style> mod is installed"
+msgstr "Только если установлен мод <style=\"KKeyword\">Palmera Tree</style>"
+
+#. MooDiet.STRINGS.OPTIONS.PALMERA_PER_COW.NAME
+msgctxt "MooDiet.STRINGS.OPTIONS.PALMERA_PER_COW.NAME"
+msgid "<style=\"KKeyword\">Palmera Tree</style> plants per one <style=\"KKeyword\">Gassy Moo</style>"
+msgstr "Растений <style=\"KKeyword\">дерево Пальмера</style> на одну <style=\"KKeyword\">Муу</style>"
+
