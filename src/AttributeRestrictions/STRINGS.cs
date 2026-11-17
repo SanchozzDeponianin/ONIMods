@@ -51,6 +51,11 @@ namespace AttributeRestrictions
                 public static LocString NAME = $"Attribute of the {FormatAsKeyWord("Manual Generator")}";
                 public static LocString TOOLTIP = "When using a Manual Generator, two attributes are trained at the same time.\nWhich one should be tracked ?";
             }
+            public class MAX_LEVEL
+            {
+                public static LocString NAME = "Maximum attribute level";
+                public static LocString TOOLTIP = "The maximum Attribute level in the mod Sidescreen\nAdjust this if you are using mods that that increase maximum attribute levels";
+            }
             public class MACHINERY
             {
                 public static LocString NAME = "";

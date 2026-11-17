@@ -1,4 +1,5 @@
-﻿using Klei.AI;
+﻿using System.Runtime.Serialization;
+using Klei.AI;
 using KSerialization;
 using UnityEngine;
 
@@ -50,6 +51,12 @@ namespace AttributeRestrictions
         {
             base.OnPrefabInit();
             hOnCopySettings = Subscribe((int)GameHashes.CopySettings, OnCopySettingsDelegate, this);
+        }
+
+        [OnDeserialized]
+        public void OnDeserialized()
+        {
+            requiredAttributeLevel = Mathf.Clamp(requiredAttributeLevel, 0, ModOptions.Instance.max_level);
         }
 
         protected override void OnCleanUp()

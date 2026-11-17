@@ -81,7 +81,7 @@ namespace AttributeRestrictions
                 Text = UI.UISIDESCREENS.THRESHOLD_SWITCH_SIDESCREEN.ABOVE_BUTTON
             }.AddOnRealize(go => aboveButton = go);
             // слайдер
-            panel.AddSliderBox(prefix, nameof(required_level), 0f, 20f,
+            panel.AddSliderBox(prefix, nameof(required_level), 0f, ModOptions.Instance.max_level,
                     f => { if (target != null) target.requiredAttributeLevel = Mathf.RoundToInt(f); },
                     out required_level, null, left_button, right_button)
                 .AddTo(gameObject);

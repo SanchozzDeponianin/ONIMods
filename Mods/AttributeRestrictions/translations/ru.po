@@ -28,6 +28,16 @@ msgctxt "AttributeRestrictions.STRINGS.OPTIONS.ATTRIBUTE.TOOLTIP"
 msgid "When using a Manual Generator, two attributes are trained at the same time.\nWhich one should be tracked ?"
 msgstr "При использовании Ручного генератора два атрибута тренируются одновременно.\nКакой из них следует отслеживать ?"
 
+#. AttributeRestrictions.STRINGS.OPTIONS.MAX_LEVEL.NAME
+msgctxt "AttributeRestrictions.STRINGS.OPTIONS.MAX_LEVEL.NAME"
+msgid "Maximum attribute level"
+msgstr "Максимальный уровень атрибутов"
+
+#. AttributeRestrictions.STRINGS.OPTIONS.MAX_LEVEL.TOOLTIP
+msgctxt "AttributeRestrictions.STRINGS.OPTIONS.MAX_LEVEL.TOOLTIP"
+msgid "The maximum Attribute level in the mod Sidescreen\nAdjust this if you are using mods that that increase maximum attribute levels"
+msgstr "Максимальный уровень атрибутов на боковом экране мода\nНастройте это, если вы используете моды, которые увеличивают максимальный уровень атрибутов"
+
 #. AttributeRestrictions.STRINGS.UI.UISIDESCREENS.ATTRIBUTE_RESTRICTION_SIDESCREEN.IS_ENABLE.NAME
 msgctxt "AttributeRestrictions.STRINGS.UI.UISIDESCREENS.ATTRIBUTE_RESTRICTION_SIDESCREEN.IS_ENABLE.NAME"
 msgid "Allow to operate this Building\nwhen the {0} attribute is"

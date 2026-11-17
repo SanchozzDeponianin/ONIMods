@@ -65,8 +65,14 @@ namespace AttributeRestrictions
             var gen_re = gen.AddOrGet<AttributeRestriction>();
             gen_re.workable = gen.GetComponent<ManualGenerator>();
             gen_re.isBelow = true;
-            if (ModOptions.Instance.attribute == ManualGeneratorAttribute.Athletics)
-                gen_re.overrideAttribute = Db.Get().Attributes.Athletics.IdHash;
+            gen.GetComponent<KPrefabID>().prefabInitFn += (gmo) =>
+            {
+                if (ModOptions.Instance.attribute == ManualGeneratorAttribute.Athletics
+                    && gmo.TryGetComponent<AttributeRestriction>(out var restriction))
+                {
+                    restriction.overrideAttribute = Db.Get().Attributes.Athletics.IdHash;
+                }
+            };
 
             // самогонный аппарат
             var oil = Assets.GetBuildingDef(OilRefineryConfig.ID).BuildingComplete;
@@ -81,6 +87,12 @@ namespace AttributeRestrictions
                     restriction.workable = workable;
                 }
             };
+        }
+
+        [PLibMethod(RunAt.OnStartGame)]
+        private static void OnStartGame()
+        {
+            ModOptions.Reload();
         }
 
         [PLibMethod(RunAt.OnDetailsScreenInit)]
