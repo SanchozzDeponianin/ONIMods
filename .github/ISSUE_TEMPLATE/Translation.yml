@@ -23,6 +23,7 @@ body:
         - Buildable Neural Vacillator
         - "Butcher & Fishing Stations"
         - Carousel
+        - Choose an Ingredient
         - Control your Robots
         - Configurable Automation-controlled Doors
         - Crabs Profit
@@ -51,6 +52,7 @@ body:
         - Squirrel Wheel
         - Suit Recharger
         - Transit Tubes Expanded
+        - "Where's My Loot ? & Prevent unwanted Demolish"
         - Not listed (use textfield below)
     validations:
       required: true
