@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using TUNING;
 using SanchozzONIMods.Lib;
+using SanchozzONIMods.Shared;
 using PeterHan.PLib.Core;
 using static STRINGS.SEARCH_TERMS;
 
@@ -59,6 +60,21 @@ namespace SquirrelGenerator
             var kBatchedAnimController = go.AddOrGet<KBatchedAnimController>();
             kBatchedAnimController.fgLayer = Grid.SceneLayer.BuildingFront;
             kBatchedAnimController.initialAnim = "off";
+            if (ModOptions.Instance.enable_light)
+            {
+                prefabID.AddTag(GameTags.LightSource, false);
+                var light = go.AddOrGet<Light2D>();
+                light.overlayColour = LIGHT2D.LIGHT_OVERLAY;
+                light.Color = LIGHT2D.LIGHT_YELLOW;
+                light.Lux = 200;
+                light.Range = 2f;
+                light.Offset = new Vector2(-0.8f, 2.1f);
+                light.shape = CustomLighting.CircleOnCellBelow.KleiLightShape;
+                light.drawOverlay = true;
+                light.enabled = false;
+                light.autoRespondToOperational = false;
+                go.AddOrGet<LightSymbolMeterTracker>().targetSymbol = "meter_light_bloom";
+            }
         }
     }
 }

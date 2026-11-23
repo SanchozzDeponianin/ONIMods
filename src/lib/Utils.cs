@@ -121,6 +121,32 @@ namespace SanchozzONIMods.Lib
             return duration;
         }
 
+        // для большинства анимаций (кроме групповых) их batchTag совпадает с id их группы
+        // для моддовых анимаций игра создаёт отдельные группы с id = name, однако batchTag = KAnimBatchManager.NO_BATCH
+        // при добавлении скинов, изза одинакового batchTag может начаться мерцание текстур
+        // поэтому, сгенерируем уникальный batchTag от name
+#if USESPLIB
+        private static readonly IDetouredField<KAnimFile, HashedString> KAnimFile_batchTag
+            = PDetours.DetourFieldLazy<KAnimFile, HashedString>("_batchTag");
+        public static void FixKanimBatchTag(params string[] animFiles)
+        {
+            foreach (var animFile in animFiles)
+            {
+                var kAnimFile = Assets.GetAnim(animFile);
+                if (kAnimFile == null)
+                    PUtil.LogWarning($"Missing Anim: [\"{animFile}\"]");
+                else
+                {
+                    var batchTag = KAnimFile_batchTag.Get(kAnimFile);
+                    if (batchTag.IsValid && batchTag != KAnimBatchManager.NO_BATCH)
+                        PUtil.LogWarning($"Anim: [\"{animFile}\"] has _batchTag \"{batchTag}\" != KAnimBatchManager.NO_BATCH");
+                    else
+                        KAnimFile_batchTag.Set(kAnimFile, kAnimFile.name);
+                }
+            }
+        }
+#endif
+
 #if !USESPLIB
         // подготовка для загрузки локализации для модов без плиб
         // отдельным патчем чтобы избежать ложных обвинений

@@ -4,6 +4,7 @@ using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
 using SanchozzONIMods.Lib;
+using SanchozzONIMods.Shared;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.Detours;
 using PeterHan.PLib.Options;
@@ -18,6 +19,7 @@ namespace SquirrelGenerator
             if (this.LogModVersion()) return;
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
             new POptions().RegisterOptions(this, typeof(ModOptions));
+            CustomLighting.Register();
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -35,6 +37,15 @@ namespace SquirrelGenerator
             GameTags.MaterialBuildingElements.Add(GameTags.Seed);
         }
 
+        [HarmonyPatch(typeof(Blueprints), MethodType.Constructor)]
+        private static class Blueprints_Constructor
+        {
+            private static void Postfix(Blueprints __instance)
+            {
+                __instance.skinsReleaseProviders = __instance.skinsReleaseProviders.Append(new Blueprints_SquirrelWheel());
+            }
+        }
+
         // добавить белкам новое поведение
         [HarmonyPatch(typeof(BaseSquirrelConfig), nameof(BaseSquirrelConfig.BaseSquirrel))]
         private static class BaseSquirrelConfig_BaseSquirrel
@@ -44,6 +55,9 @@ namespace SquirrelGenerator
                 if (!is_baby)
                 {
                     __result.AddOrGet<WheelRunningMonitor>();
+                    var choreType = __result.GetComponent<ChoreConsumer>().choreTable.GetEntry<WheelRunningStates.Def>().choreType;
+                    if (choreType != null)
+                        choreType.interruptPriority -= 50;
                 }
 #if DEBUG
                 Debug.Log($"{__result.PrefabID()} ChoreTable !!!");
@@ -54,20 +68,20 @@ namespace SquirrelGenerator
 #endif
             }
             // внедряем новое поведение так чтобы оно могло быть прервано другими типичными беличими делами
+            // кроме проигрывания эмоцый
             /*
-            ChoreTable.Builder chore_table = new ChoreTable.Builder().Add(new DeathStates.Def()).Add(new AnimInterruptStates.Def())
+            ChoreTable.Builder chore_table = new ChoreTable.Builder()
                 <блаблабла>
-                .Add(new CallAdultStates.Def())
                 .Add(new SeedPlantingStates.Def(блабла))
-        +++     .PushInterruptGroup()
-        +++     .Add(new WheelRunningStates.Def())
-        +++     .PopInterruptGroup()
+                .Add(new CritterCondoStates.Def(), блабла)
+        +++     .Add(new WheelRunningStates.Def(), !is_baby)
+                .Add(new CritterEmoteStates.Def(anim), блабла)
                 .PopInterruptGroup()
                 .Add(new IdleStates.Def());
             */
-            private static ChoreTable.Builder Inject(ChoreTable.Builder builder)
+            private static ChoreTable.Builder Inject(ChoreTable.Builder builder, bool is_baby)
             {
-                return builder.PushInterruptGroup().Add(new WheelRunningStates.Def()).PopInterruptGroup();
+                return builder.Add(new WheelRunningStates.Def(), !is_baby);
             }
 
             internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase original)
@@ -75,22 +89,22 @@ namespace SquirrelGenerator
                 return instructions.Transpile(original, transpiler);
             }
 
-            private static bool transpiler(ref List<CodeInstruction> instructions)
+            private static bool transpiler(ref List<CodeInstruction> instructions, MethodBase original)
             {
-                var pop = typeof(ChoreTable.Builder).GetMethodSafe(nameof(ChoreTable.Builder.PopInterruptGroup), false, PPatchTools.AnyArguments);
+                var is_baby = original.GetParameters().FindFirst(p => p.ParameterType == typeof(bool) && p.Name == "is_baby");
+                var add = typeof(ChoreTable.Builder).GetMethodSafe(nameof(ChoreTable.Builder.Add), false,
+                    typeof(StateMachine.BaseDef), typeof(bool), typeof(int));
+                var emote = typeof(CritterEmoteStates.Def).GetConstructors()[0];
                 var inject = typeof(BaseSquirrelConfig_BaseSquirrel).GetMethodSafe(nameof(Inject), true, PPatchTools.AnyArguments);
-                if (pop != null && inject != null)
-                {
-                    for (int i = 0; i < instructions.Count; i++)
-                    {
-                        if (instructions[i].Calls(pop))
-                        {
-                            instructions.Insert(i++, new CodeInstruction(OpCodes.Call, inject));
-                            return true;
-                        }
-                    }
-                }
-                return false;
+                if (is_baby == null || add == null || emote == null || inject == null)
+                    return false;
+                int i = instructions.FindIndex(inst => inst.opcode == OpCodes.Newobj && inst.operand is ConstructorInfo info && info == emote);
+                if (i == -1) return false;
+                int j = instructions.FindLastIndex(i, inst => inst.Calls(add));
+                if (j == -1) return false;
+                instructions.Insert(++j, is_baby.GetLoadArgInstruction());
+                instructions.Insert(++j, new CodeInstruction(OpCodes.Call, inject));
+                return true;
             }
         }
 
@@ -114,7 +128,6 @@ namespace SquirrelGenerator
                 }
             }
         }
-
 
         // чтобы нельзя было строить из мутантовых семян
         [HarmonyPatch(typeof(Constructable), "OnSpawn")]

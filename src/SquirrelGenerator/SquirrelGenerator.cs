@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using KSerialization;
+using SanchozzONIMods.Shared;
 
 namespace SquirrelGenerator
 {
@@ -56,6 +57,11 @@ namespace SquirrelGenerator
         private GeneratePowerSM.Instance smi;
         private MeterController meter;
 
+#pragma warning disable CS0649
+        [MyCmpGet]
+        private LightSymbolMeterTracker tracker;
+#pragma warning restore CS0649
+
         private static StatusItem activeWattageStatusItem;
 
         public bool IsOperational => operational.IsOperational;
@@ -94,7 +100,10 @@ namespace SquirrelGenerator
 
         private void CreateMeter()
         {
-            meter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target", "meter", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, "meter_target", "meter_fill", "meter_frame", "meter_light", "meter_tubing");
+            meter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target", "meter", Meter.Offset.Infront, Grid.SceneLayer.NoLayer,
+                "meter_target", "meter_fill", "meter_frame", "meter_light", "meter_tubing");
+            if (tracker != null)
+                tracker.kbac = meter.meterController;
         }
 
         public override void EnergySim200ms(float dt)
@@ -111,6 +120,11 @@ namespace SquirrelGenerator
                 ResetJoules();
                 selectable.SetStatusItem(Db.Get().StatusItemCategories.Power, Db.Get().BuildingStatusItems.GeneratorOffline, null);
                 meter.SetPositionPercent(0f);
+            }
+            if (tracker != null)
+            {
+                if (tracker.enabled != operational.IsActive)
+                    tracker.enabled = operational.IsActive;
             }
         }
 

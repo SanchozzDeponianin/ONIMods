@@ -2,6 +2,7 @@
 using UnityEngine;
 using Klei.AI;
 using TUNING;
+using SanchozzONIMods.Shared;
 
 namespace AthleticsGenerator
 {
@@ -17,6 +18,9 @@ namespace AthleticsGenerator
 
         [MyCmpReq]
         private Operational operational;
+
+        [MyCmpGet]
+        private LightSymbolMeterTracker tracker;
 #pragma warning restore CS0649
 
         private AttributeModifier modifier;
@@ -36,6 +40,8 @@ namespace AthleticsGenerator
             if (ModOptions.Instance.enable_meter)
             {
                 meter = new MeterController(GetComponent<KBatchedAnimController>(), "meter_target", "meter", Meter.Offset.Infront, Grid.SceneLayer.NoLayer, "meter_target", "meter_fill", "meter_frame", "meter_light", "meter_tubing");
+                if (tracker != null)
+                    tracker.kbac = meter.meterController;
                 UpdateMeter();
             }
             manualGenerator.OnWorkableEventCB += OnWorkableEvent;
@@ -99,6 +105,11 @@ namespace AthleticsGenerator
             {
                 float rating = !operational.IsActive ? 0f : generator.WattageRating / (generator.BaseWattageRating + DUPLICANTSTATS.ATTRIBUTE_LEVELING.MAX_GAINED_ATTRIBUTE_LEVEL * ModOptions.Instance.watts_per_level);
                 meter.SetPositionPercent(Mathf.Clamp01(rating));
+                if (tracker != null)
+                {
+                    if (tracker.enabled != operational.IsActive)
+                        tracker.enabled = operational.IsActive;
+                }
             }
         }
     }

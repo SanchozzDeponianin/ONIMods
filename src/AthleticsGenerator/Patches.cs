@@ -1,7 +1,9 @@
-﻿using HarmonyLib;
+﻿using TUNING;
+using HarmonyLib;
 using UnityEngine;
 using Klei.AI;
 using SanchozzONIMods.Lib;
+using SanchozzONIMods.Shared;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
 using PeterHan.PLib.Options;
@@ -17,6 +19,7 @@ namespace AthleticsGenerator
             if (this.LogModVersion()) return;
             new PPatchManager(harmony).RegisterPatchClass(typeof(Patches));
             new POptions().RegisterOptions(this, typeof(ModOptions));
+            CustomLighting.Register();
         }
 
         [PLibMethod(RunAt.BeforeDbInit)]
@@ -35,6 +38,15 @@ namespace AthleticsGenerator
                 ModOptions.Instance.watts_per_level, 0f, formatter);
         }
 
+        [HarmonyPatch(typeof(Blueprints), MethodType.Constructor)]
+        private static class Blueprints_Constructor
+        {
+            private static void Postfix(Blueprints __instance)
+            {
+                __instance.skinsReleaseProviders = __instance.skinsReleaseProviders.Append(new Blueprints_Athletics());
+            }
+        }
+
         [HarmonyPatch(typeof(ManualGeneratorConfig), nameof(ManualGeneratorConfig.CreateBuildingDef))]
         private static class ManualGeneratorConfig_CreateBuildingDef
         {
@@ -42,7 +54,7 @@ namespace AthleticsGenerator
             {
                 if (ModOptions.Instance.enable_meter)
                 {
-                    var kanim = ModOptions.Instance.enable_light ? "generatormanual_meter_light_kanim" : "generatormanual_meter_kanim";
+                    var kanim = "generator_athletic_kanim";
                     PGameUtils.CopySoundsToAnim(kanim, "generatormanual_kanim");
                     __result.AnimFiles[0] = Assets.GetAnim(kanim);
                 }
@@ -55,6 +67,21 @@ namespace AthleticsGenerator
             private static void Postfix(GameObject go)
             {
                 go.AddOrGet<AthleticsGenerator>();
+                if (ModOptions.Instance.enable_meter && ModOptions.Instance.enable_light)
+                {
+                    go.GetComponent<KPrefabID>().AddTag(GameTags.LightSource, false);
+                    var light = go.AddOrGet<Light2D>();
+                    light.overlayColour = LIGHT2D.LIGHT_OVERLAY;
+                    light.Color = LIGHT2D.LIGHT_YELLOW;
+                    light.Lux = 200;
+                    light.Range = 2f;
+                    light.Offset = new (-0.8f, 2.1f);
+                    light.shape = CustomLighting.CircleOnCellBelow.KleiLightShape;
+                    light.drawOverlay = true;
+                    light.enabled = false;
+                    light.autoRespondToOperational = false;
+                    go.AddOrGet<LightSymbolMeterTracker>().targetSymbol = "meter_light_bloom";
+                }
             }
         }
     }

@@ -20,8 +20,8 @@ msgstr "Атлетичный Ручной Генератор"
 
 #. AthleticsGenerator.STRINGS.OPTIONS.ENABLE_LIGHT.NAME
 msgctxt "AthleticsGenerator.STRINGS.OPTIONS.ENABLE_LIGHT.NAME"
-msgid "Enable Wattage meter light"
-msgstr "Включить лампочку измерителя мощности"
+msgid "Wattage meter emits light"
+msgstr "Измеритель мощности светится"
 
 #. AthleticsGenerator.STRINGS.OPTIONS.ENABLE_METER.NAME
 msgctxt "AthleticsGenerator.STRINGS.OPTIONS.ENABLE_METER.NAME"

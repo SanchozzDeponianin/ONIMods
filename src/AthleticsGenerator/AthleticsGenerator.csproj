@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Title>Athletic Manual Generator</Title>
     <Description>Now the Manual Generator produces more energy the higher the level of the Duplicant's Athletics attribute.</Description>
-    <ModVersion>1.0.8</ModVersion>
+    <ModVersion>1.1.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <SharedCS Include="BaseOptions" />
+    <SharedCS Include="BaseOptions;CustomLighting;LightSymbolMeterTracker" />
   </ItemGroup>
 </Project>

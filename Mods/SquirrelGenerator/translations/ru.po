@@ -3,6 +3,16 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. SquirrelGenerator.STRINGS.BLUEPRINTS.SQUIRRELWHEEL_A.NAME
+msgctxt "SquirrelGenerator.STRINGS.BLUEPRINTS.SQUIRRELWHEEL_A.NAME"
+msgid "<link=\"SQUIRRELGENERATOR\">Sleek Squirrel Wheel</link>"
+msgstr "<link=\"SQUIRRELGENERATOR\">Стильное Беличье колесо</link>"
+
+#. SquirrelGenerator.STRINGS.BLUEPRINTS.SQUIRRELWHEEL_B.NAME
+msgctxt "SquirrelGenerator.STRINGS.BLUEPRINTS.SQUIRRELWHEEL_B.NAME"
+msgid "<link=\"SQUIRRELGENERATOR\">Clunky Squirrel Wheel</link>"
+msgstr "<link=\"SQUIRRELGENERATOR\">Угловатое Беличье колесо</link>"
+
 #. SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.DESC
 msgctxt "SquirrelGenerator.STRINGS.BUILDINGS.PREFABS.SQUIRRELGENERATOR.DESC"
 msgid "Watching {Squirrel} run on it is adorable... the electrical power is just an added bonus."
@@ -52,6 +62,11 @@ msgstr "Новая постройка Беличье колесо, в котор
 msgctxt "SquirrelGenerator.STRINGS.MOD_TITLE"
 msgid "Squirrel Wheel"
 msgstr "Беличье колесо"
+
+#. SquirrelGenerator.STRINGS.OPTIONS.ENABLE_LIGHT.NAME
+msgctxt "SquirrelGenerator.STRINGS.OPTIONS.ENABLE_LIGHT.NAME"
+msgid "Wattage meter emits light"
+msgstr "Измеритель мощности светится"
 
 #. SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGERATING.NAME
 msgctxt "SquirrelGenerator.STRINGS.OPTIONS.GENERATORWATTAGERATING.NAME"

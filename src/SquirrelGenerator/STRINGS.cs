@@ -13,6 +13,18 @@ namespace SquirrelGenerator
         public const string WATT = "{WATT}";
         public const string DTU_S = "{DTU_S}";
 
+        public class BLUEPRINTS
+        {
+            public class SQUIRRELWHEEL_A
+            {
+                public static LocString NAME = UI.FormatAsLink("Sleek Squirrel Wheel", "SQUIRRELGENERATOR");
+            }
+            public class SQUIRRELWHEEL_B
+            {
+                public static LocString NAME = UI.FormatAsLink("Clunky Squirrel Wheel", "SQUIRRELGENERATOR");
+            }
+        }
+
         public class BUILDINGS
         {
             public class PREFABS
@@ -21,13 +33,7 @@ namespace SquirrelGenerator
                 {
                     public static LocString NAME = UI.FormatAsLink("Squirrel Wheel", "SQUIRRELGENERATOR");
                     public static LocString DESC = $"Watching {SQUIRREL} run on it is adorable... the electrical power is just an added bonus.";
-                    public static LocString EFFECT = string.Concat(new string[]
-                    {
-                        "Converts a creature’s muscular labor into electrical ",
-                        UI.FormatAsLink("Power", "POWER"),
-                        ".\n\n",
-                        $"A {SQUIRREL} is happier when it runs in a wheel, but consumes more food.",
-                    });
+                    public static LocString EFFECT = $"Converts a creature’s muscular labor into electrical {UI.FormatAsLink("Power", "POWER")}.\n\nA {SQUIRREL} is happier when it runs in a wheel, but consumes more food.";
                 }
             }
         }
@@ -73,6 +79,10 @@ namespace SquirrelGenerator
                 public static LocString NAME = "Heat Production";
                 public static LocString TOOLTIP = $"{UI.FormatAsKeyWord("Heat")} Production,{DTU_S} of Squirrel Wheel";
             }
+            public class ENABLE_LIGHT
+            {
+                public static LocString NAME = "Wattage meter emits light";
+            }
             public class HAPPINESSBONUS
             {
                 public static LocString NAME = "Happiness Bonus";
@@ -110,6 +120,7 @@ namespace SquirrelGenerator
             };
             Utils.ReplaceAllLocStringTextByDictionary(typeof(STRINGS), dictionary);
             OPTIONS.SEARCHMAXINTERVAL.TOOLTIP = OPTIONS.SEARCHMININTERVAL.TOOLTIP;
+            LocString.CreateLocStringKeys(typeof(BLUEPRINTS));
             LocString.CreateLocStringKeys(typeof(BUILDINGS));
             LocString.CreateLocStringKeys(typeof(MISC));
         }

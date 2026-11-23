@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Title>Squirrel Wheel</Title>
     <Description>Adds a new Squirrel Wheel building that your Pips can use to running, and you will get a small profit of bonus electricity power.</Description>
-    <ModVersion>1.5.1</ModVersion>
+    <ModVersion>1.6.0</ModVersion>
     <UsesPLib>true</UsesPLib>
   </PropertyGroup>
   <ItemGroup>
-    <SharedCS Include="BaseOptions;TranspilerUtils" />
+    <SharedCS Include="BaseOptions;CustomLighting;LightSymbolMeterTracker;TranspilerUtils" />
   </ItemGroup>
 </Project>

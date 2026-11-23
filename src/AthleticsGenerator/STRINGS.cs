@@ -20,7 +20,7 @@
         {
             public class ENABLE_LIGHT
             {
-                public static LocString NAME = "Enable Wattage meter light";
+                public static LocString NAME = "Wattage meter emits light";
             }
             public class ENABLE_METER
             {

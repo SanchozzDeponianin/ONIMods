@@ -20,7 +20,7 @@ msgstr ""
 
 #. AthleticsGenerator.STRINGS.OPTIONS.ENABLE_LIGHT.NAME
 msgctxt "AthleticsGenerator.STRINGS.OPTIONS.ENABLE_LIGHT.NAME"
-msgid "Enable Wattage meter light"
+msgid "Wattage meter emits light"
 msgstr ""
 
 #. AthleticsGenerator.STRINGS.OPTIONS.ENABLE_METER.NAME

@@ -23,6 +23,10 @@ namespace SquirrelGenerator
 
         [JsonProperty]
         [Option]
+        public bool enable_light { get; set; } = true;
+
+        [JsonProperty]
+        [Option]
         [Limit(0, 5)]
         public int HappinessBonus { get; set; } = WheelRunningStates.HAPPINESS_BONUS;
 

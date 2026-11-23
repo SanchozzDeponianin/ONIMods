@@ -13,7 +13,7 @@ namespace SquirrelGenerator
         public class Def : BaseDef
         {
             public Vector3 workAnimOffset = new(-0.5f, 0.4f);
-            public float workAnimSpeedMultiplier = 1.8f;
+            public float workAnimSpeedMultiplier = 2.0f;
         }
 
         public new class Instance : GameInstance
@@ -150,12 +150,13 @@ namespace SquirrelGenerator
                 .Exit(smi => smi.TargetWheel?.SetProductiveness(0));
 
             running.pre
+                .Enter(smi => smi.navigator.SetCurrentNavType(NavType.Floor))
                 .PlayAnim("rummage_pre")
                 .OnAnimQueueComplete(running.loop);
 
             running.loop
                 .Enter(StartRunning)
-                .QueueAnim("floor_floor_1_0_loop", true, null)
+                .PlayAnim("floor_floor_1_0_loop", KAnim.PlayMode.Loop)
                 .Transition(running.pst, Update, UpdateRate.SIM_4000ms)
                 .Exit(StopRunning);
 

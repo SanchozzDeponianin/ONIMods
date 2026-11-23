@@ -3,6 +3,26 @@ msgstr ""
 "Application: Oxygen Not Included"
 "POT Version: 2.0"
 
+#. OldLiquidReservoir.STRINGS.BLUEPRINTS.LIQUIDRESERVOIR_EARLY_ACCESS.DESC
+msgctxt "OldLiquidReservoir.STRINGS.BLUEPRINTS.LIQUIDRESERVOIR_EARLY_ACCESS.DESC"
+msgid "An ancient authentic skin existed in the game's files from the earliest versions,\nbut in those days the Liquid Reservoir could not be built."
+msgstr ""
+
+#. OldLiquidReservoir.STRINGS.BLUEPRINTS.LIQUIDRESERVOIR_EARLY_ACCESS.NAME
+msgctxt "OldLiquidReservoir.STRINGS.BLUEPRINTS.LIQUIDRESERVOIR_EARLY_ACCESS.NAME"
+msgid "<link=\"LIQUIDRESERVOIR\">Ancient Liquid Reservoir</link>"
+msgstr ""
+
+#. OldLiquidReservoir.STRINGS.BLUEPRINTS.LIQUIDRESERVOIR_ROCKETRY_UPDATE.DESC
+msgctxt "OldLiquidReservoir.STRINGS.BLUEPRINTS.LIQUIDRESERVOIR_ROCKETRY_UPDATE.DESC"
+msgid "It was in this skin that the Liquid Reservoir was first introduced in the game in the Rocketry Upgrade."
+msgstr ""
+
+#. OldLiquidReservoir.STRINGS.BLUEPRINTS.LIQUIDRESERVOIR_ROCKETRY_UPDATE.NAME
+msgctxt "OldLiquidReservoir.STRINGS.BLUEPRINTS.LIQUIDRESERVOIR_ROCKETRY_UPDATE.NAME"
+msgid "<link=\"LIQUIDRESERVOIR\">Rocketry Liquid Reservoir</link>"
+msgstr ""
+
 #. OldLiquidReservoir.STRINGS.MOD_DESCRIPTION
 msgctxt "OldLiquidReservoir.STRINGS.MOD_DESCRIPTION"
 msgid "Returns the old visual art of the Liquid Reservoir from older \"early access\" versions of the game."
