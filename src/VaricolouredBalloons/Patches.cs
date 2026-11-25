@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Database;
 using HarmonyLib;
-using UnityEngine;
 using SanchozzONIMods.Lib;
 using PeterHan.PLib.Core;
 using PeterHan.PLib.PatchManager;
@@ -34,12 +33,7 @@ namespace VaricolouredBalloons
 
         private static BalloonArtistFacadeResource MakeBalloon(string id, string animFile, BalloonArtistFacadeType type)
         {
-            // для большинства анимаций (кроме групповых) их batchTag совпадает с id их группы
-            // для моддовых анимаций игра создаёт отдельные группы с id = name, однако batchTag = KAnimBatchManager.NO_BATCH
-            // начиная с U48 batchTag начал использоваться вглубине скинов балонов, изза одинакового batchTag началось мерцание текстур
-            // поэтому, сгенерируем уникальный batchTag от name
-            var kAnimFile = Assets.GetAnim(animFile);
-            Traverse.Create(kAnimFile).Field<HashedString>("_batchTag").Value = kAnimFile.name;
+            Utils.FixKanimBatchTag(animFile);
             return new BalloonArtistFacadeResource(id, string.Empty, string.Empty, PermitRarity.Universal, animFile, type);
         }
 
@@ -50,8 +44,35 @@ namespace VaricolouredBalloons
             myBalloons.Add(MakeBalloon("VBalloonOrangeLongSparkles", "varicoloured_balloon_orange_kanim", BalloonArtistFacadeType.ThreeSet));
             myBalloons.Add(MakeBalloon("VBalloonBabyPuftMutant", "varicoloured_balloon_puft_mutant_kanim", Varicoloured));
             MyBalloons = myBalloons.AsReadOnly();
-            var unlocked = Db.Get().Permits.BalloonArtistFacades.resources.Where(facade => facade.IsUnlocked()).ToList();
-            unlocked.AddRange(myBalloons);
+        }
+
+        [PLibMethod(RunAt.BeforeDbPostProcess)]
+        private static void BeforeDbPostProcess()
+        {
+            Assets.GetPrefab(EquippableBalloonConfig.ID).AddOrGet<ModdedEquippableBalloon>();
+            Assets.GetPrefab(BalloonStandConfig.ID).AddTag(GameTags.NotConversationTopic);
+        }
+
+        [PLibMethod(RunAt.OnStartGame)]
+        private static void OnStartGame()
+        {
+            UpdateUnlockedBalloons();
+            KleiItems.AddInventoryRefreshCallback(UpdateUnlockedBalloons);
+        }
+
+        [PLibMethod(RunAt.OnEndGame)]
+        private static void OnEndGame()
+        {
+            KleiItems.RemoveInventoryRefreshCallback(UpdateUnlockedBalloons);
+        }
+
+        private static void UpdateUnlockedBalloons()
+        {
+            var unlocked = ListPool<BalloonArtistFacadeResource, Db>.Allocate();
+            unlocked.AddRange(Db.Get().Permits.BalloonArtistFacades.resources);
+            unlocked.RemoveAll(facade => !facade.IsUnlocked());
+            unlocked.AddRange(MyBalloons);
+            BalloonOverrides.Clear();
             foreach (var facade in unlocked)
             {
                 var iter = facade.GetSymbolIter();
@@ -61,6 +82,7 @@ namespace VaricolouredBalloons
                     BalloonOverrides.Add(iter);
                 }
             }
+            unlocked.Recycle();
         }
 
         // загрузка самопальных балонов, подхватываем все символы называющиеся на "body"
@@ -96,16 +118,6 @@ namespace VaricolouredBalloons
                         __result = default;
                     ___current = __result;
                 }
-            }
-        }
-
-        // носимый шарег:
-        [HarmonyPatch(typeof(EquippableBalloonConfig), nameof(EquippableBalloonConfig.DoPostConfigure))]
-        private static class EquippableBalloonConfig_DoPostConfigure
-        {
-            private static void Postfix(GameObject go)
-            {
-                go.AddOrGet<ModdedEquippableBalloon>();
             }
         }
 
